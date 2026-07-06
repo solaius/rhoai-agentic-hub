@@ -179,7 +179,8 @@ def validate_manifest(root):
             if raw:
                 posix = raw.replace("\\", "/")
                 parts = [p for p in posix.split("/") if p]
-                if posix.startswith("/") or ".." in parts or not parts:
+                if (posix.startswith("/") or ".." in parts or not parts
+                        or all(p == "." for p in parts)):
                     errors.append(f"{where}: {field} must be a relative path without '..'")
         src = entry.get("source")
         if src and not (Path(root) / src).exists():

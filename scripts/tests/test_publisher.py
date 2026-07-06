@@ -112,3 +112,13 @@ def test_apply_handles_dest_type_swap(tmp_path):
     assert (pages / "x/site").is_file()
     assert (pages / "x/one-pager.html").is_dir()
     assert (pages / "x/one-pager.html" / "index.html").is_file()
+
+
+def test_manifest_rejects_dot_dest(tmp_path):
+    from hublib.schema import validate_manifest
+    root = make_repo(tmp_path)
+    write(root, "publish/manifest.yaml",
+          "- source: features/x/enablement/one-pager.html\n  dest: .\n"
+          "  audience: public\n  title: T\n  description: D\n")
+    errors = validate_manifest(root)
+    assert any("must be a relative path" in e for e in errors)

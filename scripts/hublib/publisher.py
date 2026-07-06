@@ -77,16 +77,19 @@ def apply(root, pages_dir, hub_sha=""):
     snap_path = pages / SNAPSHOT
     old = json.loads(snap_path.read_text(encoding="utf-8")) if snap_path.is_file() else {}
     new_dests = {p["dest"] for p in plan}
+    pages_root = pages.resolve()
     for dest in sorted(set(old) - new_dests):
         warnings.append(f"dest '{dest}' was published before and is no longer in the "
                         f"manifest — its files will be removed (dest slugs are contracts)")
         target = pages / dest
+        if not target.resolve().is_relative_to(pages_root):
+            warnings.append(f"snapshot dest escapes pages dir, skipped: {dest}")
+            continue
         if target.is_dir():
             shutil.rmtree(target)
         elif target.is_file():
             target.unlink()
     copied = []
-    pages_root = pages.resolve()
     for p in plan:
         target = pages / p["dest"]
         if not target.resolve().is_relative_to(pages_root):
