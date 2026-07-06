@@ -86,11 +86,16 @@ def apply(root, pages_dir, hub_sha=""):
         elif target.is_file():
             target.unlink()
     copied = []
+    pages_root = pages.resolve()
     for p in plan:
         target = pages / p["dest"]
+        if not target.resolve().is_relative_to(pages_root):
+            raise ValueError(f"dest escapes pages dir: {p['dest']}")
+        if target.is_dir():
+            shutil.rmtree(target)
+        elif target.exists():
+            target.unlink()
         if p["is_dir"]:
-            if target.exists():
-                shutil.rmtree(target)
             shutil.copytree(p["src"], target)
         else:
             target.parent.mkdir(parents=True, exist_ok=True)

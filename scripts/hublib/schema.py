@@ -174,6 +174,13 @@ def validate_manifest(root):
                 errors.append(f"{where}: missing field '{field}'")
         if entry.get("audience") not in (None, "public", "internal"):
             errors.append(f"{where}: audience must be public|internal")
+        for field in ("source", "dest"):
+            raw = str(entry.get(field) or "")
+            if raw:
+                posix = raw.replace("\\", "/")
+                parts = [p for p in posix.split("/") if p]
+                if posix.startswith("/") or ".." in parts or not parts:
+                    errors.append(f"{where}: {field} must be a relative path without '..'")
         src = entry.get("source")
         if src and not (Path(root) / src).exists():
             errors.append(f"{where}: source does not exist: {src}")

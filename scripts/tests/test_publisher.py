@@ -85,3 +85,30 @@ def test_apply_warns_and_removes_on_dropped_dest(tmp_path):
     assert copied == ["x/one-pager.html"]
     assert any("x/site" in w and "no longer in the manifest" in w for w in warnings)
     assert not (pages / "x/site").exists()
+
+
+def test_manifest_rejects_traversal_dest(tmp_path):
+    from hublib.schema import validate_manifest
+    root = make_repo(tmp_path)
+    write(root, "publish/manifest.yaml",
+          "- source: features/x/enablement/one-pager.html\n  dest: ../evil.html\n"
+          "  audience: public\n  title: T\n  description: D\n")
+    errors = validate_manifest(root)
+    assert any("without '..'" in e for e in errors)
+
+
+def test_apply_handles_dest_type_swap(tmp_path):
+    root = make_repo(tmp_path)
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    apply(root, pages)
+    # same dest strings, swapped source types: dir dest -> file source, file dest -> dir source
+    write(root, "publish/manifest.yaml",
+          "- source: features/x/enablement/one-pager.html\n  dest: x/site/\n"
+          "  audience: public\n  title: T\n  description: D\n"
+          "- source: features/x/enablement/site/\n  dest: x/one-pager.html\n"
+          "  audience: public\n  title: T2\n  description: D2\n")
+    copied, warnings = apply(root, pages)
+    assert (pages / "x/site").is_file()
+    assert (pages / "x/one-pager.html").is_dir()
+    assert (pages / "x/one-pager.html" / "index.html").is_file()
