@@ -3,23 +3,45 @@
 
 ## decision
 - ["AgentOps control plane" is not accurate terminology](/features/platform/knowledge/decision-agentops-control-plane-terminology.md) — OpenShift is the control plane; Red Hat extends OpenShift with agentic capabilities rather than building a separate one.
+- [IBM/Red Hat joint positioning for agentic AI (customer-facing only)](/features/platform/knowledge/decision-ibm-redhat-agentic-ai-positioning.md) — Division of labor for joint IBM/Red Hat customer conversations on agentic AI — does not change Red Hat's product roadmap.
 - [kubeflow/model-registry renamed to "Kubeflow Hub"](/features/platform/knowledge/decision-kubeflow-hub-rename.md) — KEP-0003 renames the project and moves its images to reflect a broader multi-asset-type scope.
 - [Registry vs. Catalog separation](/features/platform/knowledge/decision-registry-vs-catalog.md) — Registry governs (system of record); Catalog discovers (consumption surface) — MLflow serves the registry role, Kubeflow (Hub) the catalog role.
 
 ## fact
+- [Red Hat's agentic AI four pillars](/features/platform/knowledge/fact-agentic-ai-four-pillars.md) — The four-pillar product framing for agentic AI — Build & BYOA, Govern & Secure (AgentOps), Deploy & Manage, AI Hub.
+- [Agentic AI messaging position — challenges, pillars, industry stats, personas](/features/platform/knowledge/fact-agentic-ai-messaging-position.md) — The customer-facing framing from the Apr 2026 Agentic AI Messaging Guide — three customer challenges, three solution pillars, industry stats, and the Builders/Operators personas.
 - [Agentic AI pod v2 (meeting transcript, 2026-04-14)](/features/platform/knowledge/fact-agentic-ai-pod-v2-transcript.md) — IBM/Red Hat agentic positioning, MCP catalog blog planning, and Summit content coordination.
 - [AI Asset Registries Sync (meeting transcript, 2026-04-07)](/features/platform/knowledge/fact-ai-asset-registries-sync-transcript.md) — The sync where the "Registry = MLflow, Catalog = Kubeflow" decision was made, plus early skills registry discussion.
+- [AI Gateway execution risks — Llama Stack bridge and SGLang/vLLM divergence](/features/platform/knowledge/fact-ai-gateway-execution-risks.md) — Two execution risks flagged at the AI Gateway F2F beyond the six binding architecture decisions — a dual-track maintenance burden and a possible vLLM ecosystem fork.
 - [AI Gateway / Inference Gateway](/features/platform/knowledge/fact-ai-gateway.md) — The unified gateway for all AI traffic (inference, tool calling, A2A, egress) — distinct from MCP Gateway, architecture decided April 2026.
 - [AI Hub (UI surface)](/features/platform/knowledge/fact-ai-hub-ui.md) — The unified RHOAI UI surface — Catalog/Registry/Deployments tabs per asset type, built on PatternFly.
 - [Databricks/MLflow upstream collaboration — process & current status](/features/platform/knowledge/fact-databricks-mlflow-upstream-process.md) — How Red Hat's upstream contribution process to MLflow works, and a snapshot of what MLflow is doing natively for GenAI/registry capabilities.
 - [Model Registry / Kubeflow Hub](/features/platform/knowledge/fact-model-registry-kubeflow-hub.md) — The existing Kubeflow/RHOAI model registry, evolving into a broader multi-asset-type hub — already serves MCP servers via assetType.
 - [Personas (AI asset registry)](/features/platform/knowledge/fact-personas.md) — The four personas the registry/catalog experience is designed around — focus and registry interaction per persona.
+- [AI asset registry program risks — upstream process and registry-strategy migration](/features/platform/knowledge/fact-registry-program-risks.md) — Two execution risks to the registry program — the Databricks upstream review cadence, and migration implications of moving from a Kubeflow-based to an MLflow-based registry direction.
 - [Registry Proposal Discussion (meeting transcript, 2026-03-19)](/features/platform/knowledge/fact-registry-proposal-discussion-transcript.md) — Early meeting covering the Databricks upstream process and the registry's plugin architecture.
+- [RHOAI 3.4 agentic capabilities — status snapshot](/features/platform/knowledge/fact-rhoai-34-agentic-capabilities.md) — GA/Tech Preview/Dev Preview status for eleven agentic capabilities as of the Agentic AI Messaging Guide (Apr 2026) — a point-in-time snapshot, not a roadmap.
 - [Sharon/Peter 1:1 - 3.4 confirmation (meeting transcript, 2026-04-13)](/features/platform/knowledge/fact-sharon-peter-1-1-34-confirmation-transcript.md) — 3.4 sign-off confirmation covering partner splash blog, quickstarts, deprecation process, AI Hub concept, and MaaS/gateway resourcing.
+- [Stakeholder map — supporting cast](/features/platform/knowledge/fact-stakeholder-map.md) — Names, roles, and one-line context for roughly 80 people mentioned once or twice in the old registry, grouped by area, who didn't warrant a standalone person entry.
 - [Red Hat Summit 2026 (May 11-14, Atlanta) — AI asset registry content](/features/platform/knowledge/fact-summit-2026.md) — Summit 2026 dates, partner-catalog blog plan, demo scope, and other agentic content slated for the event.
 
+## person
+- [Adel Zaalouk](/features/platform/knowledge/person-adel-zaalouk.md) — Agentic Strategy maintainer — recurring voice across base-images scope, UBI version, and messaging-guide review.
+- [Arjay Hinek](/features/platform/knowledge/person-arjay-hinek.md) — PM — authored the RICE scoring rubric used for RHAI prioritization.
+- [Catherine Weeks](/features/platform/knowledge/person-catherine-weeks.md) — Leadership — clarified that OpenShift, not AgentOps, is the control plane.
+- [Manuela Ansaldo](/features/platform/knowledge/person-manuela-ansaldo.md) — RHAI Documentation Program Manager — owns the CCS documentation intake process and is the key contact for RHAI docs requests.
+- [Tushar Katarki](/features/platform/knowledge/person-tushar-katarki.md) — IBM/Red Hat alignment strategy for agentic AI.
+- [Younes Ben Brahim](/features/platform/knowledge/person-younes-ben-brahim.md) — Product Marketing Manager — drives agentic messaging and Summit content.
+
 ## question
+- [Agent identity model — SPIFFE/SPIRE or an alternative?](/features/platform/knowledge/question-agent-identity-model-spiffe.md) — Whether SPIFFE/SPIRE is confirmed as the agent identity mechanism or still an open alternative-vs-SPIFFE call.
+- [Agentic loop microservice x IPP plugin framework integration](/features/platform/knowledge/question-ai-gateway-agentic-loop-ipp.md) — How the new tool-invocation/inference-cycle "agentic loop" microservice should integrate with the broader IPP plugin framework, given different plugin orderings per context.
+- [Conversation state management for the Responses API](/features/platform/knowledge/question-ai-gateway-conversation-state.md) — How to detect and approximate OpenAI's auto-compaction behavior for conversation state in the gateway-native Responses API.
+- [Cross-datacenter rate limit enforcement](/features/platform/knowledge/question-ai-gateway-cross-dc-rate-limiting.md) — How to enforce a single user's token-rate limit across multiple datacenters without unacceptable latency or complexity.
+- [Model selection x rate limiting x ITS fan-out — cost multiplication gap](/features/platform/knowledge/question-ai-gateway-model-selection-cost.md) — Intelligent model-selection failover could pick a more expensive model while inference-time-scaling fan-out multiplies the request count, compounding cost.
+- [AI Gateway group-based tenancy x MCP Registry governance — implementation details](/features/platform/knowledge/question-ai-gateway-tenancy-mcp-registry.md) — The F2F decided group-based tenancy extends to MCP tool catalogs; how that interacts with the MCP Registry's own governance model is still TBD.
 - [What belongs in the MLflow upstream proposal now vs. later?](/features/platform/knowledge/question-mlflow-upstream-scope-now-vs-later.md) — Open scoping question across all of Red Hat's upstream MLflow work — what to submit now vs. defer to a later proposal.
+- [OCP 5.0 OLM 1.0 dependency removal — installation strategy](/features/platform/knowledge/question-ocp5-olm-dependency-removal.md) — OLM 1.0 dependency mechanisms are going away in OCP 5.0; no alternative installation strategy defined yet for registry/gateway/operator components that rely on them.
 
 ## reference
 - [Agentic AI Strategy 2026](/features/platform/knowledge/ref-agentic-ai-strategy-2026.md) — Enterprise challenges, four strategic pillars, customer insights, and competitive analysis for Red Hat's agentic AI direction.

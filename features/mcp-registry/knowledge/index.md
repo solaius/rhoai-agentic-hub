@@ -8,9 +8,15 @@
 - [MCP Registry (3.5 Dev Preview target)](/features/mcp-registry/knowledge/fact-mcp-registry.md) — The system-of-record / governance backbone for MCP servers — identity, version, lifecycle, certification, trust, auditability.
 - [MCP server lifecycle — pipeline stages & status states (as documented)](/features/mcp-registry/knowledge/fact-mcp-server-lifecycle-stages.md) — The as-documented MCP server pipeline stages, the older linear 7-state governance model, and MLflow's native model-registry states — the baseline the proposed 4-track model (see fact-mcp-registry-data-model-proposal.md) supersedes.
 
+## person
+- [Gaurav Singh](/features/mcp-registry/knowledge/person-gaurav-singh.md) — Product/Engineering — authored the RHOAI Limited & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
+
 ## question
 - [Which lifecycle states are required for 3.5 Dev Preview vs. later?](/features/mcp-registry/knowledge/question-lifecycle-states-35-dp-scope.md) — Open question on how much of the proposed 4-track governance model (lifecycle/approval/verification/certification) needs to ship in the 3.5 DP cut.
 - [What MCP metadata should be mandatory for registry records?](/features/mcp-registry/knowledge/question-mcp-metadata-mandatory-fields.md) — Open question on which MCP server metadata fields the registry should require vs. treat as optional.
+- [MCP Registry data model — MVP finalization gaps](/features/mcp-registry/knowledge/question-mcp-registry-mvp-data-model-gaps.md) — Six specific decisions still needed to finalize the MCP Registry data model for 3.5 Dev Preview.
+- [How registry state should drive gateway and catalog behavior](/features/mcp-registry/knowledge/question-mcp-registry-state-propagation.md) — Three open questions on how registry-governed state (lifecycle/approval/verification/certification) should propagate to the Gateway, the Catalog, and the Lifecycle Operator.
+- [What belongs in the MLflow upstream proposal now vs. later?](/features/mcp-registry/knowledge/question-mlflow-upstream-registry-scope.md) — Scoping call on how much of the MCP Registry design goes into the initial MLflow upstream proposal.
 
 ## reference
 - [MCP Catalog — PM write-up & registry integration requirements](/features/mcp-registry/knowledge/ref-mcp-catalog-writeup.md) — PM write-up covering MCP Catalog requirements, competitor comparison, and registry integration expectations.

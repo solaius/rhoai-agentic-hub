@@ -7,10 +7,22 @@
 - [Agentic Base Images (RHAIRFE-2443)](/features/agent-registry/knowledge/fact-agentic-base-images.md) — Proposed shared, Konflux-validated UBI base images for coding-agent harnesses (Claude Code, OpenCode, etc.) — AIPCC scope decision pending.
 - [Kagenti (agent lifecycle management)](/features/agent-registry/knowledge/fact-kagenti.md) — Discovery/versioning layer for agents across their lifecycle, supporting the move from single agents to multi-agent systems — TP in RHOAI 3.4.
 
+## person
+- [Gage Krumbach](/features/agent-registry/knowledge/person-gage-krumbach.md) — Engineering, RHOAI Dashboard/UI — authored the Starter Kit Deployment Spec for the 3.5 agent catalog deploy wizard.
+- [Martin Prpič](/features/agent-registry/knowledge/person-martin-prpic.md) — Engineering (AIPCC) — agentic-ci, e2e tests, agentic base images, Konflux pipeline.
+- [Varsha Prasad Narsing](/features/agent-registry/knowledge/person-varsha-prasad-narsing.md) — Engineering — authored the post-deployment agent registry proposal Peter Double is now taking over.
+
 ## question
+- [Off-the-shelf harness integration with the agent catalog playground](/features/agent-registry/knowledge/question-agent-catalog-harness-playground-integration.md) — Full chat-interface integration for harnesses like OpenCode/Claude Code needs session management, human-in-the-loop, and tool approval — not 3.5 scope.
 - [Should the agent catalog standardize on one protocol or support several?](/features/agent-registry/knowledge/question-agent-catalog-protocol-diversity.md) — Open call on whether starter-kit harnesses should all translate to A2A, or support multiple protocols with labels.
+- [Agent-to-agent relationships and composition graphs — deferred](/features/agent-registry/knowledge/question-agent-registry-composition-graphs.md) — Multi-agent composition/relationship modeling is needed for multi-agent systems but explicitly out of scope for the current agent registry proposal.
+- [Should the agent discovery plugin interface generalize beyond agents?](/features/agent-registry/knowledge/question-agent-registry-discovery-generalization.md) — Whether AgentDiscoveryProvider should be broadened to support other discoverable AI asset types, as the proposal's design hints.
 - [How does the agent registry interact with Red Hat's multi-track governance model?](/features/agent-registry/knowledge/question-agent-registry-governance-integration.md) — Open question on reconciling the agent registry's simple runtime lifecycle with MCP Registry's four-track approval/verification/certification governance model.
+- [Which kagenti integration architecture should be the RHOAI default?](/features/agent-registry/knowledge/question-agent-registry-kagenti-integration-architecture.md) — Pull, push, or hybrid — which kagenti/agent-registry integration pattern should RHOAI standardize on?
+- [Agent registry runtime lifecycle vs. Red Hat's multi-track governance model](/features/agent-registry/knowledge/question-agent-registry-lifecycle-governance-mapping.md) — How ACTIVE/UNHEALTHY/STALE/REMOVED runtime states should map onto Red Hat's approval/verification/certification governance tracks, if at all.
 - [How should the agent registry relate to the pre-deployment agent artifacts registry?](/features/agent-registry/knowledge/question-agent-registry-pre-deployment-relationship.md) — Varsha's post-deployment agent registry proposal explicitly defers this — open question on how it should eventually reconcile with a future pre-deployment registry for agent definitions/images.
+- [Agentic base images — product ID and dependencies](/features/agent-registry/knowledge/question-agentic-base-images-product-id.md) — What product ID would agentic base images carry, and do they depend on RHOAI?
+- [Agentic base images — which UBI version?](/features/agent-registry/knowledge/question-agentic-base-images-ubi-version.md) — UBI 10 is preferred but may hurt supportability on OCP clusters still running RHCOS 9; specific kernel features need minimum versions.
 - [Should the agent discovery plugin interface generalize beyond agents?](/features/agent-registry/knowledge/question-discovery-plugin-interface-generalization.md) — Open question on whether AgentDiscoveryProvider (poll/watch/webhook) should become a generic discoverable-asset-type interface rather than agent-specific.
 
 ## reference

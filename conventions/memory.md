@@ -27,6 +27,10 @@ colleague would look up. "The 3.5 date moved" → `memory/profiles/roadmap.md`.
 3. Conflicts (scratch contradicts a profile) are never auto-resolved: present
    both, the human picks, the loser is superseded.
 4. Restricted items go to `restricted/memory/` (same shapes, local-only).
+5. Restricted bar: $ figures and SKU/entitlement specifics, consent/legal
+   process detail, customer-named risks or deals, and org-sensitive numbers
+   (headcount, ratios) → restricted/. Partner/company names in
+   public-partnership contexts are public.
 
 ## Staleness
 `review_after` (per file) wins; otherwise [staleness.yaml](/conventions/staleness.yaml)

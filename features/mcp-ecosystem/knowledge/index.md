@@ -2,6 +2,7 @@
 # MCP Ecosystem — knowledge
 
 ## fact
+- [MCP catalog/registry competitive landscape](/features/mcp-ecosystem/knowledge/fact-competitive-landscape-mcp-catalogs.md) — How Smithery, Docker, GitHub, ToolHive, Microsoft, and Databricks position their MCP catalogs/registries, and Red Hat's differentiation.
 - [Gen MCP](/features/mcp-ecosystem/knowledge/fact-gen-mcp.md) — Tool for generating, containerizing, and production-wrapping MCP servers from API/CLI/HTTP definitions.
 - [MCP build server ecosystem landscape](/features/mcp-ecosystem/knowledge/fact-mcp-build-server-ecosystem.md) — Survey of tools for building MCP servers (gen-mcp, kmcp, FastMCP, fips-agents) — a growing customer/field need with no single tool covering all cases.
 - [MCP catalog metadata schema](/features/mcp-ecosystem/knowledge/fact-mcp-catalog-metadata-schema.md) — The defined metadata fields for MCP servers listed in the RHOAI catalog — core, MCP-specific, and security-indicator fields.
@@ -11,6 +12,18 @@
 - [MCP security pipeline — SBOM, scanning, attestation, secure execution](/features/mcp-ecosystem/knowledge/fact-mcp-security-scanning-pipeline.md) — The security-scanning and trust pipeline for MCP servers moving through ingestion — SBOM, CVE scanning, provenance, signed attestations, secure execution via ToolHive, and catalog trust vendor extensions.
 - [OCP MCP Server](/features/mcp-ecosystem/knowledge/fact-ocp-mcp-server.md) — MCP server exposing OpenShift cluster management to AI agents/tools, deployed via the MCP Lifecycle Operator.
 - [Partner MCP Catalog (3.4 DP — completed)](/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md) — A partner + community MCP server catalog shipped in the RHOAI 3.4 DP catalog for Summit; the business onboarding pipeline, technical bar, and disqualification criteria behind it.
+
+## person
+- [Calum Murray](/features/mcp-ecosystem/knowledge/person-calum-murray.md) — Engineering — Gen MCP / MCP Checker; recurring, pointed voice on RHOAI Limited FAQ gaps.
+- [Daniele Martinoli](/features/mcp-ecosystem/knowledge/person-daniele-martinoli.md) — Ecosystem Engineering — did the original MCP validation research (Q3/Q4 FY25) that founded the ecosystem effort.
+- [Fernando Lozano](/features/mcp-ecosystem/knowledge/person-fernando-lozano.md) — Field/consulting — documented MCP implementation gaps in RHOAI 3.4 through hands-on testing.
+- [Jaideep Rao](/features/mcp-ecosystem/knowledge/person-jaideep-rao.md) — Engineering — authored the comprehensive MCP ecosystem best-practices deployment guide (RHAISTRAT-1149).
+- [Matt Dorn](/features/mcp-ecosystem/knowledge/person-matt-dorn.md) — Partnership Ecosystem team lead — owns partner MCP onboarding and technical attestation.
+- [Sharon Dashet](/features/mcp-ecosystem/knowledge/person-sharon-dashet.md) — Partnership Ecosystem / ecosystem engineering — key driver of partner MCP onboarding for the 3.4 Dev Preview.
+
+## question
+- [MCP implementation UX gaps found by hands-on RHOAI 3.4 testing](/features/mcp-ecosystem/knowledge/question-mcp-fernando-lozano-doc-gaps.md) — Four concrete documentation/UX gaps Fernando Lozano hit deploying MCP on RHOAI 3.4 — docs, Workbench, Catalog prerequisites, cluster-admin.
+- [How should the partner MCP ingestion pipeline be orchestrated?](/features/mcp-ecosystem/knowledge/question-mcp-ingestion-orchestration.md) — Konflux was suggested for orchestrating the partner ingestion pipeline stages, but this needs investigation.
 
 ## reference
 - [Fernando Lozano's MCP Research Notes](/features/mcp-ecosystem/knowledge/ref-fernando-lozano-mcp-research-notes.md) — Practical, undocumented gap-filling notes for actually getting MCP working on RHOAI 3.4 — the real user pain points.

@@ -7,4 +7,4 @@ tags: [mcp-ecosystem, gaps, user-pain]
 timestamp: 2026-07-06
 source: ai-asset-registry/docs/knowledge-registry.md §12 (as of 2026-07-05)
 ---
-Documents undocumented steps needed to make MCP work on RHOAI 3.4: enabling MCP Catalog via a configmap patch, a namespace label requirement, the `gen-ai-aa-mcp-servers` configmap for Gen AI Studio, and the minimal path without a Gateway. Captures real user pain (June 2026) — cross-reference the old registry's §13 open questions on documentation gaps and cluster-admin requirements.
+Documents undocumented steps needed to make MCP work on RHOAI 3.4: enabling MCP Catalog via a configmap patch, a namespace label requirement, the `gen-ai-aa-mcp-servers` configmap for Gen AI Studio, and the minimal path without a Gateway. Captures real user pain (June 2026) — see [question-mcp-fernando-lozano-doc-gaps.md](/features/mcp-ecosystem/knowledge/question-mcp-fernando-lozano-doc-gaps.md) for the four open documentation/UX gaps this surfaced.

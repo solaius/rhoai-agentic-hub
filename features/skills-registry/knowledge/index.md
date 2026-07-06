@@ -4,6 +4,9 @@
 ## fact
 - [Skills Registry MVP — data model, packaging, and gap analysis](/features/skills-registry/knowledge/fact-skills-registry-mvp-analysis.md) — The Databricks Skills Registry MVP's data model, installation modes, what it deliberately omits, and what that means for Red Hat's own upstream skills-registry proposal.
 
+## question
+- [Skills packaging format — gaps beyond the Databricks MVP](/features/skills-registry/knowledge/question-skills-packaging-format-gaps.md) — Databricks' MVP settled on SKILL.md + YAML frontmatter as the skill packaging format, but OCI artifacts and other formats remain unaddressed.
+
 ## reference
 - [B-Step62/mlflow (branch: skill-registry-mvp)](/features/skills-registry/knowledge/ref-mlflow-skill-registry-mvp-branch.md) — Databricks' Skills Registry MVP prototype — full CRUD, CLI, UI, and Claude Code integration. Not merged upstream.
 - [ODH skills-registry (plugin marketplace)](/features/skills-registry/knowledge/ref-odh-skills-registry.md) — The org plugin marketplace this hub consumes shared skills from — registry.yaml → marketplace.json/catalog.md

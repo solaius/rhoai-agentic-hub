@@ -4,5 +4,8 @@
 ## fact
 - [Zero-trust for agents](/features/agent-ops/knowledge/fact-zero-trust-for-agents.md) — The zero-trust principles for agent identity and access from Red Hat's Agentic AI Strategy — agent-native identity, fine-grained dynamic access, token exchange, enterprise IdP integration.
 
+## person
+- [Xernay Aniwar](/features/agent-ops/knowledge/person-xernay-aniwar.md) — Content/technical writer — authored the "What is AgentOps?" Red Hat topics-page explainer.
+
 ## reference
 - [What is AgentOps?](/features/agent-ops/knowledge/ref-what-is-agentops.md) — Red Hat topics-page explainer defining AgentOps, the AI-agent-vs-agentic-AI distinction, and four core capabilities.

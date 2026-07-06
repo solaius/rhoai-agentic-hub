@@ -3,5 +3,6 @@
 
 - 2026-07-06 · [MCP Gateway scope is tool governance, not injection/jailbreak prevention](/features/mcp-gateway/knowledge/decision-mcp-gateway-tool-governance-scope.md) — Clarifies the boundary between MCP Gateway and guardrails so the two stop getting conflated.
 - 2026-07-06 · ["AgentOps control plane" is not accurate terminology](/features/platform/knowledge/decision-agentops-control-plane-terminology.md) — OpenShift is the control plane; Red Hat extends OpenShift with agentic capabilities rather than building a separate one.
+- 2026-07-06 · [IBM/Red Hat joint positioning for agentic AI (customer-facing only)](/features/platform/knowledge/decision-ibm-redhat-agentic-ai-positioning.md) — Division of labor for joint IBM/Red Hat customer conversations on agentic AI — does not change Red Hat's product roadmap.
 - 2026-07-06 · [kubeflow/model-registry renamed to "Kubeflow Hub"](/features/platform/knowledge/decision-kubeflow-hub-rename.md) — KEP-0003 renames the project and moves its images to reflect a broader multi-asset-type scope.
 - 2026-07-06 · [Registry vs. Catalog separation](/features/platform/knowledge/decision-registry-vs-catalog.md) — Registry governs (system of record); Catalog discovers (consumption surface) — MLflow serves the registry role, Kubeflow (Hub) the catalog role.

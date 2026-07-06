@@ -15,8 +15,10 @@ Two ingestion lanes get MCP servers into the platform (identified at the 2026-04
 
 **Shared pipeline components** (reusable across both lanes):
 - Validate: repo integrity, provenance, supply-chain checks
-- Scan: CVE scanning (Quay), AI-specific scanning (Snyk — under investigation), dependency checking
+- Scan: CVE scanning (Quay), AI-specific scanning (Snyk — under investigation per Ann Murray's recommendation; open research question is what Snyk's AI/agent scanning actually checks beyond standard CVE scanning, and whether it's needed), dependency checking
 - Evaluate: [MCP Checker](/features/mcp-ecosystem/knowledge/fact-mcp-checker.md) for functional evaluation with configurable agents
 - Containerize: no current standard metadata schema — all 4 partner MCPs in 3.4 had different formats; a gap Red Hat could lead upstream on
 
 Key decisions from the meeting: Gen MCP containerization doesn't fit already-containerized partner MCPs (use podman/docker); Gen MCP's runtime-wrapping *is* useful for partners lacking auth/TLS/observability; evaluations are generic (MCP Checker) and reusable across all lanes including post-catalog customer re-evaluation; MLflow will be the main AI-asset evaluation tool, with MCP-evaluation integration TBD.
+
+See [question-mcp-ingestion-orchestration.md](/features/mcp-ecosystem/knowledge/question-mcp-ingestion-orchestration.md) for the open orchestration-mechanism question.

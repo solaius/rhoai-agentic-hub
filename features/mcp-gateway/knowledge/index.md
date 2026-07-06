@@ -9,6 +9,11 @@
 - [MCP Gateway feature roadmap (DP -> TP -> GA)](/features/mcp-gateway/knowledge/fact-mcp-gateway-roadmap.md) — Phased MCP Gateway rollout — what ships at Developer Preview, Technical Preview, and GA, including MCP Registry Integration landing at GA.
 - [MCP Gateway (Kuadrant/mcp-gateway)](/features/mcp-gateway/knowledge/fact-mcp-gateway.md) — Envoy-based WASM plug-in providing runtime connectivity and tool governance for MCP traffic — not a standalone gateway, not a guardrails replacement.
 
+## person
+- [Christopher Ferreira](/features/mcp-gateway/knowledge/person-christopher-ferreira.md) — PM, RHCL — signatory of the RHOAI-RHCL internal support agreement.
+- [Jeff DeMoss](/features/mcp-gateway/knowledge/person-jeff-demoss.md) — PM, RHAI — signatory of the RHOAI-RHCL internal support agreement.
+- [John Graham](/features/mcp-gateway/knowledge/person-john-graham.md) — Engineering Director, RHAI — signatory of the RHOAI-RHCL internal support agreement.
+
 ## question
 - [How should registry state inform gateway behavior?](/features/mcp-gateway/knowledge/question-registry-state-gateway-behavior.md) — Open question on how MCP Registry governance state (e.g. approval/certification) should feed into MCP Gateway routing/enforcement decisions.
 

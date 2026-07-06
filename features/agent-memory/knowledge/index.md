@@ -4,6 +4,27 @@
 ## fact
 - [Agent Memory Team sync transcript (2026-06-23)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260623-transcript.md) — Team discussion of MemoryHub demo, OGX Memory Alpha MVP, and session-vs-long-term memory separation consensus.
 
+## person
+- [Aniket Paluskar](/features/agent-memory/knowledge/person-aniket-paluskar.md) — Engineering, Feast team — authored "Feast in the Agentic AI Era" and the Agent-Assisted EDA RFE proposal.
+- [Chaitany Patel](/features/agent-memory/knowledge/person-chaitany-patel.md) — Engineering, Feast team — built the OGX+Ollama EDA experiment and the schema-discovery-eda tool.
+- [Francisco Arceo](/features/agent-memory/knowledge/person-francisco-arceo.md) — Engineering — OGX/AI Gateway Responses API and Feast upstream maintainer; implemented the OGX Memory Alpha MVP.
+- [Jonathan Zarecki](/features/agent-memory/knowledge/person-jonathan-zarecki.md) — Principal PM, OpenShift AI (Feature Store + AI Gateway) — signed the RHOAI-RHCL agreement and authored the Feast+OGX agent memory proposal.
+- [Ryan Cook](/features/agent-memory/knowledge/person-ryan-cook.md) — OCTO — initiative lead for the agent memory workstream.
+- [Sanjeev Rampal](/features/agent-memory/knowledge/person-sanjeev-rampal.md) — OCTO/ET — coordinates the agent memory workstream and leads candidate task prioritization.
+- [Umberto Manganiello](/features/agent-memory/knowledge/person-umberto-manganiello.md) — Engineering, Feast team — authored the Unified Platform Agentic Memory Infrastructure 3-phase proposal.
+- [Wes Jackson](/features/agent-memory/knowledge/person-wes-jackson.md) — Red Hat SSA — author of the MemoryHub prototype and the "agent memory as a platform concern" thesis.
+
+## question
+- [Is the agent memory architecture-doc timeline achievable?](/features/agent-memory/knowledge/question-agent-memory-architecture-timeline.md) — Team is targeting an architecture doc by July 2026 and short-term deliverables in fall, RHOAI 3.6 candidate — open whether that's realistic given the number of competing proposals.
+- [Client-side vs. server-side memory — which side should platform primitives live on?](/features/agent-memory/knowledge/question-agent-memory-client-vs-server-side.md) — OpenAI implements memory server-side; OpenClaw and others use client-side hybrid search. Frameworks differ; platform hasn't picked a side.
+- [Memory creation — brute-force capture vs. intelligent extraction vs. harness-native](/features/agent-memory/knowledge/question-agent-memory-creation-intelligence.md) — Most projects favor intelligent agent-driven extraction to avoid bloat, but harness-native memory (Claude auto-memory, Codex server-side memory) adds a third option platform memory needs to account for.
+- [Is the 3-area agent memory taxonomy the right decomposition?](/features/agent-memory/knowledge/question-agent-memory-taxonomy.md) — Peter's split (Agent Knowledge / Agentic Memory / Context Engineering) vs. competing models (Oracle's 4 access-pattern types; MemoryHub's scope-tier model).
+- [What is RHOAI's unified agent memory substrate, and how does it relate to the AI Asset Registry?](/features/agent-memory/knowledge/question-agent-memory-unified-substrate.md) — Oracle and MemoryHub both argue for one governed backend for agent memory — what's RHOAI's equivalent, and how does it connect to the existing Knowledge Sources asset type?
+- [Is agent memory genuinely distinct from RAG?](/features/agent-memory/knowledge/question-agent-memory-vs-rag-distinction.md) — Whether "Agent Knowledge" (org-wide graph) and "Agentic Memory" (learned agent state) are separate subsystems or one governed substrate, and how both relate to RAG.
+- [Feast as a pluggable storage backend for Mem0/Zep — engineering effort?](/features/agent-memory/knowledge/question-feast-mem0-pluggable-storage.md) — Umberto's proposal needs a Feast storage-provider interface for Mem0's write loop — unclear if Mem0 OSS supports pluggable storage, or what a feast init -t agent scaffolding template would cost to build.
+- [Agent memory governance layer — Feast (which proposal) vs. MemoryHub vs. other?](/features/agent-memory/knowledge/question-feast-proposals-vs-memoryhub-overlap.md) — Two separate Feast-based proposals (Zarecki's Feast+OGX, Manganiello's Unified Platform) and MemoryHub all cover overlapping governance-layer territory for RHAISTRAT-1345 — none is the current direction.
+- [Should RHAISTRAT-1345 expand to cover the Knowledge layer?](/features/agent-memory/knowledge/question-rhaistrat-1345-scope-expansion.md) — The Outcome currently covers conversation state, persistence, and context compaction, but not the org-wide Knowledge graph layer.
+
 ## reference
 - [Agent Memory Team Notes (ongoing)](/features/agent-memory/knowledge/ref-agent-memory-team-notes-ongoing.md) — Living meeting-notes doc for the agent memory workstream — task list, attendees, action items, key links.
 - [Agent Memory Team Sync Transcript (2026-06-09)](/features/agent-memory/knowledge/ref-agent-memory-team-sync-20260609.md) — The first formal agent memory team sync — sponsorship, tracking, cadence, and 2026 Phase 1 deliverables.
