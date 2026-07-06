@@ -10,7 +10,9 @@
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts
+- [fact-odh-plugin-availability](/memory/facts/fact-odh-plugin-availability.md) — Which ODH skills-registry plugins the hub consumes (verified at setup)
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-06 — **Creation** — captured ODH plugin availability fact (hub build T11 smoke)
 - 2026-07-05 — **Creation** — memory store seeded at hub creation: profiles (roadmap,
