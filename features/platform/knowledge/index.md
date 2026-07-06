@@ -3,12 +3,15 @@
 
 ## decision
 - ["AgentOps control plane" is not accurate terminology](/features/platform/knowledge/decision-agentops-control-plane-terminology.md) — OpenShift is the control plane; Red Hat extends OpenShift with agentic capabilities rather than building a separate one.
+- [kubeflow/model-registry renamed to "Kubeflow Hub"](/features/platform/knowledge/decision-kubeflow-hub-rename.md) — KEP-0003 renames the project and moves its images to reflect a broader multi-asset-type scope.
+- [Registry vs. Catalog separation](/features/platform/knowledge/decision-registry-vs-catalog.md) — Registry governs (system of record); Catalog discovers (consumption surface) — MLflow serves the registry role, Kubeflow (Hub) the catalog role.
 
 ## fact
 - [Agentic AI pod v2 (meeting transcript, 2026-04-14)](/features/platform/knowledge/fact-agentic-ai-pod-v2-transcript.md) — IBM/Red Hat agentic positioning, MCP catalog blog planning, and Summit content coordination.
 - [AI Asset Registries Sync (meeting transcript, 2026-04-07)](/features/platform/knowledge/fact-ai-asset-registries-sync-transcript.md) — The sync where the "Registry = MLflow, Catalog = Kubeflow" decision was made, plus early skills registry discussion.
 - [AI Gateway / Inference Gateway](/features/platform/knowledge/fact-ai-gateway.md) — The unified gateway for all AI traffic (inference, tool calling, A2A, egress) — distinct from MCP Gateway, architecture decided April 2026.
 - [AI Hub (UI surface)](/features/platform/knowledge/fact-ai-hub-ui.md) — The unified RHOAI UI surface — Catalog/Registry/Deployments tabs per asset type, built on PatternFly.
+- [Model Registry / Kubeflow Hub](/features/platform/knowledge/fact-model-registry-kubeflow-hub.md) — The existing Kubeflow/RHOAI model registry, evolving into a broader multi-asset-type hub — already serves MCP servers via assetType.
 - [Registry Proposal Discussion (meeting transcript, 2026-03-19)](/features/platform/knowledge/fact-registry-proposal-discussion-transcript.md) — Early meeting covering the Databricks upstream process and the registry's plugin architecture.
 - [Sharon/Peter 1:1 - 3.4 confirmation (meeting transcript, 2026-04-13)](/features/platform/knowledge/fact-sharon-peter-1-1-34-confirmation-transcript.md) — 3.4 sign-off confirmation covering partner splash blog, quickstarts, deprecation process, AI Hub concept, and MaaS/gateway resourcing.
 
@@ -17,6 +20,7 @@
 - [Messaging guide: Agentic AI by Red Hat AI](/features/platform/knowledge/ref-agentic-messaging-guide.md) — Internal marketing messaging guide — customer challenges, solution pillars, RHOAI 3.4 capability statuses, simplified personas.
 - [AI Asset Registries (product requirements)](/features/platform/knowledge/ref-ai-asset-registries-prd.md) — The single most important source doc — full product requirements, core concepts, capabilities, and asset coverage for the whole registry proposal.
 - [opendatahub-io/ai-gateway-payload-processing (GitHub)](/features/platform/knowledge/ref-ai-gateway-payload-processing-repo.md) — The IPP (Inference Payload Processor) plugin implementation — model-provider-resolver, api-translation, apikey-injection, NeMo guardrails.
+- [kubeflow/model-registry (GitHub)](/features/platform/knowledge/ref-kubeflow-model-registry-repo.md) — Model registry repo with plugin extensibility work (PR
 - [Open Responses Specification](/features/platform/knowledge/ref-open-responses-specification.md) — Industry-wide standard for the Responses API — items as core units, semantic event streaming, tool defs, conversation chaining.
 - [opendatahub-io/ai-helpers (GitHub)](/features/platform/knowledge/ref-opendatahub-ai-helpers-repo.md) — AI helper tools/utilities for OpenDataHub.
 - [opendatahub-io/architecture-context (GitHub)](/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md) — Architecture documentation repo for OpenDataHub/RHOAI.

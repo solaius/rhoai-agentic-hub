@@ -6,9 +6,10 @@
 - [MCP build server ecosystem landscape](/features/mcp-ecosystem/knowledge/fact-mcp-build-server-ecosystem.md) — Survey of tools for building MCP servers (gen-mcp, kmcp, FastMCP, fips-agents) — a growing customer/field need with no single tool covering all cases.
 - [MCP catalog metadata schema](/features/mcp-ecosystem/knowledge/fact-mcp-catalog-metadata-schema.md) — The defined metadata fields for MCP servers listed in the RHOAI catalog — core, MCP-specific, and security-indicator fields.
 - [MCP Checker (mcpchecker)](/features/mcp-ecosystem/knowledge/fact-mcp-checker.md) — Generic MCP server evaluation framework, extracted from Gen MCP, that runs evals against any MCP server with configurable agents.
+- [MCP ingestion pipeline — two lanes + shared components](/features/mcp-ecosystem/knowledge/fact-mcp-ingestion-pipeline.md) — How MCP servers get into the platform — partner ingestion vs. client/customer generation, and the pipeline stages shared by both lanes.
 - [MCP Pipeline w/ Gen MCP (meeting transcript, 2026-04-10)](/features/mcp-ecosystem/knowledge/fact-mcp-pipeline-gen-mcp-transcript.md) — Meeting covering the MCP ingestion pipeline, Gen MCP's role, partner containerization, and scanning/evaluation.
 - [OCP MCP Server](/features/mcp-ecosystem/knowledge/fact-ocp-mcp-server.md) — MCP server exposing OpenShift cluster management to AI agents/tools, deployed via the MCP Lifecycle Operator.
-- [Partner MCP Catalog (3.4 DP — completed)](/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md) — A partner + community MCP server catalog shipped in the RHOAI 3.4 DP catalog for Summit.
+- [Partner MCP Catalog (3.4 DP — completed)](/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md) — A partner + community MCP server catalog shipped in the RHOAI 3.4 DP catalog for Summit; the business onboarding pipeline, technical bar, and disqualification criteria behind it.
 
 ## reference
 - [Fernando Lozano's MCP Research Notes](/features/mcp-ecosystem/knowledge/ref-fernando-lozano-mcp-research-notes.md) — Practical, undocumented gap-filling notes for actually getting MCP working on RHOAI 3.4 — the real user pain points.

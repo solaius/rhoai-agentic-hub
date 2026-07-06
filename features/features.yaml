@@ -17,9 +17,6 @@ features:
 - id: agent-registry
   title: Agent Registry
   description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.
-- id: asset-registry
-  title: Asset Registry
-  description: The existing Kubeflow/Model Registry evolving into a general multi-asset-type hub.
 - id: platform
   title: Platform
   description: Cross-cutting AI Gateway, AI Hub UI, messaging/strategy, and org-wide process references.

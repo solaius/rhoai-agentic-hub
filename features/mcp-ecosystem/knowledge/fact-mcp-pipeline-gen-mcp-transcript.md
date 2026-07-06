@@ -7,6 +7,6 @@ tags: [mcp-ecosystem, gen-mcp, transcript]
 timestamp: 2026-07-06
 source: ai-asset-registry/docs/knowledge-registry.md §12 (as of 2026-07-05)
 ---
-2026-04-10 meeting on the MCP ingestion pipeline: Gen MCP's role, partner containerization approach, scanning/evaluation steps. Backs [fact-gen-mcp.md](/features/mcp-ecosystem/knowledge/fact-gen-mcp.md).
+2026-04-10 meeting on the MCP ingestion pipeline: Gen MCP's role, partner containerization approach, scanning/evaluation steps. Backs [fact-gen-mcp.md](/features/mcp-ecosystem/knowledge/fact-gen-mcp.md) and [fact-mcp-ingestion-pipeline.md](/features/mcp-ecosystem/knowledge/fact-mcp-ingestion-pipeline.md) (the two-lane ingestion pipeline itself).
 
 Raw transcript was local-only in the old repo and is not retained in git. This entry is the retained summary.

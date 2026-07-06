@@ -9,4 +9,6 @@ source: ai-asset-registry/docs/knowledge-registry.md §12 (as of 2026-07-05)
 ---
 2026-04-07 sync — source of the foundational registry-vs-catalog framing decision (Adam Bellusci: MLflow serves as the registry layer, Kubeflow as the catalog layer, closing out the debate), plus early skills registry discussion. Relevant to both `platform` (the core registry/catalog decision) and `skills-registry`; routed here since the framing decision is the more foundational of the two.
 
+Backs [decision-registry-vs-catalog.md](/features/platform/knowledge/decision-registry-vs-catalog.md) — the full ADR-form writeup of the decision made in this meeting.
+
 Raw transcript was local-only in the old repo and is not retained in git. This entry is the retained summary.
