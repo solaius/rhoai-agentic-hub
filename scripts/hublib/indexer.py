@@ -219,6 +219,8 @@ def check(root, today=None):
     root = Path(root)
     stale = []
     for rel, content in sorted(build_all(root, today).items()):
+        if rel == "views/stale-facts.md":
+            continue  # time-dependent view: refreshed by reindex runs, not freshness-gated
         path = root / rel
         if not path.is_file() or \
                 path.read_text(encoding="utf-8").replace("\r\n", "\n") != content:

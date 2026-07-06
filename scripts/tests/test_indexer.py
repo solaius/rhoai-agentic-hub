@@ -96,3 +96,10 @@ def test_feature_index_ignores_untracked_content(tmp_path):
     after = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
     assert before == after
     assert "file(s)" not in after
+
+
+def test_check_ignores_time_dependent_stale_view(tmp_path):
+    root = make_repo(tmp_path)
+    write_all(root, today=TODAY)
+    # far future: staleness membership changes, but freshness must stay clean
+    assert check(root, today=datetime.date(2027, 1, 1)) == []
