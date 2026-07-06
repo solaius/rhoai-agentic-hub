@@ -5,8 +5,12 @@
 - [MCP Gateway scope is tool governance, not injection/jailbreak prevention](/features/mcp-gateway/knowledge/decision-mcp-gateway-tool-governance-scope.md) — Clarifies the boundary between MCP Gateway and guardrails so the two stop getting conflated.
 
 ## fact
+- [MCP Gateway <-> RHCL deployment dependency](/features/mcp-gateway/knowledge/fact-mcp-gateway-rhcl-deployment-dependency.md) — The dependency direction between MCP Gateway and RHCL, how it's packaged release over release, and the OLM 1.0 question at OCP 5.0.
 - [MCP Gateway feature roadmap (DP -> TP -> GA)](/features/mcp-gateway/knowledge/fact-mcp-gateway-roadmap.md) — Phased MCP Gateway rollout — what ships at Developer Preview, Technical Preview, and GA, including MCP Registry Integration landing at GA.
 - [MCP Gateway (Kuadrant/mcp-gateway)](/features/mcp-gateway/knowledge/fact-mcp-gateway.md) — Envoy-based WASM plug-in providing runtime connectivity and tool governance for MCP traffic — not a standalone gateway, not a guardrails replacement.
+
+## question
+- [How should registry state inform gateway behavior?](/features/mcp-gateway/knowledge/question-registry-state-gateway-behavior.md) — Open question on how MCP Registry governance state (e.g. approval/certification) should feed into MCP Gateway routing/enforcement decisions.
 
 ## reference
 - [MCP Gateway on OpenShift — installation guide](/features/mcp-gateway/knowledge/ref-mcp-gateway-on-openshift-install-guide.md) — Production installation guide for MCP Gateway — Gateway API setup, TLS, deployment patterns.

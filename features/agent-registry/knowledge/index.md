@@ -9,6 +9,9 @@
 
 ## question
 - [Should the agent catalog standardize on one protocol or support several?](/features/agent-registry/knowledge/question-agent-catalog-protocol-diversity.md) — Open call on whether starter-kit harnesses should all translate to A2A, or support multiple protocols with labels.
+- [How does the agent registry interact with Red Hat's multi-track governance model?](/features/agent-registry/knowledge/question-agent-registry-governance-integration.md) — Open question on reconciling the agent registry's simple runtime lifecycle with MCP Registry's four-track approval/verification/certification governance model.
+- [How should the agent registry relate to the pre-deployment agent artifacts registry?](/features/agent-registry/knowledge/question-agent-registry-pre-deployment-relationship.md) — Varsha's post-deployment agent registry proposal explicitly defers this — open question on how it should eventually reconcile with a future pre-deployment registry for agent definitions/images.
+- [Should the agent discovery plugin interface generalize beyond agents?](/features/agent-registry/knowledge/question-discovery-plugin-interface-generalization.md) — Open question on whether AgentDiscoveryProvider (poll/watch/webhook) should become a generic discoverable-asset-type interface rather than agent-specific.
 
 ## reference
 - [Agentic Base Images (RHAIRFE-2443, proposal doc)](/features/agent-registry/knowledge/ref-agentic-base-images-rhairfe-2443.md) — AIPCC proposal for shared, validated UBI base images across coding-agent harnesses.

@@ -11,9 +11,15 @@
 - [AI Asset Registries Sync (meeting transcript, 2026-04-07)](/features/platform/knowledge/fact-ai-asset-registries-sync-transcript.md) — The sync where the "Registry = MLflow, Catalog = Kubeflow" decision was made, plus early skills registry discussion.
 - [AI Gateway / Inference Gateway](/features/platform/knowledge/fact-ai-gateway.md) — The unified gateway for all AI traffic (inference, tool calling, A2A, egress) — distinct from MCP Gateway, architecture decided April 2026.
 - [AI Hub (UI surface)](/features/platform/knowledge/fact-ai-hub-ui.md) — The unified RHOAI UI surface — Catalog/Registry/Deployments tabs per asset type, built on PatternFly.
+- [Databricks/MLflow upstream collaboration — process & current status](/features/platform/knowledge/fact-databricks-mlflow-upstream-process.md) — How Red Hat's upstream contribution process to MLflow works, and a snapshot of what MLflow is doing natively for GenAI/registry capabilities.
 - [Model Registry / Kubeflow Hub](/features/platform/knowledge/fact-model-registry-kubeflow-hub.md) — The existing Kubeflow/RHOAI model registry, evolving into a broader multi-asset-type hub — already serves MCP servers via assetType.
+- [Personas (AI asset registry)](/features/platform/knowledge/fact-personas.md) — The four personas the registry/catalog experience is designed around — focus and registry interaction per persona.
 - [Registry Proposal Discussion (meeting transcript, 2026-03-19)](/features/platform/knowledge/fact-registry-proposal-discussion-transcript.md) — Early meeting covering the Databricks upstream process and the registry's plugin architecture.
 - [Sharon/Peter 1:1 - 3.4 confirmation (meeting transcript, 2026-04-13)](/features/platform/knowledge/fact-sharon-peter-1-1-34-confirmation-transcript.md) — 3.4 sign-off confirmation covering partner splash blog, quickstarts, deprecation process, AI Hub concept, and MaaS/gateway resourcing.
+- [Red Hat Summit 2026 (May 11-14, Atlanta) — AI asset registry content](/features/platform/knowledge/fact-summit-2026.md) — Summit 2026 dates, partner-catalog blog plan, demo scope, and other agentic content slated for the event.
+
+## question
+- [What belongs in the MLflow upstream proposal now vs. later?](/features/platform/knowledge/question-mlflow-upstream-scope-now-vs-later.md) — Open scoping question across all of Red Hat's upstream MLflow work — what to submit now vs. defer to a later proposal.
 
 ## reference
 - [Agentic AI Strategy 2026](/features/platform/knowledge/ref-agentic-ai-strategy-2026.md) — Enterprise challenges, four strategic pillars, customer insights, and competitive analysis for Red Hat's agentic AI direction.

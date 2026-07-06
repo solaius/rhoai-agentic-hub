@@ -4,9 +4,9 @@
 > Always read this first. Regenerate with `python scripts/hub_index.py`.
 
 ## Profiles (current state)
-- [now](/memory/profiles/now.md) — Now: R2 batch 2 applied (4 new entries + 4 edits; asset-registry partition removed) — 9 partitions — hub build at M1, memory system live
+- [now](/memory/profiles/now.md) — Now: R2 batch 3 applied (18 new + 7 edits; roadmap profile refreshed) — 9 partitions — hub build at M1, memory system live
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash
-- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry targets RHOAI 3.5 Dev Preview
+- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry targets RHOAI 3.5 Dev Preview; full RHOAI/MCP release train through GA
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts
@@ -14,8 +14,8 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-06 — **Update** — R2 batch 3 applied: monolith §5–§8 → 18 new (14 public + 4 restricted) + 7 edits; roadmap profile refreshed (past milestones → History, 3.5 = Dev Preview).
 - 2026-07-06 — **Update** — R2 batch 2 applied: monolith §1+§2+§4 → 4 new + 4 edits; asset-registry partition removed (dead proposal — Kubeflow Hub entries re-homed to platform).
 - 2026-07-06 — **Update** — R2 batch 1 applied: monolith §3+§12 → 85 entries (74 public + 11 restricted-local + 3 public siblings), 9 partitions created (mcp-gateway, mcp-registry, mcp-ecosystem, agent-registry, asset-registry, platform, agent-memory, agent-ops, gen-ai-studio).
 - 2026-07-06 — **Creation** — filed ref-odh-skills-registry; created skills-registry partition (T13 smoke)
 - 2026-07-06 — **Update** — consolidated 1 scratch item: build progress → profiles/now.md
-- 2026-07-06 — **Creation** — captured ODH plugin availability fact (hub build T11 smoke)

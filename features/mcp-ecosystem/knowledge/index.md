@@ -8,6 +8,7 @@
 - [MCP Checker (mcpchecker)](/features/mcp-ecosystem/knowledge/fact-mcp-checker.md) — Generic MCP server evaluation framework, extracted from Gen MCP, that runs evals against any MCP server with configurable agents.
 - [MCP ingestion pipeline — two lanes + shared components](/features/mcp-ecosystem/knowledge/fact-mcp-ingestion-pipeline.md) — How MCP servers get into the platform — partner ingestion vs. client/customer generation, and the pipeline stages shared by both lanes.
 - [MCP Pipeline w/ Gen MCP (meeting transcript, 2026-04-10)](/features/mcp-ecosystem/knowledge/fact-mcp-pipeline-gen-mcp-transcript.md) — Meeting covering the MCP ingestion pipeline, Gen MCP's role, partner containerization, and scanning/evaluation.
+- [MCP security pipeline — SBOM, scanning, attestation, secure execution](/features/mcp-ecosystem/knowledge/fact-mcp-security-scanning-pipeline.md) — The security-scanning and trust pipeline for MCP servers moving through ingestion — SBOM, CVE scanning, provenance, signed attestations, secure execution via ToolHive, and catalog trust vendor extensions.
 - [OCP MCP Server](/features/mcp-ecosystem/knowledge/fact-ocp-mcp-server.md) — MCP server exposing OpenShift cluster management to AI agents/tools, deployed via the MCP Lifecycle Operator.
 - [Partner MCP Catalog (3.4 DP — completed)](/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md) — A partner + community MCP server catalog shipped in the RHOAI 3.4 DP catalog for Summit; the business onboarding pipeline, technical bar, and disqualification criteria behind it.
 
