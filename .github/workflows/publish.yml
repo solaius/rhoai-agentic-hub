@@ -1,0 +1,28 @@
+name: publish
+on:
+  push:
+    branches: [main]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: solaius/rhoai-agentic-hub-pages
+          token: ${{ secrets.PAGES_PUSH_TOKEN }}
+          path: pages-repo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - run: python scripts/hub_publish.py --pages-dir pages-repo --hub-sha "$GITHUB_SHA"
+      - name: Commit and push pages
+        run: |
+          cd pages-repo
+          git config user.name "hub-publish-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "publish: hub ${GITHUB_SHA}"
+          git push
