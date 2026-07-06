@@ -16,7 +16,7 @@ def parse(text):
     marker = probe.find("\n---")
     if marker == -1:
         raise FrontmatterError("missing frontmatter closing '---'")
-    raw = probe[1:marker + 1]
+    raw = probe[1:marker]
     after = probe[marker + 4:]
     if after.startswith("\n"):
         after = after[1:]

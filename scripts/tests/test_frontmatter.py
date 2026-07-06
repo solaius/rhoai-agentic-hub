@@ -38,3 +38,8 @@ def test_parse_non_mapping():
 def test_parse_invalid_yaml():
     with pytest.raises(FrontmatterError):
         parse("---\ntype: [unclosed\n---\nB\n")
+
+
+def test_parse_block_scalar_no_spurious_newline():
+    meta, _ = parse("---\ndescription: |\n  line1\n  line2\n---\nB\n")
+    assert meta == {"description": "line1\nline2"}
