@@ -21,5 +21,7 @@ Input: the source (URL or file) + whatever context the user gave.
    ref- entry points at the source system. Decisions/questions the user
    confirms from it become additional decision-/question- entries.
 5. NDA-adjacent → restricted/features/<f>/knowledge/ (same shapes).
-6. `python scripts/hub_index.py` && `python scripts/hub_lint.py` (0 errors).
-7. Commit: `git add -A && git commit -m "know(<f>): file <slug>"` && `git push`.
+6. DISCLOSURE CONFIRM: show one line — file → <path>: <description>
+   [public|restricted] — and wait for OK (this repo is public).
+7. `python scripts/hub_index.py` && `python scripts/hub_lint.py` (0 errors).
+8. Commit: `git add -A && git commit -m "know(<f>): file <slug>"` && `git push`.

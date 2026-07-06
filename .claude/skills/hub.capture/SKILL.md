@@ -34,4 +34,7 @@ Input: the item, from the user's words or session context.
       (Restricted files are gitignored and won't be staged — correct.)
 5. On reject: discard everything, no writes.
 
+Note: captures reach the remote at the next consolidate/file/publish push —
+push explicitly if another machine needs them sooner.
+
 A capture takes seconds. Do not expand it into a conversation.

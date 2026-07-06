@@ -35,8 +35,9 @@ and creates only the needed subdirectories).
 ## Keeping it healthy
 `python scripts/hub_index.py` regenerates every index/view;
 `python scripts/hub_lint.py` checks structure and schemas; CI runs both on
-every push plus the test suite. `views/stale-facts.md` lists what needs a
-refresh — clear it during consolidation.
+every push plus the test suite and the publish-manifest check.
+`views/stale-facts.md` lists what needs a refresh — clear it during
+consolidation.
 
 ## Contributing (peers)
 v1 is single-writer (Peter + agents). The contributor path, documented but

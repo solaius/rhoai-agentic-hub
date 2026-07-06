@@ -16,8 +16,8 @@ description: Sweep memory/.scratch/ (Claude auto-memory) plus the current sessio
    Conflicts render as: `N. CONFLICT — scratch: "X" vs store: "Y" — which wins?`
    The user may approve all, pick numbers, edit any item, or reject.
    NEVER auto-resolve a conflict.
-5. Apply approved items exactly as hub.capture step 4 does (profile edits with
-   ## History, new typed files, restricted routing). Conflict resolutions:
+5. Apply approved items exactly as hub.capture does (profile edits with ## History per its
+   step 2; write/log/reindex/lint/commit per its step 4). Conflict resolutions:
    the losing entry gets `status: superseded` + `superseded_by: <winner path>`.
 6. One log.md line per applied item under today's heading.
 7. Regenerate and verify: `python scripts/hub_index.py` then
