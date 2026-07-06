@@ -1,0 +1,11 @@
+{
+  "extraKnownMarketplaces": {
+    "opendatahub-skills": {
+      "source": { "source": "github", "repo": "opendatahub-io/skills-registry" }
+    }
+  },
+  "enabledPlugins": {
+    "rfe-creator@opendatahub-skills": true,
+    "assess-rfe@opendatahub-skills": true
+  }
+}
