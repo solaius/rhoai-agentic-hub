@@ -1,0 +1,5 @@
+# Machine-readable staleness defaults (days since `timestamp`), used by
+# scripts/hublib/indexer.py for views/stale-facts.md. A file's `review_after`
+# frontmatter overrides these.
+profile_default_days: 30
+fact_default_days: 90
