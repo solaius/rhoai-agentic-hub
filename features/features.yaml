@@ -5,3 +5,30 @@ features:
 - id: skills-registry
   title: Skills Registry
   description: RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketplace
+- id: mcp-gateway
+  title: MCP Gateway
+  description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
+- id: mcp-registry
+  title: MCP Registry
+  description: The governance/system-of-record layer for MCP servers — lifecycle, data model, and the deployment-time Lifecycle Operator.
+- id: mcp-ecosystem
+  title: MCP Ecosystem
+  description: MCP server building, partner/community catalog, evaluation, and ecosystem tooling.
+- id: agent-registry
+  title: Agent Registry
+  description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.
+- id: asset-registry
+  title: Asset Registry
+  description: The existing Kubeflow/Model Registry evolving into a general multi-asset-type hub.
+- id: platform
+  title: Platform
+  description: Cross-cutting AI Gateway, AI Hub UI, messaging/strategy, and org-wide process references.
+- id: agent-memory
+  title: Agent Memory
+  description: Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.
+- id: agent-ops
+  title: Agent Ops
+  description: Agent operations — observability, SDLC oversight, AgentOps positioning and talk tracks.
+- id: gen-ai-studio
+  title: Gen AI Studio
+  description: Prompt/agent iteration studio — playground UX, usability research, studio integration.

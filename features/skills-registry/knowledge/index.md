@@ -2,4 +2,5 @@
 # Skills Registry — knowledge
 
 ## reference
+- [B-Step62/mlflow (branch: skill-registry-mvp)](/features/skills-registry/knowledge/ref-mlflow-skill-registry-mvp-branch.md) — Databricks' Skills Registry MVP prototype — full CRUD, CLI, UI, and Claude Code integration. Not merged upstream.
 - [ODH skills-registry (plugin marketplace)](/features/skills-registry/knowledge/ref-odh-skills-registry.md) — The org plugin marketplace this hub consumes shared skills from — registry.yaml → marketplace.json/catalog.md

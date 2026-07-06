@@ -4,7 +4,7 @@
 > Always read this first. Regenerate with `python scripts/hub_index.py`.
 
 ## Profiles (current state)
-- [now](/memory/profiles/now.md) — Now: hub build reached M1 — memory system live (doctor configured, capture + consolidate skills landed)
+- [now](/memory/profiles/now.md) — Now: R2 batch 1 migrated (85 entries, 9 partitions) — hub build at M1, memory system live
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash
 - [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry targets RHOAI 3.5 Dev Preview
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
@@ -14,6 +14,7 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-06 — **Update** — R2 batch 1 applied: monolith §3+§12 → 85 entries (74 public + 11 restricted-local + 3 public siblings), 9 partitions created (mcp-gateway, mcp-registry, mcp-ecosystem, agent-registry, asset-registry, platform, agent-memory, agent-ops, gen-ai-studio).
 - 2026-07-06 — **Creation** — filed ref-odh-skills-registry; created skills-registry partition (T13 smoke)
 - 2026-07-06 — **Update** — consolidated 1 scratch item: build progress → profiles/now.md
 - 2026-07-06 — **Creation** — captured ODH plugin availability fact (hub build T11 smoke)
