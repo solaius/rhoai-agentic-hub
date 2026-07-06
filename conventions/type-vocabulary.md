@@ -24,9 +24,12 @@
 
 ## Base fields (every entry, both stores)
 `type`, `description` (one line — feeds indexes; write it for a reader
-deciding whether to open the file), `timestamp` (ISO date), optional `tags`.
+deciding whether to open the file), `timestamp` (ISO date), optional `tags`,
+optional `title` (display name — indexes fall back to the filename stem).
 
 ## Validity fields (changeable facts; local OKF extensions)
 `status: current|superseded` · `valid_from` · `superseded_by: /path/to/entry.md`
 · `review_after: <ISO date>`. Never delete a superseded entry.
 Optional provenance: `source:` (URL, meeting, or session reference).
+Note: `question` entries use their own `status` enum (`open|answered`);
+the `current|superseded` validity lifecycle does not apply to questions.
