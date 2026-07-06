@@ -42,7 +42,7 @@ then
   ok "autoMemoryDirectory -> memory/.scratch"
 elif [ "$MODE" = "setup" ]; then
   mkdir -p "$SCRATCH"
-  python - "$LOCAL" "$SCRATCH" <<'PY'
+  if python - "$LOCAL" "$SCRATCH" <<'PY'
 import json, os, sys
 path, want = sys.argv[1], sys.argv[2]
 data = {}
@@ -54,7 +54,11 @@ with open(path, "w") as fh:
     json.dump(data, fh, indent=2)
 print("  wrote", path)
 PY
-  ok "autoMemoryDirectory written (restart Claude Code to take effect)"
+  then
+    ok "autoMemoryDirectory written (restart Claude Code to take effect)"
+  else
+    fail "could not write $LOCAL (pre-existing invalid JSON? permissions?)"
+  fi
 else
   fail "autoMemoryDirectory not set — run: bash scripts/doctor.sh setup"
 fi
