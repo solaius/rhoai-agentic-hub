@@ -15,8 +15,9 @@ def test_parse_crlf_and_bom():
 
 
 def test_parse_empty_frontmatter():
-    meta, body = parse("---\n\n---\nB\n")
+    meta, body = parse("---\n---\nB\n")
     assert meta == {}
+    assert body == "B\n"
 
 
 def test_parse_missing_open():
