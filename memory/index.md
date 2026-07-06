@@ -4,7 +4,7 @@
 > Always read this first. Regenerate with `python scripts/hub_index.py`.
 
 ## Profiles (current state)
-- [now](/memory/profiles/now.md) — Now: executing the hub build plan (M0-M5); old repo is read-only source material
+- [now](/memory/profiles/now.md) — Now: hub build reached M1 — memory system live (doctor configured, capture + consolidate skills landed)
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash
 - [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry targets RHOAI 3.5 Dev Preview
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
@@ -14,5 +14,6 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-06 — **Update** — consolidated 1 scratch item: build progress → profiles/now.md
 - 2026-07-06 — **Creation** — captured ODH plugin availability fact (hub build T11 smoke)
 - 2026-07-05 — **Creation** — memory store seeded at hub creation: profiles (roadmap,
