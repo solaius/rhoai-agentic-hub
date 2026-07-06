@@ -1,0 +1,4 @@
+# The feature routing table. One entry per feature partition.
+# hub.file appends here when creating a partition. features/index.md is
+# generated from this file.
+features: []
