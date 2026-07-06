@@ -3,6 +3,7 @@
 
 ## fact
 - [Agent Memory Team sync transcript (2026-06-23)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260623-transcript.md) — Team discussion of MemoryHub demo, OGX Memory Alpha MVP, and session-vs-long-term memory separation consensus.
+- ["Data guardrails" vs. "output guardrails" — a positioning distinction](/features/agent-memory/knowledge/fact-data-guardrails-positioning.md) — Jonathan Zarecki's framing for where guardrails fire — before data reaches the LLM (data guardrails) vs. after the LLM generates a response (output guardrails) — proposed as a differentiator when Feast is paired with TrustyAI.
 
 ## person
 - [Aniket Paluskar](/features/agent-memory/knowledge/person-aniket-paluskar.md) — Engineering, Feast team — authored "Feast in the Agentic AI Era" and the Agent-Assisted EDA RFE proposal.
@@ -18,6 +19,7 @@
 - [Is the agent memory architecture-doc timeline achievable?](/features/agent-memory/knowledge/question-agent-memory-architecture-timeline.md) — Team is targeting an architecture doc by July 2026 and short-term deliverables in fall, RHOAI 3.6 candidate — open whether that's realistic given the number of competing proposals.
 - [Client-side vs. server-side memory — which side should platform primitives live on?](/features/agent-memory/knowledge/question-agent-memory-client-vs-server-side.md) — OpenAI implements memory server-side; OpenClaw and others use client-side hybrid search. Frameworks differ; platform hasn't picked a side.
 - [Memory creation — brute-force capture vs. intelligent extraction vs. harness-native](/features/agent-memory/knowledge/question-agent-memory-creation-intelligence.md) — Most projects favor intelligent agent-driven extraction to avoid bloat, but harness-native memory (Claude auto-memory, Codex server-side memory) adds a third option platform memory needs to account for.
+- [Should Red Hat pursue a memory interoperability protocol, or stay watch-only?](/features/agent-memory/knowledge/question-agent-memory-protocol-standardization.md) — MCP (tools) and A2A (agent-to-agent) are adopted standards; no equivalent exists for agent memory — Feast's research flags this as a high-risk, adoption-dependent option worth only watching for now.
 - [Is the 3-area agent memory taxonomy the right decomposition?](/features/agent-memory/knowledge/question-agent-memory-taxonomy.md) — Peter's split (Agent Knowledge / Agentic Memory / Context Engineering) vs. competing models (Oracle's 4 access-pattern types; MemoryHub's scope-tier model).
 - [What is RHOAI's unified agent memory substrate, and how does it relate to the AI Asset Registry?](/features/agent-memory/knowledge/question-agent-memory-unified-substrate.md) — Oracle and MemoryHub both argue for one governed backend for agent memory — what's RHOAI's equivalent, and how does it connect to the existing Knowledge Sources asset type?
 - [Is agent memory genuinely distinct from RAG?](/features/agent-memory/knowledge/question-agent-memory-vs-rag-distinction.md) — Whether "Agent Knowledge" (org-wide graph) and "Agentic Memory" (learned agent state) are separate subsystems or one governed substrate, and how both relate to RAG.

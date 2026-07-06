@@ -5,6 +5,8 @@
 - ["AgentOps control plane" is not accurate terminology](/features/platform/knowledge/decision-agentops-control-plane-terminology.md) — OpenShift is the control plane; Red Hat extends OpenShift with agentic capabilities rather than building a separate one.
 - [IBM/Red Hat joint positioning for agentic AI (customer-facing only)](/features/platform/knowledge/decision-ibm-redhat-agentic-ai-positioning.md) — Division of labor for joint IBM/Red Hat customer conversations on agentic AI — does not change Red Hat's product roadmap.
 - [kubeflow/model-registry renamed to "Kubeflow Hub"](/features/platform/knowledge/decision-kubeflow-hub-rename.md) — KEP-0003 renames the project and moves its images to reflect a broader multi-asset-type scope.
+- [MCP servers and agents are the top-priority asset types for RHOAI 3.5](/features/platform/knowledge/decision-mcp-agents-priority-rhoai-35.md) — A 2026-03-19 meeting decision setting MCP servers and agent registries as the highest-priority asset types for the 3.5 registry work, ahead of prompts/models/skills/guardrails.
+- [ODH-ADR-ML-0001: consolidate AI asset registries on MLflow (formal ADR)](/features/platform/knowledge/decision-odh-adr-consolidate-registries-mlflow.md) — The formal, approved Architecture Decision Record ratifying MLflow as the unified registry backend for all AI asset types — the same conclusion as decision-registry-vs-catalog.md, reached through ODH's ADR process.
 - [Registry vs. Catalog separation](/features/platform/knowledge/decision-registry-vs-catalog.md) — Registry governs (system of record); Catalog discovers (consumption surface) — MLflow serves the registry role, Kubeflow (Hub) the catalog role.
 
 ## fact
