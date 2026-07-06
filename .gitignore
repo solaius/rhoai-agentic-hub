@@ -1,0 +1,19 @@
+# NDA / local-only content — never tracked
+restricted/
+
+# memory scratch tier (Claude auto-memory redirect target)
+memory/.scratch/
+
+# per-machine harness settings
+.claude/settings.local.json
+
+# ephemeral skill state
+tmp/
+
+# meeting transcripts anywhere
+**/transcripts/
+
+# python
+__pycache__/
+.pytest_cache/
+*.pyc
