@@ -18,8 +18,9 @@ Input: the item, from the user's words or session context.
    - Atomic: NEW file — `memory/facts/fact-<slug>.md` or
      `features/<f>/knowledge/<prefix><slug>.md`, frontmatter per
      /conventions/type-vocabulary.md.
-   - Knowledge entry whose feature partition doesn't exist yet → hand off to
-     hub.file (it creates partitions).
+   - Knowledge entries: first check the feature partition exists in
+     features/features.yaml; if it doesn't → hand off to hub.file (it
+     creates partitions).
 3. Show ONE line: `capture → <path>: <description> [public|restricted]`
    (full content on request). Wait for the user's OK.
 4. On OK:
@@ -27,7 +28,9 @@ Input: the item, from the user's words or session context.
    b. Append to memory/log.md under today's `## YYYY-MM-DD` heading (create
       it at the TOP of the body if absent): `- **Creation|Update** — <one line>`.
    c. Run `python scripts/hub_index.py`.
-   d. Commit: `git add -A && git commit -m "mem: capture <slug>"`.
+   d. Run `python scripts/hub_lint.py` — 0 errors required; fix the captured
+      file (not the scripts) if it reports errors.
+   e. Commit: `git add -A && git commit -m "mem: capture <slug>"`.
       (Restricted files are gitignored and won't be staged — correct.)
 5. On reject: discard everything, no writes.
 
