@@ -1,0 +1,4 @@
+# The publishing allowlist. Nothing reaches the public pages repo without an
+# entry here. Schema + rules: /conventions/publishing.md. Managed via the
+# hub.publish skill (publishing is a disclosure decision).
+[]

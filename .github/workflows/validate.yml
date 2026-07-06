@@ -14,3 +14,4 @@ jobs:
       - run: python -m pytest scripts/tests -v
       - run: python scripts/hub_lint.py
       - run: python scripts/hub_index.py --check
+      - run: python scripts/hub_publish.py --check
