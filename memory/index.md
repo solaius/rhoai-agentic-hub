@@ -14,6 +14,7 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-06 — **Creation** — filed ref-odh-skills-registry; created skills-registry partition (T13 smoke)
 - 2026-07-06 — **Update** — consolidated 1 scratch item: build progress → profiles/now.md
 - 2026-07-06 — **Creation** — captured ODH plugin availability fact (hub build T11 smoke)
 - 2026-07-05 — **Creation** — memory store seeded at hub creation: profiles (roadmap,

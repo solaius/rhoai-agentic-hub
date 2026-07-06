@@ -1,4 +1,7 @@
 # The feature routing table. One entry per feature partition.
 # hub.file appends here when creating a partition. features/index.md is
 # generated from this file.
-features: []
+features:
+- id: skills-registry
+  title: Skills Registry
+  description: RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketplace
