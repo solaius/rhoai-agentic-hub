@@ -87,3 +87,12 @@ def test_check_flags_stale_and_write_all_fixes(tmp_path):
     assert check(root, today=TODAY) == []
     (root / "views" / "decisions.md").write_text("tampered", encoding="utf-8")
     assert check(root, today=TODAY) == ["views/decisions.md"]
+
+
+def test_feature_index_ignores_untracked_content(tmp_path):
+    root = make_repo(tmp_path)
+    before = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    write(root, "features/mcp-registry/work/transcripts/t.md", "x\n")
+    after = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    assert before == after
+    assert "file(s)" not in after

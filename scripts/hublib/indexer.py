@@ -86,10 +86,7 @@ def build_all(root, today=None):
             continue
         lines = [MARKER + f"# {f.get('title', f['id'])}", "", f.get("description", ""), ""]
         for sub in ("knowledge", "research", "strategy", "enablement", "work"):
-            sdir = fdir / sub
-            if sdir.is_dir():
-                count = sum(1 for x in sdir.rglob("*") if x.is_file() and x.name not in RESERVED)
-                lines.append(f"- [{sub}/](/features/{f['id']}/{sub}/) — {count} file(s)")
+            lines.append(f"- [{sub}/](/features/{f['id']}/{sub}/)")
         built[f"features/{f['id']}/index.md"] = "\n".join(lines) + "\n"
 
         if (fdir / "knowledge").is_dir():
