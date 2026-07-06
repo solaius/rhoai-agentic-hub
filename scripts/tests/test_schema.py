@@ -120,3 +120,11 @@ def test_manifest_missing_source_is_error(tmp_path):
           "  title: T\n  description: D\n")
     errors = validate_manifest(root)
     assert any("source does not exist" in e for e in errors)
+
+
+def test_unknown_status_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "memory/facts/fact-typo.md",
+          "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-05\nstatus: superceded\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("status must be current|superseded" in e for e in errors)

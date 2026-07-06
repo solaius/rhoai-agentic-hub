@@ -86,8 +86,11 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings):
             errors.append(f"{rel}: type '{etype}' requires field '{field}'")
     if etype == "reference" and meta.get("resource"):
         _check_resource(rel, meta["resource"], errors, warnings)
-    if etype == "question" and meta.get("status") not in (None, "open", "answered"):
-        errors.append(f"{rel}: question status must be open|answered")
+    if etype == "question":
+        if meta.get("status") not in (None, "open", "answered"):
+            errors.append(f"{rel}: question status must be open|answered")
+    elif meta.get("status") not in (None, "current", "superseded"):
+        errors.append(f"{rel}: status must be current|superseded")
     if meta.get("status") == "superseded" and not meta.get("superseded_by"):
         warnings.append(f"{rel}: superseded without superseded_by pointer")
     if RESTRICTED_HINTS.search(body) and "restricted" not in path.parts:
