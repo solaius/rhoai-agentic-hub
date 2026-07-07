@@ -10,14 +10,22 @@ review_after: 2026-07-20
   migrated (batch 6: 48 docs incl. the 19-doc agent-memory series); every
   meaningful text file from the old repo now lives in the hub or was ruled
   dead/covered.
-- **R4 wave 1 done**: `presentation-create` ported + first enablement
-  artifact published (mcp-registry catalog deck). Remaining: wave 2 =
-  `blog-create`/`blog-mockup`, wave 3 = `customer-feedback-*` (both
-  pull-driven, per real demand); HTML hub sites (RHCL, MCP ecosystem) still
-  migrate on-touch, gated on publishing decisions; R5/R6 runbooks
-  unchanged.
+- **R4 waves 1–2 done**: `presentation-create` (wave 1: ported + first
+  enablement artifact published, mcp-registry catalog deck) and
+  `blog-create`/`blog-mockup` (wave 2: ported, guide co-located as skill
+  reference; first real blog post is the smoke). Remaining: wave 3 =
+  `customer-feedback-ingest`/`refresh`/`sync` suite (pull-driven, per real
+  demand); `knowledge-hub-create`, the HTML hub sites (RHCL, MCP ecosystem),
+  and `rice-strats` all continue on-touch/unscheduled, gated on publishing
+  decisions; R5/R6 runbooks unchanged.
 
 ## History
+- 2026-07-06 — **Update** — superseded: "R4 wave 1 done: presentation-create
+  ported + first enablement artifact published (mcp-registry catalog deck).
+  Remaining: wave 2 = `blog-create`/`blog-mockup`, wave 3 =
+  `customer-feedback-*` (both pull-driven, per real demand); HTML hub sites
+  (RHCL, MCP ecosystem) still migrate on-touch, gated on publishing
+  decisions; R5/R6 runbooks unchanged." (source: R4 wave 2 apply)
 - 2026-07-06 — **Update** — superseded: "Remaining = HTML enablement
   artifacts (on-touch, publishing decisions) + R4 skill ports + R5/R6
   runbooks." (source: R4 wave 1 apply)

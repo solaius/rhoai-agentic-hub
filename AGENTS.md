@@ -55,6 +55,8 @@ First-party content skills (ported from ai-asset-registry, adapted to hub conven
 | skill | use for |
 |---|---|
 | presentation-create | build Red Hat-branded HTML decks/pages under a feature's enablement/ (ships via hub.publish) |
+| blog-create | multi-agent Red Hat blog drafting + review pipeline under a feature's enablement/ (final draft ships via Workfront, not hub.publish) |
+| blog-mockup | quick Red Hat-branded HTML preview of any blog content (lightweight alternative to blog-create's full pipeline; ships via hub.publish only on request) |
 
 Shared skills (rfe.*, strat.*, assess-rfe…) come from the ODH marketplace —
 see `.claude/settings.json`.
