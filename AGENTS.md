@@ -18,7 +18,7 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 | `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people) |
 | `publish/manifest.yaml` | the ONLY path to the public site |
 | `restricted/` | gitignored local mirror for NDA content |
-| `docs/` | human onboarding: setup.md, working-here.md |
+| `docs/` | the guides: architecture, setup, working-here, memory, skills, publishing, tooling, history |
 
 ## Writing rules (summary — details in /conventions/)
 - Filing = two questions: which feature (features.yaml) × which type

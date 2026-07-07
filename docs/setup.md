@@ -19,8 +19,10 @@ decks/blogs.
    (installs Python deps, creates `memory/.scratch/`, writes
    `.claude/settings.local.json` with the auto-memory redirect).
 5. **Restart Claude Code** so the auto-memory redirect takes effect.
-6. Copy `restricted/.env` from an existing machine (it is never in git).
-   Minimum keys: `JIRA_SERVER`, `JIRA_USER`, `JIRA_TOKEN`.
+6. Copy restricted content from an existing machine (none of it is ever in
+   git): at minimum `restricted/.env` (keys: `JIRA_SERVER`, `JIRA_USER`,
+   `JIRA_TOKEN`); if the other machine has `restricted/features/` or
+   `restricted/memory/` content, copy the whole `restricted/` tree.
 7. Verify: `bash scripts/doctor.sh check` → `0 fail`. You're done.
 
 Optional: clone the pages repo alongside for inspecting published output:
@@ -28,4 +30,5 @@ Optional: clone the pages repo alongside for inspecting published output:
 
 Troubleshooting: every FAIL line the doctor prints includes its own
 remediation command. Marketplace plugins missing → the trust prompt was
-declined; close and reopen the repo in Claude Code.
+declined; close and reopen the repo in Claude Code. Doctor section-by-section
+reference: [/docs/tooling.md](/docs/tooling.md).

@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-07
+- **Creation** — documentation suite: six guides added under docs/ (architecture, memory, skills, publishing, tooling, history), README rebuilt as the front door with a doc index, AGENTS.md/CLAUDE.md/setup/working-here cross-linked. Goal: bus-factor pillar — operable without Peter in the room.
+
 ## 2026-07-06
 - **Update** — R4 wave 3: customer-feedback suite ported (tracker data model: restricted + external c-tracker; rhai-tracker doctor section live; customer names scrubbed from skill texts). Active R4 waves complete.
 - **Update** — R4 wave 2: blog-create + blog-mockup ported (guide co-located as skill reference); first real blog will be the smoke.

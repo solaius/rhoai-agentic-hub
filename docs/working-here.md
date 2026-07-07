@@ -39,6 +39,13 @@ every push plus the test suite and the publish-manifest check.
 `views/stale-facts.md` lists what needs a refresh — clear it during
 consolidation.
 
+## Further reading
+Why it's shaped this way: [/docs/architecture.md](/docs/architecture.md) ·
+the gate in depth: [/docs/memory.md](/docs/memory.md) · every skill:
+[/docs/skills.md](/docs/skills.md) · shipping pages:
+[/docs/publishing.md](/docs/publishing.md) · scripts & CI:
+[/docs/tooling.md](/docs/tooling.md) · lineage: [/docs/history.md](/docs/history.md).
+
 ## Contributing (peers)
 v1 is single-writer (Peter + agents). The contributor path, documented but
 dormant: fork/branch → follow the same conventions (CI validates structure
