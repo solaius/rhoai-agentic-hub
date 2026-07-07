@@ -1,26 +1,32 @@
 ---
 type: profile
-description: "Now: CONTENT PARITY COMPLETE (monolith batches 1–4 + knowledge-review batch 5 + R3 seed all migrated) — 9 partitions — hub build at M1, memory system live"
+description: "Now: DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live"
 timestamp: 2026-07-06
 status: current
 valid_from: 2026-07-06
 review_after: 2026-07-20
 ---
-- **CONTENT PARITY COMPLETE**: the old `ai-asset-registry` repo's knowledge
-  is fully migrated — the monolith (`docs/knowledge-registry.md`, 4 batches),
-  `docs/knowledge-review/` (batch 5, this pass), and the `~/.claude` memory
-  seed (R3) are all in this hub now. The old repo has nothing left that's
-  knowledge-shaped and not either migrated here or explicitly ruled dead/
-  covered.
-- Remaining old-repo content is **workspace artifacts**, not knowledge:
-  the research series, presentations, and knowledge hubs under mcps/,
-  agents/, agent-memory/, skills/, ai-assets/ migrate on-touch, not as a
-  scheduled batch. R4 (content-skill ports — presentation-create, blog-*,
-  knowledge-hub-create, customer-feedback-*, rice-strats) is pull-driven,
-  per real demand. Runbooks R5 (cross-machine continuity test) and R6
-  (Cursor end-to-end) run when ready.
+- **DOCUMENT PARITY COMPLETE**: all workspace research/strategy documents
+  migrated (batch 6: 48 docs incl. the 19-doc agent-memory series); every
+  meaningful text file from the old repo now lives in the hub or was ruled
+  dead/covered.
+- Remaining = HTML enablement artifacts (on-touch, publishing decisions) +
+  R4 skill ports + R5/R6 runbooks.
 
 ## History
+- 2026-07-06 — **Update** — superseded: "CONTENT PARITY COMPLETE: the old
+  `ai-asset-registry` repo's knowledge is fully migrated — the monolith
+  (`docs/knowledge-registry.md`, 4 batches), `docs/knowledge-review/`
+  (batch 5, this pass), and the `~/.claude` memory seed (R3) are all in
+  this hub now. The old repo has nothing left that's knowledge-shaped and
+  not either migrated here or explicitly ruled dead/covered. Remaining
+  old-repo content is workspace artifacts, not knowledge: the research
+  series, presentations, and knowledge hubs under mcps/, agents/,
+  agent-memory/, skills/, ai-assets/ migrate on-touch, not as a scheduled
+  batch. R4 (content-skill ports — presentation-create, blog-*,
+  knowledge-hub-create, customer-feedback-*, rice-strats) is pull-driven,
+  per real demand. Runbooks R5 (cross-machine continuity test) and R6
+  (Cursor end-to-end) run when ready." (source: R2 batch 6 apply)
 - 2026-07-06 — **Update** — superseded: "R2 is now complete: the old repo's
   monolith (`docs/knowledge-registry.md`) is fully decomposed across all 4
   batches, and R3 (the `~/.claude` memory seed) is done. That monolith is
