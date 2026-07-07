@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCP Registry &amp; Catalog — Red Hat OpenShift AI</title>
+  <meta name="description" content="Enterprise governance and discovery for MCP servers on Red Hat OpenShift AI" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --stagger-delay:    80ms;
+      --transition-exit:  220ms;
+      --transition-enter: 350ms;
+      --ease-out-pop:     cubic-bezier(0.22, 1, 0.36, 1);
+
+      --accent-catalog:  #4394e5;
+      --accent-registry: #3E8635;
+      --accent-operator: #009596;
+      --accent-pipeline: #F4B400;
+      --accent-gateway:  #6753AC;
+      --accent-virtual:  #009596;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    main.deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-canvas);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      min-height: 100vh;
+      padding: 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition:
+        opacity var(--transition-exit) ease-in,
+        transform var(--transition-exit) ease-in,
+        visibility 0s linear var(--transition-exit);
+    }
+    .slide-inner {
+      max-width: var(--content-max);
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .slide-eyebrow {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      font-family: var(--font-mono);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .display-xl { font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; font-family: var(--font-text); }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; font-family: var(--font-text); }
+    .accent     { color: var(--rh-red); }
+
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes scale-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+    main.deck .slide.current .anim-fade-up     { animation: fade-up    400ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-fade-in     { animation: fade-in    400ms ease-out both;           animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-right { animation: slide-right 500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-left  { animation: slide-left  500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-scale-in    { animation: scale-in   450ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+
+    .deck-controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      background: rgba(21, 21, 21, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      z-index: 50;
+    }
+    .deck-controls button {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      border: none;
+      color: var(--rh-red);
+      font-size: 1.3rem;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 180ms ease-out, color 180ms ease-out;
+    }
+    .deck-controls button:hover:not(:disabled) { background: rgba(238, 0, 0, 0.15); color: #ff4444; }
+    .deck-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .deck-dots { display: flex; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
+    .deck-dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; background: var(--text-muted); transition: background 180ms, transform 180ms; color: transparent; font-size: 0; border: none; cursor: pointer; }
+    .deck-dots button[aria-current="true"] { background: var(--rh-red); transform: scale(1.4); box-shadow: 0 0 12px rgba(238, 0, 0, 0.5); }
+    .deck-dots button:hover { background: #ff4444; }
+    .deck-counter { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.06em; padding: 0 var(--space-sm); border-left: 1px solid var(--border-subtle); }
+    .deck-controls button:focus-visible, .deck-dots button:focus-visible { outline: 2px solid var(--rh-red); outline-offset: 2px; }
+
+    .deck-overview { position: fixed; inset: 0; background: rgba(21,21,21,0.97); backdrop-filter: blur(12px); z-index: 100; padding: 4rem 3rem; overflow-y: auto; }
+    .deck-overview[hidden] { display: none; }
+    .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-width: 1100px; margin: 0 auto; }
+    .overview-thumb { aspect-ratio: 16/10; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; cursor: pointer; text-align: left; color: var(--text-secondary); display: flex; flex-direction: column; justify-content: space-between; font-family: var(--font-sans); transition: border-color 180ms, transform 180ms; }
+    .overview-thumb:hover, .overview-thumb:focus-visible { border-color: var(--rh-red); transform: translateY(-2px); outline: none; }
+    .overview-thumb .num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--rh-red); letter-spacing: 0.15em; }
+    .overview-thumb .ttl { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); line-height: 1.25; }
+    .overview-thumb .beat { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    .deck-notes { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(21,21,21,0.95); border-top: 1px solid var(--rh-red); padding: 1rem 1.5rem; z-index: 60; }
+    .deck-notes[hidden] { display: none; }
+    .notes-label { color: var(--rh-red); font-size: var(--fs-label); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin: 0 0 0.3rem; }
+    .notes-body { color: var(--text-secondary); font-size: 0.9rem; margin: 0; font-family: var(--font-text); }
+    .deck-notes kbd { font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 0.15rem 0.4rem; border-radius: 3px; color: var(--rh-red); }
+
+    .slide-notes { display: none; }
+
+    /* ===== CUSTOM STYLES ===== */
+
+    /* Slide 2: Disconnected flow */
+    .disc-flow { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center; margin: 1.5rem 0 1rem; }
+    .disc-step {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      text-align: center;
+      min-width: 130px;
+      flex: 0 1 auto;
+      position: relative;
+    }
+    .disc-step-num {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.2rem;
+    }
+    .disc-step-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+    .disc-step-desc {
+      font-family: var(--font-text);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+    .disc-arrow { color: var(--text-muted); font-size: 1.1rem; opacity: 0.5; }
+    .disc-step.manual {
+      border-color: var(--rh-orange);
+      background: rgba(244,180,0,0.04);
+    }
+    .disc-step.manual .disc-step-num { color: var(--rh-orange); }
+    .manual-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      font-family: var(--font-mono);
+      font-size: 0.45rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--rh-orange);
+      color: #151515;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+    }
+    .disc-callout {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .disc-callout-card {
+      flex: 1;
+      background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02));
+      border: 1px solid rgba(238,0,0,0.2);
+      border-radius: 10px;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .disc-callout-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--rh-red), #ff4444);
+    }
+    .disc-callout-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--rh-red);
+      margin-bottom: 0.3rem;
+    }
+    .disc-callout-text {
+      font-family: var(--font-text);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+
+    /* Slide 3: Target state hub diagram */
+    .hub-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin: 1.5rem auto;
+      max-width: 900px;
+      position: relative;
+    }
+    .hub-center {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(62,134,53,0.15) 0%, rgba(62,134,53,0.03) 70%);
+      border: 2px solid var(--accent-registry);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+    .hub-center-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-registry);
+      margin-bottom: 0.2rem;
+    }
+    .hub-center-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+    .hub-center-sub {
+      font-family: var(--font-text);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+    .hub-spokes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .hub-consumers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      position: relative;
+    }
+    .hub-consumer {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      text-align: center;
+      min-width: 130px;
+    }
+    .hub-consumer-label {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.15rem;
+    }
+    .hub-consumer-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+    .hub-consumer-desc {
+      font-family: var(--font-text);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 0.1rem;
+    }
+    .hub-connector-left, .hub-connector-right {
+      width: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hub-connector-left svg, .hub-connector-right svg {
+      width: 60px;
+      height: 120px;
+    }
+    @keyframes dash-flow {
+      to { stroke-dashoffset: -20; }
+    }
+    .hub-flow-line {
+      stroke-dasharray: 6,4;
+      animation: dash-flow 1.5s linear infinite;
+    }
+    .hub-arrow-label {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      fill: var(--text-muted);
+    }
+
+    /* Slide 4 & 6: Capability cards */
+    .cap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 1.25rem 0 0.75rem;
+    }
+    .cap-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem;
+      transition: border-color 300ms, transform 200ms;
+    }
+    .cap-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-1px); }
+    .cap-tag {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+      display: inline-block;
+      margin-bottom: 0.4rem;
+    }
+    .cap-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+    }
+    .cap-desc {
+      font-family: var(--font-text);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .cap-list {
+      list-style: none;
+      padding: 0;
+      margin: 0.3rem 0 0;
+    }
+    .cap-list li {
+      padding: 0.15rem 0 0.15rem 0.8rem;
+      position: relative;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+      line-height: 1.4;
+    }
+    .cap-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+    .component-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      margin-top: 0.75rem;
+    }
+
+    /* Slide 5: Partner grid */
+    .partner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .partner-section-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .partner-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 0.6rem 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: border-color 200ms;
+    }
+    .partner-card:hover { border-color: rgba(255,255,255,0.12); }
+    .partner-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+    .partner-name {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+    .partner-type {
+      font-family: var(--font-text);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    /* Slide 6: 4-card grid */
+    .cap-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin: 1rem 0 0.75rem;
+    }
+
+    /* Slide 7: State flow */
+    .state-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0.35rem;
+      margin: 1.25rem 0;
+      justify-content: center;
+    }
+    .state-node {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.8rem 1rem;
+      text-align: center;
+      min-width: 160px;
+      flex: 0 1 auto;
+      position: relative;
+    }
+    .state-node-name {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+    }
+    .state-node-desc {
+      font-family: var(--font-text);
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+    .state-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      width: 30px;
+    }
+    .state-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      position: absolute;
+      top: -10px;
+      right: 8px;
+    }
+
+    /* Slide 8: Roadmap grid */
+    .roadmap-grid {
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 1rem 0;
+      font-size: 0.8rem;
+    }
+    .roadmap-header {
+      display: grid;
+      grid-template-columns: 180px repeat(3, 1fr);
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .roadmap-header > div { padding: 0.6rem 0.75rem; text-align: center; }
+    .roadmap-header > div:first-child { text-align: left; }
+    .roadmap-col-version {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+    .roadmap-col-date {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .roadmap-col-now { position: relative; }
+    .roadmap-col-now::after {
+      content: 'NOW';
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.45rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: #151515;
+      background: var(--rh-green);
+      padding: 0.05rem 0.3rem;
+      border-radius: 2px;
+    }
+    .roadmap-row {
+      display: grid;
+      grid-template-columns: 180px repeat(3, 1fr);
+      border-bottom: 1px solid rgba(51,51,51,0.5);
+    }
+    .roadmap-row:last-child { border-bottom: none; }
+    .roadmap-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.75rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+    }
+    .roadmap-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .roadmap-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+    }
+    .roadmap-badge {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 100px;
+    }
+    .rb-dp { background: rgba(0,102,204,0.15); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.3); }
+    .rb-tp { background: rgba(244,180,0,0.12); color: var(--rh-orange); border: 1px solid rgba(244,180,0,0.3); }
+    .rb-ga { background: rgba(62,134,53,0.15); color: var(--rh-green); border: 1px solid rgba(62,134,53,0.3); }
+    .rb-none { color: var(--text-muted); font-family: var(--font-mono); font-size: 0.8rem; }
+    .roadmap-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 0.75rem;
+      font-family: var(--font-text);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .roadmap-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .roadmap-note {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.5rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 180ms !important; }
+      main.deck .slide.current .anim-fade-up,
+      main.deck .slide.current .anim-slide-right,
+      main.deck .slide.current .anim-slide-left,
+      main.deck .slide.current .anim-scale-in,
+      main.deck .slide.current .anim-fade-in { animation: fade-in 180ms ease-out both; }
+      .hub-flow-line { animation: none !important; }
+    }
+
+    @media print {
+      html, body, main.deck { overflow: visible; height: auto; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      main.deck { background: var(--bg-canvas) !important; }
+      .deck-controls, .deck-overview, .deck-notes { display: none !important; }
+      .slide { position: relative; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto; page-break-after: always; break-after: page; background: var(--bg-canvas); padding: 0.5in; min-height: auto; }
+      .slide-eyebrow { color: var(--rh-red) !important; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 1.8rem; --fs-display-lg: 1.4rem; --fs-body-lead: 1rem; }
+      .slide { padding: 2rem 1.25rem; }
+      .deck-controls { padding: 0.3rem 0.6rem; gap: 0.5rem; }
+      .deck-controls button { width: 32px; height: 32px; font-size: 1.05rem; }
+      .deck-dots button { width: 8px; height: 8px; }
+      .overview-grid { grid-template-columns: repeat(2, 1fr); }
+      .disc-flow { flex-direction: column; gap: 0.5rem; }
+      .disc-arrow { transform: rotate(90deg); }
+      .cap-grid, .partner-grid { grid-template-columns: 1fr; }
+      .cap-grid-4 { grid-template-columns: 1fr; }
+      .state-flow { flex-direction: column; align-items: center; }
+      .state-arrow { transform: rotate(90deg); }
+      .hub-diagram { flex-direction: column; }
+      .hub-connector-left, .hub-connector-right { display: none; }
+      .roadmap-header, .roadmap-row { grid-template-columns: 120px repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" data-slide-current="1" tabindex="0">
+
+    <!-- ===== SLIDE 1: TITLE ===== -->
+    <section class="slide" data-slide="1" role="group" aria-label="Title">
+      <div class="slide-inner" style="display: flex; flex-direction: column; justify-content: center; min-height: 85vh; position: relative;">
+        <div style="position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(238,0,0,0.2) 0%, transparent 70%); pointer-events: none;"></div>
+        <div class="anim-fade-up" style="--index: 0">
+          <div class="slide-eyebrow">RED HAT OPENSHIFT AI</div>
+        </div>
+        <h1 class="display-xl anim-fade-up" style="--index: 1"><span class="accent">MCP Registry</span> &amp; Catalog</h1>
+        <p class="lead anim-fade-up" style="--index: 2">Enterprise governance and discovery for MCP servers</p>
+        <div class="anim-fade-up" style="--index: 3; display: flex; gap: 2.5rem; margin-top: 2rem;">
+          <div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--accent-registry);">Registry</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Governance</div>
+          </div>
+          <div style="width: 1px; background: var(--border-subtle);"></div>
+          <div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--accent-catalog);">Catalog</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Discovery</div>
+          </div>
+        </div>
+        <p class="anim-fade-up" style="--index: 4; font-family: var(--font-text); font-size: 0.85rem; color: var(--text-muted); margin-top: 2.5rem;">Peter Double &middot; Principal Product Manager &middot; Red Hat</p>
+        <div class="slide-notes">Opening slide. Frame: Registry = governance backbone, Catalog = discovery surface. Two halves of a coherent MCP management experience.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2: THE PROBLEM ===== -->
+    <section class="slide" data-slide="2" role="group" aria-label="The Problem">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up">THE CHALLENGE</div>
+        <h2 class="display-lg anim-fade-up">Five Disconnected Steps</h2>
+        <p class="lead anim-fade-up">Today, getting an MCP server from discovery to consumption requires manual stitching across disconnected components</p>
+
+        <div class="disc-flow anim-fade-up">
+          <div class="disc-step">
+            <div class="disc-step-num" style="color: var(--accent-catalog);">Step 1</div>
+            <div class="disc-step-title">Discover</div>
+            <div class="disc-step-desc">Find in Catalog</div>
+          </div>
+          <div class="disc-arrow">&#x2192;</div>
+          <div class="disc-step">
+            <div class="disc-step-num" style="color: var(--accent-operator);">Step 2</div>
+            <div class="disc-step-title">Deploy</div>
+            <div class="disc-step-desc">Lifecycle Operator</div>
+          </div>
+          <div class="disc-arrow">&#x2192;</div>
+          <div class="disc-step manual">
+            <div class="manual-badge">Manual</div>
+            <div class="disc-step-num">Step 3</div>
+            <div class="disc-step-title">Register in Gateway</div>
+            <div class="disc-step-desc">Manual configuration</div>
+          </div>
+          <div class="disc-arrow">&#x2192;</div>
+          <div class="disc-step manual">
+            <div class="manual-badge">Manual</div>
+            <div class="disc-step-num">Step 4</div>
+            <div class="disc-step-title">Update ConfigMap</div>
+            <div class="disc-step-desc">Expose to Studio</div>
+          </div>
+          <div class="disc-arrow">&#x2192;</div>
+          <div class="disc-step">
+            <div class="disc-step-num" style="color: var(--rh-teal);">Step 5</div>
+            <div class="disc-step-title">Consume</div>
+            <div class="disc-step-desc">Use in Gen AI Studio</div>
+          </div>
+        </div>
+
+        <div class="disc-callout anim-fade-up">
+          <div class="disc-callout-card">
+            <div class="disc-callout-label">No governance</div>
+            <div class="disc-callout-text">No single place tracks what MCP servers exist, what state they're in, or who changed them</div>
+          </div>
+          <div class="disc-callout-card">
+            <div class="disc-callout-label">No traceability</div>
+            <div class="disc-callout-text">A deployed MCP instance is disconnected from the asset it was deployed from</div>
+          </div>
+          <div class="disc-callout-card">
+            <div class="disc-callout-label">No consistency</div>
+            <div class="disc-callout-text">Five components maintain disconnected state, creating drift and operational burden</div>
+          </div>
+        </div>
+        <div class="slide-notes">This is the current state in RHOAI 3.4. Steps 3 and 4 are manual, ungoverned, and disconnected. The callout cards highlight the three main gaps: no governance, no traceability, no consistency across components.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3: TARGET STATE ===== -->
+    <section class="slide" data-slide="3" role="group" aria-label="Target State">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up" style="color: var(--accent-registry);">TARGET STATE</div>
+        <h2 class="display-lg anim-fade-up">One Governed Source of Truth</h2>
+        <p class="lead anim-fade-up">The MCP Registry becomes the governed center that downstream components read from &mdash; replacing disconnected artifacts with a single, coherent platform experience</p>
+
+        <div class="hub-diagram anim-scale-in" style="--index: 3">
+          <!-- Left consumers -->
+          <div class="hub-consumers">
+            <div class="hub-consumer" style="border-left: 3px solid var(--accent-catalog);">
+              <div class="hub-consumer-label" style="color: var(--accent-catalog);">Discovery</div>
+              <div class="hub-consumer-title">MCP Catalog</div>
+              <div class="hub-consumer-desc">Reads published MCPs for browsing</div>
+            </div>
+            <div class="hub-consumer" style="border-left: 3px solid var(--accent-gateway);">
+              <div class="hub-consumer-label" style="color: var(--accent-gateway);">Runtime</div>
+              <div class="hub-consumer-title">MCP Gateway</div>
+              <div class="hub-consumer-desc">Reads metadata for mediation</div>
+            </div>
+          </div>
+
+          <!-- Left connector -->
+          <div class="hub-connector-left">
+            <svg viewBox="0 0 60 120">
+              <line x1="0" y1="30" x2="55" y2="60" stroke="#444" stroke-width="1.5" class="hub-flow-line" />
+              <line x1="0" y1="90" x2="55" y2="60" stroke="#444" stroke-width="1.5" class="hub-flow-line" />
+              <text x="10" y="15" class="hub-arrow-label" font-size="7">reads</text>
+            </svg>
+          </div>
+
+          <!-- Center hub -->
+          <div class="hub-center">
+            <div class="hub-center-label">System of Record</div>
+            <div class="hub-center-title">MCP Registry</div>
+            <div class="hub-center-sub">Governed identity, versioning,<br>lifecycle state, metadata</div>
+          </div>
+
+          <!-- Right connector -->
+          <div class="hub-connector-right">
+            <svg viewBox="0 0 60 120">
+              <line x1="5" y1="60" x2="60" y2="30" stroke="#444" stroke-width="1.5" class="hub-flow-line" />
+              <line x1="5" y1="60" x2="60" y2="90" stroke="#444" stroke-width="1.5" class="hub-flow-line" />
+              <text x="20" y="15" class="hub-arrow-label" font-size="7">reads</text>
+            </svg>
+          </div>
+
+          <!-- Right consumers -->
+          <div class="hub-consumers">
+            <div class="hub-consumer" style="border-left: 3px solid var(--accent-operator);">
+              <div class="hub-consumer-label" style="color: var(--accent-operator);">Deployment</div>
+              <div class="hub-consumer-title">Lifecycle Operator</div>
+              <div class="hub-consumer-desc">Writes deployment refs back</div>
+            </div>
+            <div class="hub-consumer" style="border-left: 3px solid var(--rh-red);">
+              <div class="hub-consumer-label" style="color: var(--rh-red);">Consumption</div>
+              <div class="hub-consumer-title">Gen AI Studio</div>
+              <div class="hub-consumer-desc">Resolves published, scoped MCPs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="component-badge anim-fade-up" style="--index: 4; background: rgba(62,134,53,0.1); border: 1px solid var(--accent-registry); color: var(--accent-registry);">Replacing manual stitching with governed coherence</div>
+        <div class="slide-notes">The registry is the governed center. Catalog, Gateway, Lifecycle Operator, and Studio all read from it. The registry doesn't replace these components — it adds the governed state layer they can all read from. Key shift: components operate on registry state rather than disconnected artifacts.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4: MCP CATALOG ===== -->
+    <section class="slide" data-slide="4" role="group" aria-label="MCP Catalog">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up" style="color: var(--accent-catalog);">DISCOVERY</div>
+        <h2 class="display-lg anim-fade-up">MCP Catalog</h2>
+        <p class="lead anim-fade-up">Browse, search, and deploy MCP servers from a curated catalog built on Kubeflow Hub</p>
+
+        <div class="cap-grid anim-fade-up">
+          <div class="cap-card" style="border-left: 4px solid var(--accent-catalog);">
+            <span class="cap-tag" style="background: rgba(67,148,229,0.12); color: var(--accent-catalog);">Discovery</span>
+            <div class="cap-title">Curated Browsing</div>
+            <ul class="cap-list">
+              <li style="--dot-color: var(--accent-catalog);"><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-catalog);"></span>Browse MCP servers with rich metadata</li>
+              <li style="--dot-color: var(--accent-catalog);"><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-catalog);"></span>Search by name, category, provider</li>
+              <li style="--dot-color: var(--accent-catalog);"><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-catalog);"></span>View tools, parameters, prerequisites</li>
+            </ul>
+          </div>
+          <div class="cap-card" style="border-left: 4px solid var(--accent-operator);">
+            <span class="cap-tag" style="background: rgba(0,149,150,0.12); color: var(--accent-operator);">Deployment</span>
+            <div class="cap-title">One-Click Deploy</div>
+            <ul class="cap-list">
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-operator);"></span>Launch via MCP Lifecycle Operator</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-operator);"></span>Kubernetes-native MCPServer CRD</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-operator);"></span>Configure credentials and parameters</li>
+            </ul>
+          </div>
+          <div class="cap-card" style="border-left: 4px solid var(--rh-green);">
+            <span class="cap-tag" style="background: rgba(62,134,53,0.12); color: var(--rh-green);">Ecosystem</span>
+            <div class="cap-title">Pre-Loaded Servers</div>
+            <ul class="cap-list">
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-green);"></span>10 MCP servers ready on day one</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-green);"></span>Red Hat, partner, and community</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-green);"></span>Expanding ecosystem each release</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="component-badge anim-fade-up" style="background: rgba(67,148,229,0.1); border: 1px solid var(--accent-catalog); color: var(--accent-catalog);">Dev Preview &middot; RHOAI 3.4 &middot; Shipping May 2026</div>
+        <div class="slide-notes">The Catalog is the discovery surface — built on Kubeflow Hub. Three key capabilities: browse/search, one-click deploy via Lifecycle Operator, and a pre-loaded ecosystem. Shipping as Dev Preview in RHOAI 3.4 (May 14, 2026).</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5: PRE-LOADED MCP SERVERS ===== -->
+    <section class="slide" data-slide="5" role="group" aria-label="Pre-Loaded MCP Servers">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up" style="color: var(--rh-green);">ECOSYSTEM</div>
+        <h2 class="display-lg anim-fade-up">Ready on Day One</h2>
+        <p class="lead anim-fade-up">10 MCP servers pre-loaded in the catalog, spanning Red Hat products, ISV partners, and community projects</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin: 1.25rem 0;" class="anim-fade-up">
+          <!-- Red Hat -->
+          <div>
+            <div class="partner-section-label" style="color: var(--rh-red);">Red Hat <span style="font-weight: 400; color: var(--text-muted);">(3)</span></div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <div class="partner-card">
+                <div class="partner-icon" style="background: var(--rh-red);">OCP</div>
+                <div><div class="partner-name">OpenShift</div><div class="partner-type">Cluster management</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: var(--rh-red);">AAP</div>
+                <div><div class="partner-name">Ansible Automation</div><div class="partner-type">IT automation</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: var(--rh-red);">INS</div>
+                <div><div class="partner-name">Red Hat Insights</div><div class="partner-type">Predictive analytics</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Partners -->
+          <div>
+            <div class="partner-section-label" style="color: var(--rh-blue-light);">Partners <span style="font-weight: 400; color: var(--text-muted);">(5)</span></div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #0052CC;">CFK</div>
+                <div><div class="partner-name">Confluent Kafka</div><div class="partner-type">Event streaming</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #336791;">EDB</div>
+                <div><div class="partner-name">EDB Postgres</div><div class="partner-type">Database</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #7B42BC;">TF</div>
+                <div><div class="partner-name">IBM Terraform</div><div class="partner-type">Infrastructure as Code</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #0078D4;">AZ</div>
+                <div><div class="partner-name">Azure</div><div class="partner-type">Cloud services</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #1496FF;">DT</div>
+                <div><div class="partner-name">Dynatrace</div><div class="partner-type">Observability</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Community -->
+          <div>
+            <div class="partner-section-label" style="color: var(--rh-teal);">Community <span style="font-weight: 400; color: var(--text-muted);">(2)</span></div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #47A248;">MDB</div>
+                <div><div class="partner-name">MongoDB</div><div class="partner-type">Document database</div></div>
+              </div>
+              <div class="partner-card">
+                <div class="partner-icon" style="background: #003545;">MDB</div>
+                <div><div class="partner-name">MariaDB</div><div class="partner-type">Relational database</div></div>
+              </div>
+            </div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; text-align: center;">
+              <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.25rem;">Growing</div>
+              <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-secondary);">Ecosystem expanding with each release</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-notes">10 pre-loaded MCP servers across three tiers: 3 Red Hat products (OpenShift, Ansible, Insights), 5 ISV partners (Confluent, EDB, IBM Terraform, Azure, Dynatrace), and 2 community (MongoDB, MariaDB). Ecosystem will expand with each release.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6: MCP REGISTRY ===== -->
+    <section class="slide" data-slide="6" role="group" aria-label="MCP Registry">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up" style="color: var(--accent-registry);">GOVERNANCE</div>
+        <h2 class="display-lg anim-fade-up">MCP Registry</h2>
+        <p class="lead anim-fade-up">The system of record for MCP servers &mdash; governed identity, versioning, and lifecycle state built on MLflow</p>
+
+        <div class="cap-grid-4 anim-fade-up">
+          <div class="cap-card" style="border-left: 4px solid var(--accent-registry);">
+            <span class="cap-tag" style="background: rgba(62,134,53,0.12); color: var(--accent-registry);">Identity</span>
+            <div class="cap-title">Governed Records</div>
+            <ul class="cap-list">
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-registry);"></span>Stable identity and versioning for every MCP server</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-registry);"></span>Canonical server.json aligned with upstream MCP spec</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-registry);"></span>Mandatory metadata: name, version, description, hosting model</li>
+            </ul>
+          </div>
+          <div class="cap-card" style="border-left: 4px solid var(--rh-teal);">
+            <span class="cap-tag" style="background: rgba(0,149,150,0.12); color: var(--rh-teal);">Hosting</span>
+            <div class="cap-title">Internal &amp; External</div>
+            <ul class="cap-list">
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-teal);"></span>Internal: packaged and deployed within the platform</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-teal);"></span>External: referenced by remote endpoint URL</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-teal);"></span>Same normalized record shape for both</li>
+            </ul>
+          </div>
+          <div class="cap-card" style="border-left: 4px solid var(--rh-purple);">
+            <span class="cap-tag" style="background: rgba(103,83,172,0.12); color: var(--rh-purple);">Access</span>
+            <div class="cap-title">RBAC &amp; Workspace Scoping</div>
+            <ul class="cap-list">
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-purple);"></span>Users see only MCP records they are entitled to</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-purple);"></span>All reads and writes scoped to caller's workspace</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-purple);"></span>Unauthorized servers never appear in views</li>
+            </ul>
+          </div>
+          <div class="cap-card" style="border-left: 4px solid var(--rh-red);">
+            <span class="cap-tag" style="background: rgba(238,0,0,0.12); color: var(--rh-red);">Audit</span>
+            <div class="cap-title">Auditable State Changes</div>
+            <ul class="cap-list">
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-red);"></span>Every lifecycle transition recorded</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-red);"></span>Deployment references associated with registry records</li>
+              <li><span style="position: absolute; left: 0; top: 0.5rem; width: 4px; height: 4px; border-radius: 50%; background: var(--rh-red);"></span>Retroactive registration for already-deployed MCPs</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="component-badge anim-fade-up" style="background: rgba(62,134,53,0.1); border: 1px solid var(--accent-registry); color: var(--accent-registry);">Tech Preview &middot; RHOAI 3.5 &middot; 2H 2026</div>
+        <div class="slide-notes">Four key capabilities: Governed Records (identity, versioning, upstream spec alignment), Internal & External hosting support, RBAC & Workspace Scoping, and Auditable State Changes. Built on MLflow upstream. Tech Preview in RHOAI 3.5. Key point: both internal (packaged) and external (endpoint URL) MCPs use the same normalized record shape.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7: LIFECYCLE STATE MODEL ===== -->
+    <section class="slide" data-slide="7" role="group" aria-label="Lifecycle State Model">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up" style="color: var(--accent-registry);">LIFECYCLE</div>
+        <h2 class="display-lg anim-fade-up">From Draft to Production</h2>
+        <p class="lead anim-fade-up">Every MCP server follows a governed lifecycle &mdash; publish state determines what downstream components can see</p>
+
+        <div class="state-flow anim-fade-up">
+          <div class="state-node" style="border-color: var(--rh-orange); border-width: 2px;">
+            <div class="state-node-name" style="color: var(--rh-orange);">Draft</div>
+            <div class="state-node-desc">Under review. Not visible to downstream consumers or AI engineers.</div>
+          </div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node" style="border-color: var(--rh-green); border-width: 2px;">
+            <div class="state-node-name" style="color: var(--rh-green);">Active</div>
+            <div class="state-node-desc">Published and eligible for Catalog, Gateway, and Studio consumption.</div>
+          </div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node" style="border-color: var(--text-muted);">
+            <div class="state-node-name">Deprecated</div>
+            <div class="state-node-desc">Still queryable but not preferred. Steers users toward newer versions.</div>
+          </div>
+          <div class="state-arrow">&#x2192;</div>
+          <div class="state-node" style="border-color: rgba(238,0,0,0.4);">
+            <div class="state-node-name" style="color: var(--text-muted);">Deleted</div>
+            <div class="state-node-desc">Removed from active queries. Preserves audit history.</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;" class="anim-fade-up">
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem;">Platform Engineer View</div>
+            <div style="font-family: var(--font-text); font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45;">Registers MCP servers, manages state transitions, associates deployment references. Sees all records in their workspace scope.</div>
+          </div>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--accent-catalog); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem;">AI Engineer View</div>
+            <div style="font-family: var(--font-text); font-size: 0.78rem; color: var(--text-secondary); line-height: 1.45;">Sees only Active MCP servers scoped to their workspace in Gen AI Studio. No manual ConfigMap editing, no guessing which servers are available.</div>
+          </div>
+        </div>
+
+        <div class="slide-notes">Lifecycle states: Draft (RHOAI-specific, not in upstream spec) → Active (maps to upstream "active") → Deprecated → Deleted. Draft is critical for reviewing incoming MCPs before surfacing them. Active is when downstream consumers can see the MCP. Two persona views: Platform Engineer manages the full lifecycle, AI Engineer sees only Active MCPs.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 8: ROADMAP ===== -->
+    <section class="slide" data-slide="8" role="group" aria-label="Roadmap">
+      <div class="slide-inner" data-stagger>
+        <div class="slide-eyebrow anim-fade-up">ROADMAP</div>
+        <h2 class="display-lg anim-fade-up">Where We Are &amp; Where We're Going</h2>
+        <p class="lead anim-fade-up" style="margin-bottom: var(--space-sm);">MCP platform maturity across OpenShift AI releases</p>
+
+        <div class="roadmap-grid anim-fade-up">
+          <div class="roadmap-header">
+            <div></div>
+            <div class="roadmap-col roadmap-col-now">
+              <div class="roadmap-col-version">RHOAI 3.4</div>
+              <div class="roadmap-col-date">May 2026</div>
+            </div>
+            <div class="roadmap-col">
+              <div class="roadmap-col-version">RHOAI 3.5</div>
+              <div class="roadmap-col-date">2H 2026</div>
+            </div>
+            <div class="roadmap-col">
+              <div class="roadmap-col-version">RHOAI 3.6</div>
+              <div class="roadmap-col-date">Target</div>
+            </div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background: var(--accent-catalog);"></span>MCP Catalog</div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-ga">GA</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background: var(--accent-registry);"></span>MCP Registry</div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-ga">GA</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background: var(--accent-operator);"></span>Lifecycle Operator</div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-ga">GA</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background: var(--accent-pipeline);"></span>Ingestion Pipeline</div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+          </div>
+        </div>
+
+        <div class="roadmap-legend anim-fade-up">
+          <div class="roadmap-legend-item"><span class="roadmap-badge rb-dp" style="font-size: 0.5rem;">Dev Preview</span> Early access, feedback</div>
+          <div class="roadmap-legend-item"><span class="roadmap-badge rb-tp" style="font-size: 0.5rem;">Tech Preview</span> Feature-complete, not yet supported</div>
+          <div class="roadmap-legend-item"><span class="roadmap-badge rb-ga" style="font-size: 0.5rem;">GA</span> Production-ready, fully supported</div>
+        </div>
+        <p class="roadmap-note anim-fade-up">Schedule subject to change &middot; 3-month release cadence</p>
+        <div class="slide-notes">Roadmap grid showing maturity progression across RHOAI releases. Key callouts: Catalog is shipping NOW in 3.4 as Dev Preview. Registry arrives in 3.5 as Tech Preview. Both reach GA in 3.6. Ingestion Pipeline is a roadmap item for 3.6 TP. Gateway is covered in separate slides.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 9: NEXT STEPS ===== -->
+    <section class="slide" data-slide="9" role="group" aria-label="Next Steps">
+      <div class="slide-inner" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center;" data-stagger>
+        <div class="slide-eyebrow anim-fade-up" style="justify-content: center;">NEXT STEPS</div>
+        <h2 class="display-lg anim-fade-up" style="margin-bottom: var(--space-lg);">Get Started</h2>
+
+        <div style="display: flex; gap: 1.25rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; max-width: 900px;" class="anim-fade-up">
+          <div style="flex: 1; min-width: 220px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-top: 3px solid var(--accent-catalog); border-radius: 0 0 10px 10px; padding: 1.25rem; text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--accent-catalog); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem;">Now &middot; RHOAI 3.4</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.3rem;">Explore the MCP Catalog</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">Browse and deploy pre-loaded MCP servers. Evaluate the catalog experience and ecosystem coverage for your use cases.</div>
+          </div>
+          <div style="flex: 1; min-width: 220px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-top: 3px solid var(--accent-registry); border-radius: 0 0 10px 10px; padding: 1.25rem; text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--accent-registry); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem;">Plan &middot; RHOAI 3.5</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.3rem;">Prepare for Registry Integration</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">Identify your MCP governance requirements. Plan how internal and external MCP servers will be registered and managed.</div>
+          </div>
+          <div style="flex: 1; min-width: 220px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-top: 3px solid var(--rh-red); border-radius: 0 0 10px 10px; padding: 1.25rem; text-align: left;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.3rem;">Engage</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.3rem;">Shape the Roadmap Together</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">Share your MCP governance and discovery requirements. Your feedback directly shapes prioritization and feature design.</div>
+          </div>
+        </div>
+
+        <p class="anim-fade-up" style="font-family: var(--font-text); font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">Peter Double &middot; Principal Product Manager &middot; Red Hat</p>
+
+        <div class="slide-notes">Three clear next steps tied to timeline: (1) Explore the Catalog now in 3.4, (2) Plan for Registry governance in 3.5, (3) Engage with Red Hat to shape the roadmap. Keep this actionable, not abstract.</div>
+      </div>
+    </section>
+
+    <!-- ===== OVERVIEW GRID ===== -->
+    <div class="deck-overview" hidden aria-label="Slide overview">
+      <div class="overview-grid">
+        <button class="overview-thumb" data-goto="1"><span class="num">01</span><span class="ttl">MCP Registry & Catalog</span><span class="beat">TITLE</span></button>
+        <button class="overview-thumb" data-goto="2"><span class="num">02</span><span class="ttl">Five Disconnected Steps</span><span class="beat">PROBLEM</span></button>
+        <button class="overview-thumb" data-goto="3"><span class="num">03</span><span class="ttl">One Governed Source of Truth</span><span class="beat">TARGET STATE</span></button>
+        <button class="overview-thumb" data-goto="4"><span class="num">04</span><span class="ttl">MCP Catalog</span><span class="beat">DISCOVERY</span></button>
+        <button class="overview-thumb" data-goto="5"><span class="num">05</span><span class="ttl">Ready on Day One</span><span class="beat">ECOSYSTEM</span></button>
+        <button class="overview-thumb" data-goto="6"><span class="num">06</span><span class="ttl">MCP Registry</span><span class="beat">GOVERNANCE</span></button>
+        <button class="overview-thumb" data-goto="7"><span class="num">07</span><span class="ttl">From Draft to Production</span><span class="beat">LIFECYCLE</span></button>
+        <button class="overview-thumb" data-goto="8"><span class="num">08</span><span class="ttl">Where We Are & Where We're Going</span><span class="beat">ROADMAP</span></button>
+        <button class="overview-thumb" data-goto="9"><span class="num">09</span><span class="ttl">Get Started</span><span class="beat">NEXT STEPS</span></button>
+      </div>
+    </div>
+
+    <!-- ===== NOTES ===== -->
+    <div class="deck-notes" hidden>
+      <p class="notes-label">Presenter Notes &middot; <kbd>P</kbd> to toggle</p>
+      <p class="notes-body" id="notes-body"></p>
+    </div>
+  </main>
+
+  <!-- ===== CONTROLS ===== -->
+  <nav class="deck-controls" aria-label="Slide navigation">
+    <button class="btn-prev" aria-label="Previous slide">&#x2190;</button>
+    <ol class="deck-dots" role="tablist">
+      <li><button role="tab" data-goto="1" aria-label="Go to slide 1"></button></li>
+      <li><button role="tab" data-goto="2" aria-label="Go to slide 2"></button></li>
+      <li><button role="tab" data-goto="3" aria-label="Go to slide 3"></button></li>
+      <li><button role="tab" data-goto="4" aria-label="Go to slide 4"></button></li>
+      <li><button role="tab" data-goto="5" aria-label="Go to slide 5"></button></li>
+      <li><button role="tab" data-goto="6" aria-label="Go to slide 6"></button></li>
+      <li><button role="tab" data-goto="7" aria-label="Go to slide 7"></button></li>
+      <li><button role="tab" data-goto="8" aria-label="Go to slide 8"></button></li>
+      <li><button role="tab" data-goto="9" aria-label="Go to slide 9"></button></li>
+    </ol>
+    <span class="deck-counter">01 / 09</span>
+    <button class="btn-next" aria-label="Next slide">&#x2192;</button>
+  </nav>
+
+  <script>
+    (function () {
+      var deck = document.querySelector('main.deck');
+      var TOTAL = deck.querySelectorAll('.slide').length;
+      var dots = Array.from(document.querySelectorAll('.deck-dots button'));
+      var btnPrev = document.querySelector('.btn-prev');
+      var btnNext = document.querySelector('.btn-next');
+      var counter = document.querySelector('.deck-counter');
+      var overview = document.querySelector('.deck-overview');
+      var notes = document.querySelector('.deck-notes');
+      var notesBody = document.getElementById('notes-body');
+
+      var style = document.createElement('style');
+      var css = '';
+      for (var i = 1; i <= TOTAL; i++) {
+        css += 'main.deck[data-slide-current="' + i + '"] .slide[data-slide="' + i + '"] { opacity:1; visibility:visible; pointer-events:auto; transform:scale(1); transition: opacity var(--transition-enter) var(--ease-out-pop), transform var(--transition-enter) var(--ease-out-pop), visibility 0s linear 0s; }\n';
+      }
+      style.textContent = css;
+      document.head.appendChild(style);
+
+      var state = { current: 1, overviewOpen: false, notesOpen: false };
+
+      function clamp(n) { return Math.max(1, Math.min(TOTAL, n)); }
+
+      function getSlideNotes(n) {
+        var slide = deck.querySelector('.slide[data-slide="' + n + '"]');
+        if (!slide) return '';
+        var notesEl = slide.querySelector('.slide-notes');
+        return notesEl ? notesEl.textContent : '';
+      }
+
+      function render() {
+        deck.setAttribute('data-slide-current', String(state.current));
+        counter.textContent = String(state.current).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+        dots.forEach(function (d, i) {
+          if (i + 1 === state.current) d.setAttribute('aria-current', 'true');
+          else d.removeAttribute('aria-current');
+        });
+        Array.from(deck.querySelectorAll('.slide')).forEach(function (s) {
+          var n = parseInt(s.getAttribute('data-slide'), 10);
+          if (n === state.current) { s.classList.add('current'); s.removeAttribute('aria-hidden'); }
+          else { s.classList.remove('current'); s.setAttribute('aria-hidden', 'true'); }
+        });
+        btnPrev.disabled = state.current === 1;
+        btnNext.disabled = state.current === TOTAL;
+        if (state.notesOpen) {
+          var txt = getSlideNotes(state.current);
+          notesBody.textContent = txt || '(No notes for this slide)';
+        }
+        requestAnimationFrame(fireSlideAnimations);
+      }
+
+      function goTo(n) { var next = clamp(n); if (next === state.current) return; state.current = next; render(); syncHash(); }
+      function next() { goTo(state.current + 1); }
+      function prev() { goTo(state.current - 1); }
+
+      function syncHash() { var h = '#s=' + state.current; if (location.hash !== h) history.replaceState(null, '', h); }
+      function readHash() { var m = /^#s=(\d{1,2})$/.exec(location.hash || ''); return m ? clamp(parseInt(m[1], 10)) : 1; }
+
+      var digitBuffer = '', digitTimer = null;
+      function clearBuffer() { digitBuffer = ''; if (digitTimer) { clearTimeout(digitTimer); digitTimer = null; } }
+
+      function onKey(e) {
+        if (state.overviewOpen) return onOverviewKey(e);
+        var k = e.key;
+        if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); next(); clearBuffer(); return; }
+        if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); clearBuffer(); return; }
+        if (k === 'Home') { e.preventDefault(); goTo(1); clearBuffer(); return; }
+        if (k === 'End')  { e.preventDefault(); goTo(TOTAL); clearBuffer(); return; }
+        if (k === 'Escape') { e.preventDefault(); toggleOverview(); clearBuffer(); return; }
+        if (k === 'p' || k === 'P') { e.preventDefault(); toggleNotes(); clearBuffer(); return; }
+        if (/^[0-9]$/.test(k)) {
+          e.preventDefault();
+          digitBuffer += k;
+          if (digitTimer) clearTimeout(digitTimer);
+          if (digitBuffer.length === 2) { goTo(parseInt(digitBuffer, 10)); clearBuffer(); return; }
+          digitTimer = setTimeout(function () { var n = parseInt(digitBuffer, 10); if (n >= 1 && n <= 9) goTo(n); clearBuffer(); }, 600);
+        }
+      }
+
+      btnPrev.addEventListener('click', prev);
+      btnNext.addEventListener('click', next);
+      dots.forEach(function (d) { d.addEventListener('click', function () { goTo(parseInt(d.getAttribute('data-goto'), 10)); }); });
+      window.addEventListener('keydown', onKey);
+
+      Array.from(overview.querySelectorAll('.overview-thumb')).forEach(function (t) {
+        t.addEventListener('click', function () { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); });
+      });
+
+      function applyStaggerIndices(slide) {
+        Array.from(slide.querySelectorAll('[data-stagger] > *')).forEach(function (el, i) { el.style.setProperty('--index', String(i)); });
+      }
+      function fireSlideAnimations() { var cur = deck.querySelector('.slide.current'); if (cur) applyStaggerIndices(cur); }
+
+      function toggleOverview() { state.overviewOpen ? closeOverview() : openOverview(); }
+      function openOverview() { state.overviewOpen = true; overview.hidden = false; var active = overview.querySelector('.overview-thumb[data-goto="' + state.current + '"]'); if (active) active.focus(); }
+      function closeOverview() { state.overviewOpen = false; overview.hidden = true; deck.focus(); }
+      function onOverviewKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); closeOverview(); }
+        if (e.key === 'Enter') { var t = document.activeElement; if (t && t.classList.contains('overview-thumb')) { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); } }
+      }
+
+      function toggleNotes() { if (!notes) return; state.notesOpen = !state.notesOpen; notes.hidden = !state.notesOpen; if (state.notesOpen) { notesBody.textContent = getSlideNotes(state.current) || '(No notes for this slide)'; } }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        state.current = readHash();
+        render();
+        window.addEventListener('hashchange', function () { state.current = readHash(); render(); });
+      });
+
+      window.__deck = { goTo: goTo, next: next, prev: prev, state: state };
+    }());
+  </script>
+</body>
+</html>

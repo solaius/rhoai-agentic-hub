@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-06
+- **Update** — R4 wave 1: presentation-create ported (10 adaptations); first enablement artifact migrated + published (mcp-registry catalog deck).
 - **Update** — Batch 6 applied: workspace document parity → 48 docs into research/, strategy/, and work/ (agent-memory 27, agent-registry 9, skills-registry 10, agent-ops 1, gen-ai-studio 1); document parity COMPLETE.
 - **Update** — Batch 5 applied: knowledge-review parity pass → 12/25 already covered, 3 dead (unified-framework), 10 new + 10 edits + 3 documents (first research/ + strategy/ content); content parity with old repo COMPLETE.
 - **Update** — R2 COMPLETE: batch 4 applied (monolith §9–§11+§13 + R3 seed) → 66 new (37 fact/decision/question + 29 person) + 5 edits + 10 restricted + 4 memory facts; monolith fully decomposed across 4 batches.

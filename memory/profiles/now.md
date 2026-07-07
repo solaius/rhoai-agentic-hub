@@ -10,10 +10,17 @@ review_after: 2026-07-20
   migrated (batch 6: 48 docs incl. the 19-doc agent-memory series); every
   meaningful text file from the old repo now lives in the hub or was ruled
   dead/covered.
-- Remaining = HTML enablement artifacts (on-touch, publishing decisions) +
-  R4 skill ports + R5/R6 runbooks.
+- **R4 wave 1 done**: `presentation-create` ported + first enablement
+  artifact published (mcp-registry catalog deck). Remaining: wave 2 =
+  `blog-create`/`blog-mockup`, wave 3 = `customer-feedback-*` (both
+  pull-driven, per real demand); HTML hub sites (RHCL, MCP ecosystem) still
+  migrate on-touch, gated on publishing decisions; R5/R6 runbooks
+  unchanged.
 
 ## History
+- 2026-07-06 — **Update** — superseded: "Remaining = HTML enablement
+  artifacts (on-touch, publishing decisions) + R4 skill ports + R5/R6
+  runbooks." (source: R4 wave 1 apply)
 - 2026-07-06 — **Update** — superseded: "CONTENT PARITY COMPLETE: the old
   `ai-asset-registry` repo's knowledge is fully migrated — the monolith
   (`docs/knowledge-registry.md`, 4 batches), `docs/knowledge-review/`

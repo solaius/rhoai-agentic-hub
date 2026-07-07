@@ -1,4 +1,8 @@
 # The publishing allowlist. Nothing reaches the public pages repo without an
 # entry here. Schema + rules: /conventions/publishing.md. Managed via the
 # hub.publish skill (publishing is a disclosure decision).
-[]
+- source: features/mcp-registry/enablement/mcp-registry-catalog-deck/
+  dest: mcp-registry/catalog-deck/
+  audience: public
+  title: MCP Registry & Catalog
+  description: Slide deck covering MCP Registry and Catalog capabilities, lifecycle governance, pre-loaded MCP servers, and the roadmap from Dev Preview through GA.
