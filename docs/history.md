@@ -65,6 +65,11 @@ Deliberately deferred, in rough priority order:
   `features/platform/strategy/rice-scoring-rubric.md`.
 - Slack-MCP/podman doctor sections — port from the old repo's repo-doctor
   when hub sessions need the Slack MCP.
+- Remaining old-repo-doctor coverage: shell-env wiring (sourcing
+  `restricted/.env` from `~/.bashrc`, keeping its deliberate exclusion of
+  LLM-provider credentials) and the Jira/Slack connectivity probes — needed
+  the first time Jira-using skills (`rfe.*`, `rice-strats`) run on a
+  hub-only machine, where nothing else exports `JIRA_*` into the shell.
 - Old-repo HTML enablement artifacts — migrate on touch, per D6.
 - Two open content flags, tracked in the entries themselves: the
   security-pipeline schema future-vs-superseded note, and two inferred
