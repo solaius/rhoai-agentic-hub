@@ -1,6 +1,10 @@
 # NDA / local-only content — never tracked
 restricted/
 
+# Machine-specific MCP config (rhai-tracker path is per-machine; regenerated
+# by hub.doctor / scripts/doctor.sh)
+.mcp.json
+
 # memory scratch tier (Claude auto-memory redirect target)
 memory/.scratch/
 

@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-06
+- **Update** — R4 wave 3: customer-feedback suite ported (tracker data model: restricted + external c-tracker; rhai-tracker doctor section live; customer names scrubbed from skill texts). Active R4 waves complete.
 - **Update** — R4 wave 2: blog-create + blog-mockup ported (guide co-located as skill reference); first real blog will be the smoke.
 - **Update** — R4 wave 1: presentation-create ported (10 adaptations); first enablement artifact migrated + published (mcp-registry catalog deck).
 - **Update** — Batch 6 applied: workspace document parity → 48 docs into research/, strategy/, and work/ (agent-memory 27, agent-registry 9, skills-registry 10, agent-ops 1, gen-ai-studio 1); document parity COMPLETE.

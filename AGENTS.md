@@ -57,6 +57,9 @@ First-party content skills (ported from ai-asset-registry, adapted to hub conven
 | presentation-create | build Red Hat-branded HTML decks/pages under a feature's enablement/ (ships via hub.publish) |
 | blog-create | multi-agent Red Hat blog drafting + review pipeline under a feature's enablement/ (final draft ships via Workfront, not hub.publish) |
 | blog-mockup | quick Red Hat-branded HTML preview of any blog content (lightweight alternative to blog-create's full pipeline; ships via hub.publish only on request) |
+| customer-feedback-ingest | add/update a customer in the restricted interest tracker from a transcript, email, Jira ticket, or pasted notes |
+| customer-feedback-refresh | audit the tracker for staleness, missing sources, and accuracy |
+| customer-feedback-sync | diff the tracker against the shared Google Sheet and push approved changes via rhai-tracker MCP (gated) |
 
 Shared skills (rfe.*, strat.*, assess-rfe…) come from the ODH marketplace —
 see `.claude/settings.json`.

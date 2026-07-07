@@ -15,6 +15,7 @@ description: Set up or health-check this machine for the hub — python deps, OD
    - Marketplace plugins actually installed: have the user run /plugin and
      confirm rfe-creator appears; if not, the workspace trust prompt was
      probably declined — reopen the repo and accept it.
-   - Slack / podman / rhai-tracker MCP sections are NOT yet ported from the
-     old repo-doctor. If needed, port them on-touch from
+   - rhai-tracker MCP (section 7) was ported in R4 wave 3 — check/setup both
+     work. Slack / podman sections are still NOT ported from the old
+     repo-doctor. If needed, port them on-touch from
      C:/Users/peter/code/rh/ai-asset-registry/.claude/skills/repo-doctor/.

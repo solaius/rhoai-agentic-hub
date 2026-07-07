@@ -10,16 +10,28 @@ review_after: 2026-07-20
   migrated (batch 6: 48 docs incl. the 19-doc agent-memory series); every
   meaningful text file from the old repo now lives in the hub or was ruled
   dead/covered.
-- **R4 waves 1–2 done**: `presentation-create` (wave 1: ported + first
-  enablement artifact published, mcp-registry catalog deck) and
-  `blog-create`/`blog-mockup` (wave 2: ported, guide co-located as skill
-  reference; first real blog post is the smoke). Remaining: wave 3 =
+- **R4 waves 1–3 done**: `presentation-create` (wave 1: ported + first
+  enablement artifact published, mcp-registry catalog deck), `blog-create`/
+  `blog-mockup` (wave 2: ported, guide co-located as skill reference; first
+  real blog post is the smoke), and `customer-feedback-ingest`/`refresh`/
+  `sync` (wave 3: ported — tracker data model splits restricted local HTML +
+  transcripts from the external `c-tracker` sibling repo; `doctor.sh`
+  section 7 registers the `rhai-tracker` MCP server; all six real customer
+  names found in the old skill text were scrubbed to placeholders; first
+  real ingest/sync is the smoke). **Active R4 waves complete.** Remaining:
+  `knowledge-hub-create` and the HTML hub sites (RHCL, MCP ecosystem)
+  continue on-touch, gated on publishing decisions; `rice-strats` remains
+  unscheduled; R5/R6 runbooks unchanged.
+
+## History
+- 2026-07-06 — **Update** — superseded: "R4 waves 1–2 done: `presentation-create`
+  (wave 1: ported + first enablement artifact published, mcp-registry catalog
+  deck) and `blog-create`/`blog-mockup` (wave 2: ported, guide co-located as
+  skill reference; first real blog post is the smoke). Remaining: wave 3 =
   `customer-feedback-ingest`/`refresh`/`sync` suite (pull-driven, per real
   demand); `knowledge-hub-create`, the HTML hub sites (RHCL, MCP ecosystem),
   and `rice-strats` all continue on-touch/unscheduled, gated on publishing
-  decisions; R5/R6 runbooks unchanged.
-
-## History
+  decisions; R5/R6 runbooks unchanged." (source: R4 wave 3 apply)
 - 2026-07-06 — **Update** — superseded: "R4 wave 1 done: presentation-create
   ported + first enablement artifact published (mcp-registry catalog deck).
   Remaining: wave 2 = `blog-create`/`blog-mockup`, wave 3 =

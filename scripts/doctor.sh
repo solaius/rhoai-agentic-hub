@@ -83,5 +83,97 @@ echo "[6] structure"
 if python "$ROOT/scripts/hub_lint.py" >/dev/null; then ok "hub_lint: 0 errors"; else fail "hub_lint errors — run: python scripts/hub_lint.py"; fi
 if python "$ROOT/scripts/hub_index.py" --check >/dev/null; then ok "indexes fresh"; else warn "indexes stale — run: python scripts/hub_index.py"; fi
 
+echo "[7] customer tracker (rhai-tracker MCP)"
+# Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 5
+# (C:/Users/peter/code/rh/ai-asset-registry/.claude/skills/repo-doctor/bootstrap.sh).
+# Being on disk is NOT enough for the MCP to work — four separate states,
+# each reported separately so "cloned" can't masquerade as "functional":
+# (a) clone present, (b) registered in .mcp.json, (c) node deps installed,
+# (d) server/.env present.
+# Override keys (set in restricted/.env): CTRACK_DIR (where the clone lives)
+# and CTRACK_REPO_URL (where to clone it from — surfaced in the remediation
+# message below; this section does not auto-clone).
+CTRACK_DIR="${CTRACK_DIR:-../c-tracker}"
+# Default assumes a sibling clone named c-tracker, matching the
+# ai-asset-registry .env convention (CTRACK_DIR=.../c-tracker). Override
+# CTRACK_DIR in restricted/.env if your clone lives elsewhere or under a
+# different name.
+case "$CTRACK_DIR" in /*|?:*) ABS_CTRACK="$CTRACK_DIR" ;; *) ABS_CTRACK="$ROOT/$CTRACK_DIR" ;; esac
+SERVER_JS="$ABS_CTRACK/server/mcp-server.js"
+SERVER_DIR="$ABS_CTRACK/server"
+
+# 7a. clone / presence
+if [ -f "$SERVER_JS" ]; then
+  ok "c-tracker present ($ABS_CTRACK)"
+else
+  fail "c-tracker missing at $ABS_CTRACK (clone ${CTRACK_REPO_URL:-git@gitlab.cee.redhat.com:rh-ai-pm/rhai-customer-tracker.git}, or set CTRACK_DIR/CTRACK_REPO_URL in restricted/.env)"
+fi
+
+# 7b. register in .mcp.json — creates the file if absent (gitignored; see
+# the .mcp.json line in .gitignore). Idempotent: an unchanged path is a
+# no-op OK, never a rewrite.
+if [ -f "$SERVER_JS" ]; then
+  RESULT=$(python - "$ROOT/.mcp.json" "$SERVER_JS" "$MODE" <<'PY'
+import json, os, shutil, sys
+p, server, mode = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    d = json.load(open(p))
+    if not isinstance(d, dict): d = {}
+except Exception:
+    d = {}
+srv = d.setdefault("mcpServers", {})
+cur = (srv.get("rhai-tracker", {}).get("args", [None]) or [None])[-1] or ""
+if cur.lower() == server.lower():
+    print("ok")
+elif mode == "setup":
+    if os.path.exists(p): shutil.copy(p, p + ".bak")
+    srv["rhai-tracker"] = {"command": "node", "args": [server]}
+    json.dump(d, open(p, "w"), indent=2)
+    open(p, "a").write("\n")
+    print("wrote")
+elif cur:
+    print("warn:" + cur)
+else:
+    print("fail")
+PY
+)
+  case "$RESULT" in
+    ok)     ok ".mcp.json rhai-tracker registered" ;;
+    wrote)  ok ".mcp.json rhai-tracker registered -> $SERVER_JS (restart Claude Code)" ;;
+    warn:*) warn ".mcp.json path (${RESULT#warn:}) != $SERVER_JS — run: bash scripts/doctor.sh setup" ;;
+    fail)   fail "rhai-tracker not registered in .mcp.json — run: bash scripts/doctor.sh setup" ;;
+    *)      warn "could not evaluate .mcp.json (python error?)" ;;
+  esac
+fi
+
+# 7c. node deps — the server won't start without them
+if [ -f "$SERVER_JS" ]; then
+  if [ -d "$SERVER_DIR/node_modules" ]; then
+    ok "tracker server deps installed"
+  elif [ "$MODE" = "setup" ]; then
+    if command -v npm >/dev/null; then
+      ( cd "$SERVER_DIR" && npm install >/dev/null 2>&1 ) && ok "tracker server deps installed" || fail "npm install failed in $SERVER_DIR (run it by hand to see why)"
+    else
+      fail "npm not found — cannot install tracker server deps"
+    fi
+  else
+    warn "tracker server deps not installed — run: bash scripts/doctor.sh setup (needs npm)"
+  fi
+fi
+
+# 7d. server/.env — Google Sheets + AI-provider secrets, NOT in restricted/.env.
+# setup only scaffolds the template; it never invents secret values.
+if [ -f "$SERVER_JS" ]; then
+  SENV="$SERVER_DIR/.env"
+  if [ -f "$SENV" ]; then
+    ok "tracker server/.env present"
+  elif [ "$MODE" = "setup" ] && [ -f "$ABS_CTRACK/.env.example" ]; then
+    cp "$ABS_CTRACK/.env.example" "$SENV"
+    warn "scaffolded tracker server/.env from .env.example — fill GOOGLE_SPREADSHEET_ID, Google OAuth client ID/secret, and an AI_PROVIDER (see c-tracker README)"
+  else
+    warn "tracker server/.env missing (needs GOOGLE_SPREADSHEET_ID + Google OAuth + AI provider)"
+  fi
+fi
+
 echo "== result: $PASS ok, $WARN warn, $FAIL fail"
 [ "$FAIL" -eq 0 ]
