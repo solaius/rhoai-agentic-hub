@@ -10,6 +10,11 @@ CLI (`gh auth status` must pass), Python 3.11+, Claude Code.
    it enables the ODH skills marketplace declared in `.claude/settings.json`.
 3. In Claude Code run `/plugin` — confirm `rfe-creator` is installed (accept
    the install prompt if offered).
+
+Optional (content skills like presentation-create): the superpowers plugin
+and the Google Workspace MCP — install per their own docs if you'll build
+decks/blogs.
+
 4. Run the doctor's fix mode: `bash scripts/doctor.sh setup`
    (installs Python deps, creates `memory/.scratch/`, writes
    `.claude/settings.local.json` with the auto-memory redirect).

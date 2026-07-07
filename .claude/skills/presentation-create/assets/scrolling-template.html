@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{TITLE}} — Red Hat OpenShift AI</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === NAVIGATION === */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hat {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--rh-red);
+      color: white;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 0.65rem;
+      border-radius: 4px;
+    }
+    .nav-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-family: var(--font-text);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* === SECTIONS === */
+    section {
+      padding: 5rem 1.5rem;
+      scroll-margin-top: calc(var(--nav-height) + 16px);
+    }
+    .section-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; }
+    .accent     { color: var(--rh-red); }
+
+    /* === HERO === */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding-top: calc(var(--nav-height) + 3rem);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -100px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238, 0, 0, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+    }
+
+    /* === SCROLL ANIMATIONS === */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+    }
+    @media (max-width: 1024px) {
+      .nav-links { gap: 1rem; }
+    }
+
+    /* {{CUSTOM_STYLES}} */
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">{{NAV_TITLE}}</span>
+      </div>
+      <div class="nav-links">
+        <!-- {{NAV_LINKS}} — one per section -->
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#roadmap">Roadmap</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RED HAT OPENSHIFT AI</div>
+      <h1 class="display-xl animate-on-scroll"><span class="accent">{{TITLE_ACCENT}}</span> {{TITLE_REST}}</h1>
+      <p class="lead animate-on-scroll">{{TAGLINE}}</p>
+
+      <!-- Optional: Stats strip -->
+      <div class="animate-on-scroll" style="display: flex; gap: 2.5rem; margin-top: 2rem;">
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">{{STAT_1_VALUE}}</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">{{STAT_1_LABEL}}</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">{{STAT_2_VALUE}}</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">{{STAT_2_LABEL}}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== PROBLEM ===== -->
+  <section id="problem">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE CHALLENGE</div>
+      <h2 class="display-lg animate-on-scroll">{{PROBLEM_TITLE}}</h2>
+      <p class="lead animate-on-scroll">{{PROBLEM_LEAD}}</p>
+
+      <!-- Add problem scenario cards here -->
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== SOLUTION ===== -->
+  <section id="solution">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE SOLUTION</div>
+      <h2 class="display-lg animate-on-scroll">{{SOLUTION_TITLE}}</h2>
+      <p class="lead animate-on-scroll">{{SOLUTION_LEAD}}</p>
+
+      <!-- Add solution content, capability cards, diagrams here -->
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <section id="architecture">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ARCHITECTURE</div>
+      <h2 class="display-lg animate-on-scroll">{{ARCHITECTURE_TITLE}}</h2>
+      <p class="lead animate-on-scroll">{{ARCHITECTURE_LEAD}}</p>
+
+      <!-- Add architecture diagram here (Cytoscape.js, CSS, or SVG) -->
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== ROADMAP ===== -->
+  <section id="roadmap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ROADMAP</div>
+      <h2 class="display-lg animate-on-scroll">{{ROADMAP_TITLE}}</h2>
+
+      <!-- Add timeline/roadmap columns here -->
+
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== CTA ===== -->
+  <section id="cta" style="text-align: center;">
+    <div class="section-inner" style="display: flex; flex-direction: column; align-items: center;">
+      <div class="section-label animate-on-scroll">NEXT STEPS</div>
+      <h2 class="display-lg animate-on-scroll">{{CTA_TITLE}}</h2>
+      <p class="lead animate-on-scroll" style="text-align: center; max-width: 60ch;">{{CTA_LEAD}}</p>
+
+      <div class="animate-on-scroll" style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; justify-content: center;">
+        <a href="{{CTA_PRIMARY_URL}}" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--rh-red); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; transition: background 180ms;">
+          {{CTA_PRIMARY_TEXT}} &#x2192;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <p style="font-size: 0.8rem; color: var(--text-muted);">{{AUTHOR}} &mdash; {{ROLE}}</p>
+  </footer>
+
+  <!-- ===== SCROLL ANIMATION OBSERVER ===== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Active nav link tracking
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)'
+              : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{TITLE}} — Red Hat OpenShift AI</title>
+  <meta name="description" content="{{DESCRIPTION}}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --stagger-delay:    80ms;
+      --transition-exit:  220ms;
+      --transition-enter: 350ms;
+      --ease-out-pop:     cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* === BASE === */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    main.deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-canvas);
+    }
+
+    /* === SLIDE LAYOUT === */
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      min-height: 100vh;
+      padding: 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition:
+        opacity var(--transition-exit) ease-in,
+        transform var(--transition-exit) ease-in,
+        visibility 0s linear var(--transition-exit);
+    }
+    .slide-inner {
+      max-width: var(--content-max);
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* === SLIDE VISIBILITY — add selectors as needed for more slides === */
+    /* {{SLIDE_VISIBILITY_CSS}} */
+
+    /* === EYEBROW === */
+    .slide-eyebrow {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      font-family: var(--font-mono);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; font-family: var(--font-text); }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; font-family: var(--font-text); }
+    .accent     { color: var(--rh-red); }
+
+    /* === MOTION LIBRARY === */
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes scale-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+    /* === ANIMATION TRIGGERS === */
+    main.deck .slide.current .anim-fade-up     { animation: fade-up    400ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-fade-in     { animation: fade-in    400ms ease-out both;           animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-right { animation: slide-right 500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-left  { animation: slide-left  500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-scale-in    { animation: scale-in   450ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+
+    /* === CONTROLS === */
+    .deck-controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      background: rgba(21, 21, 21, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      z-index: 50;
+    }
+    .deck-controls button {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      border: none;
+      color: var(--rh-red);
+      font-size: 1.3rem;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 180ms ease-out, color 180ms ease-out;
+    }
+    .deck-controls button:hover:not(:disabled) { background: rgba(238, 0, 0, 0.15); color: #ff4444; }
+    .deck-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .deck-dots { display: flex; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
+    .deck-dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; background: var(--text-muted); transition: background 180ms, transform 180ms; color: transparent; font-size: 0; border: none; cursor: pointer; }
+    .deck-dots button[aria-current="true"] { background: var(--rh-red); transform: scale(1.4); box-shadow: 0 0 12px rgba(238, 0, 0, 0.5); }
+    .deck-dots button:hover { background: #ff4444; }
+    .deck-counter { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.06em; padding: 0 var(--space-sm); border-left: 1px solid var(--border-subtle); }
+    .deck-controls button:focus-visible, .deck-dots button:focus-visible { outline: 2px solid var(--rh-red); outline-offset: 2px; }
+
+    /* === OVERVIEW (Escape key) === */
+    .deck-overview { position: fixed; inset: 0; background: rgba(21,21,21,0.97); backdrop-filter: blur(12px); z-index: 100; padding: 4rem 3rem; overflow-y: auto; }
+    .deck-overview[hidden] { display: none; }
+    .overview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-width: 1100px; margin: 0 auto; }
+    .overview-thumb { aspect-ratio: 16/10; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 1rem; cursor: pointer; text-align: left; color: var(--text-secondary); display: flex; flex-direction: column; justify-content: space-between; font-family: var(--font-sans); transition: border-color 180ms, transform 180ms; }
+    .overview-thumb:hover, .overview-thumb:focus-visible { border-color: var(--rh-red); transform: translateY(-2px); outline: none; }
+    .overview-thumb .num { font-family: var(--font-mono); font-size: 0.75rem; color: var(--rh-red); letter-spacing: 0.15em; }
+    .overview-thumb .ttl { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); line-height: 1.25; }
+    .overview-thumb .beat { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    /* === NOTES (P key) === */
+    .deck-notes { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(21,21,21,0.95); border-top: 1px solid var(--rh-red); padding: 1rem 1.5rem; z-index: 60; }
+    .deck-notes[hidden] { display: none; }
+    .notes-label { color: var(--rh-red); font-size: var(--fs-label); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin: 0 0 0.3rem; }
+    .notes-body { color: var(--text-secondary); font-size: 0.9rem; margin: 0; font-family: var(--font-text); }
+    .deck-notes kbd { font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 0.15rem 0.4rem; border-radius: 3px; color: var(--rh-red); }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 180ms !important; }
+      main.deck .slide.current .anim-fade-up,
+      main.deck .slide.current .anim-slide-right,
+      main.deck .slide.current .anim-slide-left,
+      main.deck .slide.current .anim-scale-in,
+      main.deck .slide.current .anim-fade-in { animation: fade-in 180ms ease-out both; }
+    }
+
+    /* === PRINT === */
+    @media print {
+      html, body, main.deck { overflow: visible; height: auto; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      main.deck { background: var(--bg-canvas) !important; }
+      .deck-controls, .deck-overview, .deck-notes { display: none !important; }
+      .slide { position: relative; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto; page-break-after: always; break-after: page; background: var(--bg-canvas); padding: 0.5in; min-height: auto; }
+      .slide-eyebrow { color: var(--rh-red) !important; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 1.8rem; --fs-display-lg: 1.4rem; --fs-body-lead: 1rem; }
+      .slide { padding: 2rem 1.25rem; }
+      .deck-controls { padding: 0.3rem 0.6rem; gap: 0.5rem; }
+      .deck-controls button { width: 32px; height: 32px; font-size: 1.05rem; }
+      .deck-dots button { width: 8px; height: 8px; }
+      .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* {{CUSTOM_STYLES}} */
+  </style>
+</head>
+<body>
+  <main class="deck" data-slide-current="1" tabindex="0">
+
+    <!-- ===== SLIDE 1: TITLE ===== -->
+    <section class="slide" data-slide="1" role="group" aria-label="Title">
+      <div class="slide-inner" style="display: flex; flex-direction: column; justify-content: center; min-height: 85vh; position: relative;">
+        <div style="position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(238,0,0,0.2) 0%, transparent 70%); pointer-events: none;"></div>
+        <div class="anim-fade-up" style="--index: 0">
+          <div class="slide-eyebrow">RED HAT OPENSHIFT AI</div>
+        </div>
+        <h1 class="display-xl anim-fade-up" style="--index: 1"><span class="accent">{{TITLE_ACCENT}}</span> {{TITLE_REST}}</h1>
+        <p class="lead anim-fade-up" style="--index: 2">{{TAGLINE}}</p>
+        <div class="slide-notes">{{SLIDE_1_NOTES}}</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2: PROBLEM ===== -->
+    <section class="slide" data-slide="2" role="group" aria-label="Problem">
+      <div class="slide-inner">
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">THE CHALLENGE</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1">{{PROBLEM_TITLE}}</h2>
+        <p class="lead anim-fade-up" style="--index: 2">{{PROBLEM_LEAD}}</p>
+        <!-- Add problem scenario cards here -->
+        <div class="slide-notes">{{SLIDE_2_NOTES}}</div>
+      </div>
+    </section>
+
+    <!-- ===== ADD MORE SLIDES HERE ===== -->
+    <!-- Copy the slide pattern above. Each slide needs:
+         - data-slide="N" attribute (sequential number)
+         - role="group" and aria-label
+         - .slide-inner wrapper
+         - .slide-notes for presenter notes (hidden, shown with P key) -->
+
+    <!-- ===== OVERVIEW GRID (Escape key) ===== -->
+    <div class="deck-overview" hidden aria-label="Slide overview">
+      <div class="overview-grid">
+        <!-- {{OVERVIEW_THUMBS}} — one per slide -->
+        <button class="overview-thumb" data-goto="1"><span class="num">01</span><span class="ttl">Title</span><span class="beat">OPENING</span></button>
+        <button class="overview-thumb" data-goto="2"><span class="num">02</span><span class="ttl">Problem</span><span class="beat">CHALLENGE</span></button>
+      </div>
+    </div>
+
+    <!-- ===== NOTES PANEL (P key) ===== -->
+    <div class="deck-notes" hidden>
+      <p class="notes-label">Presenter Notes &middot; <kbd>P</kbd> to toggle</p>
+      <p class="notes-body" id="notes-body"></p>
+    </div>
+  </main>
+
+  <!-- ===== CONTROLS ===== -->
+  <nav class="deck-controls" aria-label="Slide navigation">
+    <button class="btn-prev" aria-label="Previous slide">&#x2190;</button>
+    <ol class="deck-dots" role="tablist">
+      <!-- {{DECK_DOTS}} — one per slide -->
+      <li><button role="tab" data-goto="1" aria-label="Go to slide 1"></button></li>
+      <li><button role="tab" data-goto="2" aria-label="Go to slide 2"></button></li>
+    </ol>
+    <span class="deck-counter">01 / 02</span>
+    <button class="btn-next" aria-label="Next slide">&#x2192;</button>
+  </nav>
+
+  <script>
+    (function () {
+      var deck = document.querySelector('main.deck');
+      var TOTAL = deck.querySelectorAll('.slide').length;
+      var dots = Array.from(document.querySelectorAll('.deck-dots button'));
+      var btnPrev = document.querySelector('.btn-prev');
+      var btnNext = document.querySelector('.btn-next');
+      var counter = document.querySelector('.deck-counter');
+      var overview = document.querySelector('.deck-overview');
+      var notes = document.querySelector('.deck-notes');
+      var notesBody = document.getElementById('notes-body');
+
+      // Generate slide visibility CSS dynamically
+      var style = document.createElement('style');
+      var css = '';
+      for (var i = 1; i <= TOTAL; i++) {
+        css += 'main.deck[data-slide-current="' + i + '"] .slide[data-slide="' + i + '"] { opacity:1; visibility:visible; pointer-events:auto; transform:scale(1); transition: opacity var(--transition-enter) var(--ease-out-pop), transform var(--transition-enter) var(--ease-out-pop), visibility 0s linear 0s; }\n';
+      }
+      style.textContent = css;
+      document.head.appendChild(style);
+
+      var state = { current: 1, overviewOpen: false, notesOpen: false };
+
+      function clamp(n) { return Math.max(1, Math.min(TOTAL, n)); }
+
+      function getSlideNotes(n) {
+        var slide = deck.querySelector('.slide[data-slide="' + n + '"]');
+        if (!slide) return '';
+        var notesEl = slide.querySelector('.slide-notes');
+        return notesEl ? notesEl.textContent : '';
+      }
+
+      function render() {
+        deck.setAttribute('data-slide-current', String(state.current));
+        counter.textContent = String(state.current).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+        dots.forEach(function (d, i) {
+          if (i + 1 === state.current) d.setAttribute('aria-current', 'true');
+          else d.removeAttribute('aria-current');
+        });
+        Array.from(deck.querySelectorAll('.slide')).forEach(function (s) {
+          var n = parseInt(s.getAttribute('data-slide'), 10);
+          if (n === state.current) { s.classList.add('current'); s.removeAttribute('aria-hidden'); }
+          else { s.classList.remove('current'); s.setAttribute('aria-hidden', 'true'); }
+        });
+        btnPrev.disabled = state.current === 1;
+        btnNext.disabled = state.current === TOTAL;
+        if (state.notesOpen) {
+          var txt = getSlideNotes(state.current);
+          notesBody.textContent = txt || '(No notes for this slide)';
+        }
+        requestAnimationFrame(fireSlideAnimations);
+      }
+
+      function goTo(n) { var next = clamp(n); if (next === state.current) return; state.current = next; render(); syncHash(); }
+      function next() { goTo(state.current + 1); }
+      function prev() { goTo(state.current - 1); }
+
+      function syncHash() { var h = '#s=' + state.current; if (location.hash !== h) history.replaceState(null, '', h); }
+      function readHash() { var m = /^#s=(\d{1,2})$/.exec(location.hash || ''); return m ? clamp(parseInt(m[1], 10)) : 1; }
+
+      var digitBuffer = '', digitTimer = null;
+      function clearBuffer() { digitBuffer = ''; if (digitTimer) { clearTimeout(digitTimer); digitTimer = null; } }
+
+      function onKey(e) {
+        if (state.overviewOpen) return onOverviewKey(e);
+        var k = e.key;
+        if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); next(); clearBuffer(); return; }
+        if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); clearBuffer(); return; }
+        if (k === 'Home') { e.preventDefault(); goTo(1); clearBuffer(); return; }
+        if (k === 'End')  { e.preventDefault(); goTo(TOTAL); clearBuffer(); return; }
+        if (k === 'Escape') { e.preventDefault(); toggleOverview(); clearBuffer(); return; }
+        if (k === 'p' || k === 'P') { e.preventDefault(); toggleNotes(); clearBuffer(); return; }
+        if (/^[0-9]$/.test(k)) {
+          e.preventDefault();
+          digitBuffer += k;
+          if (digitTimer) clearTimeout(digitTimer);
+          if (digitBuffer.length === 2) { goTo(parseInt(digitBuffer, 10)); clearBuffer(); return; }
+          digitTimer = setTimeout(function () { var n = parseInt(digitBuffer, 10); if (n >= 1 && n <= 9) goTo(n); clearBuffer(); }, 600);
+        }
+      }
+
+      btnPrev.addEventListener('click', prev);
+      btnNext.addEventListener('click', next);
+      dots.forEach(function (d) { d.addEventListener('click', function () { goTo(parseInt(d.getAttribute('data-goto'), 10)); }); });
+      window.addEventListener('keydown', onKey);
+
+      Array.from(overview.querySelectorAll('.overview-thumb')).forEach(function (t) {
+        t.addEventListener('click', function () { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); });
+      });
+
+      function applyStaggerIndices(slide) {
+        Array.from(slide.querySelectorAll('[data-stagger] > *')).forEach(function (el, i) { el.style.setProperty('--index', String(i)); });
+      }
+      function fireSlideAnimations() { var cur = deck.querySelector('.slide.current'); if (cur) applyStaggerIndices(cur); }
+
+      function toggleOverview() { state.overviewOpen ? closeOverview() : openOverview(); }
+      function openOverview() { state.overviewOpen = true; overview.hidden = false; var active = overview.querySelector('.overview-thumb[data-goto="' + state.current + '"]'); if (active) active.focus(); }
+      function closeOverview() { state.overviewOpen = false; overview.hidden = true; deck.focus(); }
+      function onOverviewKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); closeOverview(); }
+        if (e.key === 'Enter') { var t = document.activeElement; if (t && t.classList.contains('overview-thumb')) { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); } }
+      }
+
+      function toggleNotes() { if (!notes) return; state.notesOpen = !state.notesOpen; notes.hidden = !state.notesOpen; if (state.notesOpen) { notesBody.textContent = getSlideNotes(state.current) || '(No notes for this slide)'; } }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        state.current = readHash();
+        render();
+        window.addEventListener('hashchange', function () { state.current = readHash(); render(); });
+      });
+
+      window.__deck = { goTo: goTo, next: next, prev: prev, state: state };
+    }());
+  </script>
+</body>
+</html>

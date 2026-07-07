@@ -21,5 +21,8 @@ Rules:
   descriptions. The pages repo holds built artifacts only — no knowledge.
 - Use the `hub.publish` skill; publishing is a disclosure decision and gets an
   inline confirm.
+- Each enablement artifact is a self-contained directory —
+  `features/<f>/enablement/<slug>/` with index.html as its entry point;
+  assets live inside it.
 
 Live root: https://solaius.github.io/rhoai-agentic-hub-pages/

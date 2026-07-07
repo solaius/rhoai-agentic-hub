@@ -51,6 +51,11 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.publish | add/update a publish manifest entry (gated) |
 | hub.migrate | bring content over from ai-asset-registry, reshaped |
 
+First-party content skills (ported from ai-asset-registry, adapted to hub conventions):
+| skill | use for |
+|---|---|
+| presentation-create | build Red Hat-branded HTML decks/pages under a feature's enablement/ (ships via hub.publish) |
+
 Shared skills (rfe.*, strat.*, assess-rfe…) come from the ODH marketplace —
 see `.claude/settings.json`.
 
