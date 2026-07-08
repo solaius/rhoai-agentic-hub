@@ -1,5 +1,6 @@
 # NDA / local-only content — never tracked
-restricted/
+restricted/*
+!restricted/.env.example
 
 # Machine-specific MCP config (rhai-tracker path is per-machine; regenerated
 # by hub.doctor / scripts/doctor.sh)
