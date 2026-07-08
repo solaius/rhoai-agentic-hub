@@ -29,6 +29,11 @@ servers use:
 | `SLACK_XOXC_TOKEN` / `SLACK_XOXD_TOKEN` | slack | **session** tokens; they expire (see below) |
 | `SLACK_MCP_TRANSPORT` / `SLACK_LOGS_CHANNEL_ID` | slack | optional; default `stdio` / empty |
 
+That (plus `JIRA_*` and the `CTRACK_*` overrides) is the complete set. In
+particular, **LLM-provider credentials never belong in `restricted/.env`** —
+anyone using this repo already has Claude Code or Cursor set up with working
+LLM access, and nothing in the hub configures, checks, or touches that auth.
+
 With those in place, `bash scripts/doctor.sh setup` (doctor sections 8–9)
 writes both server definitions — secrets included — into your Claude config
 (backed up to `*.bak` first) and prepares the Slack runtime. **Restart

@@ -65,11 +65,9 @@ else
 fi
 
 echo "[4] restricted/.env"
-# LLM-provider credentials the .env may carry but we deliberately do NOT let
-# it inject into this process (or anything this script writes): anyone
-# running this already has working LLM access via Claude Code/Cursor, and
-# exporting these would hijack that auth. Deliberate — don't re-add.
-LLM_VARS="CLAUDE_CODE_USE_VERTEX ANTHROPIC_VERTEX_PROJECT_ID CLOUD_ML_REGION GOOGLE_APPLICATION_CREDENTIALS ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN"
+# The .env carries repo tooling secrets only (Jira, MCP servers, tracker
+# overrides) — never LLM-provider credentials; Claude Code/Cursor is set up
+# before this repo and the hub never configures or touches that auth.
 ENV_FILE="$ROOT/restricted/.env"
 if [ -f "$ENV_FILE" ]; then
   # Source it (values never printed) so later sections can use it: section
@@ -79,8 +77,6 @@ if [ -f "$ENV_FILE" ]; then
   # shellcheck disable=SC1090
   . "$ENV_FILE"
   set +a
-  # shellcheck disable=SC2086
-  unset $LLM_VARS
   for k in JIRA_SERVER JIRA_USER JIRA_TOKEN; do
     if [ -n "${!k:-}" ]; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
   done

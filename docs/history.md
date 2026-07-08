@@ -65,13 +65,15 @@ Deliberately deferred, in rough priority order:
 - `rice-strats` skill port — the rubric it needs is already here at
   `features/platform/strategy/rice-scoring-rubric.md`.
 - Remaining old-repo-doctor coverage: `~/.bashrc` shell-env wiring (so
-  `JIRA_*` reaches every shell, keeping the deliberate exclusion of
-  LLM-provider credentials) and the Jira/Slack connectivity probes — needed
-  the first time Jira-using skills (`rfe.*`, `rice-strats`) run on a
+  `JIRA_*` reaches every shell) and the Jira/Slack connectivity probes —
+  needed the first time Jira-using skills (`rfe.*`, `rice-strats`) run on a
   hub-only machine, where nothing else exports `JIRA_*` into the shell.
-  (The doctor itself now sources `restricted/.env` — with the same LLM-cred
-  exclusion — for its own run, and the Slack-MCP/podman sections were
-  ported in R4 wave 4; only the `~/.bashrc` wiring and probes remain.)
+  (The doctor itself now sources `restricted/.env` for its own run, and the
+  Slack-MCP/podman sections were ported in R4 wave 4; only the `~/.bashrc`
+  wiring and probes remain. Owner ruling 2026-07-08: the old doctor's
+  LLM-provider-credential handling is deliberately **not** carried into
+  the hub in any form — hub users arrive with Claude Code/Cursor already
+  configured, and `restricted/.env` never carries such keys.)
 - Old-repo HTML enablement artifacts — migrate on touch, per D6.
 - Two open content flags, tracked in the entries themselves: the
   security-pipeline schema future-vs-superseded note, and two inferred
