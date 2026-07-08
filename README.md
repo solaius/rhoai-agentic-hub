@@ -39,6 +39,7 @@ rulebook; `views/` and every `index.md` are generated — never hand-edited;
 | [docs/skills.md](docs/skills.md) | every skill — when to use it, what it does, what's gated |
 | [docs/publishing.md](docs/publishing.md) | manifest → CI → public pages site, end to end |
 | [docs/tooling.md](docs/tooling.md) | scripts, linter, indexer, doctor, tests, CI |
+| [docs/mcp-servers.md](docs/mcp-servers.md) | the MCP servers skills rely on — Slack, Google Workspace, rhai-tracker — setup and traps |
 | [docs/history.md](docs/history.md) | lineage: charter, build, migration from the old repo |
 | [conventions/](conventions/) | the normative rulebook the linter enforces |
 

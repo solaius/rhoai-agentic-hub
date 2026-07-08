@@ -21,6 +21,7 @@ gated review batches. The old repo remains as a read-only archive.
 | 2026-07-06 | **R4 wave 1** — `presentation-create` ported (reviewed-and-adapted, not lift-and-shift); first artifact published: the MCP Registry catalog deck |
 | 2026-07-06 | **R4 wave 2** — `blog-create` + `blog-mockup` ported (blog guide co-located as a skill reference) |
 | 2026-07-06 | **R4 wave 3** — customer-feedback suite ported; tracker data model moved to `restricted/`; rhai-tracker doctor section added |
+| 2026-07-08 | **R4 wave 4** — Slack + Google Workspace MCP setup ported: doctor sections 8–9 (Claude-config write, podman runtime), `restricted/.env` sourcing, [/docs/mcp-servers.md](/docs/mcp-servers.md) |
 
 ## Where the full records live
 
@@ -63,13 +64,14 @@ Deliberately deferred, in rough priority order:
   update-hub skills) — port at the next piece of hub-site work.
 - `rice-strats` skill port — the rubric it needs is already here at
   `features/platform/strategy/rice-scoring-rubric.md`.
-- Slack-MCP/podman doctor sections — port from the old repo's repo-doctor
-  when hub sessions need the Slack MCP.
-- Remaining old-repo-doctor coverage: shell-env wiring (sourcing
-  `restricted/.env` from `~/.bashrc`, keeping its deliberate exclusion of
+- Remaining old-repo-doctor coverage: `~/.bashrc` shell-env wiring (so
+  `JIRA_*` reaches every shell, keeping the deliberate exclusion of
   LLM-provider credentials) and the Jira/Slack connectivity probes — needed
   the first time Jira-using skills (`rfe.*`, `rice-strats`) run on a
   hub-only machine, where nothing else exports `JIRA_*` into the shell.
+  (The doctor itself now sources `restricted/.env` — with the same LLM-cred
+  exclusion — for its own run, and the Slack-MCP/podman sections were
+  ported in R4 wave 4; only the `~/.bashrc` wiring and probes remain.)
 - Old-repo HTML enablement artifacts — migrate on touch, per D6.
 - Two open content flags, tracked in the entries themselves: the
   security-pipeline schema future-vs-superseded note, and two inferred

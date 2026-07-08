@@ -97,8 +97,11 @@ through the gate. Never a straight copy, never an edit to the old repo.
 
 **`hub.doctor`** — `bash scripts/doctor.sh [check|setup]` with a skill
 wrapper. `check` is read-only; `setup` installs deps and writes the
-per-machine config (auto-memory redirect, `.mcp.json` for rhai-tracker).
-Section-by-section reference: [/docs/tooling.md](/docs/tooling.md).
+per-machine config (auto-memory redirect, `.mcp.json` for rhai-tracker, and
+the user-level slack + google-workspace MCP servers with secrets from
+`restricted/.env`). Section-by-section reference:
+[/docs/tooling.md](/docs/tooling.md); MCP server guide:
+[/docs/mcp-servers.md](/docs/mcp-servers.md).
 
 ## Content-skill notes
 

@@ -10,6 +10,7 @@ PASS=0; WARN=0; FAIL=0
 ok()   { echo "  OK    $1"; PASS=$((PASS+1)); }
 warn() { echo "  WARN  $1"; WARN=$((WARN+1)); }
 fail() { echo "  FAIL  $1"; FAIL=$((FAIL+1)); }
+note() { echo "        $1"; }   # follow-on detail; no counter
 
 echo "== hub.doctor ($MODE) — $ROOT"
 
@@ -64,12 +65,27 @@ else
 fi
 
 echo "[4] restricted/.env"
-if [ -f "$ROOT/restricted/.env" ]; then
+# LLM-provider credentials the .env may carry but we deliberately do NOT let
+# it inject into this process (or anything this script writes): anyone
+# running this already has working LLM access via Claude Code/Cursor, and
+# exporting these would hijack that auth. Deliberate — don't re-add.
+LLM_VARS="CLAUDE_CODE_USE_VERTEX ANTHROPIC_VERTEX_PROJECT_ID CLOUD_ML_REGION GOOGLE_APPLICATION_CREDENTIALS ANTHROPIC_API_KEY ANTHROPIC_AUTH_TOKEN"
+ENV_FILE="$ROOT/restricted/.env"
+if [ -f "$ENV_FILE" ]; then
+  # Source it (values never printed) so later sections can use it: section
+  # 7's CTRACK_* overrides, sections 8-9's MCP secrets. Handles both KEY=
+  # and 'export KEY=' line forms, which a plain grep for ^KEY= would not.
+  set -a
+  # shellcheck disable=SC1090
+  . "$ENV_FILE"
+  set +a
+  # shellcheck disable=SC2086
+  unset $LLM_VARS
   for k in JIRA_SERVER JIRA_USER JIRA_TOKEN; do
-    if grep -q "^\(export \)\{0,1\}$k=" "$ROOT/restricted/.env"; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
+    if [ -n "${!k:-}" ]; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
   done
 else
-  warn "restricted/.env not found (Jira-facing skills won't work; copy it from your other machine)"
+  warn "restricted/.env not found (Jira-facing skills and MCP setup won't work; copy it from your other machine)"
 fi
 
 echo "[5] pages repo clone (optional convenience)"
@@ -172,6 +188,174 @@ if [ -f "$SERVER_JS" ]; then
     warn "scaffolded tracker server/.env from .env.example — fill GOOGLE_SPREADSHEET_ID, Google OAuth client ID/secret, and an AI_PROVIDER (see rhai-customer-tracker README)"
   else
     warn "tracker server/.env missing (needs GOOGLE_SPREADSHEET_ID + Google OAuth + AI provider)"
+  fi
+fi
+
+echo "[8] Claude MCP servers (slack + google-workspace)"
+# Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 6
+# (C:/Users/peter/code/rh/ai-asset-registry/.claude/skills/repo-doctor/).
+# These two servers are USER-scoped — they live in the Claude config and
+# follow the profile, not the repo — so "not configured" can simply mean the
+# wrong profile is active. Full guide + traps: docs/mcp-servers.md.
+# setup writes each missing server (definition + secrets from restricted/
+# .env, sourced in section 4) into the config, backing it up to *.bak first.
+# Severity is intent-aware: missing server + secrets available = FAIL (setup
+# can fix it); missing server + no secrets = WARN (optional, nothing to do).
+CFG="${CLAUDE_CONFIG_DIR:+$CLAUDE_CONFIG_DIR/}"; CFG="${CFG:-$HOME/}.claude.json"
+[ -f "$CFG" ] || CFG="$HOME/.claude.json"
+note "target config: $CFG (profile-dependent — see docs/mcp-servers.md)"
+while IFS=$'\t' read -r kind msg; do
+  case "$kind" in
+    ok)    ok "$msg" ;;
+    wrote) ok "$msg (restart Claude Code)" ;;
+    warn)  warn "$msg" ;;
+    fail)  fail "$msg" ;;
+    *)     [ -n "${kind:-}" ] && warn "could not evaluate Claude config (python error?)" ;;
+  esac
+done < <(python - "$CFG" "$MODE" <<'PY'
+import json, os, shutil, sys
+cfg, mode = sys.argv[1], sys.argv[2]
+try:
+    d = json.load(open(cfg))
+    if not isinstance(d, dict): d = {}
+except Exception:
+    d = {}
+srv = d.setdefault("mcpServers", {})
+def want_slack():
+    return {"command": "podman", "args": ["run", "-i", "--rm",
+        "-e", "SLACK_XOXC_TOKEN", "-e", "SLACK_XOXD_TOKEN",
+        "-e", "MCP_TRANSPORT", "-e", "LOGS_CHANNEL_ID",
+        "quay.io/redhat-ai-tools/slack-mcp"],
+        "env": {"SLACK_XOXC_TOKEN": os.environ.get("SLACK_XOXC_TOKEN", ""),
+                "SLACK_XOXD_TOKEN": os.environ.get("SLACK_XOXD_TOKEN", ""),
+                "MCP_TRANSPORT": os.environ.get("SLACK_MCP_TRANSPORT", "stdio"),
+                "LOGS_CHANNEL_ID": os.environ.get("SLACK_LOGS_CHANNEL_ID", "")}}
+def want_google():
+    return {"type": "stdio", "command": "uvx", "args": ["workspace-mcp"],
+        "env": {"GOOGLE_OAUTH_CLIENT_ID": os.environ.get("GOOGLE_OAUTH_CLIENT_ID", ""),
+                "GOOGLE_OAUTH_CLIENT_SECRET": os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", ""),
+                "USER_GOOGLE_EMAIL": os.environ.get("USER_GOOGLE_EMAIL", ""),
+                "OAUTHLIB_INSECURE_TRANSPORT": os.environ.get("OAUTHLIB_INSECURE_TRANSPORT", "1")}}
+report = []; changed = False
+for name, builder, tok in (("slack", want_slack, "SLACK_XOXC_TOKEN"),
+                           ("google-workspace", want_google, "GOOGLE_OAUTH_CLIENT_ID")):
+    have_secret = bool(os.environ.get(tok))
+    if name in srv and srv[name].get("env", {}).get(tok):
+        report.append(("ok", f"{name} configured")); continue
+    if mode == "setup":
+        if have_secret:
+            srv[name] = builder(); changed = True
+            report.append(("wrote", f"{name} written to {cfg}"))
+        else:
+            report.append(("warn", f"{name}: {tok} not in restricted/.env - skipped (docs/mcp-servers.md)"))
+    elif have_secret:
+        report.append(("fail", f"{name} not configured - run: bash scripts/doctor.sh setup (or wrong profile? docs/mcp-servers.md)"))
+    else:
+        report.append(("warn", f"{name} not configured and no {tok} in restricted/.env - optional (docs/mcp-servers.md)"))
+if changed:
+    if os.path.exists(cfg): shutil.copy(cfg, cfg + ".bak")
+    json.dump(d, open(cfg, "w"), indent=2)
+for kind, msg in report: print(f"{kind}\t{msg}")
+PY
+)
+
+echo "[9] slack MCP runtime (podman)"
+# Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 7.
+# Section 8 can write the slack config while the thing that RUNS it is
+# missing — "slack configured" does NOT mean slack will load. Its command is
+# 'podman run … slack-mcp', so verify that runtime. Two traps this catches:
+#   1. Podman DESKTOP (the GUI) installed but the podman ENGINE (CLI) not —
+#      the GUI ships no podman.exe; the MCP silently never loads.
+#   2. Engine installed but absent from THIS shell's PATH (session predates
+#      the install) — a restarted Claude Code would find it, so the known
+#      Windows install path is checked too before calling it missing.
+# The engine install itself needs an ADMIN shell (winget's UAC prompt fails
+# silently otherwise), so it stays manual; setup starts the machine and
+# pre-pulls the image.
+IMG="quay.io/redhat-ai-tools/slack-mcp"
+SLACK_WANTED=0
+[ -n "${SLACK_XOXC_TOKEN:-}" ] && SLACK_WANTED=1
+if [ "$SLACK_WANTED" = 0 ] && [ -f "$CFG" ]; then
+  python -c 'import json,sys;d=json.load(open(sys.argv[1]));sys.exit(0 if "slack" in d.get("mcpServers",{}) else 1)' "$CFG" 2>/dev/null && SLACK_WANTED=1
+fi
+if [ "$SLACK_WANTED" = 0 ]; then
+  note "slack MCP not configured and no SLACK_XOXC_TOKEN — skipping podman checks"
+else
+  # Tokens are short-lived SESSION tokens (xoxc/xoxd) — presence is not
+  # validity. The extractor names them SLACK_MCP_XOXC_TOKEN/XOXD; rename to
+  # SLACK_XOXC_TOKEN/XOXD when pasting into restricted/.env.
+  if [ -n "${SLACK_XOXC_TOKEN:-}" ]; then
+    ok "slack tokens present (they EXPIRE — 'invalid_auth' means re-extract; docs/mcp-servers.md)"
+  else
+    warn "no SLACK_XOXC_TOKEN in this shell/restricted/.env — slack needs fresh session tokens (docs/mcp-servers.md)"
+  fi
+
+  # Locate the engine CLI: PATH first, then the known Windows install path
+  # so a stale shell PATH doesn't masquerade as "not installed".
+  PODMAN=""; PODMAN_ONPATH=0
+  if command -v podman >/dev/null 2>&1; then PODMAN="podman"; PODMAN_ONPATH=1
+  else
+    for cand in "/c/Program Files/RedHat/Podman/podman.exe" \
+                "${PROGRAMFILES:-/c/Program Files}/RedHat/Podman/podman.exe" \
+                "${ProgramW6432:-}/RedHat/Podman/podman.exe"; do
+      [ -n "$cand" ] && [ -x "$cand" ] && { PODMAN="$cand"; break; }
+    done
+  fi
+
+  if [ -z "$PODMAN" ]; then
+    DESKTOP=""
+    for dsk in "/c/Program Files/Podman Desktop/Podman Desktop.exe" \
+               "${PROGRAMFILES:-/c/Program Files}/Podman Desktop/Podman Desktop.exe"; do
+      [ -f "$dsk" ] && { DESKTOP="$dsk"; break; }
+    done
+    if [ -n "$DESKTOP" ]; then
+      fail "Podman Desktop is installed but the podman ENGINE (CLI) is not — the GUI alone can't run the slack MCP"
+    else
+      fail "podman not installed (the slack MCP runs 'podman run … $IMG')"
+    fi
+    note "install the engine in an ADMIN shell (winget's UAC prompt fails silently from here):"
+    note "  winget install --id RedHat.Podman -e --accept-source-agreements --accept-package-agreements"
+    note "then re-run 'bash scripts/doctor.sh setup' to start the machine and pre-pull the image"
+  else
+    if [ "$PODMAN_ONPATH" = 1 ]; then
+      ok "podman engine on PATH ($("$PODMAN" --version 2>/dev/null))"
+    else
+      ok "podman engine installed ($("$PODMAN" --version 2>/dev/null)) — not on THIS shell's PATH yet (a restarted Claude Code will resolve it)"
+    fi
+
+    # Machine state: running is ideal; stopped -> start it in setup; none ->
+    # 'machine init' is interactive/heavy (downloads a WSL VM image), manual.
+    MACHINE_UP=0
+    RUNNING=$("$PODMAN" machine list --format '{{.Running}}' 2>/dev/null | grep -ci true || true)
+    HAVE_MACHINE=$("$PODMAN" machine list --format '{{.Name}}' 2>/dev/null | grep -c . || true)
+    if [ "${RUNNING:-0}" -ge 1 ]; then
+      ok "podman machine running"; MACHINE_UP=1
+    elif [ "${HAVE_MACHINE:-0}" -ge 1 ]; then
+      if [ "$MODE" = "setup" ]; then
+        if "$PODMAN" machine start >/dev/null 2>&1; then
+          ok "podman machine started (restart Claude Code)"; MACHINE_UP=1
+        else
+          fail "podman machine start failed (run '$PODMAN machine start' by hand to see why)"
+        fi
+      else
+        fail "podman machine is stopped — run: bash scripts/doctor.sh setup (or: podman machine start)"
+      fi
+    else
+      fail "no podman machine exists — run interactively: podman machine init && podman machine start"
+    fi
+
+    # Image: pre-pull in setup so the first Slack call isn't a slow pull.
+    if "$PODMAN" image exists "$IMG" 2>/dev/null; then
+      ok "slack-mcp image present ($IMG)"
+    elif [ "$MODE" = "setup" ] && [ "$MACHINE_UP" = 1 ]; then
+      if "$PODMAN" pull "$IMG" >/dev/null 2>&1; then
+        ok "slack-mcp image pulled"
+      else
+        warn "could not pull $IMG (needs a running machine + network)"
+      fi
+    else
+      warn "slack-mcp image not pulled yet (setup pre-pulls it; first use would pull on demand, slowly)"
+    fi
   fi
 fi
 

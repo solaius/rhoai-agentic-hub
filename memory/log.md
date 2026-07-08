@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-08
+- **Update** — R4 wave 4: slack + google-workspace MCP setup ported from the old repo-doctor (doctor sections 8–9: Claude-config write + podman runtime; doctor now sources restricted/.env with the LLM-cred exclusion; new docs/mcp-servers.md guide). Live-verified on this machine: 19 ok / 0 warn / 0 fail.
+
 ## 2026-07-07
 - **Creation** — documentation suite: six guides added under docs/ (architecture, memory, skills, publishing, tooling, history), README rebuilt as the front door with a doc index, AGENTS.md/CLAUDE.md/setup/working-here cross-linked. Goal: bus-factor pillar — operable without Peter in the room.
 

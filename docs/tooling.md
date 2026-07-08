@@ -63,13 +63,17 @@ remediation command. Sections:
 | 1 | python + pyyaml + pytest importable | `pip install -r scripts/requirements.txt` |
 | 2 | `.claude/settings.json` declares the ODH skills marketplace | — (tracked file; confirm installs with `/plugin`) |
 | 3 | auto-memory scratch redirect (`autoMemoryDirectory` → `memory/.scratch/`) | writes `.claude/settings.local.json`, creates `memory/.scratch/` |
-| 4 | `restricted/.env` exists with required keys (`JIRA_*`) | — (secrets are copied between machines by hand, never generated) |
+| 4 | `restricted/.env` exists with required keys (`JIRA_*`); sources it — minus the deliberately-excluded LLM-provider credentials — so later sections see the `CTRACK_*` overrides and MCP secrets | — (secrets are copied between machines by hand, never generated) |
 | 5 | pages repo cloned alongside (optional convenience) | — |
 | 6 | structure: lint + index `--check` pass | — (points you at `hub_index.py`) |
 | 7 | customer tracker: rhai-tracker MCP registered in `.mcp.json`, deps installed, server env present (tracker checkout defaults to `../rhai-customer-tracker`, override with `CTRACK_DIR`) | writes `.mcp.json`, installs deps, scaffolds the server `.env` |
+| 8 | slack + google-workspace servers present in the Claude config (`$CLAUDE_CONFIG_DIR/.claude.json`, else `~/.claude.json` — profile-dependent) | writes server definitions + secrets from `restricted/.env` (config backed up to `*.bak` first) |
+| 9 | slack MCP runtime: podman **engine** installed (vs Desktop-only), machine running, image pulled; token presence/expiry reminder — skipped entirely when slack isn't in play | starts the podman machine, pre-pulls the image (the engine install stays manual — admin `winget`; see [/docs/mcp-servers.md](/docs/mcp-servers.md)) |
 
 After `setup` on a fresh machine, **restart Claude Code** — the auto-memory
-redirect is read at startup.
+redirect, `.mcp.json`, and the MCP servers are all read at startup. MCP
+server details, secrets, and troubleshooting:
+[/docs/mcp-servers.md](/docs/mcp-servers.md).
 
 ## Tests
 
