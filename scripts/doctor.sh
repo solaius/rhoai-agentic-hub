@@ -66,7 +66,7 @@ fi
 echo "[4] restricted/.env"
 if [ -f "$ROOT/restricted/.env" ]; then
   for k in JIRA_SERVER JIRA_USER JIRA_TOKEN; do
-    if grep -q "^$k=" "$ROOT/restricted/.env"; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
+    if grep -q "^\(export \)\{0,1\}$k=" "$ROOT/restricted/.env"; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
   done
 else
   warn "restricted/.env not found (Jira-facing skills won't work; copy it from your other machine)"
