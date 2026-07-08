@@ -66,7 +66,7 @@ remediation command. Sections:
 | 4 | `restricted/.env` exists with required keys (`JIRA_*`) | — (secrets are copied between machines by hand, never generated) |
 | 5 | pages repo cloned alongside (optional convenience) | — |
 | 6 | structure: lint + index `--check` pass | — (points you at `hub_index.py`) |
-| 7 | customer tracker: rhai-tracker MCP registered in `.mcp.json`, deps installed, server env present (tracker checkout defaults to `../c-tracker`, override with `CTRACK_DIR`) | writes `.mcp.json`, installs deps, scaffolds the server `.env` |
+| 7 | customer tracker: rhai-tracker MCP registered in `.mcp.json`, deps installed, server env present (tracker checkout defaults to `../rhai-customer-tracker`, override with `CTRACK_DIR`) | writes `.mcp.json`, installs deps, scaffolds the server `.env` |
 
 After `setup` on a fresh machine, **restart Claude Code** — the auto-memory
 redirect is read at startup.

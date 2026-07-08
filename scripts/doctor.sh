@@ -93,9 +93,9 @@ echo "[7] customer tracker (rhai-tracker MCP)"
 # Override keys (set in restricted/.env): CTRACK_DIR (where the clone lives)
 # and CTRACK_REPO_URL (where to clone it from — surfaced in the remediation
 # message below; this section does not auto-clone).
-CTRACK_DIR="${CTRACK_DIR:-../c-tracker}"
-# Default assumes a sibling clone named c-tracker, matching the
-# ai-asset-registry .env convention (CTRACK_DIR=.../c-tracker). Override
+CTRACK_DIR="${CTRACK_DIR:-../rhai-customer-tracker}"
+# Default assumes a sibling clone named rhai-customer-tracker, matching the
+# upstream repo name. Override
 # CTRACK_DIR in restricted/.env if your clone lives elsewhere or under a
 # different name.
 case "$CTRACK_DIR" in /*|?:*) ABS_CTRACK="$CTRACK_DIR" ;; *) ABS_CTRACK="$ROOT/$CTRACK_DIR" ;; esac
@@ -104,9 +104,9 @@ SERVER_DIR="$ABS_CTRACK/server"
 
 # 7a. clone / presence
 if [ -f "$SERVER_JS" ]; then
-  ok "c-tracker present ($ABS_CTRACK)"
+  ok "rhai-customer-tracker present ($ABS_CTRACK)"
 else
-  fail "c-tracker missing at $ABS_CTRACK (clone ${CTRACK_REPO_URL:-git@gitlab.cee.redhat.com:rh-ai-pm/rhai-customer-tracker.git}, or set CTRACK_DIR/CTRACK_REPO_URL in restricted/.env)"
+  fail "rhai-customer-tracker missing at $ABS_CTRACK (clone ${CTRACK_REPO_URL:-git@gitlab.cee.redhat.com:rh-ai-pm/rhai-customer-tracker.git}, or set CTRACK_DIR/CTRACK_REPO_URL in restricted/.env)"
 fi
 
 # 7b. register in .mcp.json — creates the file if absent (gitignored; see
@@ -169,7 +169,7 @@ if [ -f "$SERVER_JS" ]; then
     ok "tracker server/.env present"
   elif [ "$MODE" = "setup" ] && [ -f "$ABS_CTRACK/.env.example" ]; then
     cp "$ABS_CTRACK/.env.example" "$SENV"
-    warn "scaffolded tracker server/.env from .env.example — fill GOOGLE_SPREADSHEET_ID, Google OAuth client ID/secret, and an AI_PROVIDER (see c-tracker README)"
+    warn "scaffolded tracker server/.env from .env.example — fill GOOGLE_SPREADSHEET_ID, Google OAuth client ID/secret, and an AI_PROVIDER (see rhai-customer-tracker README)"
   else
     warn "tracker server/.env missing (needs GOOGLE_SPREADSHEET_ID + Google OAuth + AI provider)"
   fi

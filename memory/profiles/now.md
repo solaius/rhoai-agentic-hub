@@ -15,7 +15,7 @@ review_after: 2026-07-20
   `blog-mockup` (wave 2: ported, guide co-located as skill reference; first
   real blog post is the smoke), and `customer-feedback-ingest`/`refresh`/
   `sync` (wave 3: ported — tracker data model splits restricted local HTML +
-  transcripts from the external `c-tracker` sibling repo; `doctor.sh`
+  transcripts from the external `rhai-customer-tracker` sibling repo; `doctor.sh`
   section 7 registers the `rhai-tracker` MCP server; all six real customer
   names found in the old skill text were scrubbed to placeholders; first
   real ingest/sync is the smoke). **Active R4 waves complete.** Remaining:
