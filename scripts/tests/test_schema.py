@@ -199,3 +199,43 @@ def test_pillar_and_story_invalid_under_features(tmp_path):
     write(root, "features/x/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
     errors, _ = lint_repo(root)
     assert any("type 'pillar' not in vocabulary" in e for e in errors)
+
+
+FEATURES_YAML = ("features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+                 "- id: mcp-gateway\n  title: G\n  description: d\n")
+
+
+def test_known_feature_ids_pass(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "features/mcp-registry/knowledge/fact-a.md",
+          ENTRY.format(t="fact", extra="features: [mcp-registry, mcp-gateway]\n"))
+    errors, _ = lint_repo(root)
+    assert errors == []
+
+
+def test_unknown_feature_id_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "features/mcp-registry/knowledge/fact-a.md",
+          ENTRY.format(t="fact", extra="features: [mcp-registry, made-up]\n"))
+    errors, _ = lint_repo(root)
+    assert any("unknown feature id 'made-up'" in e for e in errors)
+
+
+def test_features_must_be_a_list(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "features/mcp-registry/knowledge/fact-a.md",
+          ENTRY.format(t="fact", extra="features: mcp-registry\n"))
+    errors, _ = lint_repo(root)
+    assert any("features must be a list" in e for e in errors)
+
+
+def test_features_on_memory_file_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "memory/facts/fact-a.md",
+          "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-08\n"
+          "features: [mcp-registry]\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("only allowed on knowledge entries" in e for e in errors)

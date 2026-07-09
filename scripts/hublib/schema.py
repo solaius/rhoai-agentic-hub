@@ -80,7 +80,37 @@ def _check_resource(rel, value, errors, warnings):
         errors.append(f"{rel}: non-canonical resource '{value}' (see conventions/uris.md)")
 
 
-def lint_entry(root, path, allowed_types, check_prefix, errors, warnings):
+def _feature_ids(base):
+    """Known feature ids from features/features.yaml (the closed routing table)."""
+    p = base / "features" / "features.yaml"
+    if not p.is_file():
+        return set()
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return set()
+    return {f.get("id") for f in (data.get("features") or []) if isinstance(f, dict)}
+
+
+def _check_features(rel, meta, feature_ids, errors):
+    """features: cross-refs — closed vocabulary, unlike dangling links (spec D13)."""
+    feats = meta.get("features")
+    if feats is None:
+        return
+    if feature_ids is None:
+        errors.append(f"{rel}: features: is only allowed on knowledge entries "
+                      f"and artifact descriptors")
+        return
+    if not isinstance(feats, list) or not all(isinstance(x, str) for x in feats):
+        errors.append(f"{rel}: features must be a list of feature ids")
+        return
+    for fid in feats:
+        if fid not in feature_ids:
+            errors.append(f"{rel}: unknown feature id '{fid}' "
+                          f"(not in features/features.yaml)")
+
+
+def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, feature_ids=None):
     rel = _rel(root, path)
     try:
         meta, body = frontmatter.load_file(path)
@@ -129,9 +159,14 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings):
     if RESTRICTED_HINTS.search(body) and "restricted" not in path.parts:
         warnings.append(f"{rel}: restricted-content heuristic matched — "
                         f"confirm this belongs in a public repo")
+    _check_features(rel, meta, feature_ids, errors)
+    if etype == "story" and meta.get("pillar"):
+        target = str(meta["pillar"])
+        if not (root / target.lstrip("/")).exists():
+            warnings.append(f"{rel}: pillar target {target} does not exist (dangling)")
 
 
-def _lint_tree(root, base, errors, warnings):
+def _lint_tree(root, base, errors, warnings, feature_ids):
     """Lint one hub tree (the repo root, or restricted/)."""
     features = base / "features"
     if features.is_dir():
@@ -148,14 +183,14 @@ def _lint_tree(root, base, errors, warnings):
                 for entry in sorted(know.glob("*.md")):
                     if entry.name in RESERVED:
                         continue
-                    lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings)
+                    lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings, feature_ids=feature_ids)
     memory = base / "memory"
     if memory.is_dir():
         for entry in sorted(memory.rglob("*.md")):
             parts = entry.relative_to(memory).parts
             if entry.name in RESERVED or parts[0] in ("log-archive", ".scratch"):
                 continue
-            lint_entry(root, entry, MEMORY_TYPES, False, errors, warnings)
+            lint_entry(root, entry, MEMORY_TYPES, False, errors, warnings, feature_ids=None)
 
 
 def _lint_links(root, warnings):
@@ -228,10 +263,11 @@ def validate_manifest(root):
 def lint_repo(root):
     root = Path(root)
     errors, warnings = [], []
-    _lint_tree(root, root, errors, warnings)
+    feature_ids = _feature_ids(root)
+    _lint_tree(root, root, errors, warnings, feature_ids)
     restricted = root / "restricted"
     if restricted.is_dir():
-        _lint_tree(root, restricted, errors, warnings)
+        _lint_tree(root, restricted, errors, warnings, feature_ids)
     _lint_budgets(root, errors)
     _lint_links(root, warnings)
     errors.extend(validate_manifest(root))
