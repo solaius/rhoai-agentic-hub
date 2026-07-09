@@ -128,3 +128,74 @@ def test_unknown_status_is_error(tmp_path):
           "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-05\nstatus: superceded\n---\nb\n")
     errors, _ = lint_repo(root)
     assert any("status must be current|superseded" in e for e in errors)
+
+
+QA = ("---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: answered\n"
+      "asks:\n- date: 2026-07-08\n  by: customer\n---\n## Question\nq\n## Answer\na\n")
+
+
+def test_qa_entry_valid(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/qa-airgap.md", QA)
+    errors, _ = lint_repo(root)
+    assert errors == []
+
+
+def test_qa_missing_asks_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/qa-airgap.md",
+          "---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: answered\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("requires field 'asks'" in e for e in errors)
+
+
+def test_qa_bad_ask_by_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/qa-airgap.md",
+          "---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: answered\n"
+          "asks:\n- date: 2026-07-08\n  by: random-person\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("asks[0].by must be" in e for e in errors)
+
+
+def test_qa_status_uses_question_enum(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/qa-airgap.md",
+          "---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: current\n"
+          "asks:\n- date: 2026-07-08\n  by: sales\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("status must be open|answered" in e for e in errors)
+
+
+def test_jtbd_entry_valid(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/jtbd-find-approved-servers.md",
+          "---\ntype: jtbd\ndescription: d\ntimestamp: 2026-07-08\n"
+          "persona: ai-engineer\nstatus: candidate\n---\n## Job\nWhen …\n")
+    errors, _ = lint_repo(root)
+    assert errors == []
+
+
+def test_jtbd_bad_persona_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/jtbd-a.md",
+          "---\ntype: jtbd\ndescription: d\ntimestamp: 2026-07-08\n"
+          "persona: wizard\nstatus: candidate\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("persona must be one of" in e for e in errors)
+
+
+def test_jtbd_status_enum(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/jtbd-a.md",
+          "---\ntype: jtbd\ndescription: d\ntimestamp: 2026-07-08\n"
+          "persona: data-scientist\nstatus: open\n---\nb\n")
+    errors, _ = lint_repo(root)
+    assert any("status must be candidate|validated|delivered|retired" in e for e in errors)
+
+
+def test_pillar_and_story_invalid_under_features(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
+    errors, _ = lint_repo(root)
+    assert any("type 'pillar' not in vocabulary" in e for e in errors)

@@ -7,7 +7,9 @@ import yaml
 
 from . import frontmatter
 
-KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question"}
+KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question", "qa", "jtbd"}
+# pillar/story are narrative-layer-only (spec D12/D14) — invalid under features/.
+NARRATIVE_TYPES = KNOWLEDGE_TYPES | {"pillar", "story"}
 MEMORY_TYPES = {"profile", "fact", "preference", "feedback"}
 PREFIX_TO_TYPE = {
     "decision-": "decision",
@@ -15,6 +17,10 @@ PREFIX_TO_TYPE = {
     "ref-": "reference",
     "person-": "person",
     "question-": "question",
+    "qa-": "qa",
+    "jtbd-": "jtbd",
+    "pillar-": "pillar",
+    "story-": "story",
 }
 SKELETON_DIRS = {"knowledge", "research", "strategy", "enablement", "work"}
 RESERVED = {"index.md", "log.md"}
@@ -24,7 +30,23 @@ TYPE_EXTRA_REQUIRED = {
     "decision": ("decided",),
     "person": ("role", "org"),
     "question": ("status",),
+    "qa": ("status", "asks"),
+    "jtbd": ("persona", "status"),
+    "story": ("features",),
 }
+# Per-type status enums (canonical order — used verbatim in messages).
+STATUS_ENUMS = {
+    "question": ("open", "answered"),
+    "qa": ("open", "answered"),
+    "jtbd": ("candidate", "validated", "delivered", "retired"),
+}
+DEFAULT_STATUS_ENUM = ("current", "superseded")
+# Locked JTBD persona vocabulary — source of truth:
+# features/platform/knowledge/fact-personas.md. Extend BOTH together (gated).
+PERSONAS = ("ai-engineer", "platform-engineer", "agentops-admin",
+            "business-consumer", "data-scientist", "cluster-admin", "rhoai-admin")
+# qa asks[].by role buckets (spec §5.3, owner-confirmed).
+ASK_BY = ("customer", "partner", "sales", "ssa", "pm", "eng", "exec", "other")
 AGENTS_BUDGET = 150
 MEMORY_INDEX_BUDGET = 200
 
@@ -86,11 +108,22 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings):
             errors.append(f"{rel}: type '{etype}' requires field '{field}'")
     if etype == "reference" and meta.get("resource"):
         _check_resource(rel, meta["resource"], errors, warnings)
-    if etype == "question":
-        if meta.get("status") not in (None, "open", "answered"):
-            errors.append(f"{rel}: question status must be open|answered")
-    elif meta.get("status") not in (None, "current", "superseded"):
-        errors.append(f"{rel}: status must be current|superseded")
+    enum = STATUS_ENUMS.get(etype, DEFAULT_STATUS_ENUM)
+    if meta.get("status") not in (None, *enum):
+        errors.append(f"{rel}: status must be {'|'.join(enum)}")
+    if etype == "qa" and meta.get("asks") is not None:
+        asks = meta["asks"]
+        if not isinstance(asks, list) or not asks:
+            errors.append(f"{rel}: asks must be a non-empty list")
+        else:
+            for i, item in enumerate(asks):
+                if not isinstance(item, dict) or not item.get("date") or not item.get("by"):
+                    errors.append(f"{rel}: asks[{i}] needs 'date' and 'by'")
+                elif str(item["by"]) not in ASK_BY:
+                    errors.append(f"{rel}: asks[{i}].by must be {'|'.join(ASK_BY)}")
+    if etype == "jtbd" and meta.get("persona") is not None:
+        if str(meta["persona"]) not in PERSONAS:
+            errors.append(f"{rel}: persona must be one of {'|'.join(PERSONAS)}")
     if meta.get("status") == "superseded" and not meta.get("superseded_by"):
         warnings.append(f"{rel}: superseded without superseded_by pointer")
     if RESTRICTED_HINTS.search(body) and "restricted" not in path.parts:
