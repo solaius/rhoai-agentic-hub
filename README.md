@@ -42,6 +42,7 @@ layout for NDA content.
 | [docs/publishing.md](docs/publishing.md) | manifest → CI → public pages site, end to end |
 | [docs/tooling.md](docs/tooling.md) | scripts, linter, indexer, doctor, tests, CI |
 | [docs/mcp-servers.md](docs/mcp-servers.md) | the MCP servers skills rely on — Slack, Google Workspace, rhai-tracker — setup and traps |
+| [docs/enhancements.md](docs/enhancements.md) | the repo's own improvement backlog — R5/R6 runbooks + prioritized future enhancements |
 | [docs/history.md](docs/history.md) | lineage: charter, build, migration from the old repo |
 | [conventions/](conventions/) | the normative rulebook the linter enforces |
 

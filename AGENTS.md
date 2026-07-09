@@ -19,7 +19,7 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 | `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people, narrative-map, faq, jtbd, artifacts) |
 | `publish/manifest.yaml` | the ONLY path to the public site |
 | `restricted/` | gitignored local mirror for NDA content |
-| `docs/` | the guides: architecture, setup, working-here, memory, skills, publishing, tooling, mcp-servers, history |
+| `docs/` | the guides: architecture, setup, working-here, memory, skills, publishing, tooling, mcp-servers, enhancements, history |
 
 ## Writing rules (summary — details in /conventions/)
 - Filing = which home — narrative/ (story-shaped) or which feature
