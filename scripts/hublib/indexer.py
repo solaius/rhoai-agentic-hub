@@ -255,8 +255,93 @@ def build_all(root, today=None):
             if ts and (today - ts).days > cfg["fact_default_days"]:
                 stale_rows.append(f"- {rp} — {m.get('description', '')} "
                                   f"(age {(today - ts).days}d)")
+    for rp, m, _ in entries:
+        if m.get("type") in ("qa", "jtbd"):
+            review = _date(m.get("review_after"))
+            if review and review < today:
+                stale_rows.append(f"- {rp} — {m.get('description', '')} "
+                                  f"(review overdue)")
     built["views/stale-facts.md"] = \
         "\n".join([MARKER + "# Stale facts & profiles", ""] + sorted(stale_rows)) + "\n"
+
+    # views/narrative-map.md — pillars → stories → features (spec §6)
+    pillars = sorted([(rp, m) for rp, m, _ in entries if m.get("type") == "pillar"])
+    stories = sorted([(rp, m) for rp, m, _ in entries if m.get("type") == "story"])
+    lines = [MARKER + "# Narrative map", ""]
+    used = set()
+    for prp, pm in pillars:
+        lines.append(f"## [{_title(pm, prp)}]({prp})")
+        lines.append(pm.get("description", ""))
+        owned = [(rp, m) for rp, m in stories if m.get("pillar") == prp]
+        for rp, m in owned:
+            used.add(rp)
+            lines.append(f"- [{_title(m, rp)}]({rp}) — {m.get('description', '')}")
+            feats_str = ", ".join(f"[{fid}](/features/{fid}/index.md)"
+                                  for fid in (m.get("features") or []))
+            if feats_str:
+                lines.append(f"  - connects: {feats_str}")
+        if not owned:
+            lines.append("- _no stories yet_")
+        lines.append("")
+    orphans = [(rp, m) for rp, m in stories if rp not in used]
+    if orphans:
+        lines.append("## Stories without a pillar")
+        for rp, m in orphans:
+            lines.append(_line(rp, m))
+        lines.append("")
+    built["views/narrative-map.md"] = "\n".join(lines).rstrip("\n") + "\n"
+
+    # views/faq.md — the field Q&A rollup ("FAQ" is the audience-facing name)
+    qas = [(rp, m) for rp, m, _ in entries if m.get("type") == "qa"]
+
+    def _ask_count(m):
+        asks = m.get("asks")
+        return len(asks) if isinstance(asks, list) else 0
+
+    lines = [MARKER + "# FAQ — field questions & answers", ""]
+    unanswered = sorted([(rp, m) for rp, m in qas if m.get("status") == "open"],
+                        key=lambda t: str(t[1].get("timestamp", "")), reverse=True)
+    if unanswered:
+        lines.append("## Unanswered")
+        for rp, m in unanswered:
+            lines.append(f"- {_line(rp, m)[2:]} (asked {_ask_count(m)}x)")
+        lines.append("")
+    recurring = sorted([(rp, m) for rp, m in qas if _ask_count(m) >= 2],
+                       key=lambda t: (-_ask_count(t[1]), t[0]))
+    if recurring:
+        lines.append("## Most asked")
+        for rp, m in recurring:
+            lines.append(f"- {_ask_count(m)}x · {_line(rp, m)[2:]}")
+        lines.append("")
+    by_home = {}
+    for rp, m in qas:
+        by_home.setdefault(_home(rp), []).append((rp, m))
+    if by_home:
+        lines.append("## All, by feature")
+        for home in sorted(by_home):
+            lines.append(f"### {home}")
+            for rp, m in sorted(by_home[home]):
+                lines.append(_line(rp, m))
+            lines.append("")
+    built["views/faq.md"] = "\n".join(lines).rstrip("\n") + "\n"
+
+    # views/jtbd.md — jobs by status, evidence-count flagged (spec §6, D15)
+    jtbds = [(rp, m) for rp, m, _ in entries if m.get("type") == "jtbd"]
+    lines = [MARKER + "# Jobs to be done", ""]
+    for status in ("candidate", "validated", "delivered", "retired"):
+        group = sorted([(rp, m) for rp, m in jtbds if m.get("status") == status])
+        if not group:
+            continue
+        lines.append(f"## {status}")
+        for rp, m in group:
+            ev = m.get("evidence")
+            ev_n = len(ev) if isinstance(ev, list) else 0
+            ev_str = f"{ev_n} evidence" if ev_n else "NO EVIDENCE"
+            jira = f" · {m['jira']}" if m.get("jira") else ""
+            lines.append(f"- {_home(rp)} · persona: {m.get('persona', '?')} · "
+                         f"{ev_str}{jira} · {_line(rp, m)[2:]}")
+        lines.append("")
+    built["views/jtbd.md"] = "\n".join(lines).rstrip("\n") + "\n"
 
     return built
 

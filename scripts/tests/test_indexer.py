@@ -176,3 +176,56 @@ def test_artifact_descriptor_creates_connection(tmp_path):
           "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
     idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
     assert "[Big Deck](/features/mcp-gateway/enablement/deck/artifact.md)" in idx
+
+
+def test_narrative_map_view(tmp_path):
+    root = add_narrative(make_repo(tmp_path))
+    write(root, "narrative/knowledge/story-orphan.md",
+          "---\ntype: story\ntitle: Orphan\ndescription: no pillar yet\n"
+          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\nstatus: current\n---\nb\n")
+    v = build_all(root, today=TODAY)["views/narrative-map.md"]
+    assert "## [Agents](/narrative/knowledge/pillar-agents.md)" in v
+    assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in v
+    assert "connects: [mcp-registry](/features/mcp-registry/index.md)" in v
+    assert "## Stories without a pillar" in v and "Orphan" in v
+
+
+def test_faq_view(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/knowledge/qa-airgap.md",
+          "---\ntype: qa\ntitle: Airgap?\ndescription: does it airgap\n"
+          "timestamp: 2026-07-01\nstatus: answered\n"
+          "asks:\n- date: 2026-07-01\n  by: customer\n- date: 2026-07-03\n  by: ssa\n"
+          "---\nb\n")
+    write(root, "features/mcp-registry/knowledge/qa-open.md",
+          "---\ntype: qa\ntitle: Quotas?\ndescription: open one\n"
+          "timestamp: 2026-07-02\nstatus: open\n"
+          "asks:\n- date: 2026-07-02\n  by: sales\n---\nb\n")
+    v = build_all(root, today=TODAY)["views/faq.md"]
+    assert "## Unanswered" in v and "Quotas?" in v
+    assert "## Most asked" in v and "2x · [Airgap?]" in v
+    assert "## All, by feature" in v and "### mcp-registry" in v
+
+
+def test_stale_view_includes_overdue_qa(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/knowledge/qa-old.md",
+          "---\ntype: qa\ntitle: Old\ndescription: aging answer\n"
+          "timestamp: 2026-01-01\nstatus: answered\nreview_after: 2026-06-01\n"
+          "asks:\n- date: 2026-01-01\n  by: pm\n---\nb\n")
+    v = build_all(root, today=TODAY)["views/stale-facts.md"]
+    assert "/features/mcp-registry/knowledge/qa-old.md" in v
+
+
+def test_jtbd_view(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/knowledge/jtbd-find.md",
+          "---\ntype: jtbd\ntitle: Find approved\ndescription: find servers\n"
+          "timestamp: 2026-07-01\npersona: ai-engineer\nstatus: candidate\n"
+          "evidence:\n- /features/mcp-registry/knowledge/qa-airgap.md\n---\nb\n")
+    write(root, "features/mcp-registry/knowledge/jtbd-bare.md",
+          "---\ntype: jtbd\ntitle: Bare job\ndescription: no proof\n"
+          "timestamp: 2026-07-01\npersona: rhoai-admin\nstatus: validated\n---\nb\n")
+    v = build_all(root, today=TODAY)["views/jtbd.md"]
+    assert "## candidate" in v and "persona: ai-engineer · 1 evidence" in v
+    assert "## validated" in v and "NO EVIDENCE" in v
