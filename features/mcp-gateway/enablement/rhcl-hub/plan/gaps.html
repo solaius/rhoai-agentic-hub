@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Known Gaps — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+
+      <h1>Known Gaps</h1>
+      <p class="lead">Technical gaps identified through customer POCs, partner evaluations, and internal testing.</p>
+
+      <section>
+        <h2>Critical Gaps</h2>
+        <p>These gaps represent missing features that are expected for production use. All are planned for GA (Q4 2026).</p>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--gap">Gap</span> Health Checks & Circuit Breakers</h3>
+          <p><strong>What's Missing:</strong> Automated health checking and circuit breaker logic to detect and remove unhealthy MCP servers from rotation.</p>
+          <p><strong>Current State:</strong> Not implemented. Envoy provides basic upstream health checking at the infrastructure layer, which can be used as an interim solution.</p>
+          <p><strong>Roadmap:</strong> Planned under "High Availability" feature set for GA (Q4 2026). Will include backend health checks and automatic failover.</p>
+          <p><strong>Impact:</strong> Table-stakes for production. Manual intervention required to remove unhealthy backends today.</p>
+          <p><strong>Source:</strong> Partner POC criteria #5</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--gap">Gap</span> Registry → Gateway Auto-Configuration</h3>
+          <p><strong>What's Missing:</strong> Automated flow from MCP Registry approval to Gateway configuration. Today, registry and gateway are separate manual processes.</p>
+          <p><strong>Current State:</strong> Manual configuration via CRDs and ConfigMaps. When an MCP server is approved in the registry, a cluster admin must separately create an <code>MCPServer</code> resource and configure routing.</p>
+          <p><strong>Roadmap:</strong> Registry integration is a GA milestone (Q4 2026). Target: registry approval → gateway configuration flows automatically.</p>
+          <p><strong>Impact:</strong> Operational friction. Increases time-to-production and creates opportunity for configuration drift.</p>
+          <p><strong>Source:</strong> Partner POC criteria #1, knowledge-review</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Partial Gaps</h2>
+        <p>These features are partially implemented. Core functionality exists but some capabilities are missing.</p>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> Per-Tool QoS (Timeouts/Concurrency)</h3>
+          <p><strong>What Works:</strong> Rate limiting per tool via Limitador (RHCL component). Limits can be configured per agent, per tool, or globally.</p>
+          <p><strong>What's Missing:</strong> Timeouts and concurrency limits are not yet configurable per tool through MCP Gateway CRDs.</p>
+          <p><strong>Workaround:</strong> Envoy provides infrastructure-level timeout configuration that can be used until CRD-level controls are available.</p>
+          <p><strong>Roadmap:</strong> Future enhancement (timeline TBD).</p>
+          <p><strong>Source:</strong> Partner POC criteria #6</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> WebSocket & Stdio Transport</h3>
+          <p><strong>What Works:</strong> HTTP and SSE (Server-Sent Events) streaming are fully supported at the gateway edge through the single <code>/mcp</code> endpoint.</p>
+          <p><strong>What's Missing:</strong> WebSocket and stdio transports are not supported at the gateway edge.</p>
+          <p><strong>Workaround:</strong> Client-side adapters or backend-side translation can bridge WebSocket/stdio MCP servers to HTTP/SSE at the gateway boundary.</p>
+          <p><strong>Impact:</strong> Depends on whether backend MCP servers use WebSocket or stdio natively. If so, additional adapter infrastructure is required.</p>
+          <p><strong>Source:</strong> Partner POC criteria #3</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> Cost Tracking</h3>
+          <p><strong>What Works:</strong> Token metrics exist (tokens consumed per tool invocation, per agent, per time window). Per-tool invocation metrics, OpenTelemetry traces, and structured audit logging are all implemented.</p>
+          <p><strong>What's Missing:</strong> Cost tracking is not explicitly modeled in metrics. There is no built-in mapping from tokens to cost.</p>
+          <p><strong>Workaround:</strong> Token metrics can be exported and combined with external pricing data to calculate cost in downstream observability pipelines.</p>
+          <p><strong>Roadmap:</strong> Cost tracking could be added as a metric dimension in future releases.</p>
+          <p><strong>Source:</strong> Partner POC criteria #9</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> Version-Aware Routing</h3>
+          <p><strong>What Works:</strong> MCP Registry tracks full lifecycle states (Draft → Candidate → Published → Deprecated → Retired) with immutable <code>MCPServerVersion</code> entities, approval workflows, and verification/certification status.</p>
+          <p><strong>What's Missing:</strong> The Gateway does not enforce version-aware routing. There is no version pinning per agent or deprecation enforcement at the routing layer.</p>
+          <p><strong>Impact:</strong> Agents always route to the latest available version. No ability to pin an agent to a specific MCP server version or to gracefully migrate between versions.</p>
+          <p><strong>Roadmap:</strong> GA integration milestone (Q4 2026). Dependent on registry-to-gateway auto-configuration.</p>
+          <p><strong>Source:</strong> Partner POC criteria #10</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> External Cache (Redis)</h3>
+          <p><strong>What Works:</strong> AuthBridge includes in-process token caching. Exchanged tokens are cached in memory (SHA-256 keyed by <code>(subjectToken, audience)</code>) with lazy TTL eviction and 30-second pre-expiry refresh.</p>
+          <p><strong>What's Missing:</strong> No external cache backend (e.g., Redis) for sharing cached tokens across multiple gateway replicas.</p>
+          <p><strong>Workaround:</strong> For single-replica deployments, in-process memory is sufficient. For multi-replica HA deployments, each replica performs independent token exchanges (higher load on Keycloak).</p>
+          <p><strong>Roadmap:</strong> The Kagenti team has confirmed willingness to add Redis support. The refactor is small: extract a <code>Cacher</code> interface and implement a Redis adapter.</p>
+          <p><strong>Source:</strong> OEM customer discussion Q6</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> OCP Version Compatibility</h3>
+          <p><strong>Issue:</strong> RHOAI 3.5 (Aug 2026) will support OCP 4.19, but RHCL 1.4 may not. This configuration (RHOAI 3.5 + RHCL + OCP 4.19) is untested and best-effort support only.</p>
+          <p><strong>Context:</strong> OCP 4.19 maintenance support ends Dec 2026 — only 4 months after RHOAI 3.5 ships. Gateway API is GA in OCP 4.19+, but RHCL testing has focused on newer OCP versions.</p>
+          <p><strong>Recommendation:</strong> Customers deploying RHOAI 3.5 with RHCL should plan to upgrade to OCP 4.20+ for full support.</p>
+          <p><strong>Source:</strong> Support Agreement, knowledge-review</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> TLS Issue in RHCL 1.4</h3>
+          <p><strong>Issue:</strong> GitHub issue #1130 — TLS hairpin and per-server SNI fixes were needed after RHCL 1.4 GA.</p>
+          <p><strong>Status:</strong> Fixed in MCP Gateway v0.7.1 (Jun 18, 2026). RC2 patch in progress with expanded TLS matrix testing.</p>
+          <p><strong>Impact:</strong> Resolved. Customers using RHCL 1.4 should upgrade to MCP Gateway v0.7.1.</p>
+          <p><strong>Source:</strong> GitHub, Slack</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Gap Analysis Summary</h2>
+        <p>Of the partner's 10 POC success criteria: <strong>4 fully met</strong>, <strong>4 partially met</strong>, <strong>2 gaps</strong>.</p>
+        <p><strong>Strengths:</strong> Auth (#7, #8) and policy routing (#4) are differentiated capabilities that solve hard enterprise problems.</p>
+        <p><strong>Weaknesses:</strong> Operational maturity (health checks, QoS completeness) and integration plumbing (registry→gateway auto-config).</p>
+        <p>See <a href="./sell/customer-stories.html">Partner POC Analysis</a> for detailed POC positioning recommendations.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Partner POC gap analysis, 2026-06-11 (POC gap analysis — internal)</li>
+            <li>Customer security discussion follow-ups (engagement Q&A — internal)</li>
+            <li>RHCL Support Agreement (Internal)</li>
+            <li>MCP Gateway GitHub Issues</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./plan/roadmap.html">Roadmap</a></li>
+            <li><a href="./plan/open-questions.html">Open Questions</a></li>
+            <li><a href="./build/features.html">Features</a></li>
+            <li><a href="./sell/customer-stories.html">Partner POC Analysis</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

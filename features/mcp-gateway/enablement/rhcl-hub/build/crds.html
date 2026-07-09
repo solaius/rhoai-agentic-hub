@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRDs & Configuration — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>CRDs & Configuration</h1>
+      <p class="lead">MCP Gateway introduces two Kubernetes Custom Resource Definitions (CRDs) for declarative configuration: MCPServer and MCPGatewayExtension.</p>
+
+      <h2>MCPServer CRD</h2>
+
+      <p>The <code>MCPServer</code> CRD registers an MCP server with the gateway. It tells the gateway: "This backend service exposes MCP tools under this prefix."</p>
+
+      <h3>MCPServer Fields</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>metadata.name</code></td>
+            <td>string</td>
+            <td>Name of the MCPServer resource (used in logs and references).</td>
+          </tr>
+          <tr>
+            <td><code>metadata.namespace</code></td>
+            <td>string</td>
+            <td>Namespace where the MCPServer is defined (typically same as backend service).</td>
+          </tr>
+          <tr>
+            <td><code>spec.toolPrefix</code></td>
+            <td>string</td>
+            <td>Tool namespace this server owns (e.g., <code>jira/</code>, <code>github/</code>). All tools from this server are prefixed with this string.</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.group</code></td>
+            <td>string</td>
+            <td>API group of the target resource (typically <code>gateway.networking.k8s.io</code>).</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.kind</code></td>
+            <td>string</td>
+            <td>Kind of the target resource (typically <code>HTTPRoute</code>).</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.name</code></td>
+            <td>string</td>
+            <td>Name of the HTTPRoute that routes traffic to this backend MCP server.</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.namespace</code></td>
+            <td>string</td>
+            <td>Namespace of the HTTPRoute (can be different from MCPServer namespace).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>MCPServer Example</h3>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: jira-mcp
+  namespace: mcp-backends
+spec:
+  # All tools from this server are prefixed with "jira/"
+  # Example: "jira/create_issue", "jira/search_issues"
+  toolPrefix: jira/
+
+  # Reference to the HTTPRoute that routes to this backend
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: jira-mcp-route
+    namespace: mcp-backends</code></pre>
+
+      <p><strong>What this does:</strong> When the MCP Gateway Controller sees this <code>MCPServer</code>, it:</p>
+      <ol>
+        <li>Reads the <code>jira-mcp-route</code> HTTPRoute to find the backend service</li>
+        <li>Adds this backend to the Broker's configuration with the <code>jira/</code> prefix</li>
+        <li>Updates the Router so it knows to route <code>jira/*</code> tool calls to this backend</li>
+      </ol>
+
+      <h2>MCPGatewayExtension CRD</h2>
+
+      <p>The <code>MCPGatewayExtension</code> CRD configures gateway-level behavior. This is where you specify which Gateway API <code>Gateway</code> resource the MCP Gateway should attach to, and any global broker/router settings.</p>
+
+      <h3>MCPGatewayExtension Fields</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>metadata.name</code></td>
+            <td>string</td>
+            <td>Name of the MCPGatewayExtension resource (typically one per gateway deployment).</td>
+          </tr>
+          <tr>
+            <td><code>metadata.namespace</code></td>
+            <td>string</td>
+            <td>Namespace where the MCPGatewayExtension is defined.</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.group</code></td>
+            <td>string</td>
+            <td>API group of the target Gateway (<code>gateway.networking.k8s.io</code>).</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.kind</code></td>
+            <td>string</td>
+            <td>Kind of the target resource (<code>Gateway</code>).</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.name</code></td>
+            <td>string</td>
+            <td>Name of the Gateway resource to attach to.</td>
+          </tr>
+          <tr>
+            <td><code>spec.targetRef.namespace</code></td>
+            <td>string</td>
+            <td>Namespace of the Gateway (can be different from MCPGatewayExtension namespace).</td>
+          </tr>
+          <tr>
+            <td><code>spec.broker</code></td>
+            <td>object</td>
+            <td>Broker configuration (optional, for advanced use cases).</td>
+          </tr>
+          <tr>
+            <td><code>spec.router</code></td>
+            <td>object</td>
+            <td>Router configuration (optional, for advanced use cases).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>MCPGatewayExtension Example</h3>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: MCPGatewayExtension
+metadata:
+  name: mcp-gateway-config
+  namespace: mcp-system
+spec:
+  # Reference to the Gateway API Gateway resource
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: istio-gateway
+    namespace: gateway-system
+
+  # Optional: Broker configuration
+  broker:
+    # Enable identity-aware tool filtering
+    enableIdentityFiltering: true
+
+  # Optional: Router configuration
+  router:
+    # Enable detailed request logging
+    logLevel: debug</code></pre>
+
+      <p><strong>What this does:</strong> Tells the MCP Gateway Controller to configure the Broker and Router components to work with the <code>istio-gateway</code> in the <code>gateway-system</code> namespace.</p>
+
+      <h2>Common Configuration Scenarios</h2>
+
+      <h3>Scenario 1: Register a Single MCP Server</h3>
+
+      <p><strong>Use case:</strong> You have a Jira MCP server running as a Kubernetes service and want to make it available through the gateway.</p>
+
+      <p><strong>Step 1:</strong> Create an HTTPRoute for your backend service:</p>
+
+      <pre><code>apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: jira-mcp-route
+  namespace: mcp-backends
+spec:
+  parentRefs:
+  - name: istio-gateway
+    namespace: gateway-system
+  hostnames:
+  - "gateway.example.com"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /jira-backend
+    backendRefs:
+    - name: jira-mcp-service
+      port: 8080</code></pre>
+
+      <p><strong>Step 2:</strong> Create an MCPServer that references this HTTPRoute:</p>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: jira-mcp
+  namespace: mcp-backends
+spec:
+  toolPrefix: jira/
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: jira-mcp-route
+    namespace: mcp-backends</code></pre>
+
+      <p><strong>Result:</strong> Agents calling <code>/mcp</code> on the gateway will see tools like <code>jira/create_issue</code>, <code>jira/search_issues</code>. Calls to these tools are routed to the <code>jira-mcp-service</code>.</p>
+
+      <h3>Scenario 2: Create a Virtual MCP Server Aggregating 3 Backends</h3>
+
+      <p><strong>Use case:</strong> You want to present a single "internal-tools" virtual MCP server that aggregates tools from Jira, GitHub, and Confluence backends.</p>
+
+      <p><strong>Step 1:</strong> Register each backend as an MCPServer (as shown in Scenario 1):</p>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: jira-mcp
+  namespace: mcp-backends
+spec:
+  toolPrefix: jira/
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: jira-mcp-route
+---
+apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: github-mcp
+  namespace: mcp-backends
+spec:
+  toolPrefix: github/
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: github-mcp-route
+---
+apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: confluence-mcp
+  namespace: mcp-backends
+spec:
+  toolPrefix: confluence/
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: confluence-mcp-route</code></pre>
+
+      <p><strong>Step 2:</strong> Create an MCPGatewayExtension that references all three:</p>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: MCPGatewayExtension
+metadata:
+  name: internal-tools-virtual-server
+  namespace: mcp-system
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: istio-gateway
+    namespace: gateway-system
+  broker:
+    # Enable virtual server mode — aggregate tools from multiple backends
+    virtualServer:
+      enabled: true
+      name: "internal-tools"
+      # List of MCPServer resources to aggregate
+      backends:
+      - name: jira-mcp
+        namespace: mcp-backends
+      - name: github-mcp
+        namespace: mcp-backends
+      - name: confluence-mcp
+        namespace: mcp-backends</code></pre>
+
+      <p><strong>Result:</strong> Agents calling <code>/mcp</code> see a single combined tool list: <code>jira/create_issue</code>, <code>github/create_pr</code>, <code>confluence/create_page</code>, etc. The Broker aggregates them into one response.</p>
+
+      <h3>Scenario 3: Add Tool Prefix to Avoid Naming Collisions</h3>
+
+      <p><strong>Use case:</strong> You have two different Slack MCP servers (one for internal Slack, one for customer Slack) and need to distinguish their tools.</p>
+
+      <p><strong>Step 1:</strong> Register each with a unique <code>toolPrefix</code>:</p>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: slack-internal
+  namespace: mcp-backends
+spec:
+  # Prefix all tools with "slack-internal/"
+  toolPrefix: slack-internal/
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: slack-internal-route
+---
+apiVersion: kuadrant.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: slack-customer
+  namespace: mcp-backends
+spec:
+  # Prefix all tools with "slack-customer/"
+  toolPrefix: slack-customer/
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: slack-customer-route</code></pre>
+
+      <p><strong>Result:</strong> Agents see tools like <code>slack-internal/post_message</code> and <code>slack-customer/post_message</code>. The Router knows which backend to send each request to based on the prefix.</p>
+
+      <p><strong>Why this matters:</strong> Without prefixes, both backends would expose a tool called <code>post_message</code>, and the Router wouldn't know which one to call. The <code>toolPrefix</code> field makes every tool name globally unique within the gateway.</p>
+
+      <h2>Best Practices</h2>
+
+      <ul>
+        <li><strong>Use descriptive tool prefixes</strong>: Choose prefixes that make it obvious which backend a tool belongs to (<code>jira/</code>, <code>github/</code>, not <code>j/</code>, <code>g/</code>).</li>
+        <li><strong>One MCPServer per backend service</strong>: Don't try to register multiple tool prefixes in a single MCPServer. Create one MCPServer per backend.</li>
+        <li><strong>Use ReferenceGrants for cross-namespace references</strong>: If your MCPServer is in a different namespace than its HTTPRoute, you need a <code>ReferenceGrant</code> to allow the reference.</li>
+        <li><strong>Keep MCPGatewayExtension minimal</strong>: Most deployments only need the <code>targetRef</code> field. Advanced broker/router config is optional and rarely needed.</li>
+        <li><strong>Version your CRDs</strong>: MCP Gateway CRDs are currently <code>v1alpha1</code>. Expect schema changes before v1. Use <code>kubectl apply --server-side</code> to safely update existing resources.</li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">Kuadrant/mcp-gateway (GitHub)</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./build/deployment.html" class="page-footer__link">Deployment Guide</a></li>
+            <li><a href="./build/features.html" class="page-footer__link">Features & Capabilities</a></li>
+            <li><a href="./understand/architecture.html" class="page-footer__link">Architecture</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

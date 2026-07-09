@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitive Landscape | MCP Management Hub</title>
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../nav.js"></script>
+</head>
+<body class="hub-layout">
+  <header id="hub-header" class="hub-header"></header>
+  <aside id="hub-sidebar" class="hub-sidebar"></aside>
+
+  <main class="hub-main">
+    <div class="breadcrumb"></div>
+
+    <h1>Competitive Landscape</h1>
+    <p class="lead">MCP ecosystem comparison — Red Hat is the only platform spanning discovery, governance, runtime, and consumption.</p>
+
+    <h2>Ecosystem-Level Comparison</h2>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>Red Hat</th>
+          <th>Docker MCP Catalog</th>
+          <th>Smithery</th>
+          <th>GitHub MCP Registry</th>
+          <th>Official MCP Registry</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Lifecycle Management</strong></td>
+          <td><span class="badge badge--shipped">Full</span><br>Discovery → Governance → Runtime → Consumption</td>
+          <td><span class="badge badge--gap">Discovery Only</span><br>No governance or runtime</td>
+          <td><span class="badge badge--gap">Discovery Only</span><br>No governance or runtime</td>
+          <td><span class="badge badge--gap">Discovery Only</span><br>No governance or runtime</td>
+          <td><span class="badge badge--gap">Spec Reference</span><br>Not a product</td>
+        </tr>
+        <tr>
+          <td><strong>Governance & Approval Workflows</strong></td>
+          <td><span class="badge badge--shipped">Yes</span><br>Draft → Candidate → Published → Deprecated → Retired. Approval status, verification, certification.</td>
+          <td><span class="badge badge--gap">No</span><br>No approval workflows</td>
+          <td><span class="badge badge--gap">No</span><br>No approval workflows</td>
+          <td><span class="badge badge--gap">No</span><br>Community-contributed, no approval gate</td>
+          <td><span class="badge badge--gap">No</span><br>Spec only</td>
+        </tr>
+        <tr>
+          <td><strong>Runtime Enforcement</strong></td>
+          <td><span class="badge badge--shipped">Yes</span><br>MCP Gateway (auth, routing, rate limits, metrics)</td>
+          <td><span class="badge badge--gap">No</span><br>No runtime component</td>
+          <td><span class="badge badge--gap">No</span><br>No runtime component</td>
+          <td><span class="badge badge--gap">No</span><br>No runtime component</td>
+          <td><span class="badge badge--gap">No</span><br>Spec only</td>
+        </tr>
+        <tr>
+          <td><strong>Auth & Identity</strong></td>
+          <td><span class="badge badge--shipped">Yes</span><br>Keycloak OIDC, token exchange, OBO, Vault secrets, wristband signing</td>
+          <td><span class="badge badge--gap">No</span><br>App-level only</td>
+          <td><span class="badge badge--gap">No</span><br>App-level only</td>
+          <td><span class="badge badge--gap">No</span><br>App-level only</td>
+          <td><span class="badge badge--gap">No</span><br>Spec mentions auth gaps</td>
+        </tr>
+        <tr>
+          <td><strong>Deployment Automation</strong></td>
+          <td><span class="badge badge--shipped">Yes</span><br>MCP Lifecycle Operator (Kubernetes-native, health checks, secrets injection)</td>
+          <td><span class="badge badge--gap">No</span><br>Manual deployment</td>
+          <td><span class="badge badge--gap">No</span><br>Manual deployment</td>
+          <td><span class="badge badge--gap">No</span><br>Manual deployment</td>
+          <td><span class="badge badge--gap">No</span><br>Spec only</td>
+        </tr>
+        <tr>
+          <td><strong>Partner Certification</strong></td>
+          <td><span class="badge badge--shipped">Yes</span><br>Consent-based partner pipeline, ecosystem engineering attestation, security indicators</td>
+          <td><span class="badge badge--gap">No</span><br>Community-contributed</td>
+          <td><span class="badge badge--gap">No</span><br>Community-contributed</td>
+          <td><span class="badge badge--gap">No</span><br>Community-contributed</td>
+          <td><span class="badge badge--gap">No</span><br>Spec only</td>
+        </tr>
+        <tr>
+          <td><strong>Monitoring & Observability</strong></td>
+          <td><span class="badge badge--shipped">Yes</span><br>OpenTelemetry traces, per-tool metrics, audit logging, agent-to-tool correlation</td>
+          <td><span class="badge badge--gap">No</span><br>No monitoring</td>
+          <td><span class="badge badge--gap">No</span><br>No monitoring</td>
+          <td><span class="badge badge--gap">No</span><br>No monitoring</td>
+          <td><span class="badge badge--gap">No</span><br>Spec only</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Key Insights</h2>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">No Competitor Has Lifecycle + Governance + Runtime</h2>
+      <p>Existing MCP solutions stop at discovery — they help you find MCP servers but don't help you govern them, deploy them, secure them, or monitor them. Red Hat is the only platform that addresses the full enterprise lifecycle.</p>
+      <ul>
+        <li><strong>Docker MCP Catalog:</strong> Discovery layer only. No governance workflows, no runtime enforcement, no deployment automation. Closest analog to Red Hat's Catalog component, but missing Registry + Gateway + MCPLO.</li>
+        <li><strong>Smithery:</strong> Discovery layer only. Community-contributed MCP servers with metadata (description, tools, endpoints) but no approval workflows, no certification, no runtime.</li>
+        <li><strong>GitHub MCP Registry:</strong> Community-contributed MCP servers in a GitHub org. No governance workflows, no approval gate, no runtime. "Registry" in name only — it's a directory, not a governed registry.</li>
+        <li><strong>Official MCP Registry:</strong> Anthropic's upstream spec reference (registry.modelcontextprotocol.io/docs). Defines <code>server.json</code> schema but is not a product — it's a standard. Red Hat follows this schema for MCP payload but layers governance metadata on top.</li>
+      </ul>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">Auth & Identity: The Enterprise Blocker</h2>
+      <p>MCP protocol specification explicitly leaves auth and identity as open questions. Competitors assume "MCP server handles auth" — but MCP servers are simple tools, not auth-aware services. Red Hat solves this with gateway-layer auth (Keycloak OIDC, token exchange, OBO, Vault secrets injection), allowing MCP servers to remain "dumb" (receive validated token in Authorization header, no auth code required).</p>
+      <p>A large enterprise OEM customer validated this architecture in May 2026: "I just want it to get the access token in its header and not have to worry about anything else." Red Hat confirmed this as fully supported via AuthBridge + Envoy sidecar. No competitor offers gateway-layer identity delegation.</p>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">Governance: The Missing Layer</h2>
+      <p>Discovery catalogs answer "what exists?" but not "who approved it?" or "is it safe?" Red Hat's Registry adds governance workflows (Draft → Candidate → Published), approval status (Draft, Pending, Approved, Rejected, Revoked), verification status (Unverified, Verified), and certification status (None, Candidate, Certified, Expired, Revoked). No competitor has approval workflows or immutable versioning with governance metadata.</p>
+      <p>A strategic hardware partner's gap analysis (June 2026) identified "Central Metadata Registry" as a gap because registry is not yet integrated with gateway (planned for GA Q4 2026). Even in gap state, Red Hat's registry is more mature than any competitor's discovery-only catalog.</p>
+    </div>
+
+    <h2>Competitive Positioning by Use Case</h2>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Use Case</th>
+          <th>Red Hat Advantage</th>
+          <th>Competitor Limitations</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Enterprise MCP Deployment</strong></td>
+          <td>Full stack: Catalog (discovery) + Registry (governance) + Gateway (runtime) + MCPLO (deployment). One platform, one vendor, one support contract.</td>
+          <td>Stitching together discovery catalog + manual YAML + app-level auth + custom monitoring. No single platform spans all layers.</td>
+        </tr>
+        <tr>
+          <td><strong>Multi-Team MCP Management</strong></td>
+          <td>Identity-aware routing (team A sees tools X/Y, team B sees tools Z), per-tool rate limits, group-based tenancy, audit trail per team.</td>
+          <td>No multi-tenancy, no identity-aware routing. All teams see all tools, or app-level RBAC (if implemented).</td>
+        </tr>
+        <tr>
+          <td><strong>Compliance & Security</strong></td>
+          <td>Approval workflows block unapproved servers, immutable versioning, audit trail for every version, policy enforcement at gateway before apps see traffic.</td>
+          <td>No approval gate, no audit trail, no policy enforcement. Compliance lives in apps (if at all).</td>
+        </tr>
+        <tr>
+          <td><strong>Developer Experience</strong></td>
+          <td>"Dumb MCP server" pattern — developer writes business logic only, gateway handles auth/metrics/limits. One-click deploy from catalog.</td>
+          <td>Developer builds auth into every MCP server, handles credential rotation, implements rate limiting, writes observability from scratch. Manual YAML deployment.</td>
+        </tr>
+        <tr>
+          <td><strong>Observability</strong></td>
+          <td>OpenTelemetry traces, per-tool invocation metrics, agent-to-tool correlation, structured audit logging, token metrics.</td>
+          <td>No observability unless built into each MCP server. No correlation across tools.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>AI Gateway Competitive Context</h2>
+
+    <div class="callout callout--source">
+      <p><strong>Related:</strong> AI Gateway (Inference Gateway) competitive landscape covers inference routing, not MCP-specific. Competitors: IBM API Connect AI Gateway (GA, API governance, no model-aware routing), Google GKE Inference Gateway (Preview, closest analog, GKE-only), Portkey/Bifrost (SaaS, multi-provider routing). No single product solves the full enterprise ask (Team B from Wells Fargo use case: multi-cluster/region/cloud resilience, capacity-aware routing, cost routing, guardrails).</p>
+      <p>MCP Gateway and AI Gateway are complementary, not competing. MCP Gateway handles MCP protocol specifically; AI Gateway handles all AI traffic including inference, egress, Responses API, and A2A. Both share Envoy, Gateway API, and RHCL infrastructure. See <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway</a> for full context.</p>
+    </div>
+
+    <div class="page-footer" data-verified="2026-06-22">
+      <div class="page-footer__links">
+        <a href="value-prop.html" class="page-footer__link">Value Proposition</a>
+        <a href="customer-stories.html" class="page-footer__link">Customer Stories</a>
+        <a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a>
+      </div>
+      <div class="page-footer__verified">
+        <span class="staleness-indicator">✓</span> Verified: 2026-06-22 | Sources: Source verification: internal, <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway Competitive Landscape</a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

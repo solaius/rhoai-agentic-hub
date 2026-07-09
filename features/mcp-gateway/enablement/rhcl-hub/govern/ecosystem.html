@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ecosystem Overview — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Ecosystem Overview</h1>
+      <p class="lead">The MCP Gateway sits within a larger governance ecosystem connecting discovery, registration, deployment, and runtime use of MCP servers.</p>
+
+      <h2>Component Flow Diagram</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">MCP Catalog</div>
+          <div class="flow-box__desc">Discovery & Browsing</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">MCP Registry</div>
+          <div class="flow-box__desc">Governance & Trust</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">Lifecycle Operator</div>
+          <div class="flow-box__desc">Deployment</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">MCP Gateway</div>
+          <div class="flow-box__desc">Runtime Connectivity</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">Gen AI Studio</div>
+          <div class="flow-box__desc">Consumption</div>
+        </div>
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Key Principle:</strong> Flow is always Catalog → Registry, never reverse. The Registry is the authoritative governance layer.
+      </div>
+
+      <h2>Today vs. Target</h2>
+      <div class="two-column">
+        <div class="column">
+          <h3>Today (3.4)</h3>
+          <ol>
+            <li>Discover in <a href="./govern/catalog.html">MCP Catalog</a></li>
+            <li>Deploy via <a href="./govern/lifecycle-operator.html">Lifecycle Operator</a></li>
+            <li><strong>MANUALLY</strong> register in MCP Gateway</li>
+            <li><strong>MANUALLY</strong> update ConfigMap</li>
+            <li>Consume in Gen AI Studio</li>
+          </ol>
+        </div>
+        <div class="column">
+          <h3>Target (3.5+)</h3>
+          <ol>
+            <li>Discover in <a href="./govern/catalog.html">MCP Catalog</a></li>
+            <li>Deploy via <a href="./govern/lifecycle-operator.html">Lifecycle Operator</a></li>
+            <li><strong>AUTO</strong> register in <a href="./govern/registry.html">MCP Registry</a></li>
+            <li><strong>AUTO</strong> configure MCP Gateway</li>
+            <li>Consume in Gen AI Studio</li>
+          </ol>
+        </div>
+      </div>
+
+      <h2>Summit Demo Workflow (May 2026)</h2>
+      <ol class="numbered-steps">
+        <li><strong>Catalog</strong> — Discover OpenShift MCP server in RHOAI catalog</li>
+        <li><strong>Deploy</strong> — Deploy via Lifecycle Operator (MCPServer CRD)</li>
+        <li><strong>Gateway Register</strong> — Manually register server with MCP Gateway</li>
+        <li><strong>ConfigMap</strong> — Update gateway configuration via ConfigMap</li>
+        <li><strong>Gen AI Studio</strong> — Discover tools in Studio tool catalog</li>
+        <li><strong>Tool Execution</strong> — Invoke tool through MCP Gateway</li>
+      </ol>
+
+      <div class="callout callout--gap">
+        <strong>Governance Gap:</strong> The Registry fills the governance gap between discovery and runtime. Today's manual registration in the Gateway (step 3) will be replaced by automated registry→gateway flow in GA (Q4 2026).
+      </div>
+
+      <h2>Component Responsibilities</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="./govern/catalog.html">MCP Catalog</a></td>
+            <td>Discovery, browsing, selection</td>
+          </tr>
+          <tr>
+            <td><a href="./govern/registry.html">MCP Registry</a></td>
+            <td>Governance, lifecycle, metadata, trust</td>
+          </tr>
+          <tr>
+            <td><a href="./govern/lifecycle-operator.html">Lifecycle Operator</a></td>
+            <td>Deployment (MCPServer CRD → Deployment + Service)</td>
+          </tr>
+          <tr>
+            <td>MCP Gateway</td>
+            <td>Runtime connectivity and enforcement</td>
+          </tr>
+          <tr>
+            <td>Gen AI Studio</td>
+            <td>Consumption (agent/user interaction)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y">MCP Registry MVP Requirements</a></li>
+            <li><a href="https://docs.google.com/document/d/1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE">MCP Catalog</a></li>
+            <li><a href="https://docs.google.com/document/d/1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740">Partners MCP servers in RHOAI Catalog</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./govern/registry.html">MCP Registry</a></li>
+            <li><a href="./govern/catalog.html">MCP Catalog</a></li>
+            <li><a href="./govern/lifecycle-operator.html">Lifecycle Operator</a></li>
+            <li><a href="./plan/roadmap.html">Roadmap & Versions</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

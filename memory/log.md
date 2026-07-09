@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-09
+- **Update** — HTML enablement migration complete (sets 1–4): 14 artifacts live on the pages site incl. the RHCL and MCP Management hubs (scrubbed per owner disclosure rulings 1b/2b); NVIDIA POC, auth deck, and GA readout stay archived in the old repo (3c/4c/5c).
+
 ## 2026-07-08
 - **Creation** — narrative layer live (D12–D16): narrative/ seeded (4 RHAI pillars + 2 source refs + 2 stories), features: connection axis, qa/jtbd/artifact types, 4 new views; platform shed story content to narrative/; JTBD persona vocabulary locked (7).
 - **Update** — owner ruling: no LLM-provider credential handling in the hub at all (users arrive with Claude Code/Cursor already configured; restricted/.env never carries such keys) — the exclusion machinery ported with R4 wave 4 earlier today was removed (doctor.sh, tooling.md, history.md scrubbed; convention stated once in docs/mcp-servers.md; preferences profile updated).

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Security</h1>
+      <p class="lead">MCP Gateway implements enterprise-grade authentication and authorization using OAuth 2.0, OpenID Connect, token exchange, and cryptographic delegation chains — enabling secure, auditable agent-to-tool interactions.</p>
+
+      <h2>Security Foundations: Understanding Tokens</h2>
+
+      <p><strong>What is a token?</strong> Think of it like a movie ticket. When you buy a ticket at the box office, you get a piece of paper that:</p>
+      <ul>
+        <li>Proves you paid (authentication)</li>
+        <li>Says which movie and showtime (authorization — this ticket is only valid for Screen 3 at 7pm)</li>
+        <li>Has an expiration (you can't use it next week)</li>
+        <li>Can't be easily forged (special paper, barcodes, holograms)</li>
+      </ul>
+
+      <p>A <strong>security token</strong> works the same way in software. It's a digitally signed piece of data that proves:</p>
+      <ul>
+        <li><strong>Who you are</strong> (identity / authentication)</li>
+        <li><strong>What you're allowed to do</strong> (permissions / authorization)</li>
+        <li><strong>When it expires</strong> (validity period)</li>
+        <li><strong>It hasn't been tampered with</strong> (cryptographic signature)</li>
+      </ul>
+
+      <p>MCP Gateway uses tokens extensively — but not just any tokens. Let's build up the concepts step by step.</p>
+
+      <h2>OAuth 2.0 and OpenID Connect (OIDC)</h2>
+
+      <p><strong>OAuth 2.0</strong> is a protocol for "delegated authorization" — giving a third party limited access to your resources without sharing your password.</p>
+
+      <p>Real-world analogy: You give a valet driver your car keys. But instead of handing over your house keys too, you give them a special valet key that only starts the car and doesn't open the trunk or glove box. That's delegation — limited access for a specific purpose.</p>
+
+      <p>In OAuth terms:</p>
+      <ul>
+        <li><strong>You</strong> = Resource Owner (the human user)</li>
+        <li><strong>Car</strong> = Protected Resource (e.g., your Jira account)</li>
+        <li><strong>Valet</strong> = Client (the AI agent)</li>
+        <li><strong>Valet key</strong> = Access Token (proof of limited permission)</li>
+        <li><strong>Authorization server</strong> = The system that issues tokens (Keycloak, Okta, etc.)</li>
+      </ul>
+
+      <p><strong>OpenID Connect (OIDC)</strong> is an identity layer on top of OAuth 2.0. OAuth handles "what can I access," OIDC adds "who am I." It introduces the <strong>ID token</strong> (a token that proves your identity) alongside the access token (which proves permission).</p>
+
+      <p>Both OAuth and OIDC typically use <strong>JWT (JSON Web Tokens)</strong> as the token format. A JWT is a JSON object that's base64-encoded and cryptographically signed, so you can verify it came from the right issuer and hasn't been modified.</p>
+
+      <h2>The Token Exchange Problem</h2>
+
+      <p>Here's the core challenge for AI agents:</p>
+
+      <ol>
+        <li>A human user authenticates and gets <strong>Token 1</strong> (their personal access token for the enterprise)</li>
+        <li>They send a request to an AI agent</li>
+        <li>The AI agent needs to call a backend tool (Jira, GitHub, etc.) <strong>on the user's behalf</strong></li>
+        <li>But <strong>Token 1</strong> was issued for the human user, not the agent. The backend service expects a token specific to the tool's audience.</li>
+      </ol>
+
+      <p>Solution: <strong>Token Exchange</strong>. The agent takes Token 1 and exchanges it for <strong>Token 2</strong> (scoped for the specific backend service). This is a standardized OAuth 2.0 extension (<a href="https://datatracker.ietf.org/doc/html/rfc8693">RFC 8693</a>).</p>
+
+      <p>Token Exchange happens at the gateway layer. The agent doesn't need to implement OAuth flows or credential management — it just passes the user's token to the gateway, and the gateway handles the exchange.</p>
+
+      <h2>Security Architecture: Three-Tier Token Flow</h2>
+
+      <p>Let's walk through a real MCP Gateway request with token exchange:</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">User</div>
+          <div class="flow-step__subtitle">Token 1 (user identity)</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">AuthProxy</div>
+          <div class="flow-step__subtitle">Exchanges to Token 2</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">MCP Gateway</div>
+          <div class="flow-step__subtitle">Exchanges to Token 3</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCP Server</div>
+          <div class="flow-step__subtitle">Validates Token 3</div>
+        </div>
+      </div>
+
+      <p><strong>Step-by-step flow:</strong></p>
+
+      <ol>
+        <li>
+          <strong>User authenticates</strong>: Human user logs in to the enterprise IdP (Okta, Keycloak, Azure AD) and receives <strong>Token 1</strong>.
+          <ul>
+            <li>Token 1 contains: user identity, enterprise-wide permissions, issued by the IdP</li>
+          </ul>
+        </li>
+        <li>
+          <strong>User calls agent</strong>: User sends a request to the AI agent, passing Token 1 in the <code>Authorization</code> header.
+        </li>
+        <li>
+          <strong>Agent calls gateway</strong>: Agent forwards the request to MCP Gateway, passing Token 1.
+        </li>
+        <li>
+          <strong>AuthProxy intercepts (Token Exchange #1)</strong>:
+          <ul>
+            <li>An Envoy sidecar (AuthProxy, part of the Kagenti security stack) intercepts the request before it reaches the gateway.</li>
+            <li>It calls the authorization server: "User presented Token 1. I need a token for audience 'mcp-gateway'."</li>
+            <li>Authorization server returns <strong>Token 2</strong> (scoped for the MCP Gateway audience, still represents the user).</li>
+            <li>AuthProxy replaces Token 1 with Token 2 in the <code>Authorization</code> header and forwards the request to the gateway.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>MCP Gateway routes & exchanges (Token Exchange #2)</strong>:
+          <ul>
+            <li>Gateway Router parses the MCP request, identifies the target tool (e.g., <code>jira/create_issue</code>).</li>
+            <li>Gateway exchanges Token 2 for <strong>Token 3</strong> (scoped for the Jira MCP server audience).</li>
+            <li>Gateway forwards the request to the Jira MCP server with Token 3.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>MCP Server validates and executes</strong>:
+          <ul>
+            <li>Jira MCP server receives Token 3.</li>
+            <li>Envoy sidecar (if present) validates Token 3's signature and expiry using local JWT verification — <strong>no round-trip to the auth server</strong>.</li>
+            <li>Jira MCP server is "dumb" — it just receives a validated token and executes the tool call. No auth logic required.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h2>The "Dumb MCP Server" Pattern</h2>
+
+      <div class="callout callout--quote">
+        <p><strong>From a customer security discussion (2026-05-04, confirmed by the Kagenti engineering team):</strong></p>
+        <p>"AuthBridge is designed to transparently handle offloading the majority of the auth work so that the MCP server can be quite dumb. The MCP server receives a validated token in its <code>Authorization</code> header. No token exchange, no credential management, and no auth code is required in the MCP server itself. The Envoy sidecar (injected by Kagenti) handles JWT validation transparently."</p>
+      </div>
+
+      <p><strong>Why this matters:</strong> MCP server developers don't need to become OAuth experts. They write tool logic (create Jira issue, query database, etc.) and assume the token is already valid. The gateway and sidecar infrastructure handle all the auth complexity.</p>
+
+      <p>This dramatically lowers the barrier to building secure MCP servers and reduces the attack surface (less auth code = fewer auth bugs).</p>
+
+      <h2>Token Caching: Avoiding Redundant Exchanges</h2>
+
+      <p>Token exchange is a network round-trip to the authorization server. Doing this on every request would be slow. MCP Gateway caches tokens to avoid redundant exchanges.</p>
+
+      <p><strong>Implementation details (from Kagenti AuthBridge):</strong></p>
+
+      <ul>
+        <li><strong>Cache location</strong>: In-process memory (thread-safe map within the AuthProxy/Gateway process)</li>
+        <li><strong>Cache key</strong>: SHA-256 hash of <code>(subjectToken, audience)</code> — ensures the right cached token is retrieved for each unique user + target combination</li>
+        <li><strong>Lazy eviction</strong>: Tokens are evicted when their TTL expires</li>
+        <li><strong>Pre-expiry refresh</strong>: Tokens are refreshed 30 seconds before expiration to ensure they're never served stale</li>
+        <li><strong>Max size</strong>: Default 10,000 entries (configurable). When full, least-recently-used entries are evicted.</li>
+        <li><strong>External caching (Redis, etc.)</strong>: Not currently supported but planned. For single-replica deployments, in-process memory is sufficient. Multi-replica gateways sharing a cache require external storage.</li>
+      </ul>
+
+      <p><strong>Result:</strong> After the first request from a user to a specific tool, subsequent requests hit the cache and skip the token exchange round-trip entirely — until the token expires or is evicted.</p>
+
+      <h2>On-Behalf-Of (OBO) Delegation</h2>
+
+      <p><strong>What is On-Behalf-Of?</strong> It's the pattern where an agent acts with a <em>subset</em> of the user's permissions, not the agent's own permissions.</p>
+
+      <p>Real-world analogy: You give your assistant power of attorney to sign documents on your behalf — but only for specific types of documents (contracts, not wills). The assistant isn't signing as themselves; they're signing as you, but with limited scope.</p>
+
+      <p>In MCP Gateway:</p>
+      <ul>
+        <li>Agent A is running on behalf of User X.</li>
+        <li>User X has broad permissions (admin access to Jira, GitHub, databases).</li>
+        <li>Agent A should only have a <strong>subset</strong> of those permissions (read-only Jira, no GitHub, no database admin).</li>
+      </ul>
+
+      <p>OBO is implemented via <strong>token exchange with scoped audiences</strong>:</p>
+      <ul>
+        <li>The agent requests a token for a specific tool/audience (e.g., "jira-read-only").</li>
+        <li>The authorization server (Keycloak) checks the user's permissions and the agent's allowed scopes.</li>
+        <li>It issues a token that represents the user but with limited permissions — the <strong>intersection</strong> of what the user is allowed and what the agent is allowed.</li>
+      </ul>
+
+      <p>This prevents privilege escalation: even if a user has admin rights, the agent can only exercise the subset of rights it was configured to use.</p>
+
+      <h2>Cryptographic Delegation Chains: The <code>act</code> Claim</h2>
+
+      <p>How do you trace a tool call back to the human who initiated it when it passes through multiple agents and gateways?</p>
+
+      <p><strong>Answer:</strong> The <code>act</code> (actor) claim in JWTs. This is a standardized claim (<a href="https://datatracker.ietf.org/doc/html/rfc8693#section-4.1">RFC 8693 §4.1</a>) that chains delegation.</p>
+
+      <p><strong>How it works:</strong></p>
+      <ul>
+        <li>Token 1 (user token) has <code>sub: "user@example.com"</code> (subject = the user)</li>
+        <li>Token 2 (exchanged for MCP Gateway) has <code>sub: "user@example.com", act: {"sub": "mcp-gateway"}</code> — meaning "the subject is the user, acting through the MCP Gateway"</li>
+        <li>Token 3 (exchanged for Jira MCP server) has <code>sub: "user@example.com", act: {"sub": "mcp-gateway", "act": {"sub": "jira-mcp-server"}}</code> — a nested chain</li>
+      </ul>
+
+      <p>This creates a cryptographically signed trail:</p>
+      <ol>
+        <li>User authenticated as <code>user@example.com</code></li>
+        <li>Delegated to <code>mcp-gateway</code></li>
+        <li>Which delegated to <code>jira-mcp-server</code></li>
+      </ol>
+
+      <p>The backend MCP server can inspect this chain and know: "This request came from <code>user@example.com</code>, through the MCP Gateway, to me." Audit logs capture this chain for compliance.</p>
+
+      <h2>Full Audit Trail</h2>
+
+      <p><strong>From a customer security discussion (2026-05-04):</strong></p>
+      <ul>
+        <li>Keycloak emits events for token exchange activities (user → agent, agent → backend)</li>
+        <li>Gateway logs every tool call with the <code>act</code> claim chain</li>
+        <li>MCP servers log tool execution with the validated token's subject and actor chain</li>
+      </ul>
+
+      <p>Combined, this provides a complete trail:</p>
+      <ul>
+        <li><strong>Who</strong>: <code>user@example.com</code></li>
+        <li><strong>Delegated through</strong>: <code>mcp-gateway</code></li>
+        <li><strong>Called what</strong>: <code>jira/create_issue</code></li>
+        <li><strong>With what permissions</strong>: <code>jira-read-only</code> scope</li>
+        <li><strong>When</strong>: Timestamp in logs</li>
+        <li><strong>Result</strong>: Success/failure in MCP server logs</li>
+      </ul>
+
+      <p>This is enough to satisfy SOC 2, ISO 27001, and financial services audit requirements for "who did what and when."</p>
+
+      <h2>Multi-IdP Support: Okta, Azure AD, Keycloak</h2>
+
+      <p>MCP Gateway doesn't dictate which identity provider you use. It works with any OIDC-compliant IdP:</p>
+
+      <ul>
+        <li><strong>Okta</strong>: Federate via OIDC identity brokering in Keycloak. Use protocol mappers to map group claims.</li>
+        <li><strong>Azure AD / Entra ID</strong>: Same — OIDC federation + claim mapping.</li>
+        <li><strong>Keycloak</strong>: Native integration (Keycloak is the default authorization server in the Kagenti stack).</li>
+        <li><strong>AWS Cognito, Auth0, etc.</strong>: Any OIDC-compliant IdP works.</li>
+      </ul>
+
+      <p><strong>Nested groups:</strong> Traditionally flattened when presented (e.g., "Engineering/Platform/MCP" becomes three separate group memberships). Reconstructing hierarchies requires custom mappers.</p>
+
+      <p><strong>Sync timing:</strong> Configurable per IdP — sync at first login only, or sync every time the user authenticates (to pick up group membership changes).</p>
+
+      <h2>Security Best Practices</h2>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Recommended Patterns</div>
+        <ul>
+          <li><strong>Short-lived tokens</strong>: Set token TTL to 5-15 minutes. The cache handles renewal, so short TTLs reduce risk without hurting performance.</li>
+          <li><strong>Principle of least privilege</strong>: Configure OBO scopes so agents only get the minimum permissions needed for their tasks.</li>
+          <li><strong>Audit log retention</strong>: Keep Keycloak event logs and gateway logs for at least 90 days (longer for compliance-heavy industries).</li>
+          <li><strong>Token rotation</strong>: Use refresh tokens for long-running sessions; re-exchange when access tokens expire.</li>
+          <li><strong>Network isolation</strong>: MCP servers should only accept traffic from the gateway (use network policies or service mesh rules).</li>
+        </ul>
+      </div>
+
+      <h2>What About Secrets Management?</h2>
+
+      <p>Token exchange solves authentication between the user, gateway, and MCP servers. But what if the MCP server needs to authenticate to a <em>backend service</em> that doesn't support OAuth (e.g., a database with username/password, GitHub Personal Access Tokens)?</p>
+
+      <p><strong>Answer:</strong> The MCP server stores those credentials securely (e.g., Kubernetes Secrets, Vault, AWS Secrets Manager). The MCP server retrieves them at runtime and uses them to authenticate to the backend.</p>
+
+      <p>RHCL 1.3.3 includes Vault integration (Technical Preview), allowing MCP servers to dynamically fetch secrets without storing them in container environment variables.</p>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Customer security discussion answers (engagement Q&A — internal)</li>
+            <li>Kagenti engineering team confirmed answers (engagement Q&A — internal)</li>
+            <li><a href="https://datatracker.ietf.org/doc/html/rfc8693" class="page-footer__link">RFC 8693 — OAuth 2.0 Token Exchange</a></li>
+            <li><a href="https://github.com/kagenti/kagenti/blob/main/kagenti/examples/identity/token_exchange.md" class="page-footer__link">Kagenti Token Exchange Doc</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./build/auth-setup.html" class="page-footer__link">Auth Setup — How to configure Keycloak, AuthPolicy, and token exchange</a></li>
+            <li><a href="./understand/architecture.html" class="page-footer__link">Architecture — How the gateway components work</a></li>
+            <li><a href="./govern/ai-gateway.html" class="page-footer__link">Audit Logging — Collecting and analyzing delegation chains</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

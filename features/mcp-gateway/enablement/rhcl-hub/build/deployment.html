@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deployment Guide — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Deployment Guide</h1>
+      <p class="lead">Step-by-step instructions for deploying MCP Gateway on OpenShift. This guide covers prerequisites, installation, verification, and production considerations.</p>
+
+      <h2>Prerequisites</h2>
+
+      <p>Before deploying MCP Gateway, ensure your OpenShift cluster meets these requirements:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Minimum Version</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>OpenShift Container Platform</strong></td>
+            <td>4.19+</td>
+            <td>Gateway API is GA in OCP 4.19. Earlier versions require manual Gateway API CRD installation.</td>
+          </tr>
+          <tr>
+            <td><strong>Gateway API</strong></td>
+            <td>v1 (GA)</td>
+            <td>Included by default in OCP 4.19+. Provides HTTPRoute, Gateway, and related CRDs.</td>
+          </tr>
+          <tr>
+            <td><strong>OpenShift Service Mesh</strong></td>
+            <td>3.x</td>
+            <td>Provides Envoy-based ingress gateway and ext_proc support required by MCP Gateway Router.</td>
+          </tr>
+          <tr>
+            <td><strong>Red Hat Connectivity Link (RHCL)</strong></td>
+            <td>1.3.3+</td>
+            <td>Kuadrant platform providing Authorino (auth) and Limitador (rate limiting). MCP Gateway 0.6.0 TP ships in RHCL 1.3.3.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Version Support Gap — August 2026</div>
+        <p>RHOAI 3.5 (Aug 2026) supports OCP 4.19, but RHCL 1.4+ will likely require OCP 4.20+. This configuration (RHOAI 3.5 + RHCL + OCP 4.19) is <strong>untested and best-effort support only</strong>.</p>
+        <p>OCP 4.19 maintenance support ends December 2026 (only 4 months overlap). Customers are advised to upgrade to OCP 4.20+ for full support.</p>
+      </div>
+
+      <h2>Installation Steps</h2>
+
+      <h3>Step 1: Enable Gateway API</h3>
+
+      <p>If you're on OCP 4.19 or later, Gateway API CRDs are already installed. Verify:</p>
+
+      <pre><code>oc get crd gateways.gateway.networking.k8s.io
+oc get crd httproutes.gateway.networking.k8s.io
+oc get crd referencegrants.gateway.networking.k8s.io</code></pre>
+
+      <p>If you're on OCP 4.18 or earlier (not recommended), install Gateway API CRDs manually:</p>
+
+      <pre><code>kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml</code></pre>
+
+      <h3>Step 2: Install OpenShift Service Mesh 3</h3>
+
+      <p>Install the Service Mesh Operator from OperatorHub:</p>
+
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: servicemeshoperator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  name: servicemeshoperator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <p>Wait for the operator to be ready:</p>
+
+      <pre><code>oc wait --for=condition=Ready pod -l name=istio-operator -n openshift-operators --timeout=300s</code></pre>
+
+      <p>Create an Istio control plane in the <code>gateway-system</code> namespace:</p>
+
+      <pre><code>oc new-project gateway-system
+
+oc apply -f - &lt;&lt;EOF
+apiVersion: operator.istio.io/v1alpha1
+kind: Istio
+metadata:
+  name: default
+  namespace: gateway-system
+spec:
+  version: v1.23
+  namespace: gateway-system
+  values:
+    global:
+      istioNamespace: gateway-system
+EOF</code></pre>
+
+      <h3>Step 3: Install Red Hat Connectivity Link (Kuadrant)</h3>
+
+      <p>Install the Kuadrant Operator from OperatorHub:</p>
+
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kuadrant-operator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  name: kuadrant-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <p>Wait for the operator to be ready:</p>
+
+      <pre><code>oc wait --for=condition=Ready pod -l control-plane=kuadrant-operator -n openshift-operators --timeout=300s</code></pre>
+
+      <p>Create a Kuadrant instance in the <code>gateway-system</code> namespace:</p>
+
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: gateway-system
+EOF</code></pre>
+
+      <h3>Step 4: Deploy MCP Gateway via Helm</h3>
+
+      <p>Create a namespace for MCP Gateway components:</p>
+
+      <pre><code>oc new-project mcp-system</code></pre>
+
+      <p>Add the MCP Gateway Helm repository:</p>
+
+      <pre><code>helm repo add kagenti https://ghcr.io/kagenti/charts
+helm repo update</code></pre>
+
+      <p>Install the MCP Gateway chart:</p>
+
+      <pre><code>helm install mcp-gateway kagenti/mcp-gateway \
+  --namespace mcp-system \
+  --set gateway.namespace=gateway-system \
+  --set gateway.name=istio-gateway</code></pre>
+
+      <p>Wait for MCP Gateway components to be ready:</p>
+
+      <pre><code>oc wait --for=condition=Ready pod -l app=mcp-gateway -n mcp-system --timeout=300s</code></pre>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Memory Allocation is Critical</div>
+        <p>"Memory allocation is critical for MCP Gateway — size replicas higher than typical API management."</p>
+        <p><strong>— Red Hat engineering, network discussion with a major telecommunications provider (2026-05-08)</strong></p>
+        <p>MCP Gateway components (especially the Broker) maintain in-memory caches for tool lists and routing tables. Production deployments should allocate at least <strong>1 GB memory per replica</strong> for the Broker and Router components.</p>
+        <p>For high-traffic environments (100+ MCP servers, 1000+ tools), consider 2-4 GB per replica and horizontal scaling (3+ replicas with load balancing).</p>
+      </div>
+
+      <h2>Verification</h2>
+
+      <p>After installation, verify that MCP Gateway is responding correctly:</p>
+
+      <h3>Check Component Status</h3>
+
+      <pre><code>oc get pods -n mcp-system
+oc get mcpgatewayextension -n mcp-system
+oc get mcpserver -n mcp-system</code></pre>
+
+      <h3>Test the MCP Endpoint</h3>
+
+      <p>Expose the gateway temporarily for testing (production deployments use proper ingress):</p>
+
+      <pre><code>oc port-forward -n gateway-system svc/istio-gateway 8080:80</code></pre>
+
+      <p>In another terminal, send an MCP <code>initialize</code> request:</p>
+
+      <pre><code>curl -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {},
+      "clientInfo": {
+        "name": "test-client",
+        "version": "1.0.0"
+      }
+    },
+    "id": 1
+  }'</code></pre>
+
+      <p>Expected response (server capabilities):</p>
+
+      <pre><code>{
+  "jsonrpc": "2.0",
+  "result": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "tools": {}
+    },
+    "serverInfo": {
+      "name": "mcp-gateway",
+      "version": "0.7.1"
+    }
+  },
+  "id": 1
+}</code></pre>
+
+      <h2>Production Considerations</h2>
+
+      <h3>DNS Management</h3>
+
+      <p>For external access, configure DNS to point to the OpenShift router or gateway service. Options:</p>
+
+      <ul>
+        <li><strong>OpenShift Cluster Ingress Operator</strong>: Automatically creates DNS records for Routes (not applicable for Gateway API)</li>
+        <li><strong>ExternalDNS</strong>: Automates DNS record creation for Gateway resources (recommended for Gateway API)</li>
+        <li><strong>Manual DNS</strong>: Create A/CNAME records pointing to the ingress gateway LoadBalancer IP</li>
+      </ul>
+
+      <p>With RHCL's full feature set, <strong>DNSPolicy</strong> CRDs provide automated DNS management including health checks and geo-routing.</p>
+
+      <h3>TLS Certificate Management</h3>
+
+      <p>MCP Gateway requires TLS for production. Options:</p>
+
+      <ul>
+        <li><strong>Gateway-level TLS</strong>: Configure TLS termination directly on the <code>Gateway</code> resource by referencing a Kubernetes Secret containing the certificate and key.</li>
+        <li><strong>TLSPolicy (RHCL)</strong>: Use Kuadrant's <code>TLSPolicy</code> CRD to automate certificate provisioning via cert-manager and Let's Encrypt.</li>
+        <li><strong>Route-level TLS</strong>: For simpler setups, use OpenShift Routes with automatic cert provisioning instead of Gateway API.</li>
+      </ul>
+
+      <p>Example TLSPolicy:</p>
+
+      <pre><code>apiVersion: kuadrant.io/v1alpha1
+kind: TLSPolicy
+metadata:
+  name: mcp-gateway-tls
+  namespace: mcp-system
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: istio-gateway
+    namespace: gateway-system
+  issuerRef:
+    group: cert-manager.io
+    kind: ClusterIssuer
+    name: letsencrypt-prod</code></pre>
+
+      <h3>Cross-Namespace ReferenceGrants</h3>
+
+      <p>If your <code>MCPGatewayExtension</code> is in a different namespace than the <code>Gateway</code> it references, you need a <code>ReferenceGrant</code> to allow the cross-namespace reference:</p>
+
+      <pre><code>apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-mcp-to-gateway
+  namespace: gateway-system
+spec:
+  from:
+  - group: kuadrant.io
+    kind: MCPGatewayExtension
+    namespace: mcp-system
+  to:
+  - group: gateway.networking.k8s.io
+    kind: Gateway</code></pre>
+
+      <p>Without this, the MCP Gateway controller will fail to reconcile the <code>MCPGatewayExtension</code> and you'll see permission errors in the logs.</p>
+
+      <h3>Backend TLS (Future)</h3>
+
+      <p>Currently, MCP Gateway communicates with backend MCP servers over plaintext HTTP within the cluster. For end-to-end encryption, Kubernetes Gateway API supports <code>BackendTLSPolicy</code> (currently alpha).</p>
+
+      <p>When <code>BackendTLSPolicy</code> becomes stable, you'll be able to enforce TLS re-encryption for traffic between the gateway and backend MCP servers:</p>
+
+      <pre><code>apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: BackendTLSPolicy
+metadata:
+  name: mcp-backend-tls
+  namespace: mcp-system
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: jira-mcp-route
+  tls:
+    caCertRefs:
+    - name: jira-ca-cert
+      kind: ConfigMap</code></pre>
+
+      <p>For now, backend TLS is achievable via Service Mesh mTLS (requires all services to be in the mesh).</p>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">Kuadrant/mcp-gateway (GitHub)</a></li>
+            <li><a href="https://ghcr.io/kagenti/charts/mcp-gateway" class="page-footer__link">MCP Gateway Helm Chart</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./build/crds.html" class="page-footer__link">CRDs & Configuration</a></li>
+            <li><a href="./build/features.html" class="page-footer__link">Features & Capabilities</a></li>
+            <li><a href="./understand/rhcl-context.html" class="page-footer__link">RHCL Context</a></li>
+            <li><a href="./build/auth-setup.html" class="page-footer__link">Auth Setup</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

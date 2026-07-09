@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Summit Feedback — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Summit Feedback</h1>
+      <p class="lead">Customer feedback from Red Hat Summit 2026 (May 11-14, 2026) — what customers asked for and what they're evaluating.</p>
+
+      <section class="card">
+        <h2>Top 3 Customer Asks</h2>
+
+        <div class="numbered-callout">
+          <div class="callout-number">1</div>
+          <div class="callout-content">
+            <h3>Identity / Token Exchange</h3>
+            <p>
+              Customers consistently asked about identity propagation and token exchange for agent-to-tool communication.
+              They need agents to carry user identity through to backend systems (Jira, GitHub, Salesforce) without exposing
+              raw user credentials. This maps directly to the MCP Gateway's credential brokering capability via AuthBridge.
+            </p>
+          </div>
+        </div>
+
+        <div class="numbered-callout">
+          <div class="callout-number">2</div>
+          <div class="callout-content">
+            <h3>Observability</h3>
+            <p>
+              Customers need full visibility into agent-to-tool invocations — who called which tool, when, with what parameters,
+              and what the result was. This includes metrics, traces, and audit logs with agent-to-tool correlation. This maps
+              to the MCP Gateway's OpenTelemetry tracing and structured audit logging.
+            </p>
+          </div>
+        </div>
+
+        <div class="numbered-callout">
+          <div class="callout-number">3</div>
+          <div class="callout-content">
+            <h3>Cost Optimization / Context Bloat</h3>
+            <p>
+              Customers are concerned about token costs and context bloat as agents invoke more tools. They need per-tool
+              token metrics, cost attribution, and rate limiting to prevent runaway usage. This maps to the MCP Gateway's
+              token metrics and Limitador rate limiting.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout callout--note">
+          <p>
+            <strong>Note:</strong> Agent-to-Agent (A2A) communication was <strong>not yet a major ask</strong> at Summit.
+            The focus was on agent-to-tool governance, not agent orchestration. A2A is on the roadmap but is not the primary
+            customer pain point today.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Customer Interest Table</h2>
+        <p>
+          Customers who expressed interest in MCP Gateway, MCP Registry, or related capabilities at Summit 2026.
+          Source: Slack summaries from davmarti + azaalouk.
+        </p>
+
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Interest Area</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Phoenix Technologies</td>
+              <td>Multi-tenant MCP proxies</td>
+              <td>Evaluating</td>
+            </tr>
+            <tr>
+              <td>Global Financial Services Firm</td>
+              <td>RBAC</td>
+              <td>Exploring</td>
+            </tr>
+            <tr>
+              <td>Florida Blue</td>
+              <td>MCP Registry + Gateway</td>
+              <td>Active interest</td>
+            </tr>
+            <tr>
+              <td>Amadeus</td>
+              <td>Envoy-based gateway, token risks</td>
+              <td>Evaluating</td>
+            </tr>
+            <tr>
+              <td>AXA</td>
+              <td>AuthN/Z</td>
+              <td>Exploring</td>
+            </tr>
+            <tr>
+              <td>T-Mobile</td>
+              <td>Centralized MCP hosting + lineage</td>
+              <td>Active interest</td>
+            </tr>
+            <tr>
+              <td>Swiss Gov (FIOTT)</td>
+              <td>Management standards</td>
+              <td>Exploring</td>
+            </tr>
+            <tr>
+              <td>Airbus</td>
+              <td>RAG/agentic</td>
+              <td>Evaluating</td>
+            </tr>
+            <tr>
+              <td>NTT Data</td>
+              <td>Agent discovery</td>
+              <td>Exploring</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>Common Thread</h2>
+        <div class="callout callout--insight">
+          <p>
+            <strong>Insight:</strong> Customers want MCP/tool governance solutions, not just a gateway.
+          </p>
+        </div>
+        <p>
+          The recurring theme across Summit conversations: customers are looking for enterprise-grade governance for
+          agent-to-tool communication. They need:
+        </p>
+        <ul>
+          <li><strong>Identity propagation</strong> — agents carry user identity to backend systems</li>
+          <li><strong>Access control</strong> — agents see only the tools they're authorized for</li>
+          <li><strong>Observability</strong> — full visibility into agent-to-tool invocations</li>
+          <li><strong>Cost control</strong> — token metrics and rate limiting to prevent runaway usage</li>
+          <li><strong>Multi-tenancy</strong> — different teams/groups see different tool catalogs</li>
+          <li><strong>Centralized management</strong> — single control plane for all MCP servers</li>
+        </ul>
+        <p>
+          This is not a traditional API gateway use case. This is a new category: <strong>agent governance</strong>.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>What This Means for Positioning</h2>
+        <p>
+          The MCP Gateway is not "just a gateway" — it's an agent governance platform. The value proposition is not about
+          routing efficiency or protocol translation. It's about enabling enterprises to deploy agents safely at scale with
+          full governance and observability.
+        </p>
+        <p>
+          Key messaging takeaways:
+        </p>
+        <ul>
+          <li>Lead with <strong>identity/token exchange</strong> — this is the #1 customer ask</li>
+          <li>Emphasize <strong>observability</strong> as a first-class capability, not an add-on</li>
+          <li>Position <strong>cost control</strong> as essential for production deployments</li>
+          <li>Frame A2A as <strong>future state</strong>, not current priority</li>
+          <li>Tie everything back to <strong>governance</strong> — the unifying theme</li>
+        </ul>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Red Hat Summit 2026 Slack summaries (davmarti, azaalouk)</li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md">AI Gateway (Inference Gateway)</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md">MCP Gateway</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./sell/customer-stories.html">Customer Stories</a></li>
+            <li><a href="./plan/gaps.html">Known Gaps</a></li>
+            <li><a href="./sell/value-prop.html">Value Proposition</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RHCL Context — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>RHCL Context</h1>
+      <p class="lead">Red Hat Connectivity Link (RHCL) is the connectivity management platform that MCP Gateway runs on — providing authentication, rate limiting, DNS, TLS, and multi-cluster orchestration infrastructure.</p>
+
+      <h2>What Is Red Hat Connectivity Link?</h2>
+
+      <p>RHCL is a connectivity management platform built on the upstream <strong>Kuadrant</strong> project. It provides enterprise-grade API management capabilities for Kubernetes-based applications.</p>
+
+      <p><strong>Think of RHCL like a universal adapter for APIs:</strong> Just as a universal power adapter lets you plug your laptop into any outlet worldwide (handling voltage conversion, plug shapes, surge protection transparently), RHCL lets you expose APIs to any client (handling auth, rate limits, DNS routing, TLS certificates transparently).</p>
+
+      <p>RHCL's three pillars:</p>
+
+      <ul>
+        <li><strong>Policy Management</strong>: Manage policies across namespaces, clusters, availability zones, and clouds</li>
+        <li><strong>API Management</strong>: Authentication, logging, rate limiting, monitoring, reporting, transformation</li>
+        <li><strong>AI Gateway</strong>: Governance, optimization, communication, security, resiliency for AI models and agents</li>
+      </ul>
+
+      <p>MCP Gateway fits into the third pillar (AI Gateway) but leverages the first two pillars for its policy and API management foundations.</p>
+
+      <h2>RHCL Component Stack</h2>
+
+      <p>RHCL is not a monolithic product — it's an orchestrated stack of specialized components:</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Role</th>
+            <th>Key CRD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Kuadrant Operator</strong></td>
+            <td>Orchestrates all RHCL components, reconciles policy CRDs</td>
+            <td><code>Kuadrant</code></td>
+          </tr>
+          <tr>
+            <td><strong>Authorino</strong></td>
+            <td>Authentication and authorization engine (OAuth, OIDC, API keys, OPA policies)</td>
+            <td><code>AuthPolicy</code></td>
+          </tr>
+          <tr>
+            <td><strong>Limitador</strong></td>
+            <td>Rate limiting engine (request/second, token/minute, custom limits)</td>
+            <td><code>RateLimitPolicy</code></td>
+          </tr>
+          <tr>
+            <td><strong>Cert Manager</strong></td>
+            <td>TLS certificate management (Let's Encrypt, custom CAs)</td>
+            <td><code>Certificate</code></td>
+          </tr>
+          <tr>
+            <td><strong>DNS Operator</strong></td>
+            <td>DNS integration (AWS Route53, GCP Cloud DNS, Azure DNS)</td>
+            <td><code>DNSRecord</code></td>
+          </tr>
+          <tr>
+            <td><strong>Policy APIs</strong></td>
+            <td>Unified policy interface across TLS, Auth, DNS, Rate Limits</td>
+            <td><code>TLSPolicy</code>, <code>DNSPolicy</code>, etc.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Each component is responsible for a specific concern. The Kuadrant Operator stitches them together, ensuring policies are applied consistently.</p>
+
+      <h2>Communication Path: Request to Response</h2>
+
+      <p>Let's trace a request through the full RHCL stack (with MCP Gateway in the middle):</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">Gateway API</div>
+          <div class="flow-step__subtitle">K8s standard</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Ingress Gateway</div>
+          <div class="flow-step__subtitle">Envoy</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Limitador</div>
+          <div class="flow-step__subtitle">Rate limiting</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Authorino</div>
+          <div class="flow-step__subtitle">Auth engine</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">KeyCloak</div>
+          <div class="flow-step__subtitle">IdP</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">MCP Gateway</div>
+          <div class="flow-step__subtitle">Router + Broker</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCP Server</div>
+          <div class="flow-step__subtitle">Backend service</div>
+        </div>
+      </div>
+
+      <p><strong>Step-by-step:</strong></p>
+      <ol>
+        <li><strong>Gateway API</strong>: Request arrives at Kubernetes Gateway resource (e.g., <code>Gateway</code> with <code>HTTPRoute</code>)</li>
+        <li><strong>Ingress Gateway (Envoy)</strong>: Entry point for external traffic; applies TLS termination</li>
+        <li><strong>Limitador</strong>: Checks rate limits (e.g., "100 requests/second per user"); rejects if exceeded</li>
+        <li><strong>Authorino</strong>: Validates OAuth token, checks permissions via <code>AuthPolicy</code></li>
+        <li><strong>KeyCloak</strong>: Identity provider consulted by Authorino for token validation (if using Keycloak as IdP)</li>
+        <li><strong>MCP Gateway</strong>: Parses MCP protocol, routes to correct backend MCP server</li>
+        <li><strong>MCP Server</strong>: Executes tool logic, returns result</li>
+      </ol>
+
+      <p>With Service Mesh (Istio/OpenShift Service Mesh), the Istio Control Plane is added to manage sidecar proxies for east-west traffic (service-to-service communication).</p>
+
+      <h2>Why WASM Matters</h2>
+
+      <div class="callout callout--insight">
+        <p><strong>RHCL is implemented as a WASM (WebAssembly) plug-in for Envoy, not a standalone gateway product.</strong> This design choice has three critical advantages:</p>
+
+        <ol>
+          <li>
+            <strong>Minimal disruption to existing infrastructure</strong>
+            <p>Organizations already running Envoy for ingress (via OpenShift Service Mesh, Istio, or standalone Envoy) don't need to rip-and-replace their networking stack. RHCL components slot in as WASM plugins, reusing existing Envoy deployments.</p>
+          </li>
+          <li>
+            <strong>Gateway API standardization</strong>
+            <p>RHCL uses the Kubernetes <strong>Gateway API</strong> (not the older Ingress API). Gateway API is a role-oriented, portable, expressive routing standard that's becoming the de facto standard for Kubernetes networking. This means RHCL-configured resources are portable across different Kubernetes distributions and cloud providers.</p>
+          </li>
+          <li>
+            <strong>Multi-cluster resiliency</strong>
+            <p>RHCL supports configuration mirroring across clusters, BYOP (Bring Your Own Policies), and HA/DR/GLB (High Availability / Disaster Recovery / Global Load Balancing). This allows enterprises to deploy MCP Gateway across multiple clusters or clouds with consistent policies.</p>
+          </li>
+        </ol>
+      </div>
+
+      <h2>RHCL Version Roadmap</h2>
+
+      <p>RHCL ships on a quarterly cadence. Here's the version roadmap relevant to MCP Gateway:</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Key Features</th>
+            <th>MCP Gateway Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="status-table--shipped">
+            <td><strong>v1.3 (Current)</strong></td>
+            <td>
+              <ul>
+                <li>Developer Portal (RHDH) DP</li>
+                <li><strong>MCP Gateway TP</strong> (v0.6.0 in v1.3.3, April 30, 2026)</li>
+                <li>DNS Auto Cluster Failover DP</li>
+                <li>CoreDNS GA</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--tp">TP</span> MCP Gateway 0.6.0 shipped in RHCL 1.3.3</td>
+          </tr>
+          <tr class="status-table--tp">
+            <td><strong>v1.4 (Next)</strong></td>
+            <td>
+              <ul>
+                <li>Developer Portal (OCP Console) TP</li>
+                <li>Extensions SDK DP II</li>
+                <li>gRPC Policy DP</li>
+                <li>Egress Gateway DP</li>
+                <li>Multi-Arch GA</li>
+                <li>Disconnected Environments GA</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--tp">Expected</span> June 11, 2026 (adds OCP 4.22 support)</td>
+          </tr>
+          <tr class="status-table--planned">
+            <td><strong>vNext (Future)</strong></td>
+            <td>
+              <ul>
+                <li>Any Kubernetes Support GA</li>
+                <li>Analytics / Policy Recommendation DP</li>
+                <li>Metrics-Based DNS Routing DP</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--planned">Q4 2026</span> MCP Registry integration planned</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>OpenShift Version Support Matrix</h2>
+
+      <p>RHCL requires Gateway API support, which became GA in OpenShift 4.19. However, RHCL and RHOAI version support doesn't always align perfectly:</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>OCP Version</th>
+            <th>Status</th>
+            <th>RHCL Support</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>OCP 4.19</strong></td>
+            <td>Full Support + Maintenance</td>
+            <td><span class="badge badge--gap">Untested</span></td>
+            <td>Gateway API GA. RHOAI 3.5 targets 4.19, but RHCL 1.4 likely won't support it. <strong>Best-effort only.</strong></td>
+          </tr>
+          <tr>
+            <td><strong>OCP 4.20</strong></td>
+            <td>Released Oct 21, 2025</td>
+            <td><span class="badge badge--shipped">Supported</span></td>
+            <td>Recommended minimum for RHOAI + RHCL deployments</td>
+          </tr>
+          <tr>
+            <td><strong>OCP 4.21</strong></td>
+            <td>Released Feb 3, 2026</td>
+            <td><span class="badge badge--shipped">Supported</span></td>
+            <td>Fully supported</td>
+          </tr>
+          <tr>
+            <td><strong>OCP 4.22</strong></td>
+            <td>May/Jun 2026</td>
+            <td><span class="badge badge--tp">v1.4</span></td>
+            <td>RHCL 1.4 adds OCP 4.22 support (June 11, 2026)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--gap">
+        <div class="callout__title">Known Gap: August 2026</div>
+        <p>RHOAI 3.5 (August 2026) will support OCP 4.19, but RHCL 1.4 will likely not. This means the configuration (RHOAI 3.5 + RHCL + OCP 4.19) is <strong>untested and best-effort support only</strong>.</p>
+        <p>OCP 4.19 maintenance support ends December 2026 (only 4 months of overlap with RHOAI 3.5 TP). Customers are advised to upgrade to OCP 4.20+ for full support.</p>
+      </div>
+
+      <h2>MCP Gateway Feature Roadmap in RHCL</h2>
+
+      <p>MCP Gateway shipped as Technical Preview in RHCL 1.3.3 (April 2026). Here's what's coming:</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Features</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="status-table--shipped">
+            <td><strong>Developer Preview (Feb 2026)</strong></td>
+            <td>
+              <ul>
+                <li>Authentication (OAuth-Based Security)</li>
+                <li>Authorization (Fine Grained Access Control)</li>
+                <li>Virtual MCP Servers (Focused Tool Collections)</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--shipped">Shipped</span></td>
+          </tr>
+          <tr class="status-table--tp">
+            <td><strong>Technical Preview (Apr 2026)</strong></td>
+            <td>
+              <ul>
+                <li>Isolated Gateway Deployment (Multiple MCP Gateways)</li>
+                <li>Vault Integration (Secrets/Keys)</li>
+                <li>MCP Elicitation Support</li>
+                <li>Content Guardrails (Handle Content at Gateway)</li>
+                <li>Hosts for Virtual MCP Servers (Easier Routing)</li>
+                <li>Router OTEL Tracing (Open Telemetry Trace Logs)</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--tp">RHCL 1.3.3/1.4</span></td>
+          </tr>
+          <tr class="status-table--planned">
+            <td><strong>General Availability (Q4 2026)</strong></td>
+            <td>
+              <ul>
+                <li>Deployment Operator (MCP Gateway Operator)</li>
+                <li>Security Plug-In (DDoS, Bot Management)</li>
+                <li>Session Management (Resumable Sessions)</li>
+                <li>High Availability (Health Checks / Failover)</li>
+                <li><strong>MCP Registry Integration</strong></li>
+                <li>Extending Existing Capabilities (Prompts, Resources, Sampling)</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--planned">Planned Q4 2026</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Key implication for AI Asset Registry:</strong> MCP Registry integration is planned for GA (Q4 2026). This confirms the target workflow: registry approval → gateway configuration should flow automatically by GA.</p>
+
+      <h2>Deployment Models</h2>
+
+      <p>RHCL (and MCP Gateway) can be deployed in several configurations depending on entitlement and use case:</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">OCP 5.0 Platform</div>
+        </div>
+        <div class="feature-card__description">
+          <p>MCP Gateway available via catalog (layered installation). OCP 5.0 includes entitlement to MCP Gateway for platform-internal MCP servers. MCP Gateway Operator declares dependency on RHCL Operator. Zero-cost SKU covers this use case.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">RHOAI Deployment</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Gets zero-cost RHCL SKU entitlement (includes MCP Gateway). MCP auth via Authorino and AuthPolicy. RHCL rate limiting or token rate limiting available. <strong>Note:</strong> MCP and Agent workloads are explicitly excluded from RHOAI's unlimited tokens/token metrics entitlement (which is scoped to MaaS only).</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Full RHCL Purchase</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Full RHCL feature set including MCP Gateway. Additional capabilities: DNS management, HA/DR/GLB (High Availability, Disaster Recovery, Global Load Balancing), advanced rate limiting policies.</p>
+        </div>
+      </div>
+
+      <p>For detailed SKU pricing and entitlement matrix, see <a href="./plan/skus.html">Plan It &gt; SKUs & Entitlement</a>.</p>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway (RHCL context)</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./understand/architecture.html" class="page-footer__link">Architecture — How MCP Gateway components work</a></li>
+            <li><a href="./plan/skus.html" class="page-footer__link">SKUs & Entitlement — Pricing and deployment models</a></li>
+            <li><a href="./build/deployment.html" class="page-footer__link">Deployment — Installing MCP Gateway on OpenShift</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

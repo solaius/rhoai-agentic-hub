@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security Model — MCP Ecosystem Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Security Model</h1>
+      <p class="lead">Authentication, authorization, identity propagation, and credential brokering across the MCP ecosystem.</p>
+
+      <h2>Security Architecture</h2>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">Keycloak</div>
+          <div class="flow-step__subtitle">Identity Provider</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step__title">Authorino</div>
+          <div class="flow-step__subtitle">Policy Enforcement</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">Wristband Tokens</div>
+          <div class="flow-step__subtitle">Per-Tool Auth</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCP Gateway</div>
+          <div class="flow-step__subtitle">Tool-Level RBAC</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCP Servers</div>
+          <div class="flow-step__subtitle">Execution</div>
+        </div>
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Defense in Depth:</strong> Multi-layer security from Keycloak (identity) → Authorino (policy) → Wristband (per-tool auth) → RBAC (namespace scoping) → Vault (credential brokering).
+      </div>
+
+      <h2>Authentication Flow</h2>
+      <h3>1. User Authentication (Keycloak)</h3>
+      <p>Keycloak sits at the center of the ecosystem as the identity provider:</p>
+      <ul>
+        <li><strong>Identity Federation</strong> — Keycloak acts as broker, delegating to OpenShift OAuth</li>
+        <li><strong>MCP Realm</strong> — Dedicated realm with realm roles (<code>user</code>, <code>admin</code>)</li>
+        <li><strong>Two OIDC Clients</strong>:
+          <ul>
+            <li><strong>Confidential client</strong> for Gateway broker (service-to-service with client secret)</li>
+            <li><strong>Public client</strong> for Gen AI Studio/Playground (authorization code flow, no secret)</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>2. Policy Enforcement (Authorino)</h3>
+      <p>Authorino enforces policy at the Gateway level via AuthPolicy CRD:</p>
+      <ul>
+        <li><strong>JWT Authentication</strong> — Validates Bearer tokens against Keycloak OIDC</li>
+        <li><strong>Wristband Signing</strong> — OPA Rego extracts per-server tool roles from JWT <code>resource_access</code> claim, signs into ES256 wristband JWT in <code>x-authorized-tools</code> header</li>
+        <li><strong>VirtualMCPServer Routing</strong> — CEL reads <code>groups</code> claim, sets <code>x-mcp-virtualserver</code> header</li>
+      </ul>
+
+      <h3>3. Wristband Tokens (Per-Tool Auth)</h3>
+      <p>Wristband tokens provide fine-grained per-tool authorization:</p>
+      <ul>
+        <li>Signed by Authorino using ECDSA private key</li>
+        <li>Verified by Gateway broker using public key (referenced in <code>MCPGatewayExtension.spec.trustedHeadersKey</code>)</li>
+        <li>Contains per-server tool roles extracted from Keycloak JWT</li>
+        <li>Passed in <code>x-authorized-tools</code> header</li>
+      </ul>
+
+      <h3>4. RBAC (Namespace Scoping)</h3>
+      <p>Kubernetes RBAC controls deployment and management access:</p>
+      <ul>
+        <li><strong>ServiceAccount + ClusterRoleBinding</strong> — MCP servers run with restricted cluster-wide read access</li>
+        <li><strong>Namespace Labels</strong> — <code>opendatahub.io/dashboard: "true"</code> required for RHOAI visibility</li>
+        <li><strong>ReferenceGrants</strong> — Cross-namespace references for MCPGatewayExtension → Gateway</li>
+      </ul>
+
+      <h2>Agent Identity Tiers</h2>
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Mechanism</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tier 1</strong></td>
+            <td>OpenShell token masking — basic credential protection</td>
+            <td><span class="badge badge--shipped">Available (3.4)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Tier 2</strong></td>
+            <td>SPIFFE/Authbridge — actor-chain identity propagation with service mesh mTLS</td>
+            <td><span class="badge badge--planned">Planned (3.5+)</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--quote">
+        <strong>From AI Gateway F2F (April 2026):</strong> "Agent identity tiered: Tier 1 (OpenShell token masking), Tier 2 (Spire/Authbridge with actor-chain)."
+      </div>
+
+      <h2>Credential Brokering (Vault Integration)</h2>
+      <p>For MCP servers requiring per-user credentials (e.g., GitHub PATs):</p>
+
+      <h3>Vault Setup</h3>
+      <ol style="margin-left: var(--space-lg); color: var(--text-secondary);">
+        <li>Enable KV v2 secrets engine</li>
+        <li>Configure JWT auth method with Keycloak JWKS</li>
+        <li>Create templated policy scoping read access to <code>secret/data/mcp-gateway/users/{{username}}/*</code></li>
+      </ol>
+
+      <h3>Per-Server AuthPolicy Wiring</h3>
+      <ol style="margin-left: var(--space-lg); color: var(--text-secondary);">
+        <li>Extract Keycloak JWT from Authorization header</li>
+        <li>Exchange JWT for Vault token</li>
+        <li>Retrieve credential from Vault KV</li>
+        <li>Inject credential into Authorization header for MCP server</li>
+      </ol>
+
+      <div class="callout callout--gap">
+        <strong>Known Gap:</strong> Vault integration is optional for MVP but required for production use cases with external MCP servers (GitHub, Slack, etc.).
+      </div>
+
+      <h2>Gateway Topology Options</h2>
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>Topology</th>
+            <th>When to Use</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Shared Gateway</strong></td>
+            <td>Policy-isolated teams with centralized governance. Single Gateway instance with per-team VirtualMCPServers and AuthPolicies.</td>
+          </tr>
+          <tr>
+            <td><strong>Gateway-per-Team</strong></td>
+            <td>Namespace-isolated teams with strict compliance requirements. Each team deploys its own Gateway in its own namespace.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Key Security Recommendations</h2>
+      <ul>
+        <li><strong>HTTP-based MCP servers only</strong> — stdio transport not supported by Gateway</li>
+        <li><strong>Wristband + VirtualMCPServer layering</strong> — defense-in-depth approach</li>
+        <li><strong>Gateway-level AuthPolicy</strong> for auth/wristband; per-server HTTPRoute for credential injection</li>
+        <li><strong>Prefer OpenShift OAuth federation</strong> over seed users in production Keycloak</li>
+        <li><strong>Namespace isolation</strong> for multi-tenant deployments</li>
+      </ul>
+
+      <h2>Deep Dive: Gateway Security</h2>
+      <p>For comprehensive coverage of MCP Gateway security architecture, policy configuration, and wristband signing:</p>
+      <p style="margin-top: var(--space-md);"><a href="../../../mcp-gateway/rhcl/understand/security.html" style="color: var(--rh-blue-light); text-decoration: none; font-weight: 600;">→ MCP Gateway Security Deep Dive</a></p>
+
+      <footer class="page-footer" data-verified="2026-06-22">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y">Jaideep's MCP Ecosystem Best Practices</a></li>
+            <li><a href="https://docs.google.com/document/d/1liziAy55qQBd80qRN63WTZjhu5mJRQ4-OlogP_edftQ">MCP Gateway on OpenShift</a></li>
+            <li><a href="https://docs.google.com/document/d/1-WGqvk5Ehn5ocyMON0QNkMDeQyiFzbsAMmIXuyzqrBU">AI Gateway F2F — Agenda & Outcomes</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../../../mcp-gateway/rhcl/understand/security.html">MCP Gateway Security Deep Dive</a></li>
+            <li><a href="./lifecycle-flow.html">Lifecycle Flow</a></li>
+            <li><a href="./component-integration.html">Component Integration</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

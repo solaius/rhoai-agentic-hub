@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+
+      <h1>Roadmap</h1>
+      <p class="lead">MCP Gateway version history, feature timeline, and platform alignment.</p>
+
+      <section>
+        <h2>Version History</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release Date</th>
+              <th>RHCL Version</th>
+              <th>Key Changes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>v0.5</strong></td>
+              <td>Early 2026</td>
+              <td>Pre-1.3</td>
+              <td>Baseline implementation, Developer Preview features</td>
+            </tr>
+            <tr>
+              <td><strong>v0.6</strong></td>
+              <td>Apr 30, 2026</td>
+              <td>RHCL 1.3.3</td>
+              <td>First Technology Preview release in RHCL</td>
+            </tr>
+            <tr>
+              <td><strong>v0.7.0</strong></td>
+              <td>Jun 11, 2026</td>
+              <td>RHCL 1.4 GA</td>
+              <td>Major performance overhaul, content guardrails</td>
+            </tr>
+            <tr>
+              <td><strong>v0.7.1</strong></td>
+              <td>Jun 18, 2026</td>
+              <td>RHCL 1.4</td>
+              <td>TLS hairpin fix, per-server SNI fix</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>v0.7.0 Performance Gains</h2>
+        <div class="callout callout--insight">
+          <h3>8× Latency Reduction Under Load</h3>
+          <p><strong>p95 latency at 500 MCP servers dropped from 390ms to 47ms.</strong></p>
+          <p>8-hour soak test results:</p>
+          <ul>
+            <li>44.3M requests processed</li>
+            <li>1,540 RPS sustained throughput</li>
+            <li>Zero broker restarts</li>
+            <li>Zero memory leaks</li>
+          </ul>
+          <p>This performance overhaul makes the gateway production-ready for high-scale enterprise deployments.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Feature Roadmap</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Milestone</th>
+              <th>Target Date</th>
+              <th>Features</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Developer Preview</strong></td>
+              <td>Feb 2026</td>
+              <td>
+                <ul>
+                  <li>OAuth-Based Security</li>
+                  <li>Fine-Grained Access Control</li>
+                  <li>Virtual MCP Servers (Focused Tool Collections)</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Tech Preview</strong></td>
+              <td>Apr 2026</td>
+              <td>
+                <ul>
+                  <li>Isolated Gateway Deployment (Multiple Gateways)</li>
+                  <li>Vault Integration (Secrets/Keys)</li>
+                  <li>MCP Elicitation Support</li>
+                  <li>Content Guardrails (NeMo/TrustyAI via ext_proc)</li>
+                  <li>Hosts for Virtual MCP Servers (Easier Routing)</li>
+                  <li>Router OTEL Tracing</li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>General Availability</strong></td>
+              <td>Q4 2026</td>
+              <td>
+                <ul>
+                  <li>Deployment Operator (MCP Gateway Operator)</li>
+                  <li>Security Plug-In (DDoS, Bot Management)</li>
+                  <li>Session Management (Resumable Sessions)</li>
+                  <li>High Availability (Health Checks / Failover)</li>
+                  <li><strong>MCP Registry Integration</strong></li>
+                  <li>Extending Existing Capabilities (Prompts, Resources, Sampling)</li>
+                </ul>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Platform Alignment</h2>
+
+        <h3>RHCL Version Alignment</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>RHCL Version</th>
+              <th>Release Date</th>
+              <th>MCP Gateway</th>
+              <th>Key Features</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1.3.3</strong></td>
+              <td>Apr 30, 2026</td>
+              <td>v0.6 (Tech Preview)</td>
+              <td>Developer Portal (RHDH) DP, DNS Auto Cluster Failover DP, CoreDNS GA</td>
+            </tr>
+            <tr>
+              <td><strong>1.4</strong></td>
+              <td>Jun 11, 2026</td>
+              <td>v0.7.0+ (Tech Preview)</td>
+              <td>Developer Portal (OCP Console) TP, Extensions SDK DP II, gRPC Policy DP, Egress Gateway DP, Multi-Arch GA, Disconnected Environments GA</td>
+            </tr>
+            <tr>
+              <td><strong>vNext</strong></td>
+              <td>Future</td>
+              <td>v1.0 (GA candidate)</td>
+              <td>Any Kubernetes Support GA, Analytics / Policy Recommendation DP, Metrics-Based DNS Routing DP</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>RHOAI Alignment</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Current Version</th>
+              <th>Next Version</th>
+              <th>MCP Gateway Integration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>RHCL</strong></td>
+              <td>1.4 GA</td>
+              <td>vNext</td>
+              <td>MCP Gateway ships in RHCL</td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI</strong></td>
+              <td>3.4 (catalog)</td>
+              <td>3.5 (Aug 2026: registry + gateway dependency)</td>
+              <td>MCP Gateway as dependency, registry-to-gateway auto-config (TP)</td>
+            </tr>
+            <tr>
+              <td><strong>OCP</strong></td>
+              <td>4.19+ required</td>
+              <td>5.0 early access requested</td>
+              <td>Gateway API GA (4.19+), MCP Gateway in OCP 5.0 catalog</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Upstream MCP Spec</h2>
+        <div class="callout callout--source">
+          <h3>MCP Spec Release Candidate Published</h3>
+          <p>The Model Context Protocol specification has published a Release Candidate. The MCP Gateway team is evaluating whether to support both the new spec version and the current version simultaneously during the transition period.</p>
+          <p><strong>Status:</strong> Under discussion. Decision expected before GA.</p>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway/releases">MCP Gateway Releases (GitHub)</a></li>
+            <li>RHCL Overview Deck (RHCL Product Team)</li>
+            <li>MCP Gateway Delivery Doc (Internal)</li>
+            <li>Source Verification Report (2026-06-21)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./build/features.html">Features</a></li>
+            <li><a href="./plan/gaps.html">Known Gaps</a></li>
+            <li><a href="./plan/skus.html">SKUs & Entitlements</a></li>
+            <li><a href="./understand/rhcl-context.html">RHCL Context</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

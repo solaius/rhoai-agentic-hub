@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Registry — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>MCP Registry</h1>
+      <p class="lead">The authoritative governance layer for MCP servers in RHOAI. System of record that brings governance, lifecycle control, trust, and visibility so MCP assets can move cleanly from discovery through approval, deployment, runtime use, and consumption.</p>
+
+      <div class="callout callout--insight">
+        <strong>Target:</strong> RHOAI 3.5 Dev Preview
+      </div>
+
+      <h2>Purpose</h2>
+      <p>System of record for governed MCP servers (internal or external). Provides:</p>
+      <ul>
+        <li>Ingestion and lifecycle management</li>
+        <li>Security and certification context</li>
+        <li>Versioning and immutability</li>
+        <li>Policy-aware visibility</li>
+      </ul>
+
+      <h2>Data Model (Proposed)</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">MCPServer</div>
+          <div class="flow-box__desc">Logical governed asset<br>Scoped to workspace</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">MCPServerVersion</div>
+          <div class="flow-box__desc">Immutable payload<br>+ mutable governance metadata</div>
+        </div>
+      </div>
+
+      <p class="note">Source: <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8">MLflow MCP Registry Data Model Proposal</a> — this is a proposal/brain dump, not an approved design.</p>
+
+      <h2>Governance Tracks</h2>
+      <p>Unlike a single linear lifecycle, the proposal separates governance into four independent tracks:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Track</th>
+            <th>States</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Lifecycle State</strong></td>
+            <td>Draft → Candidate → Published → Deprecated → Retired</td>
+            <td>Progression state of the version</td>
+          </tr>
+          <tr>
+            <td><strong>Approval Status</strong></td>
+            <td>Draft → Pending → Approved → Rejected → Revoked</td>
+            <td>Authorization/governance decision</td>
+          </tr>
+          <tr>
+            <td><strong>Verification Status</strong></td>
+            <td>Unverified → Verified</td>
+            <td>Identity/source verification</td>
+          </tr>
+          <tr>
+            <td><strong>Certification Status</strong></td>
+            <td>None → Candidate → Certified → Expired → Revoked</td>
+            <td>Certification program compliance</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--insight">
+        <strong>Design Principle:</strong> Governance metadata is first-class and separate from tags. The <code>server_json</code> on MCPServerVersion stores the canonical MCP payload following the <a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON">upstream MCP registry schema</a>.
+      </div>
+
+      <h2>MLflow Integration</h2>
+      <p>Red Hat is collaborating upstream with MLflow/Databricks on MCP registry design. The data model proposal is undergoing RFC approval process. This collaboration informs the future generalized AI asset registry architecture.</p>
+
+      <h2>MVP Scope (3.5 Dev Preview)</h2>
+      <ul>
+        <li>Governed registration of MCP servers</li>
+        <li>Metadata-first MCP records</li>
+        <li>Lifecycle state tracking</li>
+        <li>Certification and approval visibility</li>
+        <li>RBAC-aware visibility and governance</li>
+        <li>Support for internal and external MCP representation</li>
+        <li>Conceptual integration with catalog, deployment, gateway, Studio</li>
+      </ul>
+
+      <h2>Open Questions (from Reviewers)</h2>
+      <ul>
+        <li><strong>Dan Kuc:</strong> MLflow lifecycle states (None/Staging/Production/Archived) may need expansion for MCP</li>
+        <li><strong>Chris Hambridge:</strong> Should Lifecycle Operator create read-only "managed" registry entries?</li>
+        <li><strong>Matt Prahl:</strong> Clarified concept as "discovered" MCP servers from MLflow's perspective</li>
+        <li><strong>Jon Burdo:</strong> Certification allowlist question may connect to RHAIRFE-294</li>
+      </ul>
+
+      <div class="callout callout--gap">
+        <strong>Integration Gap:</strong> Not yet integrated with Gateway — automated registry→gateway flow is GA target (Q4 2026). Today's manual gateway registration will be replaced by registry-driven configuration.
+      </div>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y">MCP Registry MVP Requirements</a></li>
+            <li><a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8">MLflow MCP Registry Data Model Proposal</a></li>
+            <li><a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON">Upstream MCP Registry Schema</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./govern/ecosystem.html">Ecosystem Overview</a></li>
+            <li><a href="./govern/catalog.html">MCP Catalog</a></li>
+            <li><a href="./plan/roadmap.html">Roadmap & Versions</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

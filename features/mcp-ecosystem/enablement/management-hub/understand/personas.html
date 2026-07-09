@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personas — MCP Ecosystem Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Personas</h1>
+      <p class="lead">Three key personas interact with the MCP Management ecosystem — each with different roles, goals, and touchpoints.</p>
+
+      <h2>Platform Engineer</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Platform Engineer</div>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Role:</strong> Installs and configures the MCP ecosystem infrastructure. Manages cluster-level resources, operators, and namespace boundaries.</p>
+
+          <p><strong>Goals:</strong></p>
+          <ul>
+            <li>Deploy MCP Gateway, Lifecycle Operator, and Registry with minimal manual steps</li>
+            <li>Configure RBAC policies for who can deploy/register/consume MCP servers</li>
+            <li>Set up namespace isolation (e.g., dev, staging, prod MCP servers)</li>
+            <li>Monitor platform health (operator logs, Gateway metrics, deployment status)</li>
+            <li>Troubleshoot failed deployments or misconfigurations</li>
+          </ul>
+
+          <p><strong>Components Touched:</strong></p>
+          <ul>
+            <li><strong>MCP Gateway:</strong> Install via Helm, configure <code>MCPGatewayExtension</code>, create wristband signing keys, set up AuthPolicy for OIDC integration</li>
+            <li><strong>MCP Lifecycle Operator:</strong> Install via YAML from release manifest, verify operator pod health, configure namespace labels (<code>opendatahub.io/dashboard</code>)</li>
+            <li><strong>MCP Registry:</strong> Configure MLflow backend, set workspace-level RBAC policies</li>
+            <li><strong>OpenShift/Kubernetes:</strong> Create ClusterRoleBindings, configure Keycloak realms, set up cert-manager for TLS</li>
+          </ul>
+
+          <p><strong>Typical Workflow:</strong></p>
+          <ol>
+            <li>Install Tier 1 operators (Service Mesh, cert-manager, RHCL) via OperatorHub</li>
+            <li>Install Tier 2 components (MCP Gateway, MCPLO, Keycloak) via Helm/YAML</li>
+            <li>Configure namespace labels and RBAC policies</li>
+            <li>Create prerequisite resources (ServiceAccounts, ConfigMaps for MCP server configs)</li>
+            <li>Verify connectivity: <code>curl -X POST http://gateway/mcp -d '{"jsonrpc":"2.0","method":"initialize",...}'</code></li>
+            <li>Monitor metrics: OpenTelemetry traces, Prometheus scrapes, Gateway broker logs</li>
+          </ol>
+
+          <p><strong>Pain Points (3.4):</strong></p>
+          <ul>
+            <li>Manual prerequisite creation for every MCP server (ServiceAccount, ConfigMap, ClusterRoleBinding)</li>
+            <li>Namespace label requirement can't be set via <code>oc new-project</code> — requires manifest</li>
+            <li>ConfigMap (<code>gen-ai-aa-mcp-servers</code>) must be manually edited for Studio integration</li>
+            <li>No single "install MCP ecosystem" command — requires orchestrating 10+ YAML applies</li>
+          </ul>
+
+          <p><strong>3.5+ Improvements:</strong></p>
+          <ul>
+            <li>Lifecycle Operator auto-creates prerequisites when deploying from Catalog</li>
+            <li>Registry replaces manual ConfigMap editing — Studio reads from Registry API</li>
+            <li>RHOAI operator bundles MCPLO, reducing manual installation steps</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>AI Engineer</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">AI Engineer</div>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Role:</strong> Builds AI agents and workflows. Discovers and consumes MCP servers to give agents tool-calling capabilities.</p>
+
+          <p><strong>Goals:</strong></p>
+          <ul>
+            <li>Discover available MCP servers and understand what tools they expose</li>
+            <li>Deploy MCP servers without needing deep Kubernetes knowledge</li>
+            <li>Test agents with MCP tools in Gen AI Studio playground</li>
+            <li>Build agents in workbenches (Python/Langchain) that call MCP servers</li>
+            <li>Understand which MCP servers are certified/approved vs community/unverified</li>
+          </ul>
+
+          <p><strong>Components Touched:</strong></p>
+          <ul>
+            <li><strong>MCP Catalog:</strong> Browse partner, community, and Red Hat MCP servers; read READMEs, view tool lists, check security indicators</li>
+            <li><strong>Gen AI Studio Playground:</strong> Select MCP servers in settings panel, test prompts that invoke tools ("list all projects in the cluster")</li>
+            <li><strong>Workbench:</strong> Write Python code (Langchain, custom) to call MCP servers remotely (HTTP MCP)</li>
+            <li><strong>MCP Registry (indirect):</strong> Benefits from governance metadata — trust tier labels and approval status — that inform what's visible and recommended in the Catalog</li>
+          </ul>
+
+          <p><strong>Typical Workflow:</strong></p>
+          <ol>
+            <li><strong>Discover:</strong> Browse Catalog → find "OpenShift MCP server" → read README for prerequisites and tool list</li>
+            <li><strong>Deploy:</strong> Click "Deploy MCP Server" → select namespace → click Deploy → wait for MCPLO to create resources</li>
+            <li><strong>Test in Playground:</strong> Create playground with tool-calling model (e.g., gpt-4, claude-3.5-sonnet) → Settings > MCP tab → select OpenShift MCP → test prompt: "list all projects in the cluster"</li>
+            <li><strong>Build Agent:</strong> In workbench, write Langchain code that calls <code>http://ocp-mcp.my-mcp.svc.cluster.local:8080/mcp</code> → test locally → deploy as agent image</li>
+            <li><strong>Monitor Usage:</strong> Check Gateway metrics to see how often agent is calling tools, success/failure rates</li>
+          </ol>
+
+          <p><strong>Pain Points (3.4):</strong></p>
+          <ul>
+            <li>No documented way to call MCP servers from Python code in workbenches (Langchain integration gap)</li>
+            <li>Catalog doesn't create prerequisites — must manually create ServiceAccount, ConfigMap, ClusterRoleBinding before deploying</li>
+            <li>Small models (llama-3.2-3b-instruct) struggle with large tool outputs (many pods with many attributes)</li>
+            <li>No visibility into which MCP servers are approved for production vs playground-only</li>
+          </ul>
+
+          <p><strong>3.5+ Improvements:</strong></p>
+          <ul>
+            <li>Trust tier labels in Catalog (certified, community, unverified) informed by Registry governance</li>
+            <li>Workbench templates/examples for calling MCP servers via Langchain</li>
+            <li>Improved model recommendations for tool calling (surface models with strong tool-calling support)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Admin / Governance Lead</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Admin / Governance Lead</div>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Role:</strong> Approves MCP servers for production use. Sets governance policies (who can deploy what, which tools are allowed). Audits MCP usage for compliance.</p>
+
+          <p><strong>Goals:</strong></p>
+          <ul>
+            <li>Approve or reject MCP servers for production deployment</li>
+            <li>Set policies: "Agent A can only call Jira read-only tools", "Only certified MCP servers in prod namespace"</li>
+            <li>Audit trail: Who deployed what MCP server? Who called which tools? On whose behalf?</li>
+            <li>Certification visibility: Which MCP servers are certified? Which need re-certification?</li>
+            <li>Risk management: Identify MCP servers with vulnerabilities or expired certifications</li>
+          </ul>
+
+          <p><strong>Components Touched:</strong></p>
+          <ul>
+            <li><strong>MCP Registry:</strong> Review pending MCP server registrations → approve/reject → set certification status → revoke approvals if vulnerabilities found</li>
+            <li><strong>MCP Gateway:</strong> Configure per-tool AuthPolicies (who can call which tools), review audit logs (full request/response with delegation chains)</li>
+            <li><strong>MCP Catalog (via Registry integration):</strong> Indirectly — controls which MCP servers surface in Catalog based on approval/certification status</li>
+          </ul>
+
+          <p><strong>Typical Workflow:</strong></p>
+          <ol>
+            <li><strong>Review Pending MCP Servers:</strong> Log into Registry UI → see list of MCP servers in "Pending" approval status → review metadata (owner, source, tools, security indicators)</li>
+            <li><strong>Approve for Dev:</strong> Click "Approve" → set lifecycle state to "Published" → MCP server now visible in Catalog for dev namespace</li>
+            <li><strong>Certify for Prod:</strong> Run security scan (SAST, vulnerability check) → if passed, set certification status to "Certified" → MCP server now eligible for prod deployment</li>
+            <li><strong>Set Tool Policies:</strong> In Gateway, configure AuthPolicy: <code>groups=["data-science"]</code> can call Jira read-only tools, <code>groups=["admins"]</code> can call all tools</li>
+            <li><strong>Audit Usage:</strong> Query Gateway audit logs for compliance report: "Show all tool calls by user X in last 30 days" → export to SIEM for SOC 2 audit</li>
+            <li><strong>Revoke Approval:</strong> If vulnerability found, set approval status to "Revoked" → Gateway stops routing to that MCP server → Catalog hides it from UI</li>
+          </ol>
+
+          <p><strong>Pain Points (3.4):</strong></p>
+          <ul>
+            <li>No approval workflow — anyone with cluster-admin can edit <code>gen-ai-aa-mcp-servers</code> ConfigMap and add MCP servers to Studio</li>
+            <li>No audit trail for MCP server registration (who added it, when, why)</li>
+            <li>No certification status tracking (which MCP servers are production-ready vs playground-only)</li>
+            <li>No central policy enforcement (can't set "only certified MCP servers in prod namespace")</li>
+          </ul>
+
+          <p><strong>3.5+ Improvements:</strong></p>
+          <ul>
+            <li>Registry provides full governance: lifecycle state, approval status, certification status, ownership, audit trail</li>
+            <li>Gateway integration with Registry enables automatic policy enforcement (approved MCP servers auto-registered in Gateway)</li>
+            <li>RBAC-aware visibility (admins see all MCP servers, AI engineers see only approved)</li>
+            <li>Certification program support (external allowlists, expiration tracking, re-certification workflows)</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Component Touchpoints by Persona</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Platform Engineer</th>
+            <th>AI Engineer</th>
+            <th>Admin / Governance Lead</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MCP Catalog</strong></td>
+            <td>-</td>
+            <td>✓ Browse, deploy</td>
+            <td>✓ Review (via Registry integration)</td>
+          </tr>
+          <tr>
+            <td><strong>MCP Registry</strong></td>
+            <td>✓ Configure, RBAC</td>
+            <td>- (indirect via Catalog)</td>
+            <td>✓ Approve, certify, audit</td>
+          </tr>
+          <tr>
+            <td><strong>MCP Lifecycle Operator</strong></td>
+            <td>✓ Install, monitor</td>
+            <td>✓ Trigger deployment</td>
+            <td>- (via Registry approval)</td>
+          </tr>
+          <tr>
+            <td><strong>MCP Gateway</strong></td>
+            <td>✓ Install, configure</td>
+            <td>✓ Consume (via agents)</td>
+            <td>✓ Set policies, audit logs</td>
+          </tr>
+          <tr>
+            <td><strong>Gen AI Studio</strong></td>
+            <td>-</td>
+            <td>✓ Test agents, call tools</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer class="page-footer" data-verified="2026-06-22">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/flows/mcp-implementation-end-to-end.md" class="page-footer__link">MCP Implementation End-to-End</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-catalog.md" class="page-footer__link">MCP Catalog Component Doc</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./what-is-mcp-management.html" class="page-footer__link">What Is MCP Management? — Problem and positioning</a></li>
+            <li><a href="./ecosystem-architecture.html" class="page-footer__link">Ecosystem Architecture — How components connect</a></li>
+            <li><a href="./component-overview.html" class="page-footer__link">Component Overview — Status, versions, repos</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

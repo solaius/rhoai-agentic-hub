@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitive Landscape — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Competitive Landscape</h1>
+      <p class="lead">How Red Hat MCP Gateway compares to alternative solutions for agent-to-tool traffic management.</p>
+
+      <section class="card">
+        <h2>Comparison Matrix</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Red Hat MCP Gateway</th>
+              <th>IBM API Connect</th>
+              <th>Google GKE Inference Gateway</th>
+              <th>Portkey / Bifrost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="status-met">
+              <td><strong>Tool-level auth</strong></td>
+              <td><strong>Yes</strong> (Authorino)</td>
+              <td>API-level only</td>
+              <td>No</td>
+              <td>No</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Policy routing</strong></td>
+              <td><strong>Yes</strong> (ext_proc)</td>
+              <td>Yes</td>
+              <td>Yes (GKE-only)</td>
+              <td>Yes</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Virtual servers</strong></td>
+              <td><strong>Yes</strong></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Enterprise identity</strong></td>
+              <td><strong>Yes</strong> (Keycloak/SPIFFE)</td>
+              <td>Yes (API Connect)</td>
+              <td>IAM</td>
+              <td>No</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Multi-cluster</strong></td>
+              <td><strong>Yes</strong> (RHCL)</td>
+              <td>Yes</td>
+              <td>GKE only</td>
+              <td>SaaS</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Open source</strong></td>
+              <td><strong>Yes</strong> (Kuadrant)</td>
+              <td>No</td>
+              <td>Partial</td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>Competitor Profiles</h2>
+
+        <h3>IBM API Connect AI Gateway</h3>
+        <p>
+          <strong>Status:</strong> GA<br>
+          <strong>Positioning:</strong> Traditional API management extended to AI workloads
+        </p>
+        <p>
+          IBM API Connect is a mature API management platform that has added AI gateway capabilities. It provides strong
+          API governance, policy enforcement, and enterprise identity integration. However, it operates at the API level
+          rather than the tool level — it cannot enforce per-tool access control within an MCP server's tool catalog.
+        </p>
+        <p>
+          <strong>Key Differentiator:</strong> Red Hat MCP Gateway provides tool-level authorization (allow/deny per tool)
+          and credential brokering (per-tool OAuth 2.0), which IBM API Connect cannot.
+        </p>
+
+        <h3>Google GKE Inference Gateway</h3>
+        <p>
+          <strong>Status:</strong> Preview<br>
+          <strong>Positioning:</strong> Closest analog to Red Hat MCP Gateway
+        </p>
+        <p>
+          GKE Inference Gateway is Google's gateway for AI traffic on GKE. It provides policy-based routing and integration
+          with Google Cloud IAM for identity. However, it is GKE-only — it cannot be deployed on-prem, in other clouds, or
+          on OpenShift. It also does not support virtual MCP servers or tool-level authorization.
+        </p>
+        <p>
+          <strong>Key Differentiator:</strong> Red Hat MCP Gateway is portable (runs anywhere OpenShift runs), multi-cluster
+          via RHCL, and provides virtual MCP servers with tool aggregation.
+        </p>
+
+        <h3>Portkey / Bifrost</h3>
+        <p>
+          <strong>Status:</strong> SaaS<br>
+          <strong>Positioning:</strong> Multi-provider routing for LLMs and agents
+        </p>
+        <p>
+          Portkey and Bifrost are SaaS platforms for routing agent traffic across multiple LLM providers (OpenAI, Anthropic,
+          Bedrock, etc.). They provide policy-based routing, failover, and observability. However, they are SaaS-only — no
+          on-prem deployment, no enterprise identity integration, and no tool-level governance.
+        </p>
+        <p>
+          <strong>Key Differentiator:</strong> Red Hat MCP Gateway is self-hosted, integrates with enterprise identity
+          (Keycloak/SPIFFE), and provides tool-level governance that SaaS platforms cannot.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Key Insight</h2>
+        <div class="callout callout--insight">
+          <p>
+            <strong>No single competitor solves the full enterprise ask:</strong> tool-level auth + policy routing +
+            governance + multi-cluster.
+          </p>
+        </div>
+        <p>
+          IBM API Connect and Google GKE Inference Gateway solve parts of the problem, but neither provides tool-level
+          authorization or virtual MCP servers. Portkey/Bifrost provide routing but lack enterprise identity integration
+          and on-prem deployment.
+        </p>
+        <p>
+          Red Hat MCP Gateway is the only solution that combines:
+        </p>
+        <ul>
+          <li>Tool-level authentication and authorization (not just API-level)</li>
+          <li>Virtual MCP servers with aggregated tool catalogs</li>
+          <li>Enterprise identity integration (Keycloak, SPIFFE, Okta federation)</li>
+          <li>Multi-cluster support via RHCL (HA/DR across data centers)</li>
+          <li>Open source upstream (Kuadrant) for no vendor lock-in</li>
+        </ul>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md">AI Gateway (Inference Gateway)</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md">MCP Gateway</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./sell/value-prop.html">Value Proposition</a></li>
+            <li><a href="./sell/summit-feedback.html">Summit Feedback</a></li>
+            <li><a href="./build/features.html">Features Deep Dive</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Stories | MCP Management Hub</title>
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../nav.js"></script>
+</head>
+<body class="hub-layout">
+  <header id="hub-header" class="hub-header"></header>
+  <aside id="hub-sidebar" class="hub-sidebar"></aside>
+
+  <main class="hub-main">
+    <div class="breadcrumb"></div>
+
+    <h1>Customer Stories</h1>
+    <p class="lead">Real-world validation from customer POCs, partner integrations, and internal implementation experiences.</p>
+
+    <h2>Large Enterprise OEM Customer — "Dumb MCP Server" Validation</h2>
+
+    <div class="callout callout--quote">
+      <p><strong>Customer Need:</strong> The customer wanted their MCP servers to be minimal — "I just want it to get the access token in its header and not have to worry about anything else." They use Okta as IdP, needed group-based authorization, and required token exchange to backend services (Jira, GitHub).</p>
+      <blockquote>
+        <p>"I just want it to get the access token in its header and not have to worry about anything else."</p>
+        <footer>— Customer security lead, OEM customer, May 4, 2026</footer>
+      </blockquote>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__header">
+        <h3 class="feature-card__title">What We Delivered</h3>
+      </div>
+      <p class="feature-card__description"><strong>10 Questions Answered:</strong> Comprehensive technical deep-dive covering Okta group mapping via Keycloak protocol mappers, token exchange for backend services, in-process token caching (10K entries, 30-second pre-expiry refresh), external Keycloak support (no co-location required), OBO configuration patterns, and full audit trail via Keycloak events + JWT <code>act</code> claim chain.</p>
+      <p class="feature-card__description"><strong>Key Validation:</strong> AuthBridge designed to transparently offload auth — MCP server receives validated token, no auth code required. Envoy sidecar (injected by Kagenti) handles JWT validation. The customer's "dumb MCP server" requirement confirmed as fully supported.</p>
+      <div class="feature-card__why">
+        <div class="feature-card__why-title">Sources</div>
+        <ul>
+          <li>Customer questions, 10 Qs, May 4, 2026 (engagement Q&A — internal)</li>
+          <li>Customer answers, annotated by the Kagenti engineering team, May 6-7, 2026 (engagement Q&A — internal)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Major Telecommunications Provider — Full Ecosystem POC</h2>
+
+    <div class="callout callout--quote">
+      <p><strong>Customer Need:</strong> Multi-team MCP deployment across the customer's Network APIs organization. 20+ MCP servers (mix of vendor, partner, and internally built), external monetization use cases, internal automation (ticket triage, network troubleshooting, onboarding acceleration), and urgent timeline ("I'm in a big hurry" — customer lead).</p>
+      <blockquote>
+        <p>"The purpose of this is not the end goal, right? I mean, I think you meet [a colleague] next week. I think that would be his point. It's like guys, we've done enough plumbing. We need a lot more impact."</p>
+        <footer>— Customer lead, telecommunications provider, May 7, 2026</footer>
+      </blockquote>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__header">
+        <h3 class="feature-card__title">What We Delivered</h3>
+      </div>
+      <p class="feature-card__description"><strong>Full Stack POC:</strong> MCP Gateway + MCP Lifecycle Operator + MCP Catalog (3.4 DP) + MCP Registry (3.5 early access offer). Catalog shipped with 10+ certified partners (Confluent, Dynatrace, Azure, Terraform, EDB) plus Red Hat (OpenShift, Ansible, Insights). Registry early access offered for governance workflows.</p>
+      <p class="feature-card__description"><strong>Technical Validation:</strong> Gateway deployed in the customer's local environment (not demo sandbox) for "real world use case" validation. Technical Preview state with support included. Red Hat engineering offered direct engineer access: "should you require an engineer that actually wrote the code for MCP Gateway, I'd be more than happy to get them on a call with you."</p>
+      <p class="feature-card__description"><strong>Deployment Confidence:</strong> "Gateway can be deployed anywhere... you get a real feel for the product instead of doing it in some demo environment where everything's optimal anyways. Going into your own environment gives you a real world use case and it's the most important part of it." (Red Hat engineering, May 7, 2026)</p>
+      <div class="feature-card__why">
+        <div class="feature-card__why-title">Sources</div>
+        <ul>
+          <li>Customer meeting transcript, May 7, 2026 (internal)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>Strategic Hardware Partner — Gap Analysis & Positioning</h2>
+
+    <div class="callout callout--quote">
+      <p><strong>Customer Need:</strong> Strategic hardware partner Factory partnership — POC success criteria for MCP Gateway & Tool Routing. 10 requirements evaluated against current capabilities to determine POC feasibility and positioning strategy.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__header">
+        <h3 class="feature-card__title">Assessment Results</h3>
+      </div>
+      <p class="feature-card__description"><strong>4 Fully Met:</strong> Unified interface contract (MCP JSON-RPC), policy-driven routing (Envoy ext_proc + Gateway API), tool access allowlisting (Authorino identity-aware filtering), credential brokering (AuthBridge OBO + Vault).</p>
+      <p class="feature-card__description"><strong>4 Partially Met:</strong> Multi-transport connectivity (HTTP/SSE only, WebSocket/stdio not supported), tool-level QoS (rate limits yes, timeouts/concurrency not yet configurable per-tool), tool KPIs & observability (metrics/traces/audit yes, cost tracking gap), tool versioning & lifecycle (registry tracks lifecycle, gateway doesn't enforce version-aware routing).</p>
+      <p class="feature-card__description"><strong>2 Gaps:</strong> Central metadata registry (exists in design, not yet integrated with gateway — planned for GA Q4 2026), health checks & circuit breakers (not implemented — planned for GA).</p>
+      <div class="feature-card__why">
+        <div class="feature-card__why-title">POC Positioning Recommendations</div>
+        <ul>
+          <li><strong>Lead with strengths:</strong> Auth and policy routing are differentiated capabilities solving hard enterprise problems — centerpiece of POC demo.</li>
+          <li><strong>Leverage Envoy for gaps:</strong> Health checks and timeouts available at Envoy layer even if not yet surfaced through MCP Gateway CRDs.</li>
+          <li><strong>Demo registry and gateway separately:</strong> Show registry lifecycle, show gateway routing/auth, present integration path as GA milestone.</li>
+          <li><strong>Frame observability as extensible:</strong> OTEL and metrics foundation is solid; cost tracking is a metric dimension to add, not a new system to build.</li>
+        </ul>
+      </div>
+      <div class="feature-card__why">
+        <div class="feature-card__why-title">Sources</div>
+        <ul>
+          <li>Partner POC gap analysis, June 11, 2026 (POC gap analysis — internal)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>An Internal User Story</h2>
+
+    <div class="callout callout--quote">
+      <p><strong>Context:</strong> A Red Hat Principal Software Engineer attempted to deploy MCP in RHOAI 3.4 using only product documentation. Their experience revealed every gap between "what the docs say" and "what actually works."</p>
+      <blockquote>
+        <p>"RHOAI 3.4 displays 'MCP' in different parts of its web UI, but none of these features work without installing and configuring several components that are currently undocumented or scattered across multiple sources."</p>
+        <footer>— Red Hat Principal Software Engineer, June 2026</footer>
+      </blockquote>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__header">
+        <h3 class="feature-card__title">What They Found</h3>
+      </div>
+      <p class="feature-card__description"><strong>Documentation Gaps:</strong> Product docs reference MCP features but don't explain prerequisites. Circular references between docs, blogs, and GitHub repos. No end-to-end runbook for the minimal path (playground without gateway).</p>
+      <p class="feature-card__description"><strong>Missing Prerequisites:</strong> Catalog doesn't create ServiceAccount/ConfigMap/RBAC automatically (privilege escalation concern). Namespace requires special label (<code>opendatahub.io/dashboard: "true"</code>) that can't be applied via <code>oc new-project</code> or console — must use manifest. <code>gen-ai-aa-mcp-servers</code> ConfigMap is the only integration point between deployed MCP servers and Gen AI Studio (undocumented, requires cluster-admin to patch).</p>
+      <p class="feature-card__description"><strong>Workbench Gap:</strong> "I need some Python code (Langchain?) for remote MCP calls." Playground's exported code doesn't work for MCP calls from workbenches. No documented pattern for calling MCP servers from Python in workbenches.</p>
+      <div class="feature-card__why">
+        <div class="feature-card__why-title">What We Fixed</div>
+        <ul>
+          <li><strong>Documented the undocumented:</strong> End-to-end minimal path now captured in knowledge docs (7 steps from operator install to playground usage).</li>
+          <li><strong>Identified gaps for 3.5:</strong> ConfigMap bridge will be replaced by registry integration in RHOAI 3.5. Catalog prerequisite creation is on 3.5 roadmap.</li>
+          <li><strong>Validated the happy path:</strong> Another engineer's comprehensive guide (full Gateway + Keycloak + Vault setup) now cross-referenced with this minimal path — users can choose their level of complexity.</li>
+        </ul>
+      </div>
+      <div class="feature-card__why">
+        <div class="feature-card__why-title">Sources</div>
+        <ul>
+          <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/flows/mcp-implementation-end-to-end.md" class="page-footer__link">MCP Implementation End-to-End Process</a></li>
+          <li>Internal MCP research notes (Google Doc — internal)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">Why This Matters</h2>
+      <p>This experience proves that Red Hat validates products by using them. When an internal engineer finds gaps, we document them, fix them, and ship the fix to customers. This is how we go from "technically correct docs" to "docs that actually help you succeed."</p>
+    </div>
+
+    <div class="page-footer" data-verified="2026-06-22">
+      <div class="page-footer__links">
+        <a href="value-prop.html" class="page-footer__link">Value Proposition</a>
+        <a href="competitive.html" class="page-footer__link">Competitive Landscape</a>
+        <a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a>
+      </div>
+      <div class="page-footer__verified">
+        <span class="staleness-indicator">✓</span> Verified: 2026-06-22 | Sources: Source verification: internal
+      </div>
+    </div>
+  </main>
+</body>
+</html>

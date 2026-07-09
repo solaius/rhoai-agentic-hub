@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entitlement — MCP Ecosystem Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Entitlement</h1>
+      <p class="lead">Per-component subscription requirements across OpenShift, RHOAI Limited, RHOAI, and full Red Hat Connectivity Link (RHCL).</p>
+
+      <h2>Component Subscription Matrix</h2>
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>OCP</th>
+            <th>RHOAI Limited</th>
+            <th>RHOAI</th>
+            <th>Full RHCL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MCP Gateway (basic)</strong></td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+          <tr>
+            <td><strong>Auth (Authorino)</strong></td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+          <tr>
+            <td><strong>Rate Limiting (Limitador)</strong></td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+          <tr>
+            <td><strong>MCP Lifecycle Operator</strong></td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+          <tr>
+            <td><strong>MCP Catalog</strong></td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+          <tr>
+            <td><strong>MCP Registry</strong></td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">✓</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+          <tr>
+            <td><strong>DNS/HA/DR/GLB</strong></td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">—</td>
+            <td style="text-align: center;">✓</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--gap">
+        <strong>RHOAI Token Scope Limitation:</strong> RHOAI entitlement for unlimited tokens and token metrics is scoped to MaaS (Model-as-a-Service) only. MCP and Agent workloads were explicitly excluded from this scope in the signed RHOAI-RHCL Support Agreement (April 2026).
+      </div>
+
+      <h2>Subscription Tiers</h2>
+
+      <h3>OpenShift Container Platform (Base)</h3>
+      <p>Includes MCP Gateway (basic) for platform-internal MCP servers:</p>
+      <ul>
+        <li>MCP Gateway proxy functionality (broker, router, controller)</li>
+        <li>No authentication, rate limiting, or observability</li>
+        <li>For platform-internal use cases only</li>
+      </ul>
+
+      <h3>RHOAI Limited</h3>
+      <p>Minimal AI capabilities for MCP server deployment:</p>
+      <ul>
+        <li>MCP Lifecycle Operator (deployment primitive)</li>
+        <li>MCP Catalog (discovery and deployment UI)</li>
+        <li>MCP Gateway (basic proxy, no auth/rate limiting)</li>
+        <li><strong>Not available</strong>: OperatorHub, OLM, standalone OCP installation</li>
+        <li><strong>Distribution</strong>: Bundled in RHOAI operator only; offline/disconnected via RHOAI bundle</li>
+      </ul>
+
+      <h3>RHOAI (Full)</h3>
+      <p>Complete AI platform with MCP governance and enforcement:</p>
+      <ul>
+        <li>All RHOAI Limited components</li>
+        <li><strong>MCP Registry</strong> — governance, lifecycle, trust (3.5 DP, GA Q4 2026)</li>
+        <li><strong>Authorino</strong> — authentication and policy enforcement</li>
+        <li><strong>Limitador</strong> — rate limiting (AI workloads only, not MCP/Agents)</li>
+        <li><strong>Gen AI Studio MCP Support</strong> — tool catalog, playground integration</li>
+      </ul>
+
+      <div class="callout callout--insight">
+        <strong>Key Limitation:</strong> RHOAI rate limiting and token metrics apply to MaaS workloads only. For MCP and Agent rate limiting, Full RHCL subscription is required.
+      </div>
+
+      <h3>Full RHCL</h3>
+      <p>Enterprise-grade connectivity platform with multi-cluster resiliency:</p>
+      <ul>
+        <li>All RHOAI components</li>
+        <li><strong>DNS management</strong> — automatic failover, geo-routing</li>
+        <li><strong>High Availability / Disaster Recovery</strong> — cross-cluster mirroring</li>
+        <li><strong>Global Load Balancing</strong> — multi-cluster traffic distribution</li>
+        <li><strong>Advanced Gateway Features</strong> — TLS reencryption, external provider egress, DDoS protection</li>
+        <li><strong>MCP/Agent Rate Limiting</strong> — rate limiting for non-MaaS AI workloads</li>
+      </ul>
+
+      <h2>RHCL Pricing</h2>
+      <p>SKU pricing detail for MCP Gateway on Red Hat Connectivity Link is maintained internally. Red Hat associates: see the internal RHCL SKU reference or contact the MCP Gateway PM.</p>
+
+      <h2>RHOAI-RHCL Support Agreement</h2>
+      <p>Support-agreement scope and terms between RHOAI and RHCL are maintained internally. Red Hat associates: contact the MCP Gateway PM for details.</p>
+
+      <div class="callout callout--gap">
+        <strong>Known Gap (Aug 2026):</strong> RHOAI 3.5 (Aug 2026) supports OCP 4.19, but RHCL 1.4 likely won't. Configuration is <strong>untested, best-effort only</strong>. OCP 4.19 maintenance support ends Dec 2026 (4-month overlap). Customers advised to upgrade to OCP 4.20+ for full support.
+      </div>
+
+      <h2>Distribution Channels</h2>
+
+      <h3>MCP Lifecycle Operator</h3>
+      <ul>
+        <li><strong>Not available</strong> in OperatorHub or via OLM</li>
+        <li><strong>Not available</strong> for standalone OCP installation</li>
+        <li><strong>Requires</strong> RHOAI Limited subscription minimum</li>
+        <li><strong>Distribution</strong>: Bundled within RHOAI operator releases</li>
+        <li><strong>Connected clusters</strong>: Automatic via RHOAI operator updates</li>
+        <li><strong>Disconnected clusters</strong>: Via updated RHOAI offline bundles</li>
+      </ul>
+
+      <h3>MCP Gateway</h3>
+      <ul>
+        <li><strong>Basic gateway</strong>: Ships with OCP for platform-internal MCP servers</li>
+        <li><strong>Auth + Rate Limiting</strong>: RHOAI subscription required (AI workloads only)</li>
+        <li><strong>Full RHCL features</strong>: RHCL subscription required (DNS, HA/DR/GLB, MCP/Agent rate limiting)</li>
+      </ul>
+
+      <h2>Version Support</h2>
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>RHOAI Version</th>
+            <th>OCP Support</th>
+            <th>RHCL Version</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>3.4 DP</strong></td>
+            <td>4.19, 4.20, 4.21</td>
+            <td>RHCL 1.3.3 (MCP Gateway 0.6.0 TP)</td>
+            <td><span class="badge badge--shipped">Shipped (Apr 2026)</span></td>
+          </tr>
+          <tr>
+            <td><strong>3.5 DP</strong></td>
+            <td>4.19 (best-effort), 4.20+</td>
+            <td>RHCL 1.4 GA (Jun 2026)</td>
+            <td><span class="badge badge--tp">Planned (Aug 2026)</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--source">
+        <strong>Source:</strong> <a href="https://docs.google.com/document/d/11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g" style="color: var(--rh-blue-light);">Internal Support and Product Agreement</a> — RHOAI-RHCL support agreement (internal).
+      </div>
+
+      <footer class="page-footer" data-verified="2026-06-22">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g">Internal Support and Product Agreement (RHOAI-RHCL)</a></li>
+            <li><a href="https://docs.google.com/document/d/1qZ66JjL99KhV-OF67ArQjT-GNOGiHYCKdLZW9ptqtHQ">FAQ on RHOAI Limited & MCP Lifecycle Operator</a></li>
+            <li><a href="https://docs.google.com/presentation/d/14ekB7bfRxvpZNl1SLBoD_MUQ7T4Ot5Tes3xvyftFOW0">Red Hat Connectivity Link (Latest)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./lifecycle-flow.html">Lifecycle Flow</a></li>
+            <li><a href="./component-integration.html">Component Integration</a></li>
+            <li><a href="../plan/roadmap.html">Roadmap</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

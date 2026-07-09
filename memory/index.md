@@ -18,8 +18,8 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-09 — **Update** — HTML enablement migration complete (sets 1–4): 14 artifacts live on the pages site incl. the RHCL and MCP Management hubs (scrubbed per owner disclosure rulings 1b/2b); NVIDIA POC, auth deck, and GA readout stay archived in the old repo (3c/4c/5c).
 - 2026-07-08 — **Creation** — narrative layer live (D12–D16): narrative/ seeded (4 RHAI pillars + 2 source refs + 2 stories), features: connection axis, qa/jtbd/artifact types, 4 new views; platform shed story content to narrative/; JTBD persona vocabulary locked (7).
 - 2026-07-08 — **Update** — owner ruling: no LLM-provider credential handling in the hub at all (users arrive with Claude Code/Cursor already configured; restricted/.env never carries such keys) — the exclusion machinery ported with R4 wave 4 earlier today was removed (doctor.sh, tooling.md, history.md scrubbed; convention stated once in docs/mcp-servers.md; preferences profile updated).
 - 2026-07-08 — **Update** — R4 wave 4: slack + google-workspace MCP setup ported from the old repo-doctor (doctor sections 8–9: Claude-config write + podman runtime; doctor now sources restricted/.env with the LLM-cred exclusion; new docs/mcp-servers.md guide). Live-verified on this machine: 19 ok / 0 warn / 0 fail.
 - 2026-07-07 — **Creation** — documentation suite: six guides added under docs/ (architecture, memory, skills, publishing, tooling, history), README rebuilt as the front door with a doc index, AGENTS.md/CLAUDE.md/setup/working-here cross-linked. Goal: bus-factor pillar — operable without Peter in the room.
-- 2026-07-06 — **Update** — R4 wave 3: customer-feedback suite ported (tracker data model: restricted + external rhai-customer-tracker; rhai-tracker doctor section live; customer names scrubbed from skill texts). Active R4 waves complete.

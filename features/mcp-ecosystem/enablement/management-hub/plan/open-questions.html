@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Questions — MCP Ecosystem Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+
+      <h1>Open Questions</h1>
+      <p class="lead">Aggregated open questions across the MCP Ecosystem — design decisions, integration points, and strategic choices still under discussion.</p>
+
+      <section>
+        <h2>High Priority — MCP Registry & Lifecycle</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>What exact MCP metadata should be mandatory for registry records?</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Which lifecycle states are required for 3.5 Dev Preview?</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>How should registry-governed state inform gateway behavior?</td>
+              <td>MCP Registry + Gateway</td>
+              <td>Integration Team</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>How should registry state influence catalog surfacing?</td>
+              <td>MCP Registry + Catalog</td>
+              <td>Catalog Team</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>13</td>
+              <td>How should MCP Lifecycle Operator interact with registry entries — read-only "discovered/managed" entries vs. full governance?</td>
+              <td>MCPLO + Registry</td>
+              <td>MCPLO Team (Chris Hambridge, Matt Prahl)</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Medium Priority — Governance & Data Model</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>9</td>
+              <td>Whether certification programs should be backed by an admin-managed allowlist</td>
+              <td>MCP Registry</td>
+              <td>Registry Team (may connect to RHAIRFE-294)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>10</td>
+              <td>Whether lifecycle history should be added in MVP or deferred</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>Whether approval, verification, and certification transitions need distinct permissions beyond general update permissions</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td>Whether MCP registry entities need EntityAssociationType support in MVP or later</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Documentation & UX Gaps</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>25</td>
+              <td>MCP implementation documentation gap: Product docs reference MCP features without prerequisites (configmap, namespace labels, MCPLO, service account). Circular references between docs, blogs, GitHub.</td>
+              <td>Cross-cutting (Docs + Catalog + Registry)</td>
+              <td>RHOAI Docs Team</td>
+              <td>High</td>
+              <td><span class="badge badge--acknowledged">Acknowledged</span> Gap will be partially addressed by Registry in 3.5</td>
+            </tr>
+            <tr>
+              <td>26</td>
+              <td>MCP Workbench integration: No documented way to call MCP servers from Python code in RHOAI workbenches. Playground's exported code doesn't work for MCP calls.</td>
+              <td>Gen AI Studio + MCPLO</td>
+              <td>AI Engineering Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> Not scoped for 3.5</td>
+            </tr>
+            <tr>
+              <td>27</td>
+              <td>MCP Catalog prerequisite automation: Catalog "Deploy" button requires ServiceAccount, ConfigMap, ClusterRoleBinding pre-created. UX friction vs privilege escalation trade-off.</td>
+              <td>MCP Catalog</td>
+              <td>Catalog Team (Jaideep Rao, Fernando Lozano)</td>
+              <td>High</td>
+              <td><span class="badge badge--planned">Planned</span> RHAIRFE-2434 (3.5 TP)</td>
+            </tr>
+            <tr>
+              <td>28</td>
+              <td>Cluster-admin requirement for MCP: Currently needed for configmap patches and MCPLO installation. Prevents self-service in multi-tenant clusters.</td>
+              <td>MCPLO + Registry</td>
+              <td>MCPLO Team + Registry Team</td>
+              <td>High</td>
+              <td><span class="badge badge--planned">Planned</span> Will be resolved when Registry replaces configmap (3.5/GA)</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Upstream & MLflow Integration</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5</td>
+              <td>What belongs in MLflow upstream proposal now vs later?</td>
+              <td>MCP Registry (Upstream)</td>
+              <td>MLflow Collaboration (Peter Double, Dan Kuc)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>17</td>
+              <td>How does MCP Checker evaluation integrate with MLflow's evaluation capabilities? MLflow becoming main eval tool for AI assets.</td>
+              <td>MCP Checker + MLflow</td>
+              <td>Gen MCP Team + MLflow Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Partner & Ecosystem</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>14</td>
+              <td>What does Snyk's AI/agent scanning actually check? Is it needed beyond standard CVE scanning?</td>
+              <td>Partner Pipeline (Ingestion)</td>
+              <td>Ecosystem Engineering (Ann Murray)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--research">Needs Research</span></td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td>What should the standardized MCP container metadata schema look like for Kubernetes? No upstream standard exists; all 4 partner MCPs in 3.4 had different metadata.</td>
+              <td>MCP Catalog + Upstream</td>
+              <td>Catalog Team + Upstream Advocacy</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span> Red Hat opportunity to lead upstream</td>
+            </tr>
+            <tr>
+              <td>16</td>
+              <td>How should the partner ingestion pipeline be orchestrated? Konflux suggested.</td>
+              <td>Partner Pipeline</td>
+              <td>Ecosystem Engineering (Serob, Matt Dorn)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--research">Needs Investigation</span></td>
+            </tr>
+            <tr>
+              <td>19</td>
+              <td>What indemnification clause is needed for partners whose MCPs are in our catalog? Oracle requested IP indemnity; legal ownership unclear.</td>
+              <td>Partner Catalog (Legal)</td>
+              <td>Legal + Product Team</td>
+              <td>High</td>
+              <td><span class="badge badge--blocked">Blocked</span> May need platform-level answer for all agentic assets</td>
+            </tr>
+            <tr>
+              <td>20</td>
+              <td>How should Azure "Agentic Packs" / plugins beyond MCP be handled in AI Hub?</td>
+              <td>Partner Catalog</td>
+              <td>Catalog Team (Azure requested during consent)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>23</td>
+              <td>How should community MCP servers be positioned differently from partner servers in the catalog? MariaDB and MongoDB in 3.4 but not featured in Summit splash.</td>
+              <td>MCP Catalog</td>
+              <td>Catalog Team + Marketing</td>
+              <td>Low</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Platform & Entitlement</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>8</td>
+              <td>How to handle OLM 1.0 dependency removal in OCP 5.0?</td>
+              <td>MCPLO + Gateway (OCP 5.0)</td>
+              <td>OCP Integration Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> OCP 5.0 removes dependency declarations</td>
+            </tr>
+            <tr>
+              <td>25 (dup)</td>
+              <td>RHOAI-RHCL agreement excludes MCP and Agents from unlimited tokens and token metrics. What are the implications for MCP/Agent token tracking and cost allocation?</td>
+              <td>RHCL Entitlement</td>
+              <td>RHCL PM + RHOAI PM</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span> Separate agreement may be needed</td>
+            </tr>
+            <tr>
+              <td>26 (dup)</td>
+              <td>RHOAI-RHCL Case 2 agreement (customers installing full RHCL alongside RHOAI for extended functionality) — not yet developed.</td>
+              <td>RHCL Entitlement</td>
+              <td>RHCL PM + RHOAI PM</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> Needed when use cases defined</td>
+            </tr>
+            <tr>
+              <td>27 (dup)</td>
+              <td>RHOAI 3.5 + OCP 4.19 version gap: RHCL likely won't support OCP 4.19 when RHOAI 3.5 ships (Aug 2026). Best-effort only for 4 months until OCP 4.19 EOM (Dec 2026).</td>
+              <td>RHCL + RHOAI Alignment</td>
+              <td>RHCL PM + RHOAI PM</td>
+              <td>High</td>
+              <td><span class="badge badge--accepted">Accepted Gap</span> Customers advised to upgrade to OCP 4.20+</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Agent & Skills Registries</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>6</td>
+              <td>Skills packaging format - OCI artifacts? Markdown? Zip bundles?</td>
+              <td>Skills Registry</td>
+              <td>Skills Team + Databricks</td>
+              <td>Medium</td>
+              <td><span class="badge badge--partial">Partially Answered</span> Databricks MVP uses SKILL.md with YAML frontmatter in MLflow artifact store</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td>Agent identity model - SPIFFE/SPIRE or alternative?</td>
+              <td>Agent Registry</td>
+              <td>Agent Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>28</td>
+              <td>How should the post-deployment agent registry (live services) relate to a pre-deployment agent artifacts registry (versioned definitions/images)?</td>
+              <td>Agent Registry</td>
+              <td>Agent Team (Peter Double, Varsha Narsing)</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span> Varsha's proposal defers pre-deployment to separate RFC</td>
+            </tr>
+            <tr>
+              <td>31</td>
+              <td>How does the agent registry's runtime lifecycle (ACTIVE/UNHEALTHY/STALE/REMOVED) map to Red Hat's multi-track governance model (approval, verification, certification)?</td>
+              <td>Agent Registry + Governance</td>
+              <td>Agent Team + Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>40</td>
+              <td>Should the agent catalog support multiple agent protocols (A2A, OpenCode API, ag-ui, completions) or standardize on A2A with wrappers?</td>
+              <td>Agent Catalog</td>
+              <td>Agent Team (Gage Krumbach, Bill Murdock)</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span> Affects playground integration</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>AI Gateway (Inference Gateway)</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>33</td>
+              <td>How should cross-datacenter rate limit enforcement work? User with 100K token/hour limit hitting both DC-East and DC-West — shared Redis (latency), split budgets, or eventual consistency?</td>
+              <td>AI Gateway (Rate Limiting)</td>
+              <td>AI Gateway Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>34</td>
+              <td>How does the AI Gateway's group-based tenancy model for MCP tool catalogs interact with the MCP Registry's governance model?</td>
+              <td>AI Gateway + MCP Registry</td>
+              <td>AI Gateway Team + Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--partial">Partially Decided</span> Group-based tenancy extends to MCP; implementation details TBD</td>
+            </tr>
+            <tr>
+              <td>37</td>
+              <td>How does intelligent model selection compose with rate limiting and ITS fan-out? If gateway selects more expensive model on failover, fan-out could multiply costs.</td>
+              <td>AI Gateway (Routing)</td>
+              <td>AI Gateway Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> Gap identified at F2F</td>
+            </tr>
+            <tr>
+              <td>38</td>
+              <td>What is the Llama Stack transition timeline? GA current implementation as bridge in 3.5, replace within ~6 months with gateway-native multi-tenant Responses.</td>
+              <td>AI Gateway (Responses API)</td>
+              <td>AI Gateway Team</td>
+              <td>High</td>
+              <td><span class="badge badge--decided">Decided</span> Execution plan needed</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-22">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Knowledge Registry (knowledge-registry.md) — Section 13: Open Questions & Risks</li>
+            <li>MCP Registry Component Doc (mcp-registry.md)</li>
+            <li>MCP Catalog Component Doc (mcp-catalog.md)</li>
+            <li>MCP Gateway Component Doc (mcp-gateway.md)</li>
+            <li>MLflow MCP Registry Data Model Proposal (Google Doc)</li>
+            <li>AI Gateway F2F Agenda & Outcomes (Google Doc)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="roadmap.html">Roadmap</a></li>
+            <li><a href="gaps.html">Gaps</a></li>
+            <li><a href="jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="../understand/ecosystem-architecture.html">Architecture</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

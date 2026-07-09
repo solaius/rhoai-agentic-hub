@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <!-- Hero Section -->
+      <div style="margin-bottom: var(--space-2xl);">
+        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md);">
+          <span class="badge badge--tp">v0.7.1 Tech Preview</span>
+          <span class="badge badge--shipped">RHCL 1.4 GA</span>
+        </div>
+        <h1 class="display-xl" style="margin-bottom: var(--space-md);">MCP Gateway Knowledge Hub</h1>
+        <p class="lead" style="max-width: 800px; margin-bottom: var(--space-md);">
+          Enterprise security, governance, and observability for every AI tool call
+        </p>
+        <p style="font-size: var(--fs-body); color: var(--text-muted);">
+          Upstream: <a href="https://github.com/Kuadrant/mcp-gateway" style="color: var(--rh-blue-light); text-decoration: none;" target="_blank" rel="noopener">github.com/Kuadrant/mcp-gateway</a>
+        </p>
+      </div>
+
+      <!-- Section Cards -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md); margin-bottom: var(--space-2xl);">
+        <a href="./understand/what-is-it.html" class="section-card">
+          <div class="section-card__title">Understand It</div>
+          <div class="section-card__description">Learn how MCP Gateway works, from protocol basics to auth deep-dives</div>
+          <div class="section-card__pages">4 pages</div>
+        </a>
+
+        <a href="./sell/value-prop.html" class="section-card">
+          <div class="section-card__title">Sell It</div>
+          <div class="section-card__description">Talk tracks, customer stories, competitive positioning</div>
+          <div class="section-card__pages">4 pages</div>
+        </a>
+
+        <a href="./build/deployment.html" class="section-card">
+          <div class="section-card__title">Build It</div>
+          <div class="section-card__description">Deploy, configure, and operate MCP Gateway on OpenShift</div>
+          <div class="section-card__pages">4 pages</div>
+        </a>
+
+        <a href="./govern/ecosystem.html" class="section-card">
+          <div class="section-card__title">Govern It</div>
+          <div class="section-card__description">How Gateway connects to Registry, Catalog, Lifecycle Operator</div>
+          <div class="section-card__pages">5 pages</div>
+        </a>
+
+        <a href="./plan/roadmap.html" class="section-card">
+          <div class="section-card__title">Plan It</div>
+          <div class="section-card__description">Roadmap, gaps, open questions, SKUs</div>
+          <div class="section-card__pages">4 pages</div>
+        </a>
+      </div>
+
+      <!-- What's New Section -->
+      <section style="margin-bottom: var(--space-2xl);">
+        <h2>What's New</h2>
+        <ul style="list-style: none; margin-left: 0;">
+          <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-green);">
+            <strong style="color: var(--text-primary);">v0.7.1 released (June 18, 2026)</strong> — Major performance gains: p95 latency at 500 servers dropped from 390ms to 47ms. Includes TLS hairpin fix and per-server SNI fix.
+          </li>
+          <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-green);">
+            <strong style="color: var(--text-primary);">RHCL 1.4 GA (June 11, 2026)</strong> — MCP Gateway ships as Technology Preview with OCP 4.22 support.
+          </li>
+          <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-blue);">
+            <strong style="color: var(--text-primary);">MCP spec RC published</strong> — Gateway support for new spec version under discussion upstream.
+          </li>
+          <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-teal);">
+            <strong style="color: var(--text-primary);">Active customer POC traction</strong> — evaluations underway with a large enterprise OEM customer, a major telecommunications provider, and a strategic hardware partner's Factory POC.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Quick Links Section -->
+      <section style="margin-bottom: var(--space-2xl);">
+        <h2>Quick Links</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-md);">
+          <div style="padding: var(--space-md); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 4px;">
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Getting Started</div>
+            <a href="./understand/what-is-it.html" style="color: var(--rh-blue-light); text-decoration: none; font-size: var(--fs-body);">What Is MCP Gateway?</a>
+          </div>
+          <div style="padding: var(--space-md); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 4px;">
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Deploy It</div>
+            <a href="./build/deployment.html" style="color: var(--rh-blue-light); text-decoration: none; font-size: var(--fs-body);">Deployment Guide</a>
+          </div>
+          <div style="padding: var(--space-md); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 4px;">
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Customer Stories</div>
+            <a href="./sell/customer-stories.html" style="color: var(--rh-blue-light); text-decoration: none; font-size: var(--fs-body);">POCs & Field Feedback</a>
+          </div>
+          <div style="padding: var(--space-md); background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 4px;">
+            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Roadmap</div>
+            <a href="./plan/roadmap.html" style="color: var(--rh-blue-light); text-decoration: none; font-size: var(--fs-body);">What's Coming Next</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <p>Sources: <a href="https://github.com/Kuadrant/mcp-gateway" style="color: var(--rh-blue-light); text-decoration: none;">Kuadrant/mcp-gateway</a></p>
+        <p>Quick Reference: <a href="./reference.html" style="color: var(--rh-blue-light); text-decoration: none;">All external links</a></p>
+      </footer>
+    </main>
+  </div>
+  <script src="./nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gaps — MCP Ecosystem Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+
+      <h1>Known Gaps</h1>
+      <p class="lead">Cross-cutting gaps across the MCP Ecosystem — documentation, integration, automation, and governance limitations in current releases.</p>
+
+      <section>
+        <h2>Documentation & User Experience</h2>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Product Documentation Circular References
+          </h3>
+          <p><strong>Issue:</strong> RHOAI product documentation references MCP features (Catalog, Gen AI Studio) without explaining the full prerequisite chain (Gateway API, Service Mesh, RHCL, MCPLO).</p>
+          <p><strong>Impact:</strong> Users attempting to follow product docs hit missing dependencies and cannot complete setup without external knowledge.</p>
+          <p><strong>Owner:</strong> RHOAI Documentation Team</p>
+          <p><strong>Status:</strong> Known issue, documentation improvements planned for 3.5</p>
+          <p><strong>Workaround:</strong> Use community notes (Fernando Lozano's minimal setup guide, Jaideep Rao's full setup guide) for end-to-end flow.</p>
+          <p class="source-ref">Source: Fernando Lozano's MCP Notes (Google Doc), Knowledge Registry #25</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Workbench MCP Integration Missing
+          </h3>
+          <p><strong>Issue:</strong> No documented or supported way for Python code running in workbenches to call MCP servers. Langchain-style libraries for in-notebook MCP interaction do not exist.</p>
+          <p><strong>Impact:</strong> AI Engineers using RHOAI workbenches cannot programmatically invoke MCP tools from their code — only from Gen AI Studio UI.</p>
+          <p><strong>Owner:</strong> RHOAI AI Engineering Team</p>
+          <p><strong>Status:</strong> Not scoped for 3.5; potentially 3.6+ or partner-contributed library</p>
+          <p><strong>Workaround:</strong> Use Gen AI Studio for manual tool invocation; use direct HTTP calls to MCP endpoints (not governed path).</p>
+          <p class="source-ref">Source: Fernando Lozano's MCP Notes, Knowledge Registry #26</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Deployment & Automation</h2>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Catalog Does Not Create Prerequisites
+          </h3>
+          <p><strong>Issue:</strong> Deploying an MCP server from the catalog requires manually creating ServiceAccount, RBAC (ClusterRoleBinding), and ConfigMap resources. Catalog UI "Deploy" button does not automate this.</p>
+          <p><strong>Impact:</strong> Users must prepare namespace with correct prerequisites before deployment succeeds. Failure mode is silent (deployment created but pods crash).</p>
+          <p><strong>Owner:</strong> RHOAI Catalog Team</p>
+          <p><strong>Status:</strong> Prerequisite automation planned for 3.5 TP (RHAIRFE-2434)</p>
+          <p><strong>Workaround:</strong> Follow manual setup steps from MCP server deployment guides (e.g., create ServiceAccount, ConfigMap, RBAC before deploying).</p>
+          <p class="source-ref">Source: Fernando Lozano's MCP Notes, Source Verification Report</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Namespace Label Requirement
+          </h3>
+          <p><strong>Issue:</strong> MCP server deployments require namespace with <code>opendatahub.io/dashboard: "true"</code> label. This label cannot be added via <code>oc new-project</code> — requires manifest creation.</p>
+          <p><strong>Impact:</strong> Users cannot use standard namespace creation workflow; must apply YAML manually.</p>
+          <p><strong>Owner:</strong> RHOAI Dashboard Integration</p>
+          <p><strong>Status:</strong> Known limitation; no fix planned (namespace labels are design-by-contract for RHOAI dashboard discovery)</p>
+          <p><strong>Workaround:</strong> Use <code>oc apply -f namespace.yaml</code> with labels pre-set instead of <code>oc new-project</code>.</p>
+          <p class="source-ref">Source: Fernando Lozano's MCP Notes, Source Verification Report</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Integration & Governance</h2>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            ConfigMap as Bridge (Temporary)
+          </h3>
+          <p><strong>Issue:</strong> Gen AI Studio discovers MCP servers via <code>gen-ai-aa-mcp-servers</code> ConfigMap in <code>redhat-ods-applications</code> namespace. This is a manual, single-tenant integration point with no governance.</p>
+          <p><strong>Impact:</strong> MCP server registration is decoupled from Catalog and Lifecycle Operator. No RBAC, no approval workflow, no lifecycle state visibility in Studio.</p>
+          <p><strong>Owner:</strong> RHOAI Registry Team (replacement), RHOAI Gen AI Studio Team (current bridge)</p>
+          <p><strong>Status:</strong> Will be replaced by MCP Registry in RHOAI 3.5 DP</p>
+          <p><strong>Workaround:</strong> Manually update ConfigMap with MCP service URLs after deployment. Template: <code>{"url": "http://...", "description": "..."}</code>.</p>
+          <p class="source-ref">Source: Source Verification Report, Knowledge Registry #27</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Cluster-Admin Requirement (Temporary)
+          </h3>
+          <p><strong>Issue:</strong> MCP Lifecycle Operator installation and MCP Gateway configuration currently require cluster-admin privileges. No namespace-scoped installation path exists.</p>
+          <p><strong>Impact:</strong> AI Engineers cannot self-service deploy MCP infrastructure in multi-tenant clusters with restricted permissions.</p>
+          <p><strong>Owner:</strong> MCPLO Team (namespace-scoped operator), MCP Gateway Team (namespace-scoped gateway)</p>
+          <p><strong>Status:</strong> Cluster-admin requirement will be lifted when Registry provides tenant-scoped visibility and approval workflows (3.5 TP / GA)</p>
+          <p><strong>Workaround:</strong> Platform Engineers with cluster-admin deploy infrastructure; AI Engineers consume via RBAC-scoped catalog and AAA.</p>
+          <p class="source-ref">Source: Knowledge Registry #28</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Registry Not Yet Built
+          </h3>
+          <p><strong>Issue:</strong> MCP Registry does not exist in RHOAI 3.4. The governance backbone connecting Catalog, Lifecycle Operator, Gateway, and Gen AI Studio is missing.</p>
+          <p><strong>Impact:</strong> No system of record for MCP lifecycle, approval, certification, or trust. Each component operates in isolation with manual handoffs.</p>
+          <p><strong>Owner:</strong> RHOAI Registry Team</p>
+          <p><strong>Status:</strong> RHOAI 3.5 Dev Preview target (RHAIRFE-294, RHAIRFE-2421)</p>
+          <p><strong>Workaround:</strong> Use manual workflows for governance; document MCP servers in spreadsheets or wikis; enforce approval via team processes.</p>
+          <p class="source-ref">Source: MCP Registry Component Doc, Knowledge Registry #27</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Registry→Gateway Auto-Config Missing
+          </h3>
+          <p><strong>Issue:</strong> MCP Registry approval state does not automatically configure MCP Gateway. Manual registration of MCPs in Gateway required even when Registry shows "Approved" state.</p>
+          <p><strong>Impact:</strong> Governance and runtime enforcement are disconnected. Approved MCPs do not automatically become available through gateway-secured endpoints.</p>
+          <p><strong>Owner:</strong> MCP Gateway Team + MCP Registry Team (integration work)</p>
+          <p><strong>Status:</strong> GA target (Q4 2026); manual registration path remains in 3.5</p>
+          <p><strong>Workaround:</strong> After Registry approval, manually create MCPServer CRD for Gateway or apply Gateway configuration YAML.</p>
+          <p class="source-ref">Source: MCP Gateway Roadmap, Knowledge Registry</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Platform Compatibility</h2>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            RHOAI 3.5 + OCP 4.19 Compatibility (Untested)
+          </h3>
+          <p><strong>Issue:</strong> RHOAI 3.5 (Aug 2026) supports OCP 4.19, but RHCL 1.4 likely will not. MCP Gateway TP in RHOAI 3.5 may run on an unsupported OCP version.</p>
+          <p><strong>Impact:</strong> Configuration (RHOAI 3.5 + RHCL 1.4+ + OCP 4.19) documented as <strong>untested, best-effort support only</strong>. OCP 4.19 maintenance support ends Dec 2026 (4-month overlap).</p>
+          <p><strong>Owner:</strong> RHCL Product Team + RHOAI Product Team (alignment)</p>
+          <p><strong>Status:</strong> Customers advised to upgrade to OCP 4.20+ for full support; OCP 4.19 gap accepted as temporary</p>
+          <p><strong>Workaround:</strong> Deploy on OCP 4.20+ for validated configuration. If stuck on 4.19, treat as unsupported/experimental.</p>
+          <p class="source-ref">Source: RHOAI-RHCL Support Agreement, Source Verification Report</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Gateway API Prerequisite Not Enforced
+          </h3>
+          <p><strong>Issue:</strong> MCP Gateway requires Gateway API (GA in OCP 4.19+), but installation does not validate prerequisite or fail gracefully if Gateway API unavailable.</p>
+          <p><strong>Impact:</strong> Silent failure mode — Gateway Helm chart deploys successfully, but routing does not work. Users must diagnose missing Gateway API CRDs manually.</p>
+          <p><strong>Owner:</strong> MCP Gateway Operator Team (future), RHCL Team (current Helm chart)</p>
+          <p><strong>Status:</strong> Pre-flight checks planned for MCP Gateway Operator (GA target)</p>
+          <p><strong>Workaround:</strong> Verify Gateway API CRDs exist before installing MCP Gateway: <code>oc get crd gateways.gateway.networking.k8s.io</code>.</p>
+          <p class="source-ref">Source: MCP Gateway Component Doc, Source Verification Report</p>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-22">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Fernando Lozano's MCP Notes (Google Doc: 1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8)</li>
+            <li>Source Verification Report (2026-06-22)</li>
+            <li>Knowledge Registry (knowledge-registry.md #25-28)</li>
+            <li>Component Knowledge Docs (mcp-gateway.md, mcp-catalog.md, mcp-registry.md)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="roadmap.html">Roadmap</a></li>
+            <li><a href="open-questions.html">Open Questions</a></li>
+            <li><a href="../build/end-to-end-setup.html">End-to-End Setup</a></li>
+            <li><a href="../govern/entitlement.html">Entitlements</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

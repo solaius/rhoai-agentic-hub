@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap — MCP Ecosystem Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+
+      <h1>Roadmap</h1>
+      <p class="lead">Cross-cutting roadmap for the MCP Ecosystem — tracking Catalog, Lifecycle Operator, Gateway, and Registry delivery across RHOAI releases.</p>
+
+      <section>
+        <h2>Release Timelines</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Release</th>
+              <th>Date</th>
+              <th>Catalog</th>
+              <th>MCPLO</th>
+              <th>Gateway</th>
+              <th>Registry</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>RHOAI 3.4 (Current)</strong></td>
+              <td>Apr 2026</td>
+              <td><span class="badge badge--shipped">DP Shipped</span> Partner & community MCPs</td>
+              <td><span class="badge badge--shipped">DP v0.2.0</span> Manual YAML install</td>
+              <td><span class="badge badge--shipped">TP in RHCL 1.4</span> Gateway API required</td>
+              <td><span class="badge badge--not-available">—</span></td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI 3.5</strong></td>
+              <td>Aug 2026</td>
+              <td><span class="badge badge--planned">Enhancements</span> Registry integration</td>
+              <td><span class="badge badge--planned">TP (mid-July)</span> Bundled in RHOAI operator</td>
+              <td><span class="badge badge--planned">TP (RHOAI dep)</span> Registry auto-config</td>
+              <td><span class="badge badge--planned">DP</span> Metadata-first governance</td>
+            </tr>
+            <tr>
+              <td><strong>GA Target</strong></td>
+              <td>Q4 2026+</td>
+              <td><span class="badge badge--planned">GA</span> Full federation</td>
+              <td><span class="badge badge--planned">GA</span> Production hardening</td>
+              <td><span class="badge badge--planned">GA</span> Session mgmt, HA</td>
+              <td><span class="badge badge--planned">GA Target</span> Full lifecycle automation</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Component Version Timelines</h2>
+
+        <h3>MCP Catalog</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>3.4 DP</strong></td>
+              <td>Apr 2026</td>
+              <td>5 partners + 2 community MCPs, deploy wizard, manual prerequisites</td>
+            </tr>
+            <tr>
+              <td><strong>3.5 TP</strong></td>
+              <td>Aug 2026</td>
+              <td>Registry integration, prerequisite automation, enhanced metadata</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong></td>
+              <td>Q4 2026+</td>
+              <td>Multi-registry federation, partner pipeline scaling, tier labeling</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>MCP Lifecycle Operator</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>v0.2.0 DP</strong></td>
+              <td>Jun 17, 2026</td>
+              <td>MCPServer CRD, manual YAML install, catalog selection wizard</td>
+            </tr>
+            <tr>
+              <td><strong>TP (mid-July)</strong></td>
+              <td>Jul 2026</td>
+              <td>Bundled in RHOAI operator, RHOAI Limited entitlement, Day 2 ops</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong></td>
+              <td>Q4 2026+</td>
+              <td>Production hardening, disconnected support, registry sync</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>MCP Gateway</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>v0.6.0 TP</strong></td>
+              <td>Apr 30, 2026 (RHCL 1.3.3)</td>
+              <td>OAuth auth, virtual servers, isolated deployments, Vault integration</td>
+            </tr>
+            <tr>
+              <td><strong>v0.7.1 TP</strong></td>
+              <td>Jun 18, 2026 (RHCL 1.4)</td>
+              <td>8× performance gain, content guardrails, OTEL tracing</td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI 3.5 TP</strong></td>
+              <td>Aug 2026</td>
+              <td>RHOAI dependency, registry auto-config (manual fallback)</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong></td>
+              <td>Q4 2026+</td>
+              <td>Deployment operator, session mgmt, HA, registry integration</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>MCP Registry</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>3.5 DP</strong></td>
+              <td>Aug 2026</td>
+              <td>Metadata-first governance, lifecycle states, approval workflows, workspace scoping</td>
+            </tr>
+            <tr>
+              <td><strong>GA Target</strong></td>
+              <td>Q4 2026+</td>
+              <td>Gateway auto-config, catalog sync, full lifecycle automation, multi-track governance</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Strategic Outcome</h2>
+        <div class="callout callout--insight">
+          <h3>RHAISTRAT-1339: AI Hub AI Asset Delivery for Agentic Solutions</h3>
+          <p><strong>Umbrella outcome for the full MCP Ecosystem delivery.</strong></p>
+          <p>The roadmap above represents the unified delivery of all components required to achieve the strategic outcome: a governed, federated AI asset ecosystem for agentic solutions on Red Hat OpenShift AI.</p>
+          <p><strong>Key dependencies:</strong></p>
+          <ul>
+            <li>Catalog depends on Lifecycle Operator for deployment primitive</li>
+            <li>Gateway depends on RHCL for infrastructure</li>
+            <li>Registry depends on Catalog + Gateway + MCPLO for integration points</li>
+            <li>Gen AI Studio depends on Registry (ConfigMap bridge in 3.4, registry-backed in 3.5)</li>
+          </ul>
+          <p><strong>GA readiness criteria:</strong> All four components reach GA, registry→gateway auto-config works, end-to-end flow (Catalog → Deploy → Govern → Enforce → Consume) validated in production.</p>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-06-22">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway/releases">MCP Gateway Releases</a></li>
+            <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/releases">MCPLO Releases</a></li>
+            <li>Source Verification Report (2026-06-22)</li>
+            <li>RHCL Overview Deck (RHCL Product Team)</li>
+            <li>Component Knowledge Docs (mcp-gateway.md, mcp-catalog.md, mcp-registry.md, mcp-lifecycle-operator.md)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="gaps.html">Gaps</a></li>
+            <li><a href="jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="open-questions.html">Open Questions</a></li>
+            <li><a href="../understand/ecosystem-architecture.html">Architecture</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
