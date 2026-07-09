@@ -239,3 +239,81 @@ def test_features_on_memory_file_is_error(tmp_path):
           "features: [mcp-registry]\n---\nb\n")
     errors, _ = lint_repo(root)
     assert any("only allowed on knowledge entries" in e for e in errors)
+
+
+def test_narrative_story_and_pillar_valid(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "narrative/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
+    write(root, "narrative/knowledge/story-governed-mcp.md",
+          ENTRY.format(t="story",
+                       extra="features: [mcp-registry, mcp-gateway]\n"
+                             "pillar: /narrative/knowledge/pillar-agents.md\n"))
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert not any("pillar target" in w for w in warnings)
+
+
+def test_story_requires_features(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "narrative/knowledge/story-a.md", ENTRY.format(t="story", extra=""))
+    errors, _ = lint_repo(root)
+    assert any("type 'story' requires field 'features'" in e for e in errors)
+
+
+def test_story_dangling_pillar_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "narrative/knowledge/story-a.md",
+          ENTRY.format(t="story", extra="features: [mcp-registry]\n"
+                                        "pillar: /narrative/knowledge/pillar-gone.md\n"))
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("pillar target /narrative/knowledge/pillar-gone.md" in w for w in warnings)
+
+
+def test_stray_dir_under_narrative_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "narrative/stories/a.md", ENTRY.format(t="fact", extra=""))
+    errors, _ = lint_repo(root)
+    assert any("not part of the narrative skeleton" in e for e in errors)
+
+
+def test_stray_file_under_narrative_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "narrative/notes.md", "x\n")
+    errors, _ = lint_repo(root)
+    assert any("files directly under narrative/" in e for e in errors)
+
+
+def test_artifact_descriptor_valid(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "features/mcp-registry/enablement/deck/index.html", "<html></html>")
+    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+          ENTRY.format(t="artifact", extra="features: [mcp-gateway]\n"))
+    errors, _ = lint_repo(root)
+    assert errors == []
+
+
+def test_artifact_wrong_type_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+          ENTRY.format(t="fact", extra=""))
+    errors, _ = lint_repo(root)
+    assert any("type 'fact' not in vocabulary ['artifact']" in e for e in errors)
+
+
+def test_artifact_directly_under_enablement_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/enablement/artifact.md",
+          ENTRY.format(t="artifact", extra=""))
+    errors, _ = lint_repo(root)
+    assert any("must live inside an enablement/<slug>/ directory" in e for e in errors)
+
+
+def test_artifact_assets_are_not_linted(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/enablement/deck/README.md", "no frontmatter here\n")
+    errors, _ = lint_repo(root)
+    assert errors == []

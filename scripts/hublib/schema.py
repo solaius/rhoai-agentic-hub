@@ -110,6 +110,22 @@ def _check_features(rel, meta, feature_ids, errors):
                           f"(not in features/features.yaml)")
 
 
+def _lint_artifacts(root, enablement, errors, warnings, feature_ids):
+    """artifact.md descriptors inside enablement slug dirs. All other files in
+    an artifact directory are the artifact's own assets — never linted."""
+    if not enablement.is_dir():
+        return
+    stray = enablement / "artifact.md"
+    if stray.is_file():
+        errors.append(f"{_rel(root, stray)}: artifact.md must live inside an "
+                      f"enablement/<slug>/ directory")
+    for slug in sorted(p for p in enablement.iterdir() if p.is_dir()):
+        desc = slug / "artifact.md"
+        if desc.is_file():
+            lint_entry(root, desc, {"artifact"}, False, errors, warnings,
+                       feature_ids=feature_ids)
+
+
 def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, feature_ids=None):
     rel = _rel(root, path)
     try:
@@ -184,6 +200,24 @@ def _lint_tree(root, base, errors, warnings, feature_ids):
                     if entry.name in RESERVED:
                         continue
                     lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings, feature_ids=feature_ids)
+            _lint_artifacts(root, feat / "enablement", errors, warnings, feature_ids)
+    narrative = base / "narrative"
+    if narrative.is_dir():
+        for child in sorted(narrative.iterdir()):
+            if child.is_dir() and child.name not in SKELETON_DIRS:
+                errors.append(f"{_rel(root, child)}: not part of the narrative skeleton "
+                              f"({', '.join(sorted(SKELETON_DIRS))})")
+            elif child.is_file() and child.name != "index.md":
+                errors.append(f"{_rel(root, child)}: files directly under narrative/ "
+                              f"are not allowed (only index.md)")
+        know = narrative / "knowledge"
+        if know.is_dir():
+            for entry in sorted(know.glob("*.md")):
+                if entry.name in RESERVED:
+                    continue
+                lint_entry(root, entry, NARRATIVE_TYPES, True, errors, warnings,
+                           feature_ids=feature_ids)
+        _lint_artifacts(root, narrative / "enablement", errors, warnings, feature_ids)
     memory = base / "memory"
     if memory.is_dir():
         for entry in sorted(memory.rglob("*.md")):
@@ -194,7 +228,7 @@ def _lint_tree(root, base, errors, warnings, feature_ids):
 
 
 def _lint_links(root, warnings):
-    scan_dirs = ["conventions", "features", "memory", "docs", "views"]
+    scan_dirs = ["conventions", "features", "memory", "docs", "views", "narrative"]
     files = [root / "README.md", root / "AGENTS.md", root / "CLAUDE.md"]
     for d in scan_dirs:
         if (root / d).is_dir():
