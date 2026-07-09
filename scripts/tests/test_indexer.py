@@ -229,3 +229,20 @@ def test_jtbd_view(tmp_path):
     v = build_all(root, today=TODAY)["views/jtbd.md"]
     assert "## candidate" in v and "persona: ai-engineer · 1 evidence" in v
     assert "## validated" in v and "NO EVIDENCE" in v
+
+
+def test_artifacts_view(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/enablement/deck/index.html", "<html></html>")
+    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+          "---\ntype: artifact\ntitle: Catalog Deck\ndescription: the deck\n"
+          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
+    write(root, "features/mcp-registry/enablement/bare/index.html", "<html></html>")
+    write(root, "publish/manifest.yaml",
+          "- source: features/mcp-registry/enablement/deck/\n  dest: mcp-registry/deck/\n"
+          "  audience: public\n  title: T\n  description: D\n")
+    v = build_all(root, today=TODAY)["views/artifacts.md"]
+    assert "[Catalog Deck](/features/mcp-registry/enablement/deck/)" in v
+    assert "published → mcp-registry/deck/" in v
+    assert "connects: mcp-registry" in v
+    assert "_no artifact.md descriptor yet_" in v and "(unpublished)" in v

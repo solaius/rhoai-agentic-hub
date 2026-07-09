@@ -343,6 +343,36 @@ def build_all(root, today=None):
         lines.append("")
     built["views/jtbd.md"] = "\n".join(lines).rstrip("\n") + "\n"
 
+    # views/artifacts.md — every enablement artifact; publish state from manifest
+    manifest_dest = {}
+    mpath = root / "publish" / "manifest.yaml"
+    if mpath.is_file():
+        try:
+            for e in (yaml.safe_load(mpath.read_text(encoding="utf-8")) or []):
+                if isinstance(e, dict) and e.get("source") and e.get("dest"):
+                    key = str(e["source"]).replace("\\", "/").strip("/")
+                    manifest_dest[key] = str(e["dest"])
+        except yaml.YAMLError:
+            pass
+    lines = [MARKER + "# Artifacts", ""]
+    slug_dirs = []
+    for pattern in ("features/*/enablement/*", "narrative/enablement/*"):
+        slug_dirs += [p for p in sorted(root.glob(pattern)) if p.is_dir()]
+    for slug in slug_dirs:
+        rel = slug.relative_to(root).as_posix()
+        desc = _meta_of(slug / "artifact.md") if (slug / "artifact.md").is_file() else None
+        pub = manifest_dest.get(rel)
+        pub_str = f"published → {pub}" if pub else "unpublished"
+        if desc:
+            feats = ", ".join(desc.get("features") or [])
+            feat_str = f" · connects: {feats}" if feats else ""
+            lines.append(f"- [{desc.get('title') or slug.name}](/{rel}/) — "
+                         f"{desc.get('description', '')} ({pub_str}){feat_str}")
+        else:
+            lines.append(f"- [{slug.name}](/{rel}/) — _no artifact.md descriptor "
+                         f"yet_ ({pub_str})")
+    built["views/artifacts.md"] = "\n".join(lines) + "\n"
+
     return built
 
 
