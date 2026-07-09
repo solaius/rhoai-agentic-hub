@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Memory Series — Red Hat OpenShift AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;900&family=Red+Hat+Text:wght@400;500;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Red Hat Text', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container { max-width: 800px; width: 100%; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 0.75rem;
+            color: #999;
+            text-decoration: none;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #e4002b; }
+
+        h1 {
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+        h1 span { color: #e4002b; }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #999;
+            margin-bottom: 1rem;
+            max-width: 60ch;
+            line-height: 1.5;
+        }
+
+        .series-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .series-stat {
+            display: flex;
+            flex-direction: column;
+        }
+        .series-stat .val {
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #e4002b;
+        }
+        .series-stat .lbl {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #666;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(228, 0, 43, 0.15);
+            color: #e4002b;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            border: 1px solid rgba(228, 0, 43, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #e4002b;
+            margin-bottom: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 1.75rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .card:hover {
+            border-color: #e4002b;
+            background: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(228, 0, 43, 0.1);
+        }
+
+        .card-label {
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #e4002b;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-label.teal { color: #009596; }
+        .card-label.blue { color: #4394e5; }
+        .card-label.purple { color: #6753AC; }
+        .card-label.green { color: #3E8635; }
+        .card-label.orange { color: #F4B400; }
+
+        .card h2 {
+            font-family: 'Red Hat Display', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .card .card-status {
+            display: inline-block;
+            font-family: 'Red Hat Mono', monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            margin-top: 0.75rem;
+        }
+        .status-live { background: rgba(62,134,53,0.15); color: #3E8635; }
+        .status-coming { background: rgba(138,138,138,0.15); color: #8a8a8a; }
+
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        .footer a { color: #e4002b; text-decoration: none; }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .series-meta { gap: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a class="back-link" href="../../">&#8592; All Presentations</a>
+
+        <div class="badge">Red Hat OpenShift AI</div>
+        <h1><span>Agent Memory</span> Series</h1>
+        <p class="subtitle">A series of presentations exploring agent memory &mdash; from foundational concepts through enterprise architecture and competitive positioning.</p>
+
+        <div class="series-meta">
+            <div class="series-stat">
+                <div class="val">17</div>
+                <div class="lbl">Research documents</div>
+            </div>
+            <div class="series-stat">
+                <div class="val" style="color: #009596;">5</div>
+                <div class="lbl">Strategy documents</div>
+            </div>
+            <div class="series-stat">
+                <div class="val" style="color: #fff;">2026</div>
+                <div class="lbl">Research phase</div>
+            </div>
+        </div>
+
+        <div class="section-title">Presentations</div>
+
+        <div class="cards">
+            <a class="card" href="agent-memory-starter-guide.html">
+                <div class="card-label">Part 1 &mdash; Starter Guide</div>
+                <h2>Agent Memory: A Starter Guide</h2>
+                <p>The foundational primer. Covers the four memory types (CoALA taxonomy), memory vs. RAG, the memory lifecycle, storage architectures, context engineering, multi-agent patterns, governance, and the competitive landscape.</p>
+                <span class="card-status status-live">Live</span>
+            </a>
+
+            <a class="card" href="agent-memory-foundations.html">
+                <div class="card-label teal">Part 2 &mdash; Foundations</div>
+                <h2>Phase 1 Research Findings</h2>
+                <p>What we found when we surveyed 16+ solutions, mapped the standards landscape, and evaluated four competing taxonomies. The solution comparison, seven cross-solution gaps, the recommended decomposition, and the key decisions ahead.</p>
+                <span class="card-status status-live">Live</span>
+            </a>
+
+            <a class="card" href="agent-memory-deep-dives.html">
+                <div class="card-label blue">Part 3 &mdash; Deep Dives</div>
+                <h2>Phase 2 Research Findings</h2>
+                <p>Agent harness memory patterns, Claude dreaming and consolidation, adversarial memory threats (MINJA, SpAIware, MemoryGraft), benchmarking and evaluation, KV-cache optimization, and multi-modal memory.</p>
+                <span class="card-status status-live">Live</span>
+            </a>
+
+            <a class="card" href="agent-memory-enterprise.html">
+                <div class="card-label purple">Part 4 &mdash; Enterprise Use Cases</div>
+                <h2>Agent Memory in Regulated Verticals</h2>
+                <p>How healthcare, financial services, ITOps, legal, manufacturing, and defense each require governed agent memory &mdash; and why the requirements converge on the same platform capabilities.</p>
+                <span class="card-status status-live">Live</span>
+            </a>
+
+            <a class="card" href="agent-memory-strategy.html">
+                <div class="card-label green">Part 5 &mdash; Strategy</div>
+                <h2>RHOAI Agent Memory Strategy</h2>
+                <p>The recommended architecture, phased roadmap (3.6 &rarr; 3.7 &rarr; 3.8+), competitive positioning, standards workstream, and the path from Dev Preview to GA.</p>
+                <span class="card-status status-live">Live</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+            <p><a href="https://github.com/solaius/ai-asset-registry">github.com/solaius/ai-asset-registry</a></p>
+        </div>
+    </div>
+</body>
+</html>

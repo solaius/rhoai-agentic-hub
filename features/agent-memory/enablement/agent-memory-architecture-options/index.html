@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory Architecture — Options &amp; Roadmap</title>
+  <meta name="description" content="Architecture options, component analysis, and feature roadmap for RHOAI agent memory" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .hat {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--rh-red); color: white;
+      font-family: var(--font-sans); font-weight: 800; font-size: 0.65rem; border-radius: 4px;
+    }
+    .nav-title { font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: 0.8rem;
+      font-family: var(--font-text); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    section {
+      padding: 5rem 1.5rem;
+      scroll-margin-top: calc(var(--nav-height) + 16px);
+    }
+    .section-inner { max-width: var(--content-max); margin: 0 auto; }
+    .section-label {
+      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .accent { color: var(--rh-red); }
+
+    .hero {
+      min-height: auto; display: flex; align-items: center; position: relative;
+      padding-top: calc(var(--nav-height) + 2rem);
+      padding-bottom: 2rem;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50px; right: -100px;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238,0,0,0.4); transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238,0,0,0.08);
+    }
+
+    .animate-on-scroll {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+    .stagger-1 { transition-delay: 80ms; }
+    .stagger-2 { transition-delay: 160ms; }
+    .stagger-3 { transition-delay: 240ms; }
+    .stagger-4 { transition-delay: 320ms; }
+
+    .tag {
+      font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block;
+    }
+    .tag-red { background: rgba(238,0,0,0.12); color: var(--rh-red); }
+    .tag-green { background: rgba(62,134,53,0.15); color: var(--rh-green); }
+    .tag-blue { background: rgba(0,102,204,0.12); color: var(--rh-blue-light); }
+    .tag-teal { background: rgba(0,149,150,0.12); color: var(--rh-teal); }
+    .tag-purple { background: rgba(103,83,172,0.12); color: var(--rh-purple); }
+    .tag-orange { background: rgba(244,180,0,0.12); color: var(--rh-orange); }
+
+    .check { color: var(--rh-green); }
+    .cross { color: var(--rh-red); opacity: 0.7; }
+    .partial { color: var(--rh-orange); }
+
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.85rem;
+      font-family: var(--font-text);
+    }
+    table th {
+      text-align: left; padding: 0.75rem 1rem;
+      border-bottom: 2px solid var(--border-muted);
+      font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem;
+      color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    table td {
+      padding: 0.6rem 1rem; border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary); vertical-align: top;
+    }
+    table tr:hover td { background: rgba(255,255,255,0.02); }
+    table td:first-child { font-weight: 500; color: var(--text-primary); font-family: var(--font-text); }
+
+    .layer-box {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 1.75rem; position: relative; overflow: hidden;
+    }
+    .layer-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .layer-box.substrate::before { background: var(--rh-teal); }
+    .layer-box.intelligence::before { background: var(--rh-blue); }
+    .layer-box.governance::before { background: var(--rh-purple); }
+
+    .option-card {
+      background: var(--bg-card); border: 1px solid var(--border-subtle);
+      border-radius: 10px; padding: 1.25rem; margin-top: 1rem;
+    }
+    .option-card h4 {
+      font-family: var(--font-sans); font-weight: 700; font-size: 1rem;
+      margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .option-card .meta {
+      display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);
+    }
+    .option-card .pros, .option-card .cons {
+      font-size: 0.85rem; line-height: 1.5; margin: 0; padding: 0; list-style: none;
+    }
+    .option-card .pros li::before { content: '+'; color: var(--rh-green); font-weight: 700; margin-right: 0.4rem; font-family: var(--font-mono); }
+    .option-card .cons li::before { content: '\2013'; color: var(--rh-red); font-weight: 700; margin-right: 0.4rem; font-family: var(--font-mono); opacity: 0.7; }
+    .option-card .pros li, .option-card .cons li { padding: 0.15rem 0; color: var(--text-secondary); }
+
+    .roadmap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .roadmap-card {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 10px; padding: 1.25rem; position: relative; overflow: hidden;
+    }
+    .roadmap-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    }
+    .roadmap-card.short::before { background: var(--rh-green); }
+    .roadmap-card.long::before { background: var(--rh-purple); }
+    .roadmap-card h4 {
+      font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem;
+      margin-bottom: 0.5rem; color: var(--text-primary);
+    }
+    .roadmap-card ul {
+      list-style: none; padding: 0; margin: 0;
+    }
+    .roadmap-card li {
+      font-size: 0.82rem; padding: 0.2rem 0 0.2rem 1rem; position: relative;
+      color: var(--text-secondary);
+    }
+    .roadmap-card li::before {
+      content: ''; position: absolute; left: 0; top: 0.55rem;
+      width: 5px; height: 5px; border-radius: 50%;
+    }
+    .roadmap-card.short li::before { background: var(--rh-green); }
+    .roadmap-card.long li::before { background: var(--rh-purple); }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: auto; }
+      .roadmap-grid { grid-template-columns: 1fr; }
+      table { font-size: 0.75rem; }
+      table th, table td { padding: 0.5rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory Architecture</span>
+      </div>
+      <div class="nav-links">
+        <a href="#layers">Layers</a>
+        <a href="#options">Options</a>
+        <a href="#in-rhoai">In RHOAI Today</a>
+        <a href="#features">Features</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#recommendation">Paths Forward</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RHAISTRAT-1345 &mdash; AGENT MEMORY</div>
+      <h1 class="display-xl animate-on-scroll"><span class="accent">Agent Memory</span> Architecture Options</h1>
+      <p class="lead animate-on-scroll">A composable architecture for enterprise agent memory in RHOAI. Three layers, multiple candidates per layer, and a phased roadmap from what we ship today to a complete governed solution.</p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE THREE LAYERS ===== -->
+  <section id="layers">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ARCHITECTURE</div>
+      <h2 class="display-lg animate-on-scroll">Three Layers, Not One Monolith</h2>
+      <p class="lead animate-on-scroll">Agent memory is not a single system. It decomposes into three distinct layers with different responsibilities, different maturity requirements, and different candidate projects for each.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2.5rem;">
+
+        <!-- Layer 1: Substrate -->
+        <div class="layer-box substrate animate-on-scroll stagger-1">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span class="tag tag-teal">LAYER 1</span>
+            <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem;">Memory Substrate</h3>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; max-width: 80ch;">
+            The raw storage and retrieval engine. Handles read path (vector search, context injection before inference) and write path (async summarization, vector store upload after response). Owns the Responses API integration point.
+          </p>
+          <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap;">
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-teal); background: rgba(0,149,150,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,149,150,0.15);">Vector search</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-teal); background: rgba(0,149,150,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,149,150,0.15);">Context injection</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-teal); background: rgba(0,149,150,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,149,150,0.15);">Async write</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-teal); background: rgba(0,149,150,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,149,150,0.15);">Compaction</span>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="text-align: center; color: var(--text-muted); font-size: 1.2rem; opacity: 0.5;">&#x25BC;</div>
+
+        <!-- Layer 2: Intelligence -->
+        <div class="layer-box intelligence animate-on-scroll stagger-2">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span class="tag tag-blue">LAYER 2</span>
+            <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem;">Memory Intelligence</h3>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; max-width: 80ch;">
+            The application-layer brain. LLM-based extraction (turning conversations into durable facts), hybrid retrieval (vector + BM25 + entity graph), contradiction detection, semantic deduplication, and PII scanning.
+          </p>
+          <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap;">
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-blue-light); background: rgba(0,102,204,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,102,204,0.15);">LLM extraction</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-blue-light); background: rgba(0,102,204,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,102,204,0.15);">Contradiction detection</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-blue-light); background: rgba(0,102,204,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,102,204,0.15);">Hybrid retrieval</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-blue-light); background: rgba(0,102,204,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(0,102,204,0.15);">PII scanning</span>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="text-align: center; color: var(--text-muted); font-size: 1.2rem; opacity: 0.5;">&#x25BC;</div>
+
+        <!-- Layer 3: Governance -->
+        <div class="layer-box governance animate-on-scroll stagger-3">
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <span class="tag tag-purple">LAYER 3</span>
+            <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem;">Governance &amp; Scope</h3>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; max-width: 80ch;">
+            Enterprise policy enforcement. Multi-tier scope isolation (user/project/org), RBAC, immutable audit trails, erasure/retention, provenance tracking, and compliance (EU AI Act, GDPR, HIPAA). This is what turns a memory store into a <em>governed</em> memory store.
+          </p>
+          <div style="display: flex; gap: 0.75rem; margin-top: 0.75rem; flex-wrap: wrap;">
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-purple); background: rgba(103,83,172,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(103,83,172,0.15);">Scope tiers</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-purple); background: rgba(103,83,172,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(103,83,172,0.15);">Audit trail</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-purple); background: rgba(103,83,172,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(103,83,172,0.15);">RBAC</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-purple); background: rgba(103,83,172,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(103,83,172,0.15);">Erasure</span>
+            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-purple); background: rgba(103,83,172,0.08); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(103,83,172,0.15);">Provenance</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emerging consensus callout -->
+      <div class="animate-on-scroll" style="border-left: 3px solid var(--rh-orange); padding: 1rem 1.5rem; background: rgba(244,180,0,0.04); border-radius: 0 8px 8px 0; margin-top: 2rem;">
+        <p style="font-family: var(--font-text); font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin: 0;">
+          <strong>Emerging consensus (Jun 23 team sync):</strong> Long-term memory should be separate from the session/Responses API, but &ldquo;they come together at prompt assembly time.&rdquo; Memory as an independent, decoupled service &mdash; callable via MCP from any agent framework &mdash; would survive the OGX deprecation. <em>All architectural paths below are proposals under evaluation for the July architecture review.</em>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== OPTIONS PER LAYER ===== -->
+  <section id="options">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">OPTIONS ANALYSIS</div>
+      <h2 class="display-lg animate-on-scroll">Candidates by Layer</h2>
+      <p class="lead animate-on-scroll">Each layer has different candidates with different strengths. No single project fills all three layers well.</p>
+
+      <!-- SUBSTRATE OPTIONS -->
+      <div style="margin-top: 2.5rem;">
+        <div class="animate-on-scroll" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <span class="tag tag-teal">LAYER 1</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.15rem;">Memory Substrate Options</h3>
+        </div>
+
+        <div class="option-card animate-on-scroll">
+          <h4>OGX / AI Gateway Responses API <span class="tag tag-green" style="font-size: 0.55rem;">IN RHOAI 3.5</span></h4>
+          <div class="meta">
+            <span>Author: Francisco Arceo</span>
+            <span>PRs #6162 / #6163</span>
+            <span>Community: Meta + Red Hat contributors</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <ul class="pros">
+              <li>Already in the RHOAI 3.5 production path</li>
+              <li>Conversations, Vector Stores, Files, Prompts, Compaction all ship</li>
+              <li>Multi-tenancy (AuthorizedSqlStore ABAC) landed</li>
+              <li>Francisco is upstream maintainer &mdash; Red Hat has influence</li>
+            </ul>
+            <ul class="cons">
+              <li>OGX is being deprecated &mdash; AI Gateway absorbing its surfaces</li>
+              <li>Memory Alpha MVP tightly couples memory to Responses API lifecycle</li>
+              <li>No governance primitives (audit, scope tiers, provenance)</li>
+              <li>Owner-scoped only &mdash; no project/org tiers</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="option-card animate-on-scroll">
+          <h4>PostgreSQL + pgvector (standalone) <span class="tag tag-blue" style="font-size: 0.55rem;">DECOUPLED</span></h4>
+          <div class="meta">
+            <span>Used by: MemoryHub, Oracle AI Agent Memory</span>
+            <span>Community: massive (PostgreSQL ecosystem)</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <ul class="pros">
+              <li>Competitive with dedicated vector DBs under 50M vectors</li>
+              <li>Single-database design (relational + vector + graph in one engine)</li>
+              <li>OpenShift OOTB PostgreSQL operator available</li>
+              <li>FIPS inheritable from cluster</li>
+            </ul>
+            <ul class="cons">
+              <li>Requires building the memory service layer on top</li>
+              <li>No agent memory-specific tooling out of the box</li>
+              <li>No dedicated vector DB has Red Hat OCP Operator Certification</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTELLIGENCE OPTIONS -->
+      <div style="margin-top: 2.5rem;">
+        <div class="animate-on-scroll" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <span class="tag tag-blue">LAYER 2</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.15rem;">Memory Intelligence Options</h3>
+        </div>
+
+        <div class="option-card animate-on-scroll">
+          <h4>Mem0 <span class="tag tag-orange" style="font-size: 0.55rem;">EXTERNAL OSS</span></h4>
+          <div class="meta">
+            <span>License: Apache 2.0 (OSS tier)</span>
+            <span>GitHub: 48,000+ stars</span>
+            <span>Funding: $24M Series A</span>
+            <span>Community: large, fast-moving</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <ul class="pros">
+              <li>Most popular open-source memory framework</li>
+              <li>Single-pass LLM extraction, hybrid retrieval (vector + BM25 + entity graph)</li>
+              <li>21 framework integrations, 20 vector store backends</li>
+              <li>AWS Agent SDK exclusive memory provider</li>
+              <li>93.4% on LongMemEval (vendor-published)</li>
+            </ul>
+            <ul class="cons">
+              <li>Governance thin in OSS tier (no audit, no erasure)</li>
+              <li>Drops to 48.6% at 10M-token enterprise scale (BEAM)</li>
+              <li>Open-core model &mdash; key features may migrate to paid tier</li>
+              <li>Market consolidation risk (5+ funded startups converging)</li>
+              <li>Benchmarks are vendor-published, not independently validated</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="option-card animate-on-scroll">
+          <h4>MemoryHub (curation engine) <span class="tag tag-red" style="font-size: 0.55rem;">RED HAT</span></h4>
+          <div class="meta">
+            <span>License: Apache 2.0</span>
+            <span>Author: Wes Jackson (Red Hat SSA)</span>
+            <span>Community: 1 author (IP transferred to team)</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <ul class="pros">
+              <li>Inline curation pipeline: regex PII scan + embedding similarity dedup</li>
+              <li>Contradiction detection with threshold-based surfacing</li>
+              <li>Two-vector retrieval via RRF (query vector + session focus)</li>
+              <li>Covers both intelligence and governance in one package</li>
+            </ul>
+            <ul class="cons">
+              <li>Single-author project &mdash; bus factor of 1</li>
+              <li>No independent benchmarks on extraction quality</li>
+              <li>Extraction less sophisticated than Mem0's single-pass algorithm</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOVERNANCE OPTIONS -->
+      <div style="margin-top: 2.5rem;">
+        <div class="animate-on-scroll" style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <span class="tag tag-purple">LAYER 3</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.15rem;">Governance &amp; Scope Options</h3>
+        </div>
+
+        <div class="option-card animate-on-scroll">
+          <h4>Feast <span class="tag tag-green" style="font-size: 0.55rem;">GA IN RHOAI 3.4</span></h4>
+          <div class="meta">
+            <span>License: Apache 2.0</span>
+            <span>Team: Umberto, Aniket, Nikhil, Amita + Jonathan (PM)</span>
+            <span>Community: active upstream, Red Hat-owned</span>
+          </div>
+          <!-- Umberto's 3-phase plan -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+            <div style="border-top: 2px solid var(--rh-green); padding-top: 0.5rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em;">Phase A &mdash; 3.5</div>
+              <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; margin: 0.2rem 0;">Discovery Loop</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Feast MCP server for agent-assisted feature engineering. Agents discover data schemas safely via MCP.</div>
+            </div>
+            <div style="border-top: 2px solid var(--rh-blue); padding-top: 0.5rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.1em;">Phase B &mdash; 3.5</div>
+              <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; margin: 0.2rem 0;">Retrieval Loop</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">MemoryFeatureView with L0 (Redis KV) / L1 (Parquet summaries) / L2 (pgvector embeddings). <code>feast init -t agent</code> scaffolding.</div>
+            </div>
+            <div style="border-top: 2px solid var(--rh-purple); padding-top: 0.5rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.1em;">Phase C &mdash; 3.6</div>
+              <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; margin: 0.2rem 0;">Write Loop</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">Feast as pluggable backend for Mem0/Zep. &ldquo;Mem0 owns the cognitive logic; Feast owns the data boundary.&rdquo;</div>
+            </div>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Source: Umberto Manganiello, &ldquo;Unified Platform Agentic Memory Infrastructure&rdquo; (May 2026)</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <ul class="pros">
+              <li><strong>GA in RHOAI 3.4</strong> &mdash; ships today, OLM-managed</li>
+              <li>OIDC group-based + namespace-based RBAC</li>
+              <li>Point-in-time correctness (unique: reconstruct state at any timestamp)</li>
+              <li>Lineage graph (source &rarr; transformation &rarr; serving)</li>
+              <li>TTL declarative expiration, cell-level masking</li>
+              <li>MCP server (RHAIRFE-1916, 3.5 candidate)</li>
+              <li>MemoryFeatureView primitive designed (L0/L1/L2 tiered memory)</li>
+              <li>Dedicated team with upstream community</li>
+              <li>3-phase roadmap already designed (A &rarr; B &rarr; C)</li>
+            </ul>
+            <ul class="cons">
+              <li>RBAC is per-feature-view, not per-record &mdash; Delta 1 needed</li>
+              <li>No write-event audit log &mdash; Delta 2 needed</li>
+              <li>No per-record provenance fields &mdash; Delta 3 needed</li>
+              <li>No contradiction detection, PII scanning, or hybrid retrieval</li>
+              <li>Feature store, not a memory service &mdash; memory-specific features all need building</li>
+              <li>Phase C depends on Mem0 supporting pluggable storage backends</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="option-card animate-on-scroll">
+          <h4>MemoryHub (governance layer) <span class="tag tag-red" style="font-size: 0.55rem;">RED HAT PROTOTYPE</span></h4>
+          <div class="meta">
+            <span>License: Apache 2.0</span>
+            <span>Author: Wes Jackson &mdash; IP transferred to team</span>
+            <span>Community: 1 author + Sanjeev evaluating</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <ul class="pros">
+              <li>6-tier scope model (user/project/campaign/role/org/enterprise)</li>
+              <li>Contradiction detection + inline curation (PII + dedup)</li>
+              <li>Memory versioning with full history + relationship edges</li>
+              <li>MCP server (3 profiles: compact/full/minimal)</li>
+              <li>UBI9 images, air-gap deployable, FIPS-delegated</li>
+              <li>SDK on PyPI with kagenti/adk as external consumer</li>
+              <li>IP/license blocker resolved</li>
+            </ul>
+            <ul class="cons">
+              <li><strong>Single-author project</strong> &mdash; no dedicated team or community</li>
+              <li>Audit trail is a stub (issue #67), not wired through</li>
+              <li>Kubernetes operator is a skeleton (plain manifests today)</li>
+              <li>No observability (Prometheus/Grafana TBD)</li>
+              <li>FIPS delegated but not validated end-to-end</li>
+              <li>Genuine prototype &mdash; production hardening needed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== WHAT'S IN RHOAI TODAY ===== -->
+  <section id="in-rhoai">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">CURRENT STATE</div>
+      <h2 class="display-lg animate-on-scroll">What's Already in RHOAI</h2>
+      <p class="lead animate-on-scroll">Several memory-relevant components already ship or are in the pipeline. These are building blocks, not a complete memory solution.</p>
+
+      <div style="overflow-x: auto; margin-top: 2rem;">
+        <table class="animate-on-scroll">
+          <thead>
+            <tr>
+              <th style="width: 22%;">Component</th>
+              <th style="width: 12%;">Status</th>
+              <th>Memory-Relevant Capabilities</th>
+              <th style="width: 15%;">Layer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Feast</td>
+              <td><span class="tag tag-green">GA 3.4</span></td>
+              <td>OIDC RBAC, lineage graph, PIT correctness, TTL, cell-level masking, OLM operator, 7-object catalog</td>
+              <td><span class="tag tag-purple">Governance</span></td>
+            </tr>
+            <tr>
+              <td>OGX Responses API</td>
+              <td><span class="tag tag-green">GA 3.5</span></td>
+              <td>Conversations, Vector Stores, Files, Prompts, Compaction, AuthorizedSqlStore ABAC multi-tenancy</td>
+              <td><span class="tag tag-teal">Substrate</span></td>
+            </tr>
+            <tr>
+              <td>Feast MCP Server</td>
+              <td><span class="tag tag-blue">3.5 candidate</span></td>
+              <td>Feature store exposed as MCP tools, routes through MCP Gateway</td>
+              <td><span class="tag tag-purple">Governance</span></td>
+            </tr>
+            <tr>
+              <td>AI Gateway</td>
+              <td><span class="tag tag-blue">In progress</span></td>
+              <td>Identity establishment, "conversation state microservice" for Responses replacement</td>
+              <td><span class="tag tag-teal">Substrate</span></td>
+            </tr>
+            <tr>
+              <td>MCP Gateway</td>
+              <td><span class="tag tag-green">GA 3.4</span></td>
+              <td>Per-tool authz, guardrails, audit &mdash; enforcement point for memory MCP tools</td>
+              <td><span class="tag tag-purple">Governance</span></td>
+            </tr>
+            <tr>
+              <td>MemoryHub</td>
+              <td><span class="tag tag-orange">Prototype</span></td>
+              <td>6-tier scope, contradiction detection, PII scan, versioning, MCP server, SDK</td>
+              <td><span class="tag tag-blue">Intel</span> + <span class="tag tag-purple">Gov</span></td>
+            </tr>
+            <tr>
+              <td>OGX Memory Alpha</td>
+              <td><span class="tag tag-orange">MVP / PRs</span></td>
+              <td>Owner-scoped read path (vector search &rarr; context injection) + async write path</td>
+              <td><span class="tag tag-teal">Substrate</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== FEATURE REQUIREMENTS ===== -->
+  <section id="features">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">COMPETITIVE REQUIREMENTS</div>
+      <h2 class="display-lg animate-on-scroll">Feature Gap Analysis</h2>
+      <p class="lead animate-on-scroll">What the industry ships and where each candidate stands today. Features ordered by competitive importance.</p>
+
+      <div style="overflow-x: auto; margin-top: 2rem;">
+        <table class="animate-on-scroll">
+          <thead>
+            <tr>
+              <th style="width: 22%;">Feature</th>
+              <th style="width: 10%;">Priority</th>
+              <th style="width: 17%;">Feast</th>
+              <th style="width: 17%;">MemoryHub</th>
+              <th style="width: 17%;">Mem0 OSS</th>
+              <th style="width: 17%;">OGX</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Audit trail</td>
+              <td><span class="tag tag-red">P0</span></td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="partial">&#x25CB;</span> Stub</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>Record-level scope</td>
+              <td><span class="tag tag-red">P0</span></td>
+              <td><span class="partial">&#x25CB;</span> View-level</td>
+              <td><span class="check">&#x2713;</span> 6 tiers</td>
+              <td><span class="partial">&#x25CB;</span> 4 dims</td>
+              <td><span class="partial">&#x25CB;</span> Owner only</td>
+            </tr>
+            <tr>
+              <td>Provenance fields</td>
+              <td><span class="tag tag-red">P0</span></td>
+              <td><span class="partial">&#x25CB;</span> View-level</td>
+              <td><span class="check">&#x2713;</span> Full</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>RBAC</td>
+              <td><span class="tag tag-red">P0</span></td>
+              <td><span class="check">&#x2713;</span> OIDC + NS</td>
+              <td><span class="check">&#x2713;</span> JWT + scope</td>
+              <td><span class="cross">&#x2717;</span> None (OSS)</td>
+              <td><span class="partial">&#x25CB;</span> ABAC</td>
+            </tr>
+            <tr>
+              <td>Erasure / retention</td>
+              <td><span class="tag tag-orange">P1</span></td>
+              <td><span class="partial">&#x25CB;</span> TTL only</td>
+              <td><span class="partial">&#x25CB;</span> Designed</td>
+              <td><span class="cross">&#x2717;</span> None (OSS)</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>Hybrid retrieval</td>
+              <td><span class="tag tag-orange">P1</span></td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="check">&#x2713;</span> 2-vector RRF</td>
+              <td><span class="check">&#x2713;</span> Vec+BM25+graph</td>
+              <td><span class="partial">&#x25CB;</span> Vector only</td>
+            </tr>
+            <tr>
+              <td>Contradiction detection</td>
+              <td><span class="tag tag-orange">P1</span></td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="check">&#x2713;</span> Full</td>
+              <td><span class="partial">&#x25CB;</span> Partial</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>PII / secrets scanning</td>
+              <td><span class="tag tag-orange">P1</span></td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="check">&#x2713;</span> 2-tier</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>Inspectable compaction</td>
+              <td><span class="tag tag-blue">P2</span></td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="partial">&#x25CB;</span> Designed</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="cross">&#x2717;</span> Opaque</td>
+            </tr>
+            <tr>
+              <td>Memory versioning</td>
+              <td><span class="tag tag-blue">P2</span></td>
+              <td><span class="check">&#x2713;</span> PIT correctness</td>
+              <td><span class="check">&#x2713;</span> Full chains</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>Multi-agent coordination</td>
+              <td><span class="tag tag-blue">P2</span></td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="partial">&#x25CB;</span> Designed</td>
+              <td><span class="partial">&#x25CB;</span> Partial</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>OLM operator</td>
+              <td><span class="tag tag-blue">P2</span></td>
+              <td><span class="check">&#x2713;</span> Shipped</td>
+              <td><span class="cross">&#x2717;</span> Skeleton</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+              <td><span class="cross">&#x2717;</span> None</td>
+            </tr>
+            <tr>
+              <td>MCP server</td>
+              <td><span class="tag tag-orange">P1</span></td>
+              <td><span class="check">&#x2713;</span> 3.5 candidate</td>
+              <td><span class="check">&#x2713;</span> 3 profiles</td>
+              <td><span class="check">&#x2713;</span> OpenMemory</td>
+              <td><span class="cross">&#x2717;</span> N/A</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="animate-on-scroll" style="border-left: 3px solid var(--rh-orange); padding: 1rem 1.5rem; background: rgba(244,180,0,0.04); border-radius: 0 8px 8px 0; margin-top: 1.5rem;">
+        <p style="font-family: var(--font-text); font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; margin: 0;">
+          <strong>No single project covers all requirements.</strong> Feast is strongest on governance infrastructure (RBAC, PIT, OLM). MemoryHub is strongest on memory-specific intelligence (scope tiers, contradiction, PII). Mem0 is strongest on retrieval quality. The composable approach uses each for what it's best at.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== ROADMAP ===== -->
+  <section id="roadmap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">DELIVERY ROADMAP</div>
+      <h2 class="display-lg animate-on-scroll">Feature Phasing</h2>
+      <p class="lead animate-on-scroll">Incremental delivery aligned with RHOAI release cadence (~3 months per release).</p>
+
+      <div class="roadmap-grid" style="margin-top: 2rem;">
+        <div class="roadmap-card short animate-on-scroll">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.25rem;">SHORT-TERM &mdash; RHOAI 3.6 (NOV 2026)</div>
+          <h4>Limited Tech Preview</h4>
+          <ul>
+            <li>Memory as independent MCP service (decoupled from Responses API)</li>
+            <li>Record-level scope isolation (user / project / org)</li>
+            <li>Basic audit logging (append-only write events)</li>
+            <li>MCP tool surface (read / write / search / curate)</li>
+            <li>PII scanning on write path</li>
+            <li>Hybrid retrieval (vector + BM25 at minimum)</li>
+            <li>PostgreSQL + pgvector single-substrate backend</li>
+            <li>OLM-managed operator (extend Feast operator or build new)</li>
+          </ul>
+        </div>
+
+        <div class="roadmap-card long animate-on-scroll">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.25rem;">LONG-TERM &mdash; RHOAI 3.7+ (2027)</div>
+          <h4>GA Target</h4>
+          <ul>
+            <li>Full provenance tracking (source_agent, identity, lineage per record)</li>
+            <li>Inspectable compaction (human-readable summaries, not opaque)</li>
+            <li>Contradiction detection with curator workflow</li>
+            <li>GDPR Article 17 erasure across all memory tiers</li>
+            <li>Multi-agent memory coordination + scope promotion</li>
+            <li>Memory versioning with full history chains</li>
+            <li>Observability (Prometheus metrics, Grafana dashboards)</li>
+            <li>FIPS end-to-end validation</li>
+            <li>Sleep-time consolidation with governance gate</li>
+            <li>KV-cache-aware memory ordering (Red Hat differentiator)</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Compliance callout -->
+      <div class="animate-on-scroll" style="border-left: 3px solid var(--rh-red); padding: 1rem 1.5rem; background: rgba(238,0,0,0.04); border-radius: 0 8px 8px 0; margin-top: 1.5rem;">
+        <p style="font-family: var(--font-text); font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; margin: 0;">
+          <strong>EU AI Act enforcement: August 2026.</strong> Audit trail and inspectable compaction are compliance-gating features. A 3.6 Tech Preview can ship without full compliance, but GA must have them. Neither OGX nor MemoryHub ships a working audit trail today &mdash; this is the single highest-severity gap (Q-G7).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== PATHS FORWARD ===== -->
+  <section id="recommendation">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">PATHS FORWARD</div>
+      <h2 class="display-lg animate-on-scroll">Three Proposed Architectures</h2>
+      <p class="lead animate-on-scroll">Each path has different champions, different trade-offs, and different assumptions about where value concentrates. All are proposals under evaluation for the July architecture review.</p>
+
+      <!-- PATH A: Feast-Led Full Stack -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.75rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-green);"></div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+          <span class="tag tag-green">PATH A</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem;">Feast-Led Full Stack</h3>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Champions: Jonathan Zarecki (PM), Umberto Manganiello (Eng), Feast team</div>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+          Feast owns the full memory stack &mdash; substrate, governance, and retrieval &mdash; via the 3-phase plan (A: Discovery/MCP &rarr; B: Retrieval/MemoryFeatureView &rarr; C: Write/Mem0 integration). Mem0 provides the cognitive layer (extraction, contradiction detection) while Feast enforces the data boundary. &ldquo;Mem0 owns the cognitive logic; Feast owns the data boundary.&rdquo;
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem;">
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--rh-green); margin-bottom: 0.4rem;">Strengths</div>
+            <ul class="pros">
+              <li>Feast GA in 3.4 &mdash; production RBAC, OLM, PIT correctness ship today</li>
+              <li>Dedicated Red Hat team + upstream community</li>
+              <li>3-phase roadmap already designed with clear phasing</li>
+              <li>Cell-level masking for PII governance at the storage layer</li>
+              <li><code>feast init -t agent</code> scaffolding for developer experience</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--rh-red); opacity: 0.8; margin-bottom: 0.4rem;">Risks &amp; Gaps</div>
+            <ul class="cons">
+              <li>Feature store &rarr; memory service is a significant pivot</li>
+              <li>3 deltas needed (record-level scope, audit log, provenance)</li>
+              <li>Phase C depends on Mem0 supporting pluggable storage backends</li>
+              <li>No memory-specific intelligence built yet (all on roadmap)</li>
+              <li>Inherits Mem0 open-core risk if Mem0 is the cognitive layer</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATH B: MemoryHub-Led Independent Service -->
+      <div class="animate-on-scroll" style="margin-top: 1.25rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.75rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-red);"></div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+          <span class="tag tag-red">PATH B</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem;">MemoryHub-Led Independent Service</h3>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Champions: Sanjeev Rampal (OCTO/ET), Wes Jackson (author)</div>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+          MemoryHub becomes the standalone memory service, decoupled from both OGX and Feast. It already covers intelligence (PII scan, dedup, contradiction detection) and governance (6-tier scope, versioning, MCP server) in a single package. Exposed as MCP tools through MCP Gateway. IP/license blocker now resolved &mdash; Wes Jackson transferring full ownership.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem;">
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--rh-green); margin-bottom: 0.4rem;">Strengths</div>
+            <ul class="pros">
+              <li>Purpose-built for agent memory &mdash; most features already implemented</li>
+              <li>6-tier scope model, contradiction detection, PII curation, versioning</li>
+              <li>MCP server with 3 profiles (compact/full/minimal)</li>
+              <li>UBI9 images, air-gap deployable, kagenti/adk SDK consumer</li>
+              <li>IP/license fully resolved</li>
+              <li>Could ship as limited Tech Preview in 2026</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--rh-red); opacity: 0.8; margin-bottom: 0.4rem;">Risks &amp; Gaps</div>
+            <ul class="cons">
+              <li><strong>Single-author project</strong> &mdash; bus factor of 1, no team or community</li>
+              <li>Audit trail is a stub (not wired through)</li>
+              <li>Kubernetes operator is a skeleton</li>
+              <li>No observability, no FIPS validation</li>
+              <li>Genuine prototype &mdash; production hardening needed</li>
+              <li>Extraction less sophisticated than Mem0</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATH C: Composable Architecture -->
+      <div class="animate-on-scroll" style="margin-top: 1.25rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.75rem; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--rh-green), var(--rh-red), var(--rh-blue));"></div>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+          <span class="tag tag-purple">PATH C</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem;">Composable &mdash; Best of Each</h3>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); margin-bottom: 0.75rem;">Proposed synthesis &mdash; uses each project for what it&rsquo;s best at</div>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+          Compose the layers independently: Feast for governance infrastructure (RBAC, PIT, OLM), MemoryHub patterns for memory-specific intelligence (scope tiers, contradiction, PII, versioning), and Mem0 as a pluggable backend compatibility target. No single project owns everything &mdash; each contributes where it&rsquo;s strongest.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.85rem;">
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--rh-green); margin-bottom: 0.4rem;">Strengths</div>
+            <ul class="pros">
+              <li>Feast&rsquo;s production governance + MemoryHub&rsquo;s memory-native design</li>
+              <li>No single point of failure &mdash; reduces risk from any one project</li>
+              <li>Mem0 compatibility gives customers a migration path</li>
+              <li>Each team contributes from their area of expertise</li>
+              <li>Survives OGX deprecation, framework changes, and market shifts</li>
+            </ul>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--rh-red); opacity: 0.8; margin-bottom: 0.4rem;">Risks &amp; Gaps</div>
+            <ul class="cons">
+              <li>Integration complexity &mdash; composing 3 projects is harder than owning 1</li>
+              <li>Unclear ownership boundaries between Feast team and MemoryHub</li>
+              <li>Requires cross-team coordination (Feast team + ET + PM)</li>
+              <li>May result in &ldquo;designed by committee&rdquo; if boundaries aren&rsquo;t crisp</li>
+              <li>Longer path to a unified developer experience</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- What's common across all paths -->
+      <div class="animate-on-scroll" style="border-left: 3px solid var(--rh-teal); padding: 1rem 1.5rem; background: rgba(0,149,150,0.04); border-radius: 0 8px 8px 0; margin-top: 2rem;">
+        <p style="font-family: var(--font-text); font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; margin: 0;">
+          <strong>Common ground across all paths:</strong> MCP as the transport protocol. PostgreSQL + pgvector as the storage substrate. Memory decoupled from the Responses API. Exposed through MCP Gateway for per-tool authz and audit. The July architecture review should evaluate which path best balances delivery speed, team capacity, and enterprise readiness.
+        </p>
+      </div>
+
+      <!-- Decision factors -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-top: 3px solid var(--rh-green);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">FEAST ADVANTAGE</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Already Shipped</div>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">GA in RHOAI 3.4 with a dedicated team, upstream community, OLM operator, and proven RBAC. The governance infrastructure is production-grade today.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-top: 3px solid var(--rh-red);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">MEMORYHUB ADVANTAGE</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Memory-Native Design</div>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">Purpose-built for agent memory. 6-tier scoping, contradiction detection, PII curation, memory versioning &mdash; features no other project has. IP blocker now resolved.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-3" style="border-top: 3px solid var(--rh-blue);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">MEM0 ADVANTAGE</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Industry Standard</div>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">48K GitHub stars, 21 framework integrations, AWS partnership. Strongest extraction and retrieval algorithms. Customers will arrive already using it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <section style="padding: 3rem 1.5rem; text-align: center;">
+    <div class="section-inner">
+      <div class="section-label">RHAISTRAT-1345</div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+        Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries<br>
+        <span style="font-family: var(--font-mono); font-size: 0.7rem;">June 2026 &bull; Agent Memory Architecture Working Group</span>
+      </p>
+      <div style="display: flex; gap: 2rem; margin-top: 1.5rem; justify-content: center; font-size: 0.8rem;">
+        <a href="https://github.com/solaius/ai-asset-registry/tree/main/agent-memory" style="color: var(--rh-blue-light); text-decoration: none;">Research Docs</a>
+        <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1345" style="color: var(--rh-blue-light); text-decoration: none;">RHAISTRAT-1345</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) { entry.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)' : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

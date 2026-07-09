@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory — Strategy</title>
+  <meta name="description" content="RHOAI agent memory strategy: vision, architecture, phased roadmap, standards workstream, competitive positioning, and the path from Dev Preview to GA." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:#151515;--bg-elevated:#1a1a1a;--bg-card:#202020;
+      --text-primary:#ffffff;--text-secondary:#d2d2d2;--text-muted:#8a8a8a;
+      --rh-red:#EE0000;--rh-red-dark:#A30000;--rh-teal:#009596;--rh-blue:#0066CC;--rh-blue-light:#4394e5;
+      --rh-purple:#6753AC;--rh-green:#3E8635;--rh-orange:#F4B400;
+      --border-subtle:#333333;--border-muted:#444444;
+      --font-sans:"Red Hat Display","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-text:"Red Hat Text","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-mono:"Red Hat Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      --fs-display-xl:2.8rem;--fs-display-lg:2rem;--fs-h2:1.5rem;--fs-body-lead:1.15rem;--fs-body:0.95rem;--fs-label:0.7rem;
+      --space-sm:0.75rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem;--space-2xl:3rem;
+      --content-max:1100px;--nav-height:56px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg-canvas);color:var(--text-primary);font-family:var(--font-text);font-size:var(--fs-body);line-height:1.6;-webkit-font-smoothing:antialiased}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(21,21,21,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-subtle)}
+    .nav-inner{max-width:var(--content-max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1.5rem}
+    .nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none}
+    .hat{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--rh-red);color:white;font-family:var(--font-sans);font-weight:800;font-size:0.65rem;border-radius:4px}
+    .nav-title{font-family:var(--font-sans);font-weight:600;font-size:0.9rem;color:var(--text-primary)}
+    .nav-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+    .nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.78rem;font-family:var(--font-text);transition:color 0.2s;white-space:nowrap}
+    .nav-links a:hover,.nav-links a.active{color:var(--text-primary)}
+    section{padding:5rem 1.5rem;scroll-margin-top:calc(var(--nav-height) + 16px)}
+    .section-inner{max-width:var(--content-max);margin:0 auto}
+    .section-label{font-family:var(--font-mono);font-size:var(--fs-label);font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--rh-red);margin-bottom:var(--space-sm)}
+    .section-divider{width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(238,0,0,0.18),rgba(238,0,0,0.35),rgba(238,0,0,0.18),transparent)}
+    .display-xl{font-family:var(--font-sans);font-size:var(--fs-display-xl);line-height:1.05;letter-spacing:-0.03em;font-weight:800;color:var(--text-primary);margin:0}
+    .display-lg{font-family:var(--font-sans);font-size:var(--fs-display-lg);line-height:1.1;letter-spacing:-0.02em;font-weight:700;color:var(--text-primary);margin:0 0 var(--space-md)}
+    .h2{font-family:var(--font-sans);font-size:var(--fs-h2);font-weight:700;color:var(--text-primary);margin:0 0 var(--space-sm)}
+    .lead{font-size:var(--fs-body-lead);line-height:1.5;color:var(--text-secondary);margin:var(--space-sm) 0 0;max-width:80ch}
+    .body-text{font-size:var(--fs-body);line-height:1.65;color:var(--text-secondary);margin:var(--space-md) 0 0;max-width:72ch}
+    .accent{color:var(--rh-red)}
+    .hero{min-height:90vh;display:flex;align-items:center;position:relative;padding-top:calc(var(--nav-height) + 3rem);overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-100px;right:-150px;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(238,0,0,0.16) 0%,transparent 70%);pointer-events:none}
+    .hero::after{content:'';position:absolute;bottom:-250px;left:-180px;width:550px;height:550px;border-radius:50%;background:radial-gradient(circle,rgba(0,149,150,0.08) 0%,transparent 70%);pointer-events:none}
+    .card{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;padding:1.5rem;transition:border-color 300ms,transform 200ms,box-shadow 300ms}
+    .card:hover{border-color:rgba(238,0,0,0.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(238,0,0,0.08)}
+    .tag{font-family:var(--font-mono);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;padding:0.2rem 0.6rem;border-radius:3px;display:inline-block}
+    .tag-red{background:rgba(238,0,0,0.12);color:var(--rh-red)}.tag-teal{background:rgba(0,149,150,0.12);color:var(--rh-teal)}
+    .tag-blue{background:rgba(0,102,204,0.12);color:var(--rh-blue-light)}.tag-green{background:rgba(62,134,53,0.12);color:var(--rh-green)}
+    .tag-purple{background:rgba(103,83,172,0.12);color:var(--rh-purple)}.tag-orange{background:rgba(244,180,0,0.12);color:var(--rh-orange)}
+    .stat-value{font-family:var(--font-sans);font-size:2rem;font-weight:800;line-height:1}
+    .stat-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.25rem}
+    .animate-on-scroll{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease-out,transform 0.7s ease-out}
+    .animate-on-scroll.visible{opacity:1;transform:translateY(0)}
+    .stagger-1{transition-delay:100ms}.stagger-2{transition-delay:200ms}.stagger-3{transition-delay:300ms}.stagger-4{transition-delay:400ms}
+    .quote{border-left:3px solid var(--rh-red);padding:1rem 1.5rem;background:rgba(238,0,0,0.04);border-radius:0 8px 8px 0;margin:1.5rem 0}
+    .quote p{font-family:var(--font-text);font-size:1rem;color:var(--text-primary);font-style:italic;line-height:1.6;margin:0}
+    .quote cite{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-style:normal;display:block;margin-top:0.5rem}
+    @keyframes dash-flow{to{stroke-dashoffset:-28}}
+    @keyframes glow-pulse{0%,100%{box-shadow:0 0 20px rgba(238,0,0,0.12)}50%{box-shadow:0 0 40px rgba(238,0,0,0.28)}}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    @keyframes pulse-ring{0%{transform:scale(1);opacity:0.6}100%{transform:scale(2.5);opacity:0}}
+
+    /* Roadmap */
+    .roadmap{position:relative;margin-top:2.5rem}
+    .roadmap-line{position:absolute;top:28px;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rh-green),var(--rh-blue),var(--rh-purple));border-radius:2px;z-index:0}
+    .roadmap-phases{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:0;position:relative;z-index:1}
+    .roadmap-phase{text-align:center;padding-top:3.5rem}
+    .roadmap-dot{width:20px;height:20px;border-radius:50%;margin:0 auto 1rem;position:relative}
+    .roadmap-dot::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid;opacity:0.3}
+    .roadmap-dot::after{content:'';position:absolute;inset:-8px;border-radius:50%;animation:pulse-ring 2.5s ease-out infinite}
+
+    /* Whitespace quadrant */
+    .quadrant{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:0;max-width:700px;margin:2rem auto;position:relative}
+    .q-cell{padding:1.5rem;border:1px solid var(--border-subtle);position:relative}
+    .q-cell:nth-child(1){border-radius:12px 0 0 0}.q-cell:nth-child(2){border-radius:0 12px 0 0;border-left:none}
+    .q-cell:nth-child(3){border-radius:0 0 0 12px;border-top:none}.q-cell:nth-child(4){border-radius:0 0 12px 0;border-left:none;border-top:none}
+    .q-axis-x{position:absolute;bottom:-2rem;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em}
+    .q-axis-y{position:absolute;left:-2.5rem;top:50%;transform:translateY(-50%) rotate(-90deg);font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;white-space:nowrap}
+
+    @media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:180ms!important}.animate-on-scroll{opacity:1;transform:none}html{scroll-behavior:auto}}
+    @media(max-width:768px){:root{--fs-display-xl:2rem;--fs-display-lg:1.5rem;--fs-body-lead:1rem}section{padding:3rem 1.25rem}.nav-links{display:none}.hero{min-height:65vh}.roadmap-phases{grid-template-columns:1fr!important;gap:1.5rem}.roadmap-line{display:none}.quadrant{grid-template-columns:1fr!important}.q-cell:nth-child(2),.q-cell:nth-child(4){border-left:1px solid var(--border-subtle)}.q-cell:nth-child(2){border-radius:0}.q-cell:nth-child(3){border-top:none;border-radius:0}.q-cell:nth-child(4){border-radius:0 0 12px 12px}}
+    @media(max-width:1024px){.nav-links{gap:0.8rem}}
+    @media print{*{print-color-adjust:exact;-webkit-print-color-adjust:exact}nav{display:none}}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html" style="text-decoration:none;">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory Series</span>
+      </a>
+      <div class="nav-links">
+        <a href="#whitespace">Whitespace</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#standards">Standards</a>
+        <a href="#positioning">Positioning</a>
+        <a href="#risks">Risks</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT MEMORY SERIES &mdash; PART 5</div>
+      <h1 class="display-xl animate-on-scroll" style="max-width:18ch;"><span class="accent">Strategy</span><br>The Path Forward</h1>
+      <p class="lead animate-on-scroll stagger-1" style="margin-top:1rem;font-size:1.2rem;">
+        Make memory a <em>governed platform primitive</em> &mdash; the way OpenShift made container orchestration a platform tier &mdash; so that every agent team stops reinventing conversation state, long-term persistence, and context compaction.
+      </p>
+      <div class="animate-on-scroll stagger-2" style="display:flex;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap;">
+        <div><div class="stat-value" style="color:var(--rh-red);">3</div><div class="stat-label">Phased releases</div></div>
+        <div><div class="stat-value" style="color:var(--rh-teal);">3.7</div><div class="stat-label">Dev Preview target</div></div>
+        <div><div class="stat-value">4</div><div class="stat-label">OpenShift-native scope tiers</div></div>
+        <div><div class="stat-value" style="color:var(--rh-green);">0</div><div class="stat-label">Thrown-away work between phases</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- THE WHITESPACE -->
+  <section id="whitespace">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE OPPORTUNITY</div>
+      <h2 class="display-lg animate-on-scroll">The Whitespace No One Fills</h2>
+      <p class="lead animate-on-scroll">Enterprise agent memory requires four properties simultaneously. No existing solution delivers all four.</p>
+
+      <!-- Quadrant diagram -->
+      <div class="animate-on-scroll" style="margin-top:3rem;position:relative;padding:0 3rem;">
+        <div class="quadrant">
+          <!-- Top-left: Hyperscalers -->
+          <div class="q-cell" style="background:rgba(0,102,204,0.05);">
+            <div class="tag tag-blue" style="margin-bottom:0.5rem;">Hyperscalers</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;">GA &amp; Validated</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem;">AWS &bull; Google &bull; OpenAI</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">
+              <span style="color:var(--rh-green);">&#10003;</span> Enterprise governance<br>
+              <span style="color:var(--rh-red);">&#10007;</span> Self-hosted / air-gap<br>
+              <span style="color:var(--rh-red);">&#10007;</span> Open standard
+            </div>
+          </div>
+          <!-- Top-right: THE WHITESPACE -->
+          <div class="q-cell" style="background:rgba(238,0,0,0.06);border-color:var(--rh-red);animation:glow-pulse 4s ease-in-out infinite;">
+            <div style="text-align:center;">
+              <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--rh-red);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:0.5rem;">The Whitespace</div>
+              <div style="font-family:var(--font-sans);font-weight:800;font-size:1.15rem;color:var(--text-primary);margin-bottom:0.75rem;">Enterprise Governance<br>+ Self-Hosted + Open</div>
+              <div style="font-size:0.82rem;color:var(--text-secondary);">
+                <span style="color:var(--rh-green);">&#10003;</span> Enterprise governance<br>
+                <span style="color:var(--rh-green);">&#10003;</span> K8s-native / air-gap<br>
+                <span style="color:var(--rh-green);">&#10003;</span> Open standard<br>
+                <span style="color:var(--rh-green);">&#10003;</span> Framework-agnostic
+              </div>
+            </div>
+          </div>
+          <!-- Bottom-left: Database-native -->
+          <div class="q-cell" style="background:rgba(103,83,172,0.05);">
+            <div class="tag tag-purple" style="margin-bottom:0.5rem;">Database-Native</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;">Highest Governance</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem;">Oracle AI Agent Memory</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">
+              <span style="color:var(--rh-green);">&#10003;</span> Enterprise governance<br>
+              <span style="color:var(--rh-red);">&#10007;</span> Database lock-in<br>
+              <span style="color:var(--rh-red);">&#10007;</span> Not portable to K8s
+            </div>
+          </div>
+          <!-- Bottom-right: OSS -->
+          <div class="q-cell" style="background:rgba(62,134,53,0.05);">
+            <div class="tag tag-green" style="margin-bottom:0.5rem;">Open Source</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.9rem;margin-bottom:0.3rem;">Deployment-Flexible</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem;">Mem0 &bull; Letta &bull; Zep &bull; Cognee</div>
+            <div style="font-size:0.8rem;color:var(--text-secondary);">
+              <span style="color:var(--rh-red);">&#10007;</span> Governance thin/absent<br>
+              <span style="color:var(--rh-green);">&#10003;</span> Self-hosted options<br>
+              <span style="color:var(--rh-orange);">&#9888;</span> Consolidation risk ($62M+)
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:1.5rem;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;">
+          Self-hosted &amp; air-gappable &nbsp;&#8594;
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ARCHITECTURE -->
+  <section id="architecture">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ARCHITECTURE</div>
+      <h2 class="display-lg animate-on-scroll">Three Pieces, One Platform</h2>
+      <p class="lead animate-on-scroll">The architecture has three pieces matching the accepted decomposition: a memory substrate, a governance layer, and a context-engineering capability. They integrate into the existing RHOAI/OCP stack &mdash; not a standalone product.</p>
+
+      <!-- Architecture diagram -->
+      <div class="animate-on-scroll" style="margin-top:2.5rem;max-width:850px;margin-left:auto;margin-right:auto;">
+        <!-- Governance layer -->
+        <div style="background:linear-gradient(135deg,rgba(103,83,172,0.12),rgba(103,83,172,0.04));border:2px solid rgba(103,83,172,0.35);border-radius:14px 14px 0 0;padding:1.5rem;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rh-purple),rgba(103,83,172,0.3),var(--rh-purple));background-size:200% 100%;animation:shimmer 3s linear infinite;"></div>
+          <div class="tag tag-purple" style="margin-bottom:0.4rem;">Enterprise Governance Layer</div>
+          <div style="display:flex;justify-content:center;gap:2rem;margin-top:0.5rem;flex-wrap:wrap;">
+            <div style="font-size:0.78rem;color:var(--text-secondary);"><strong style="color:var(--rh-purple);">Scope</strong><br>user &bull; project &bull; role &bull; org</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);"><strong style="color:var(--rh-purple);">Security</strong><br>RBAC &bull; PII scan &bull; curation</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);"><strong style="color:var(--rh-purple);">Compliance</strong><br>audit &bull; erasure &bull; provenance</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);"><strong style="color:var(--rh-purple);">Quality</strong><br>contradiction detection</div>
+          </div>
+        </div>
+
+        <!-- Governs arrow -->
+        <div style="text-align:center;padding:0.25rem 0;font-family:var(--font-mono);font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.15em;background:var(--bg-canvas);position:relative;z-index:1;">governs &#8595;</div>
+
+        <!-- Substrate + Context Engineering -->
+        <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:0;border:2px solid var(--border-subtle);border-radius:0 0 14px 14px;overflow:hidden;">
+          <div style="background:linear-gradient(135deg,rgba(238,0,0,0.08),rgba(238,0,0,0.02));padding:1.5rem;border-right:1px solid var(--border-subtle);position:relative;">
+            <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--rh-red);"></div>
+            <div class="tag tag-red" style="margin-bottom:0.75rem;">Memory Substrate</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.75rem;">One governed store, four access patterns</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-family:var(--font-sans);font-weight:700;font-size:0.82rem;">Working</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">In-context</div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-family:var(--font-sans);font-weight:700;font-size:0.82rem;">Episodic</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">What happened</div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-family:var(--font-sans);font-weight:700;font-size:0.82rem;">Semantic</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">Durable facts</div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem;text-align:center;">
+                <div style="font-family:var(--font-sans);font-weight:700;font-size:0.82rem;">Procedural</div>
+                <div style="font-size:0.7rem;color:var(--text-muted);">How to act</div>
+              </div>
+            </div>
+            <div style="margin-top:0.75rem;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">PostgreSQL + pgvector &bull; framework-agnostic API &bull; MCP surface</div>
+          </div>
+          <div style="background:linear-gradient(135deg,rgba(0,149,150,0.08),rgba(0,149,150,0.02));padding:1.5rem;position:relative;">
+            <div style="position:absolute;top:0;left:0;bottom:0;width:3px;background:var(--rh-teal);"></div>
+            <div class="tag tag-teal" style="margin-bottom:0.75rem;">Context Engineering</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.75rem;">Capability layer over the substrate</div>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;">
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem 0.8rem;display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--rh-teal);flex-shrink:0;"></div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Inspectable compaction</strong></div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem 0.8rem;display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--rh-teal);flex-shrink:0;"></div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Retrieval assembly</strong></div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem 0.8rem;display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--rh-teal);flex-shrink:0;"></div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Progressive disclosure</strong></div>
+              </div>
+              <div style="background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:8px;padding:0.6rem 0.8rem;display:flex;align-items:center;gap:0.5rem;">
+                <div style="width:8px;height:8px;border-radius:50%;background:var(--rh-teal);flex-shrink:0;"></div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">KV-cache-aware ordering</strong></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RHOAI integration -->
+      <div class="animate-on-scroll" style="margin-top:2.5rem;">
+        <div class="h2" style="margin-bottom:0.75rem;">How It Slots Into RHOAI</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.75rem;">
+          <div class="card" style="padding:1rem;border-left:3px solid var(--rh-red);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">AI Gateway</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Identity establishment. Hosts substrate as conversation-state microservice.</div>
+          </div>
+          <div class="card" style="padding:1rem;border-left:3px solid var(--rh-teal);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">MCP Gateway</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Memory-over-MCP with per-tool authz, metrics, audit, guardrails.</div>
+          </div>
+          <div class="card" style="padding:1rem;border-left:3px solid var(--rh-blue);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">kagenti</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Agent runtime. SPIFFE identity injection. AgentCard carries memory binding.</div>
+          </div>
+          <div class="card" style="padding:1rem;border-left:3px solid var(--rh-purple);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">AI Asset Registry</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Registers memory <em>service</em> as governed asset. Does not store records.</div>
+          </div>
+          <div class="card" style="padding:1rem;border-left:3px solid var(--rh-green);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">vLLM on RHOAI</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Serves embedding model + cross-encoder reranker. On-cluster, air-gap-compatible.</div>
+          </div>
+          <div class="card" style="padding:1rem;border-left:3px solid var(--rh-orange);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">Identity (Spire/Authbridge)</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Platform identity via RFC 8693 token exchange. RBAC principal for scope enforcement.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE ROADMAP</div>
+      <h2 class="display-lg animate-on-scroll">Three Phases, No Thrown-Away Work</h2>
+      <p class="lead animate-on-scroll">Each release builds on the last. Nothing in 3.6 is discarded at 3.7; nothing in 3.7 is discarded at 3.8. The incremental path the organization can absorb.</p>
+
+      <!-- Animated roadmap -->
+      <div class="roadmap animate-on-scroll">
+        <div class="roadmap-line"></div>
+        <div class="roadmap-phases">
+          <!-- Phase 0 -->
+          <div class="roadmap-phase">
+            <div class="roadmap-dot" style="background:var(--rh-green);box-shadow:0 0 12px rgba(62,134,53,0.4);">
+              <div style="position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--rh-green);opacity:0.3;"></div>
+            </div>
+            <div class="tag tag-green" style="margin-bottom:0.5rem;">Phase 0 &mdash; RHOAI 3.6</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.2rem;">Standards Foundation</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem;">November 2026</div>
+            <div style="text-align:left;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:10px;padding:1rem;">
+              <ul style="list-style:none;padding:0;margin:0;">
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-green);"></span>MCP Memory Convention SEP</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-green);"></span>Upstream MLflow memory abstractions</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-green);"></span>A2A AgentCard memory binding</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-green);"></span>Architecture validated against upstream</li>
+              </ul>
+              <div style="margin-top:0.5rem;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">Sizing: contributor effort, fits alongside committed release</div>
+            </div>
+          </div>
+
+          <!-- Phase 1 -->
+          <div class="roadmap-phase">
+            <div class="roadmap-dot" style="background:var(--rh-blue);box-shadow:0 0 12px rgba(0,102,204,0.4);">
+              <div style="position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--rh-blue);opacity:0.3;"></div>
+            </div>
+            <div class="tag tag-blue" style="margin-bottom:0.5rem;">Phase 1 &mdash; RHOAI 3.7</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.2rem;">Governed Substrate</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem;">~Q1-Q2 2027 &bull; Dev Preview</div>
+            <div style="text-align:left;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:10px;padding:1rem;">
+              <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--rh-blue-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">Two parallel workstreams</div>
+              <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.5rem;"><strong style="color:var(--text-primary);">Substrate:</strong> Framework-agnostic memory API, scope-aware RBAC, platform identity</div>
+              <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.5rem;"><strong style="color:var(--text-primary);">Governance:</strong> Scope tiers, curation, contradiction detection, provenance</div>
+              <div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.5rem;"><strong style="color:var(--text-primary);">Context Eng:</strong> Inspectable compaction, retrieval assembly, KV-cache ordering</div>
+              <div style="font-size:0.82rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Integration:</strong> Memory-over-MCP via gateway; registered in AI Asset Registry</div>
+              <div style="margin-top:0.5rem;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">Sizing: largest phase; Dev Preview keeps it realistic</div>
+            </div>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="roadmap-phase">
+            <div class="roadmap-dot" style="background:var(--rh-purple);box-shadow:0 0 12px rgba(103,83,172,0.4);">
+              <div style="position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--rh-purple);opacity:0.3;"></div>
+            </div>
+            <div class="tag tag-purple" style="margin-bottom:0.5rem;">Phase 2 &mdash; RHOAI 3.8+</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.2rem;">GA &amp; Beyond</div>
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);margin-bottom:0.75rem;">Directional</div>
+            <div style="text-align:left;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:10px;padding:1rem;">
+              <ul style="list-style:none;padding:0;margin:0;">
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>Append-only audit trail (GA gate)</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>OLM operator + observability</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>End-to-end FIPS validation</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>Adversarial memory defense</li>
+                <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.82rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>Client-side hybrid memory path</li>
+              </ul>
+              <div style="margin-top:0.5rem;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">Sizing: productization-heavy; likely multi-release</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- STANDARDS -->
+  <section id="standards">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">STANDARDS WORKSTREAM</div>
+      <h2 class="display-lg animate-on-scroll">Build Toward Standards from Day One</h2>
+      <p class="lead animate-on-scroll">There is no memory standard. That absence is an opportunity. The standards workstream runs in parallel with product work &mdash; Phase 0&rsquo;s primary deliverable.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-top:3px solid var(--rh-green);">
+          <div class="tag tag-green" style="margin-bottom:0.5rem;">Phase 0 Deliverable</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">MCP Memory Convention SEP</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">Standards Enhancement Proposal formalizing the de facto memory-tool naming convention: canonical tool set, minimal record format, scope model. The 3.7 substrate&rsquo;s MCP surface tracks it.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-top:3px solid var(--rh-blue);">
+          <div class="tag tag-blue" style="margin-bottom:0.5rem;">Phase 0 Deliverable</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">A2A AgentCard Memory Binding</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">Optional extension declaring an agent&rsquo;s memory services &mdash; transport, scope model, access method. Makes memory discoverable and governable via AgentCards.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-3" style="border-top:3px solid var(--rh-purple);">
+          <div class="tag tag-purple" style="margin-bottom:0.5rem;">Longer Horizon</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">AAIF Memory Project</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">Neutral governance home for a memory schema, API contract, and portability spec. The MCP/AGENTS.md donation model. Socialize from Phase 0; formal proposal post-3.7.</p>
+        </div>
+      </div>
+
+      <div class="quote animate-on-scroll" style="margin-top:1.5rem;">
+        <p>&ldquo;A platform that ships memory primitives before standards converge gets to shape them. A platform that waits will inherit them.&rdquo;</p>
+        <cite>Phase 1 Research Finding &mdash; doc 05, Standards &amp; Protocols</cite>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- COMPETITIVE POSITIONING -->
+  <section id="positioning">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">COMPETITIVE POSITIONING</div>
+      <h2 class="display-lg animate-on-scroll">What Sets This Apart</h2>
+      <p class="lead animate-on-scroll">Four structural differentiators that competitors cannot easily replicate.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:2rem;">
+        <div class="card animate-on-scroll stagger-1" style="position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rh-red),#ff4444);"></div>
+          <div style="font-size:1.8rem;margin-bottom:0.5rem;animation:float 3s ease-in-out infinite;">&#127760;</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.3rem;">Open-Source Foundation</h3>
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.45;">Community-driven upstream projects with Apache 2.0 licensing. No proprietary lock-in. Red Hat&rsquo;s traditional model.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rh-teal),#37a3a3);"></div>
+          <div style="font-size:1.8rem;margin-bottom:0.5rem;animation:float 3s ease-in-out 0.5s infinite;">&#9881;</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.3rem;">OpenShift-Native Deployment</h3>
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.45;">UBI9, FIPS delegation, air-gap deployable, on-cluster vLLM embeddings. The only camp that serves regulated, sovereign, and disconnected customers.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-3" style="position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rh-purple),#876fd4);"></div>
+          <div style="font-size:1.8rem;margin-bottom:0.5rem;animation:float 3s ease-in-out 1s infinite;">&#128274;</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.3rem;">Governance Depth</h3>
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.45;">Scope/RBAC/curation/provenance model deeper than any OSS competitor and not locked to a proprietary database the way Oracle&rsquo;s is.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-4" style="position:relative;overflow:hidden;">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--rh-blue),#73bcf7);"></div>
+          <div style="font-size:1.8rem;margin-bottom:0.5rem;animation:float 3s ease-in-out 1.5s infinite;">&#128220;</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.3rem;">Credible Standards Posture</h3>
+          <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.45;">AAIF Gold membership and existing upstream contributor channels make the standards posture real, not aspirational.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- RISKS -->
+  <section id="risks">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RISKS &amp; DEPENDENCIES</div>
+      <h2 class="display-lg animate-on-scroll">Eyes Open</h2>
+      <p class="lead animate-on-scroll">The strategic risk is timing, not capability. The hyperscalers and Oracle ship today.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0.75rem;margin-top:2rem;">
+        <div class="card animate-on-scroll" style="padding:1.1rem;border-left:3px solid var(--rh-red);border-radius:0 10px 10px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Proprietary-API Lock-In</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">A bespoke memory API built before standards converge inherits migration cost. <span style="color:var(--rh-green);">Mitigated:</span> standards workstream from day one.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding:1.1rem;border-left:3px solid var(--rh-orange);border-radius:0 10px 10px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Audit Trail Under-Delivered</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">EU AI Act August 2026; no internal candidate ships a working audit trail. <span style="color:var(--rh-green);">Mitigated:</span> GA gate held firm; minimum write-event log at Dev Preview.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding:1.1rem;border-left:3px solid var(--rh-purple);border-radius:0 10px 10px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Platform Transition Parity</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">The gateway-native architecture may not reach full primitive parity by Phase 1. <span style="color:var(--rh-green);">Mitigated:</span> substrate-agnostic API surface allows transitional fallback.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding:1.1rem;border-left:3px solid var(--rh-blue);border-radius:0 10px 10px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Market Consolidation</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">$62M+ into 5+ startups with near-identical approaches. <span style="color:var(--rh-green);">Mitigated:</span> partner products only as pluggable backends, never the substrate.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding:1.1rem;border-left:3px solid var(--rh-teal);border-radius:0 10px 10px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Org Absorption</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Competing priorities; ~3-month release cadence. <span style="color:var(--rh-green);">Mitigated:</span> Phase 0 is near-zero cost; Phase 1 is Dev Preview; sizing is explicit per phase.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding:1.1rem;border-left:3px solid var(--rh-green);border-radius:0 10px 10px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Phase 2 Scope Expansion</div>
+          <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Adversarial defense and benchmarking add new GA criteria. <span style="color:var(--rh-green);">Mitigated:</span> size early; adversarial is security-critical, benchmarking can be phased.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CTA -->
+  <section id="cta" style="text-align:center;">
+    <div class="section-inner" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="section-label animate-on-scroll">SERIES COMPLETE</div>
+      <h2 class="display-lg animate-on-scroll">From Concepts to Strategy</h2>
+      <p class="lead animate-on-scroll" style="text-align:center;max-width:60ch;">
+        Five presentations, one narrative. Agent memory is a platform capability &mdash; not a feature, not a framework plugin, not a vendor product. The research, the enterprise demand, and the competitive whitespace all point to the same conclusion.
+      </p>
+
+      <div style="display:flex;gap:0.75rem;margin-top:2rem;flex-wrap:wrap;justify-content:center;">
+        <a href="agent-memory-starter-guide.html" style="display:inline-flex;align-items:center;gap:0.4rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.6rem 1rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.82rem;transition:border-color 180ms,color 180ms;">Part 1</a>
+        <a href="agent-memory-foundations.html" style="display:inline-flex;align-items:center;gap:0.4rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.6rem 1rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.82rem;transition:border-color 180ms,color 180ms;">Part 2</a>
+        <a href="agent-memory-deep-dives.html" style="display:inline-flex;align-items:center;gap:0.4rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.6rem 1rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.82rem;transition:border-color 180ms,color 180ms;">Part 3</a>
+        <a href="agent-memory-enterprise.html" style="display:inline-flex;align-items:center;gap:0.4rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.6rem 1rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.82rem;transition:border-color 180ms,color 180ms;">Part 4</a>
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:var(--rh-red);color:white;padding:0.6rem 1.25rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.82rem;transition:background 180ms;">View Series &#x2192;</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2rem 1.5rem;text-align:center;border-top:1px solid var(--border-subtle);">
+    <p style="font-size:0.8rem;color:var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-top:0.25rem;">Based on the Agent Memory Strategy (Phase 2), Agent Memory &amp; Knowledge Research Series, 2026</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id)); });
+    }, { threshold: 0.2 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

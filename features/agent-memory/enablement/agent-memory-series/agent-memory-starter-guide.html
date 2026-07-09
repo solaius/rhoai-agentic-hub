@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory — A Starter Guide</title>
+  <meta name="description" content="A technical primer on agent memory: the four memory types, the memory lifecycle, storage patterns, governance, and the competitive landscape." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(21,21,21,0.88); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-subtle); }
+    .nav-inner { max-width: var(--content-max); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1.5rem; }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .hat { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: var(--rh-red); color: white; font-family: var(--font-sans); font-weight: 800; font-size: 0.65rem; border-radius: 4px; }
+    .nav-title { font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.78rem; font-family: var(--font-text); transition: color 0.2s; white-space: nowrap; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+
+    /* SECTIONS */
+    section { padding: 5rem 1.5rem; scroll-margin-top: calc(var(--nav-height) + 16px); }
+    .section-inner { max-width: var(--content-max); margin: 0 auto; }
+    .section-label { font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rh-red); margin-bottom: var(--space-sm); }
+    .section-divider { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent); }
+
+    /* TYPOGRAPHY */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .h2 { font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-sm); }
+    .lead { font-size: var(--fs-body-lead); line-height: 1.5; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body-text { font-size: var(--fs-body); line-height: 1.65; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 72ch; }
+    .accent { color: var(--rh-red); }
+
+    /* HERO */
+    .hero { min-height: 85vh; display: flex; align-items: center; position: relative; padding-top: calc(var(--nav-height) + 3rem); overflow: hidden; }
+    .hero::before { content: ''; position: absolute; top: -80px; right: -120px; width: 650px; height: 650px; border-radius: 50%; background: radial-gradient(circle, rgba(238,0,0,0.14) 0%, transparent 70%); pointer-events: none; }
+    .hero::after { content: ''; position: absolute; bottom: -200px; left: -150px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(0,149,150,0.08) 0%, transparent 70%); pointer-events: none; }
+
+    /* CARDS */
+    .card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; transition: border-color 300ms, transform 200ms, box-shadow 300ms; }
+    .card:hover { border-color: rgba(238, 0, 0, 0.4); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08); }
+
+    /* TAGS */
+    .tag { font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 3px; display: inline-block; }
+    .tag-red { background: rgba(238,0,0,0.12); color: var(--rh-red); }
+    .tag-teal { background: rgba(0,149,150,0.12); color: var(--rh-teal); }
+    .tag-blue { background: rgba(0,102,204,0.12); color: var(--rh-blue-light); }
+    .tag-green { background: rgba(62,134,53,0.12); color: var(--rh-green); }
+    .tag-purple { background: rgba(103,83,172,0.12); color: var(--rh-purple); }
+    .tag-orange { background: rgba(244,180,0,0.12); color: var(--rh-orange); }
+
+    /* STAT */
+    .stat-value { font-family: var(--font-sans); font-size: 2rem; font-weight: 800; line-height: 1; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.25rem; }
+
+    /* SCROLL ANIMATIONS */
+    .animate-on-scroll { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+    .stagger-1 { transition-delay: 80ms; }
+    .stagger-2 { transition-delay: 160ms; }
+    .stagger-3 { transition-delay: 240ms; }
+    .stagger-4 { transition-delay: 320ms; }
+    .stagger-5 { transition-delay: 400ms; }
+
+    /* QUOTE */
+    .quote { border-left: 3px solid var(--rh-red); padding: 1rem 1.5rem; background: rgba(238,0,0,0.04); border-radius: 0 8px 8px 0; margin: 1.5rem 0; }
+    .quote p { font-family: var(--font-text); font-size: 1rem; color: var(--text-primary); font-style: italic; line-height: 1.6; margin: 0; }
+    .quote cite { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-style: normal; display: block; margin-top: 0.5rem; }
+
+    /* MEMORY TYPE CARDS */
+    .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 2rem; }
+    .type-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; transition: border-color 300ms, transform 200ms; }
+    .type-card:hover { transform: translateY(-2px); }
+    .type-card .type-icon { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
+    .type-card h3 { font-family: var(--font-sans); font-weight: 700; font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .type-card .type-question { font-family: var(--font-text); font-size: 0.85rem; color: var(--rh-red); font-style: italic; margin-bottom: 0.5rem; }
+    .type-card .type-desc { font-family: var(--font-text); font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; }
+    .type-card .type-examples { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); }
+    .type-card .type-examples span { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: block; padding: 0.15rem 0; }
+
+    /* COMPARISON TABLE */
+    .compare-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: 0.85rem; }
+    .compare-table th { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); padding: 0.75rem 1rem; text-align: left; border-bottom: 2px solid var(--border-subtle); }
+    .compare-table td { padding: 0.6rem 1rem; border-bottom: 1px solid rgba(51,51,51,0.5); color: var(--text-secondary); vertical-align: top; }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .compare-table .col-dim { color: var(--text-muted); font-family: var(--font-text); font-weight: 600; font-size: 0.82rem; min-width: 130px; }
+    .col-memory { color: var(--rh-teal); }
+    .col-rag { color: var(--rh-blue-light); }
+
+    /* LIFECYCLE DIAGRAM */
+    .lifecycle-ring { position: relative; width: 100%; max-width: 700px; margin: 2.5rem auto; aspect-ratio: 1; }
+    .lifecycle-node { position: absolute; background: var(--bg-elevated); border: 2px solid var(--border-subtle); border-radius: 12px; padding: 0.75rem 1rem; text-align: center; width: 130px; transition: border-color 300ms, box-shadow 300ms; z-index: 2; }
+    .lifecycle-node:hover { border-color: var(--rh-red); box-shadow: 0 0 20px rgba(238,0,0,0.15); }
+    .lifecycle-node .node-step { font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
+    .lifecycle-node .node-label { font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
+    .lifecycle-node .node-desc { font-family: var(--font-text); font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .lifecycle-svg { position: absolute; inset: 0; z-index: 1; }
+
+    /* TIER DIAGRAM */
+    .tier-stack { display: flex; flex-direction: column; gap: 0; max-width: 600px; margin: 2rem auto; }
+    .tier-row { display: flex; align-items: stretch; border: 1px solid var(--border-subtle); position: relative; transition: border-color 300ms; }
+    .tier-row:first-child { border-radius: 12px 12px 0 0; }
+    .tier-row:last-child { border-radius: 0 0 12px 12px; }
+    .tier-row + .tier-row { border-top: none; }
+    .tier-row:hover { border-color: rgba(238,0,0,0.3); z-index: 1; }
+    .tier-analogy { width: 100px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; flex-shrink: 0; }
+    .tier-content { flex: 1; padding: 1rem 1.25rem; }
+    .tier-content h4 { font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.2rem; }
+    .tier-content p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
+    .tier-speed { width: 90px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); flex-shrink: 0; }
+
+    /* PATTERN CARDS */
+    .pattern-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .pattern-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1.25rem; transition: border-color 300ms; }
+    .pattern-card:hover { border-color: rgba(238,0,0,0.3); }
+    .pattern-card .pattern-num { font-family: var(--font-sans); font-size: 1.8rem; font-weight: 900; color: rgba(238,0,0,0.2); line-height: 1; margin-bottom: 0.5rem; }
+    .pattern-card h4 { font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem; }
+    .pattern-card p { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45; }
+
+    /* SCOPE DIAGRAM */
+    .scope-tiers { display: flex; flex-direction: column; align-items: center; gap: 0; margin: 2rem auto; max-width: 650px; }
+    .scope-tier { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1.25rem; border: 1px solid var(--border-subtle); width: 100%; transition: border-color 300ms; }
+    .scope-tier:first-child { border-radius: 10px 10px 0 0; }
+    .scope-tier:last-child { border-radius: 0 0 10px 10px; }
+    .scope-tier + .scope-tier { border-top: none; }
+    .scope-tier:hover { border-color: rgba(238,0,0,0.3); }
+    .scope-tier .scope-icon { font-size: 1.2rem; width: 32px; text-align: center; }
+    .scope-tier .scope-name { font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--text-primary); min-width: 110px; }
+    .scope-tier .scope-desc { font-size: 0.8rem; color: var(--text-secondary); flex: 1; }
+
+    /* CAMP GRID */
+    .camp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+    .camp-card { border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden; }
+    .camp-card h4 { font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .camp-card .camp-examples { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+    .camp-card .camp-strength { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .camp-card .camp-gap { font-size: 0.8rem; color: var(--rh-red); font-style: italic; }
+
+    /* ANIMATED FLOW ARROWS */
+    @keyframes dash-flow { to { stroke-dashoffset: -28; } }
+    @keyframes pulse-dot { 0%, 100% { opacity: 0.4; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes glow-pulse { 0%, 100% { box-shadow: 0 0 15px rgba(238,0,0,0.1); } 50% { box-shadow: 0 0 30px rgba(238,0,0,0.25); } }
+    @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* RESPONSIVE */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 65vh; }
+      .type-grid { grid-template-columns: 1fr; }
+      .camp-grid { grid-template-columns: 1fr; }
+      .compare-table { font-size: 0.78rem; }
+      .lifecycle-ring { display: none; }
+      .lifecycle-fallback { display: block !important; }
+    }
+    @media (max-width: 1024px) {
+      .nav-links { gap: 0.8rem; }
+      .camp-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media print {
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html" style="text-decoration:none;">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory Series</span>
+      </a>
+      <div class="nav-links">
+        <a href="#why">Why Memory</a>
+        <a href="#memory-vs-rag">Memory vs RAG</a>
+        <a href="#four-types">Four Types</a>
+        <a href="#lifecycle">Lifecycle</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#context">Context Eng.</a>
+        <a href="#multi-agent">Multi-Agent</a>
+        <a href="#governance">Governance</a>
+        <a href="#landscape">Landscape</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT MEMORY SERIES &mdash; PART 1</div>
+      <h1 class="display-xl animate-on-scroll" style="max-width: 16ch;"><span class="accent">Agent Memory</span><br>A Starter Guide</h1>
+      <p class="lead animate-on-scroll stagger-1" style="margin-top: 1rem;">
+        Agent memory has crossed from research curiosity into a funded, contested platform layer. This guide explains the core concepts &mdash; what memory is, how it works, and why it matters for anyone building or evaluating AI agent systems.
+      </p>
+
+      <div class="animate-on-scroll stagger-2" style="display: flex; gap: 2.5rem; margin-top: 2.5rem; flex-wrap: wrap;">
+        <div>
+          <div class="stat-value" style="color: var(--rh-red);">9.5x</div>
+          <div class="stat-label">Context efficiency gain</div>
+        </div>
+        <div>
+          <div class="stat-value">6x</div>
+          <div class="stat-label">Task completion (Harvey)</div>
+        </div>
+        <div>
+          <div class="stat-value">$62M+</div>
+          <div class="stat-label">VC into memory startups</div>
+        </div>
+        <div>
+          <div class="stat-value" style="color: var(--rh-teal);">0</div>
+          <div class="stat-label">Mature standards exist</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== WHY MEMORY MATTERS ===== -->
+  <section id="why">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE PROBLEM</div>
+      <h2 class="display-lg animate-on-scroll">Why Do Agents Need Memory?</h2>
+      <p class="lead animate-on-scroll">Without memory, every agent session starts from zero. The agent that helped you debug a deployment on Monday has no idea who you are on Tuesday.</p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+        <div class="animate-on-scroll stagger-1" style="background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02)); border: 1px solid rgba(238,0,0,0.2); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--rh-red), #ff4444);"></div>
+          <div class="tag tag-red" style="margin-bottom: 0.75rem;">Without Memory</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              Re-explains context every session
+            </li>
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              Repeats the same mistakes
+            </li>
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              ~13,900 tokens per request (flat history)
+            </li>
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              Cannot share knowledge across agents
+            </li>
+          </ul>
+        </div>
+        <div class="animate-on-scroll stagger-2" style="background: linear-gradient(135deg, rgba(62,134,53,0.06), rgba(62,134,53,0.02)); border: 1px solid rgba(62,134,53,0.2); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--rh-green), #5cb85c);"></div>
+          <div class="tag tag-green" style="margin-bottom: 0.75rem;">With Memory</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              Picks up where it left off
+            </li>
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              Learns from past interactions
+            </li>
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              ~1,300 tokens per request (9.5x efficiency)
+            </li>
+            <li style="padding: 0.35rem 0 0.35rem 1.2rem; position: relative; font-size: 0.88rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.7rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              Shares knowledge as a platform primitive
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quote animate-on-scroll" style="margin-top: 2rem;">
+        <p>&ldquo;Generative Agents without reflection degenerated within 48 simulated hours to repetitive responses.&rdquo;</p>
+        <cite>Park et al., Generative Agents (arXiv:2304.03442)</cite>
+      </div>
+
+      <div class="animate-on-scroll" style="display: flex; gap: 2rem; margin-top: 2rem; padding: 1.25rem; background: var(--bg-elevated); border-radius: 12px; border: 1px solid var(--border-subtle); flex-wrap: wrap;">
+        <div style="text-align: center; flex: 1; min-width: 120px;">
+          <div class="stat-value" style="color: var(--rh-red);">9.5x</div>
+          <div class="stat-label">Context efficiency</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Oracle, 80-turn conversation</div>
+        </div>
+        <div style="text-align: center; flex: 1; min-width: 120px;">
+          <div class="stat-value" style="color: var(--rh-green);">6x</div>
+          <div class="stat-label">Task completion</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Harvey + Claude Dreaming</div>
+        </div>
+        <div style="text-align: center; flex: 1; min-width: 120px;">
+          <div class="stat-value" style="color: var(--rh-teal);">91%</div>
+          <div class="stat-label">Speed gain</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Selective memory retrieval</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== MEMORY vs RAG ===== -->
+  <section id="memory-vs-rag">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">KEY DISTINCTION</div>
+      <h2 class="display-lg animate-on-scroll">Memory vs. RAG</h2>
+      <p class="lead animate-on-scroll">The structural test that separates memory from RAG is the <strong style="color:var(--text-primary);">write path</strong>. Memory is a stateful store agents <em>write to</em> during interaction. RAG is read-only retrieval over a stable corpus.</p>
+
+      <div class="quote animate-on-scroll" style="margin-top: 1.5rem;">
+        <p>&ldquo;RAG retrieves external information &mdash; it answers <em>&lsquo;What does the manual say?&rsquo;</em> Agent memory tracks internal system knowledge &mdash; it answers <em>&lsquo;What have agents learned?&rsquo;</em>&rdquo;</p>
+        <cite>Wes Jackson, Red Hat Solutions Architect</cite>
+      </div>
+
+      <div class="animate-on-scroll" style="margin-top: 2rem; overflow-x: auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Dimension</th>
+              <th class="col-rag" style="min-width: 200px;">
+                <span class="tag tag-blue" style="margin-bottom: 0.25rem;">RAG</span>
+              </th>
+              <th class="col-memory" style="min-width: 200px;">
+                <span class="tag tag-teal" style="margin-bottom: 0.25rem;">Agent Memory</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="col-dim">Write path</td><td>Offline ingestion only; agents cannot write</td><td><strong style="color:var(--rh-teal);">Dynamic writes</strong> from agent interactions</td></tr>
+            <tr><td class="col-dim">Persistence</td><td>Session-independent (corpus is stable)</td><td>Cross-session accumulation; memories evolve</td></tr>
+            <tr><td class="col-dim">Data shape</td><td>Large, diverse document corpora</td><td>Bounded, coherent interaction streams</td></tr>
+            <tr><td class="col-dim">Freshness</td><td>Batch-dependent lag</td><td>Continuously updated</td></tr>
+            <tr><td class="col-dim">Retrieval</td><td>One-shot at query time</td><td>Dynamic, context-aware, multi-signal</td></tr>
+            <tr><td class="col-dim">Error semantics</td><td>Errors reset each session</td><td><strong style="color:var(--rh-orange);">Errors persist</strong> and resurface indefinitely</td></tr>
+            <tr><td class="col-dim">Architecture</td><td>Search concern</td><td><strong style="color:var(--rh-teal);">Database concern</strong> &mdash; consistency, audit, retention</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="body-text animate-on-scroll" style="margin-top: 1.5rem;">
+        <strong style="color: var(--text-primary);">They are complementary, not alternatives.</strong> For production enterprise agents, use RAG for breadth (knowledge-intensive Q&A over large static corpora) and memory for continuity (multi-turn workflows, personalization, cross-session learning). Systems requiring both deploy them in parallel.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE FOUR TYPES ===== -->
+  <section id="four-types">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE CoALA TAXONOMY</div>
+      <h2 class="display-lg animate-on-scroll">The Four Types of Agent Memory</h2>
+      <p class="lead animate-on-scroll">The dominant taxonomy, formalized by the CoALA paper (Princeton, 2023) and adopted by Oracle, IBM, Mem0, and most major frameworks. A key architectural insight: these are <strong style="color:var(--text-primary);">four access patterns over one governed substrate</strong> &mdash; not four separate systems.</p>
+
+      <div class="type-grid">
+        <div class="type-card animate-on-scroll stagger-1" style="border-top: 3px solid var(--rh-red);">
+          <div class="type-icon" style="background: rgba(238,0,0,0.12); color: var(--rh-red);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+          </div>
+          <div class="tag tag-red" style="margin-bottom: 0.5rem;">In-Context</div>
+          <h3>Working Memory</h3>
+          <div class="type-question">&ldquo;What am I reasoning about right now?&rdquo;</div>
+          <div class="type-desc">Everything the agent actively reasons over during a single inference call: system prompt, conversation history, tool outputs, scratchpad. Bounded by the context window. Temporary and session-bound.</div>
+          <div class="type-examples">
+            <span>Current conversation transcript</span>
+            <span>Tool call results in progress</span>
+            <span>Intermediate reasoning steps</span>
+          </div>
+        </div>
+
+        <div class="type-card animate-on-scroll stagger-2" style="border-top: 3px solid var(--rh-teal);">
+          <div class="type-icon" style="background: rgba(0,149,150,0.12); color: var(--rh-teal);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="tag tag-teal" style="margin-bottom: 0.5rem;">Event-Indexed</div>
+          <h3>Episodic Memory</h3>
+          <div class="type-question">&ldquo;What happened in past sessions?&rdquo;</div>
+          <div class="type-desc">Specific past experiences: what decisions were made, which errors occurred, what feedback was received. Timestamped records of agent activity across sessions. The hardest benchmark category for all memory systems.</div>
+          <div class="type-examples">
+            <span>&ldquo;Deployed to cluster X on Apr 15, hit RBAC error Y&rdquo;</span>
+            <span>&ldquo;User asked to change tabs to spaces in session 3&rdquo;</span>
+            <span>Multi-session recall at 88% (Oracle benchmark)</span>
+          </div>
+        </div>
+
+        <div class="type-card animate-on-scroll stagger-3" style="border-top: 3px solid var(--rh-blue);">
+          <div class="type-icon" style="background: rgba(0,102,204,0.12); color: var(--rh-blue-light);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div class="tag tag-blue" style="margin-bottom: 0.5rem;">De-Contextualized Facts</div>
+          <h3>Semantic Memory</h3>
+          <div class="type-question">&ldquo;What is durably true?&rdquo;</div>
+          <div class="type-desc">Durable, de-contextualized facts and knowledge: user preferences, entity properties, domain terminology, structured reference data. Independent of any specific interaction &mdash; stores what <em>is true</em> rather than what <em>happened</em>.</div>
+          <div class="type-examples">
+            <span>&ldquo;User prefers Python over Java&rdquo;</span>
+            <span>&ldquo;Project X uses PostgreSQL 15&rdquo;</span>
+            <span>&ldquo;FIPS 140-3 requires encrypted connections&rdquo;</span>
+          </div>
+        </div>
+
+        <div class="type-card animate-on-scroll stagger-4" style="border-top: 3px solid var(--rh-purple);">
+          <div class="type-icon" style="background: rgba(103,83,172,0.12); color: var(--rh-purple);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div class="tag tag-purple" style="margin-bottom: 0.5rem;">Behavioral Rules</div>
+          <h3>Procedural Memory</h3>
+          <div class="type-question">&ldquo;How should I do things?&rdquo;</div>
+          <div class="type-desc">Behavioral rules, guidelines, executable skills, and learned procedures. How to perform recurring tasks, which tools to use in which sequences, workflow templates. Often encoded in system prompts or harness configuration.</div>
+          <div class="type-examples">
+            <span>Reusable skill definitions</span>
+            <span>Tool-routing logic and decision trees</span>
+            <span>Dynamically learned workflow optimizations</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connecting concept -->
+      <div class="animate-on-scroll" style="margin-top: 2rem; padding: 1.25rem 1.5rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; text-align: center;">
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Key Insight</div>
+        <p style="font-family: var(--font-sans); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); max-width: 60ch; margin: 0 auto;">
+          Working memory is the only type the model directly reasons over. All other types must be explicitly <em>retrieved into</em> working memory before they can influence behavior.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== MEMORY LIFECYCLE ===== -->
+  <section id="lifecycle">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">HOW IT WORKS</div>
+      <h2 class="display-lg animate-on-scroll">The Memory Lifecycle</h2>
+      <p class="lead animate-on-scroll">Agent memory follows a standard loop. Each phase addresses a different engineering problem.</p>
+
+      <!-- CSS Flow Diagram -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; justify-content: center;">
+          <div style="background: var(--bg-elevated); border: 2px solid var(--rh-red); border-radius: 10px; padding: 0.8rem 1.1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em;">Step 1</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Read</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Retrieve relevant memories</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#EE0000" stroke-width="2" stroke-dasharray="4,3" style="animation: dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#EE0000"/></svg>
+          <div style="background: var(--bg-elevated); border: 2px solid var(--rh-teal); border-radius: 10px; padding: 0.8rem 1.1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em;">Step 2</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Reason</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">LLM inference with context</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#009596" stroke-width="2" stroke-dasharray="4,3" style="animation: dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#009596"/></svg>
+          <div style="background: var(--bg-elevated); border: 2px solid var(--rh-blue); border-radius: 10px; padding: 0.8rem 1.1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.1em;">Step 3</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Act</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Execute tool calls</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#0066CC" stroke-width="2" stroke-dasharray="4,3" style="animation: dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#0066CC"/></svg>
+          <div style="background: var(--bg-elevated); border: 2px solid var(--rh-purple); border-radius: 10px; padding: 0.8rem 1.1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.1em;">Step 4</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Observe</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Collect results</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#6753AC" stroke-width="2" stroke-dasharray="4,3" style="animation: dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#6753AC"/></svg>
+          <div style="background: var(--bg-elevated); border: 2px solid var(--rh-green); border-radius: 10px; padding: 0.8rem 1.1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em;">Step 5</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Write</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Persist to memory store</div>
+          </div>
+        </div>
+        <!-- Loop arrow -->
+        <div style="text-align: center; margin-top: 0.75rem;">
+          <svg width="100%" height="40" viewBox="0 0 800 40" preserveAspectRatio="xMidYMid meet" style="max-width: 750px;">
+            <path d="M 700 5 C 750 5 780 20 780 35 L 20 35 C 20 35 -10 20 20 5 L 100 5" fill="none" stroke="var(--rh-red)" stroke-width="1.5" stroke-dasharray="6,4" style="animation: dash-flow 3s linear infinite;" opacity="0.5"/>
+            <polygon points="95,0 105,5 95,10" fill="var(--rh-red)" opacity="0.5"/>
+          </svg>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Loop</div>
+        </div>
+      </div>
+
+      <!-- Write Path Detail -->
+      <div class="animate-on-scroll" style="margin-top: 3rem;">
+        <div class="h2" style="margin-bottom: 0.5rem;">The Write Path &mdash; Where Systems Differ</div>
+        <p class="body-text" style="margin-top: 0;">The write path is the most complex and differentiated part of memory architecture. Simple systems append every turn; sophisticated systems apply multi-stage filtering.</p>
+        <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 0.9rem; text-align: center; font-size: 0.78rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.58rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15rem;">1</div>
+            <span style="color: var(--text-primary); font-weight: 600;">Filter</span>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Remove noise</div>
+          </div>
+          <span style="color: var(--border-muted);">&rarr;</span>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 0.9rem; text-align: center; font-size: 0.78rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.58rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15rem;">2</div>
+            <span style="color: var(--text-primary); font-weight: 600;">Normalize</span>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Canonicalize</div>
+          </div>
+          <span style="color: var(--border-muted);">&rarr;</span>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 0.9rem; text-align: center; font-size: 0.78rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.58rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15rem;">3</div>
+            <span style="color: var(--text-primary); font-weight: 600;">Deduplicate</span>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Merge overlaps</div>
+          </div>
+          <span style="color: var(--border-muted);">&rarr;</span>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 0.9rem; text-align: center; font-size: 0.78rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.58rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15rem;">4</div>
+            <span style="color: var(--text-primary); font-weight: 600;">Score</span>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Priority rank</div>
+          </div>
+          <span style="color: var(--border-muted);">&rarr;</span>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.6rem 0.9rem; text-align: center; font-size: 0.78rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.58rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15rem;">5</div>
+            <span style="color: var(--text-primary); font-weight: 600;">Embed</span>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Vector repr.</div>
+          </div>
+          <span style="color: var(--border-muted);">&rarr;</span>
+          <div style="background: var(--bg-card); border: 1px solid var(--rh-green); border-radius: 8px; padding: 0.6rem 0.9rem; text-align: center; font-size: 0.78rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.58rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.15rem;">6</div>
+            <span style="color: var(--text-primary); font-weight: 600;">Persist</span>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Write to store</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== STORAGE & ARCHITECTURE ===== -->
+  <section id="architecture">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">STORAGE PATTERNS</div>
+      <h2 class="display-lg animate-on-scroll">Storage &amp; Architecture</h2>
+      <p class="lead animate-on-scroll">How memory systems organize data across tiers, and why the single-substrate pattern is winning for enterprise deployments.</p>
+
+      <!-- Tiered Memory Diagram -->
+      <div class="animate-on-scroll" style="margin-top: 2rem;">
+        <div class="h2" style="margin-bottom: 0.75rem;">Tiered Memory &mdash; The OS Analogy</div>
+        <p class="body-text" style="margin-top: 0; margin-bottom: 1.5rem;">Pioneered by Letta/MemGPT (2023), this model treats the LLM context window as constrained RAM and organizes memory across explicit tiers.</p>
+
+        <div class="tier-stack">
+          <div class="tier-row" style="background: linear-gradient(135deg, rgba(238,0,0,0.08), rgba(238,0,0,0.03));">
+            <div class="tier-analogy" style="color: var(--rh-red); background: rgba(238,0,0,0.05);">RAM</div>
+            <div class="tier-content">
+              <h4 style="color: var(--rh-red);">Core Memory <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">(In-Context)</span></h4>
+              <p>Directly in the context window. Labeled blocks (persona, human, project) with character limits. Agent actively manages content via function calls.</p>
+            </div>
+            <div class="tier-speed" style="color: var(--rh-red);">Instant</div>
+          </div>
+          <div class="tier-row" style="background: linear-gradient(135deg, rgba(0,149,150,0.06), rgba(0,149,150,0.02));">
+            <div class="tier-analogy" style="color: var(--rh-teal); background: rgba(0,149,150,0.05);">Page File</div>
+            <div class="tier-content">
+              <h4 style="color: var(--rh-teal);">Recall Memory <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">(Warm)</span></h4>
+              <p>Relational/vector store, searchable on demand. When core memory fills, the agent summarizes and pages content down to recall.</p>
+            </div>
+            <div class="tier-speed">~ms</div>
+          </div>
+          <div class="tier-row" style="background: linear-gradient(135deg, rgba(0,102,204,0.06), rgba(0,102,204,0.02));">
+            <div class="tier-analogy" style="color: var(--rh-blue-light); background: rgba(0,102,204,0.05);">Hard Drive</div>
+            <div class="tier-content">
+              <h4 style="color: var(--rh-blue-light);">Archival Memory <span style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted);">(Cold)</span></h4>
+              <p>External vector/graph store accessed via explicit tool calls. Unlimited capacity but higher retrieval cost.</p>
+            </div>
+            <div class="tier-speed">~sec</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Substrate vs Multi-Store -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 3rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-left: 4px solid var(--rh-green); border-radius: 0 12px 12px 0;">
+          <div class="tag tag-green" style="margin-bottom: 0.75rem;">Recommended for Enterprise</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">Single Substrate</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">PostgreSQL + pgvector: relational data, vectors, and graph relationships in one ACID-compliant database.</p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Atomic updates (no dual-write lag)</li>
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>One system to secure, backup, monitor</li>
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Competitive to ~50M vectors</li>
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Reduced FIPS/security surface</li>
+          </ul>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-left: 4px solid var(--rh-orange); border-radius: 0 12px 12px 0;">
+          <div class="tag tag-orange" style="margin-bottom: 0.75rem;">Scale-Dependent</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem;">Multi-Store</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">Separate vector store + relational DB + graph DB + KV cache. Each optimized for its access pattern.</p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>Best-of-breed per data type</li>
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>Cross-store consistency challenges</li>
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>Four failure modes instead of one</li>
+            <li style="padding: 0.2rem 0 0.2rem 1rem; position: relative; font-size: 0.8rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>Justified at 50M+ vectors</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== CONTEXT ENGINEERING ===== -->
+  <section id="context">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">CONTEXT ENGINEERING</div>
+      <h2 class="display-lg animate-on-scroll">Managing What the Model Sees</h2>
+      <p class="lead animate-on-scroll">Context engineering is the discipline of designing what information the LLM can access across the full context window. It is a capability layer over the memory substrate &mdash; not a separate system.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem;">
+        <div class="card animate-on-scroll stagger-1">
+          <div class="tag tag-red" style="margin-bottom: 0.75rem;">Compaction</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Reducing Context Size</h3>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">Summarize older turns while preserving task continuity. Triggered at 60-70% context window utilization.</p>
+          <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);">
+              <span style="color: var(--rh-green);">Readable:</span> Anthropic, Factory.ai (4.04/5.0 accuracy)<br>
+              <span style="color: var(--rh-orange);">Opaque:</span> OpenAI (3.35/5.0, highest compression)
+            </div>
+          </div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-2">
+          <div class="tag tag-teal" style="margin-bottom: 0.75rem;">Retrieval</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Finding Relevant Memory</h3>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">Hybrid search (vector + BM25) outperforms single-method approaches across all tested conditions. Cross-encoder reranking adds precision.</p>
+          <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);">
+              Stage 1: Recall (top-200 candidates)<br>
+              Stage 2: Precision (rerank to top-30)
+            </div>
+          </div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-3">
+          <div class="tag tag-blue" style="margin-bottom: 0.75rem;">Consolidation</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem;">Sleep-Time &ldquo;Dreaming&rdquo;</h3>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">Between-session background processes that review, prune, merge, and reorganize memory. Not a research curiosity &mdash; a validated production pattern.</p>
+          <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);">
+              Claude Dreaming: reviews up to 100 sessions<br>
+              Harvey: 6x task completion improvement
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regulatory callout -->
+      <div class="animate-on-scroll" style="margin-top: 2rem; padding: 1.25rem; background: rgba(238,0,0,0.04); border: 1px solid rgba(238,0,0,0.2); border-radius: 12px;">
+        <div style="display: flex; align-items: flex-start; gap: 1rem;">
+          <div style="font-size: 1.5rem; flex-shrink: 0;">&#9888;</div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem;">Regulatory Constraint: Compaction Must Be Inspectable</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">For EU AI Act (enforcement August 2026), GDPR, and HIPAA deployments, opaque compaction is not compliant. The compaction artifact must be human-readable so compliance teams can inspect what was kept and what was discarded.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== MULTI-AGENT MEMORY ===== -->
+  <section id="multi-agent">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MULTI-AGENT</div>
+      <h2 class="display-lg animate-on-scroll">When Agents Share Memory</h2>
+      <p class="lead animate-on-scroll">As agents proliferate, how memory is shared, isolated, and coordinated becomes the central design problem. Five architectural patterns have emerged.</p>
+
+      <div class="pattern-grid">
+        <div class="pattern-card animate-on-scroll stagger-1">
+          <div class="pattern-num">01</div>
+          <div class="tag tag-teal" style="margin-bottom: 0.5rem;">Simple</div>
+          <h4>Shared Memory Pool</h4>
+          <p>All agents read/write a common store. Strong consistency, easy to reason about. Bottlenecks emerge beyond ~5 agents.</p>
+        </div>
+        <div class="pattern-card animate-on-scroll stagger-2">
+          <div class="pattern-num">02</div>
+          <div class="tag tag-blue" style="margin-bottom: 0.5rem;">Autonomous</div>
+          <h4>Blackboard Architecture</h4>
+          <p>A central knowledge store with specialist agents that self-select contributions. 13-57% improvement on complex tasks (arXiv, 2026).</p>
+        </div>
+        <div class="pattern-card animate-on-scroll stagger-3">
+          <div class="pattern-num">03</div>
+          <div class="tag tag-green" style="margin-bottom: 0.5rem;">Isolated</div>
+          <h4>Message-Passing</h4>
+          <p>No shared mutable state. Agents communicate via explicit messages. Clean trust boundaries; higher coordination overhead. The A2A protocol model.</p>
+        </div>
+        <div class="pattern-card animate-on-scroll stagger-4">
+          <div class="pattern-num">04</div>
+          <div class="tag tag-purple" style="margin-bottom: 0.5rem;">Managed</div>
+          <h4>Hierarchical Memory</h4>
+          <p>Manager agents curate and distribute memory to workers. Reduces cross-talk and limits blast radius of bad memory writes.</p>
+        </div>
+        <div class="pattern-card animate-on-scroll stagger-5">
+          <div class="pattern-num">05</div>
+          <div class="tag tag-orange" style="margin-bottom: 0.5rem;">Distributed</div>
+          <h4>Federated Memory</h4>
+          <p>Distributed stores with eventual consistency. Each team maintains its own substrate; selected facts synchronize. Most complex, best scales for multi-team deployments.</p>
+        </div>
+      </div>
+
+      <div class="animate-on-scroll" style="margin-top: 2rem; padding: 1.25rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px;">
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 200px;">
+            <div class="stat-value" style="color: var(--rh-red);">36.9%</div>
+            <div class="stat-label">Multi-agent failures from misalignment</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">MAST taxonomy, NeurIPS 2025</div>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div class="stat-value" style="color: var(--rh-orange);">87%</div>
+            <div class="stat-label">Downstream contamination in 4 hours</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Single poisoned agent, Galileo AI</div>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div class="stat-value" style="color: var(--rh-purple);">&gt;95%</div>
+            <div class="stat-label">MINJA injection success rate</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem;">Query-only attack, NeurIPS 2025</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== GOVERNANCE & SECURITY ===== -->
+  <section id="governance">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">GOVERNANCE &amp; SECURITY</div>
+      <h2 class="display-lg animate-on-scroll">Who Can Read What &mdash; and Why It Matters</h2>
+      <p class="lead animate-on-scroll">Scope hierarchies, audit trails, and adversarial defense are not nice-to-haves &mdash; they are enterprise deployment prerequisites. Every regulated vertical independently converges on the same requirements.</p>
+
+      <!-- Scope Isolation -->
+      <div class="animate-on-scroll" style="margin-top: 2rem;">
+        <div class="h2" style="margin-bottom: 0.5rem;">Scope Isolation</div>
+        <p class="body-text" style="margin-top: 0; margin-bottom: 1.25rem;">Every memory system must answer: <em>who can read and write which memories?</em> There is no standard scope model &mdash; implementations compose different scoping dimensions based on their architecture. But the underlying need is universal: every memory record must carry access-control metadata.</p>
+
+        <!-- Scoping dimensions table -->
+        <div style="overflow-x: auto; margin-bottom: 1.5rem;">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Scoping Dimension</th>
+                <th>Who Uses It</th>
+                <th>What It Controls</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="col-dim">User</td><td>All systems</td><td>Private to one human &mdash; the universal baseline</td></tr>
+              <tr><td class="col-dim">Agent</td><td>Mem0 (<span style="font-family:var(--font-mono);font-size:0.78rem;">agent_id</span>), LangGraph (thread-scoped)</td><td>Private to one agent instance</td></tr>
+              <tr><td class="col-dim">Session / Run</td><td>OpenAI (<span style="font-family:var(--font-mono);font-size:0.78rem;">sessionId</span>), Mem0 (<span style="font-family:var(--font-mono);font-size:0.78rem;">run_id</span>)</td><td>Isolated to a single conversation</td></tr>
+              <tr><td class="col-dim">Project / App</td><td>Mem0 (<span style="font-family:var(--font-mono);font-size:0.78rem;">app_id</span>), MemoryHub, LangGraph Stores</td><td>Shared within a bounded team or workspace</td></tr>
+              <tr><td class="col-dim">Tenant / Org</td><td>Oracle (tenant-scoped DB isolation), MemoryHub</td><td>Organization-wide &mdash; all agents and users</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Design principles -->
+        <div class="card" style="border-left: 4px solid var(--rh-teal); border-radius: 0 12px 12px 0;">
+          <div class="tag tag-teal" style="margin-bottom: 0.5rem;">Converging Design Principles</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Despite different tier models, the industry converges on three principles for governed memory:</p>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0 0.3rem 1.2rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-teal);"></span><strong style="color: var(--text-primary);">Scope on every record</strong> &mdash; access control lives on individual memory entries, not just per-collection or per-database</li>
+            <li style="padding: 0.3rem 0 0.3rem 1.2rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-teal);"></span><strong style="color: var(--text-primary);">Cross-user writes blocked by default</strong> &mdash; if someone else can modify your memories, they can change how your agent behaves and make you responsible for the outcome</li>
+            <li style="padding: 0.3rem 0 0.3rem 1.2rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);"><span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-teal);"></span><strong style="color: var(--text-primary);">Enforcement at the storage layer</strong> &mdash; Oracle enforces per-record scoping at the database level; MemoryHub uses SQL-clause RBAC &mdash; not application-layer checks that can be bypassed</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Security Threats -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <div class="h2" style="margin-bottom: 0.5rem;">Adversarial Memory Threats</div>
+        <p class="body-text" style="margin-top: 0; margin-bottom: 1rem;">Memory security is an existential concern. OWASP classified &ldquo;Memory and Context Poisoning&rdquo; as ASI06 in the 2026 Agentic AI Top 10.</p>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+          <div class="card" style="border-left: 4px solid var(--rh-red); border-radius: 0 12px 12px 0;">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.3rem;">MINJA Attack</div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">&gt;95% injection success via query-only interaction. No elevated privileges needed. Existing defenses fail because they detect malicious actions, not corrupted beliefs.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--rh-orange); border-radius: 0 12px 12px 0;">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.3rem;">Memory Contamination</div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">Compromising a single agent's memory leads to 87% of downstream decisions being poisoned within 4 hours in multi-agent systems.</p>
+          </div>
+          <div class="card" style="border-left: 4px solid var(--rh-purple); border-radius: 0 12px 12px 0;">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.3rem;">MemoryGraft</div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">Implants malicious &ldquo;successful experiences&rdquo; into long-term memory. Poisoned memories are structurally indistinguishable from legitimate context.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance timeline -->
+      <div class="animate-on-scroll" style="margin-top: 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+        <div style="border-top: 3px solid var(--rh-red); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em;">EU AI Act</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin: 0.3rem 0;">August 2, 2026</div>
+          <p style="font-size: 0.78rem; color: var(--text-secondary);">High-risk AI system obligations. Tamper-evident logging, human oversight, 6-month minimum retention.</p>
+        </div>
+        <div style="border-top: 3px solid var(--rh-teal); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em;">HIPAA</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin: 0.3rem 0;">2026 Security Rule Update</div>
+          <p style="font-size: 0.78rem; color: var(--text-secondary);">Eliminates &ldquo;addressable&rdquo; safeguards. AI systems explicitly included in annual risk assessments.</p>
+        </div>
+        <div style="border-top: 3px solid var(--rh-blue); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em;">FINRA</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin: 0.3rem 0;">2026 Regulatory Report</div>
+          <p style="font-size: 0.78rem; color: var(--text-secondary);">AI agents classified as a distinct supervisory risk category. 7-year audit trail, individual attribution required.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== COMPETITIVE LANDSCAPE ===== -->
+  <section id="landscape">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MARKET LANDSCAPE</div>
+      <h2 class="display-lg animate-on-scroll">Who&rsquo;s Building What</h2>
+      <p class="lead animate-on-scroll">The field divides into three camps. None occupies the intersection of enterprise governance + Kubernetes-native + air-gappable + open standard interface.</p>
+
+      <div class="camp-grid animate-on-scroll" style="margin-top: 2rem;">
+        <div class="camp-card" style="background: linear-gradient(135deg, rgba(0,102,204,0.08), rgba(0,102,204,0.02)); border: 1px solid rgba(0,102,204,0.2); border-radius: 12px;">
+          <div class="tag tag-blue" style="margin-bottom: 0.75rem;">Cloud-Only</div>
+          <h4>Hyperscaler Managed</h4>
+          <div class="camp-examples">AWS AgentCore &bull; Google Memory Bank &bull; OpenAI server-side</div>
+          <div class="camp-strength"><strong style="color: var(--text-primary);">Strength:</strong> GA, product-validated, integrated with their ecosystems</div>
+          <div class="camp-gap"><strong>Gap:</strong> No on-premise or air-gap deployment path</div>
+        </div>
+        <div class="camp-card" style="background: linear-gradient(135deg, rgba(103,83,172,0.08), rgba(103,83,172,0.02)); border: 1px solid rgba(103,83,172,0.2); border-radius: 12px;">
+          <div class="tag tag-purple" style="margin-bottom: 0.75rem;">Database-Native</div>
+          <h4>Enterprise Database</h4>
+          <div class="camp-examples">Oracle AI Agent Memory</div>
+          <div class="camp-strength"><strong style="color: var(--text-primary);">Strength:</strong> Highest external governance maturity; per-record audit/erasure</div>
+          <div class="camp-gap"><strong>Gap:</strong> Hard Oracle Database lock-in; not portable to Kubernetes</div>
+        </div>
+        <div class="camp-card" style="background: linear-gradient(135deg, rgba(62,134,53,0.08), rgba(62,134,53,0.02)); border: 1px solid rgba(62,134,53,0.2); border-radius: 12px;">
+          <div class="tag tag-green" style="margin-bottom: 0.75rem;">Open Source</div>
+          <h4>OSS Startups &amp; Frameworks</h4>
+          <div class="camp-examples">Mem0 &bull; Letta &bull; Zep/Graphiti &bull; Cognee &bull; LangGraph &bull; CrewAI</div>
+          <div class="camp-strength"><strong style="color: var(--text-primary);">Strength:</strong> Deployment-flexible, fast-moving, open-source</div>
+          <div class="camp-gap"><strong>Gap:</strong> Governance thin or absent; market consolidation risk (~$62M+ invested)</div>
+        </div>
+      </div>
+
+      <!-- The whitespace -->
+      <div class="animate-on-scroll" style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-elevated); border: 1px solid var(--rh-red); border-radius: 12px; text-align: center; animation: glow-pulse 4s ease-in-out infinite;">
+        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.5rem;">The Whitespace</div>
+        <p style="font-family: var(--font-sans); font-weight: 700; font-size: 1.15rem; color: var(--text-primary); max-width: 60ch; margin: 0 auto;">
+          No existing solution combines enterprise governance + Kubernetes-native self-hosted + air-gappable + open standard interface.
+        </p>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; max-width: 55ch; margin-left: auto; margin-right: auto;">That gap is the opportunity for a platform-level governed memory primitive.</p>
+      </div>
+
+      <!-- Key numbers -->
+      <div class="animate-on-scroll" style="margin-top: 2rem; display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+        <div style="text-align: center;">
+          <div class="stat-value" style="color: var(--rh-red);">$62M+</div>
+          <div class="stat-label">VC into memory startups (18 months)</div>
+        </div>
+        <div style="text-align: center;">
+          <div class="stat-value">GA</div>
+          <div class="stat-label">Memory features at every hyperscaler</div>
+        </div>
+        <div style="text-align: center;">
+          <div class="stat-value" style="color: var(--rh-teal);">0</div>
+          <div class="stat-label">Mature memory standards</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== CTA / RESOURCES ===== -->
+  <section id="resources" style="text-align: center;">
+    <div class="section-inner" style="display: flex; flex-direction: column; align-items: center;">
+      <div class="section-label animate-on-scroll">DIVE DEEPER</div>
+      <h2 class="display-lg animate-on-scroll">Continue the Series</h2>
+      <p class="lead animate-on-scroll" style="text-align: center; max-width: 60ch;">
+        This starter guide introduces the core concepts. The series continues with detailed research findings, advanced topics, enterprise use cases, and strategy.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem; max-width: 700px; width: 100%; text-align: left;">
+        <a class="card animate-on-scroll stagger-1" href="agent-memory-foundations.html" style="padding: 1.25rem; text-decoration: none; color: inherit;">
+          <div class="tag tag-red" style="margin-bottom: 0.5rem;">Part 2</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem;">Foundations</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">Solution landscape, standards gaps, industry taxonomies, the recommended decomposition, and key decisions ahead.</p>
+        </a>
+        <a class="card animate-on-scroll stagger-2" href="agent-memory-deep-dives.html" style="padding: 1.25rem; text-decoration: none; color: inherit;">
+          <div class="tag tag-teal" style="margin-bottom: 0.5rem;">Part 3</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem;">Deep Dives</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">Agent harness memory, dreaming &amp; consolidation, adversarial threats, benchmarking, KV-cache optimization, multi-modal.</p>
+        </a>
+      </div>
+
+      <div class="animate-on-scroll stagger-3" style="margin-top: 2rem;">
+        <a href="index.html" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--rh-red); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; transition: background 180ms;">
+          View All Presentations &#x2192;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+    <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">Based on the Agent Memory &amp; Knowledge Research Series (17 documents, 2026)</p>
+  </footer>
+
+  <!-- SCROLL ANIMATION OBSERVER -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { threshold: 0.25 });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

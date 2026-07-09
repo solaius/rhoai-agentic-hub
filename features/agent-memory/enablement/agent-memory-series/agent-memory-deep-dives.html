@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory — Deep Dives</title>
+  <meta name="description" content="Phase 2 research: agent harness memory, dreaming and consolidation, adversarial threats, benchmarking, KV-cache optimization, and multi-modal memory." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:#151515;--bg-elevated:#1a1a1a;--bg-card:#202020;
+      --text-primary:#ffffff;--text-secondary:#d2d2d2;--text-muted:#8a8a8a;
+      --rh-red:#EE0000;--rh-red-dark:#A30000;--rh-teal:#009596;--rh-blue:#0066CC;--rh-blue-light:#4394e5;
+      --rh-purple:#6753AC;--rh-green:#3E8635;--rh-orange:#F4B400;
+      --border-subtle:#333333;--border-muted:#444444;
+      --font-sans:"Red Hat Display","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-text:"Red Hat Text","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-mono:"Red Hat Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      --fs-display-xl:2.8rem;--fs-display-lg:2rem;--fs-h2:1.5rem;--fs-body-lead:1.15rem;--fs-body:0.95rem;--fs-label:0.7rem;
+      --space-xs:0.5rem;--space-sm:0.75rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem;--space-2xl:3rem;
+      --content-max:1100px;--nav-height:56px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg-canvas);color:var(--text-primary);font-family:var(--font-text);font-size:var(--fs-body);line-height:1.6;-webkit-font-smoothing:antialiased}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(21,21,21,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-subtle)}
+    .nav-inner{max-width:var(--content-max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1.5rem}
+    .nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none}
+    .hat{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--rh-red);color:white;font-family:var(--font-sans);font-weight:800;font-size:0.65rem;border-radius:4px}
+    .nav-title{font-family:var(--font-sans);font-weight:600;font-size:0.9rem;color:var(--text-primary)}
+    .nav-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+    .nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.78rem;font-family:var(--font-text);transition:color 0.2s;white-space:nowrap}
+    .nav-links a:hover,.nav-links a.active{color:var(--text-primary)}
+    section{padding:5rem 1.5rem;scroll-margin-top:calc(var(--nav-height) + 16px)}
+    .section-inner{max-width:var(--content-max);margin:0 auto}
+    .section-label{font-family:var(--font-mono);font-size:var(--fs-label);font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--rh-red);margin-bottom:var(--space-sm)}
+    .section-divider{width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(238,0,0,0.18),rgba(238,0,0,0.35),rgba(238,0,0,0.18),transparent)}
+    .display-xl{font-family:var(--font-sans);font-size:var(--fs-display-xl);line-height:1.05;letter-spacing:-0.03em;font-weight:800;color:var(--text-primary);margin:0}
+    .display-lg{font-family:var(--font-sans);font-size:var(--fs-display-lg);line-height:1.1;letter-spacing:-0.02em;font-weight:700;color:var(--text-primary);margin:0 0 var(--space-md)}
+    .h2{font-family:var(--font-sans);font-size:var(--fs-h2);font-weight:700;color:var(--text-primary);margin:0 0 var(--space-sm)}
+    .lead{font-size:var(--fs-body-lead);line-height:1.5;color:var(--text-secondary);margin:var(--space-sm) 0 0;max-width:80ch}
+    .body-text{font-size:var(--fs-body);line-height:1.65;color:var(--text-secondary);margin:var(--space-md) 0 0;max-width:72ch}
+    .accent{color:var(--rh-red)}
+    .hero{min-height:85vh;display:flex;align-items:center;position:relative;padding-top:calc(var(--nav-height) + 3rem);overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-80px;right:-120px;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle,rgba(238,0,0,0.14) 0%,transparent 70%);pointer-events:none}
+    .card{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;padding:1.5rem;transition:border-color 300ms,transform 200ms,box-shadow 300ms}
+    .card:hover{border-color:rgba(238,0,0,0.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(238,0,0,0.08)}
+    .tag{font-family:var(--font-mono);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;padding:0.2rem 0.6rem;border-radius:3px;display:inline-block}
+    .tag-red{background:rgba(238,0,0,0.12);color:var(--rh-red)}.tag-teal{background:rgba(0,149,150,0.12);color:var(--rh-teal)}
+    .tag-blue{background:rgba(0,102,204,0.12);color:var(--rh-blue-light)}.tag-green{background:rgba(62,134,53,0.12);color:var(--rh-green)}
+    .tag-purple{background:rgba(103,83,172,0.12);color:var(--rh-purple)}.tag-orange{background:rgba(244,180,0,0.12);color:var(--rh-orange)}
+    .stat-value{font-family:var(--font-sans);font-size:2rem;font-weight:800;line-height:1}
+    .stat-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.25rem}
+    .animate-on-scroll{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease-out,transform 0.6s ease-out}
+    .animate-on-scroll.visible{opacity:1;transform:translateY(0)}
+    .stagger-1{transition-delay:80ms}.stagger-2{transition-delay:160ms}.stagger-3{transition-delay:240ms}.stagger-4{transition-delay:320ms}.stagger-5{transition-delay:400ms}
+    .quote{border-left:3px solid var(--rh-red);padding:1rem 1.5rem;background:rgba(238,0,0,0.04);border-radius:0 8px 8px 0;margin:1.5rem 0}
+    .quote p{font-family:var(--font-text);font-size:1rem;color:var(--text-primary);font-style:italic;line-height:1.6;margin:0}
+    .quote cite{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-style:normal;display:block;margin-top:0.5rem}
+    .compare-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:0.82rem}
+    .compare-table th{font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0.6rem 0.75rem;text-align:left;border-bottom:2px solid var(--border-subtle);white-space:nowrap}
+    .compare-table td{padding:0.5rem 0.75rem;border-bottom:1px solid rgba(51,51,51,0.5);color:var(--text-secondary);vertical-align:top}
+    .compare-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .compare-table .col-dim{color:var(--text-muted);font-family:var(--font-text);font-weight:600;font-size:0.82rem;min-width:110px}
+    @keyframes dash-flow{to{stroke-dashoffset:-28}}
+    @keyframes glow-pulse{0%,100%{box-shadow:0 0 15px rgba(238,0,0,0.1)}50%{box-shadow:0 0 30px rgba(238,0,0,0.25)}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:180ms!important}.animate-on-scroll{opacity:1;transform:none}html{scroll-behavior:auto}}
+    @media(max-width:768px){:root{--fs-display-xl:2rem;--fs-display-lg:1.5rem;--fs-body-lead:1rem}section{padding:3rem 1.25rem}.nav-links{display:none}.hero{min-height:65vh}}
+    @media(max-width:1024px){.nav-links{gap:0.8rem}}
+    @media print{*{print-color-adjust:exact;-webkit-print-color-adjust:exact}nav{display:none}}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html" style="text-decoration:none;">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory Series</span>
+      </a>
+      <div class="nav-links">
+        <a href="#harnesses">Harnesses</a>
+        <a href="#dreaming">Dreaming</a>
+        <a href="#adversarial">Adversarial</a>
+        <a href="#benchmarks">Benchmarks</a>
+        <a href="#kv-cache">KV-Cache</a>
+        <a href="#multimodal">Multi-Modal</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT MEMORY SERIES &mdash; PART 3</div>
+      <h1 class="display-xl animate-on-scroll" style="max-width:16ch;"><span class="accent">Deep Dives</span><br>Phase 2 Research</h1>
+      <p class="lead animate-on-scroll stagger-1" style="margin-top:1rem;">
+        Six advanced topics the Phase 1 foundations didn&rsquo;t cover: how real agent harnesses implement memory, how consolidation (&ldquo;dreaming&rdquo;) works, what adversarial attacks look like, how to benchmark memory quality, why memory ordering affects inference cost, and what multi-modal memory means.
+      </p>
+      <div class="animate-on-scroll stagger-2" style="display:flex;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap;">
+        <div><div class="stat-value" style="color:var(--rh-red);">5</div><div class="stat-label">Agent harnesses analyzed</div></div>
+        <div><div class="stat-value">7</div><div class="stat-label">Cross-harness patterns</div></div>
+        <div><div class="stat-value" style="color:var(--rh-orange);">&gt;95%</div><div class="stat-label">MINJA injection success</div></div>
+        <div><div class="stat-value" style="color:var(--rh-teal);">57x</div><div class="stat-label">TTFT improvement (llm-d)</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- AGENT HARNESS MEMORY -->
+  <section id="harnesses">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT HARNESS MEMORY</div>
+      <h2 class="display-lg animate-on-scroll">How Real Agents Remember</h2>
+      <p class="lead animate-on-scroll">Five agent harnesses dominate the developer-facing market. Each independently arrived at a memory architecture. The convergences reveal what the industry considers settled; the divergences reveal what&rsquo;s still experimental.</p>
+
+      <!-- Harness comparison -->
+      <div class="animate-on-scroll" style="margin-top:2rem;overflow-x:auto;">
+        <table class="compare-table" style="min-width:800px;">
+          <thead><tr><th>Harness</th><th>Storage</th><th>Memory Format</th><th>Consolidation</th><th>MCP Support</th></tr></thead>
+          <tbody>
+            <tr><td class="col-dim">OpenClaw</td><td>Filesystem (Markdown)</td><td>SOUL.md, MEMORY.md, daily logs</td><td>DREAMS.md (optional)</td><td>Native (stdio + HTTP)</td></tr>
+            <tr><td class="col-dim">Claude Code</td><td>Filesystem (Markdown)</td><td>CLAUDE.md + Auto Memory + topic files</td><td>Auto Dream (4-phase)</td><td>Native</td></tr>
+            <tr><td class="col-dim">Codex CLI</td><td>Filesystem (Markdown)</td><td>AGENTS.md + Memories pipeline</td><td>Async Memories pipeline</td><td>Via config</td></tr>
+            <tr><td class="col-dim">Hermes</td><td>Filesystem (Markdown)</td><td>hermes.md + MCP memory servers</td><td>Via MCP tools</td><td>Native (memory-as-MCP)</td></tr>
+            <tr><td class="col-dim">Gemini CLI</td><td>Filesystem (Markdown)</td><td>GEMINI.md + settings</td><td>None documented</td><td>Via config</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 7 Patterns -->
+      <div class="animate-on-scroll" style="margin-top:2.5rem;">
+        <div class="h2" style="margin-bottom:0.75rem;">Seven Cross-Harness Patterns</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0.75rem;">
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-red);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">1. Filesystem-Native Markdown</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Universal pattern. All five harnesses use Markdown files as primary memory format. &ldquo;The files are the agent.&rdquo;</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-teal);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">2. Layered Override Semantics</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Global &rarr; project &rarr; workspace &rarr; session. More specific scopes override broader ones. Policy separate from memory.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-blue);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">3. Memory-as-MCP</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">OpenClaw and Hermes expose memory through MCP servers. Memory becomes a governed tool with per-tool authorization and audit.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-purple);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">4. Dream Consolidation</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Between-session background processes that reorganize memory. Claude and Codex both implement this; OpenClaw has optional dreaming.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-green);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">5. Git-Native Versioning</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Filesystem storage makes version control with Git natural. Memory changes are diffable, reviewable, and revertible.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-orange);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">6. Policy &#x2260; Memory</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Every harness separates human-authored configuration (CLAUDE.md, SOUL.md) from agent-written memory. Conflating them creates governance confusion.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-red);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">7. Capture &#x2260; Consolidate</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Separating the act of remembering (inline, during session) from organizing (async, between sessions) is the core architectural insight.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- DREAMING / CONSOLIDATION -->
+  <section id="dreaming">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MEMORY CONSOLIDATION</div>
+      <h2 class="display-lg animate-on-scroll">How &ldquo;Dreaming&rdquo; Works</h2>
+      <p class="lead animate-on-scroll">Sleep-time consolidation &mdash; running memory reorganization between sessions &mdash; is not a research curiosity. It&rsquo;s a validated production pattern. Without it, agents degenerate within 48 simulated hours.</p>
+
+      <!-- Generic layered memory model -->
+      <div class="animate-on-scroll" style="margin-top:2rem;max-width:700px;margin-left:auto;margin-right:auto;">
+        <div class="h2" style="margin-bottom:0.75rem;text-align:center;">The Converging Memory Layer Model</div>
+        <p style="font-size:0.85rem;color:var(--text-secondary);text-align:center;margin-bottom:1.25rem;max-width:60ch;margin-left:auto;margin-right:auto;">All major harnesses independently arrived at a similar layered structure. The layer names differ; the separation of concerns does not.</p>
+        <div style="display:flex;flex-direction:column;gap:0;">
+          <div style="background:rgba(238,0,0,0.06);border:1px solid rgba(238,0,0,0.25);border-radius:10px 10px 0 0;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
+            <div class="tag tag-red" style="flex-shrink:0;">Layer 1</div>
+            <div><strong style="color:var(--text-primary);">Policy / Configuration</strong> <span style="color:var(--text-muted);">&mdash; Human-authored instructions. Highest authority. Not memory &mdash; it&rsquo;s configuration.</span>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem;">CLAUDE.md &bull; SOUL.md &bull; AGENTS.md &bull; hermes.md &bull; GEMINI.md</div></div>
+          </div>
+          <div style="background:rgba(0,149,150,0.06);border:1px solid rgba(0,149,150,0.2);border-top:none;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
+            <div class="tag tag-teal" style="flex-shrink:0;">Layer 2</div>
+            <div><strong style="color:var(--text-primary);">Persistent Memory</strong> <span style="color:var(--text-muted);">&mdash; Agent self-written knowledge that persists across sessions. The &ldquo;pen&rdquo; &mdash; captures what&rsquo;s worth remembering.</span>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem;">MEMORY.md &bull; USER.md &bull; topic files &bull; daily logs</div></div>
+          </div>
+          <div style="background:rgba(0,102,204,0.06);border:1px solid rgba(0,102,204,0.2);border-top:none;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
+            <div class="tag tag-blue" style="flex-shrink:0;">Layer 3</div>
+            <div><strong style="color:var(--text-primary);">Session Context</strong> <span style="color:var(--text-muted);">&mdash; Ephemeral conversation state. High-value items promoted to Layer 2. Lost when session ends.</span></div>
+          </div>
+          <div style="background:rgba(103,83,172,0.06);border:1px solid rgba(103,83,172,0.2);border-top:none;border-radius:0 0 10px 10px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;">
+            <div class="tag tag-purple" style="flex-shrink:0;">Layer 4</div>
+            <div><strong style="color:var(--text-primary);">Consolidation</strong> <span style="color:var(--text-muted);">&mdash; Background process that reorganizes Layer 2 between sessions. The &ldquo;editor&rdquo; &mdash; prunes, merges, resolves contradictions.</span>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);margin-top:0.2rem;">Claude Auto Dream &bull; Codex Memories pipeline &bull; Letta sleep-time compute</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dream cycle -->
+      <div class="animate-on-scroll" style="margin-top:2.5rem;">
+        <div class="h2" style="margin-bottom:0.75rem;">The Consolidation Cycle</div>
+        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;justify-content:center;">
+          <div style="background:var(--bg-elevated);border:2px solid var(--rh-purple);border-radius:10px;padding:0.8rem 1rem;text-align:center;min-width:110px;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-purple);text-transform:uppercase;">Phase 1</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;">Orient</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Read current memory state</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#6753AC" stroke-width="2" stroke-dasharray="4,3" style="animation:dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#6753AC"/></svg>
+          <div style="background:var(--bg-elevated);border:2px solid var(--rh-teal);border-radius:10px;padding:0.8rem 1rem;text-align:center;min-width:110px;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-teal);text-transform:uppercase;">Phase 2</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;">Gather</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Review past sessions</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#009596" stroke-width="2" stroke-dasharray="4,3" style="animation:dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#009596"/></svg>
+          <div style="background:var(--bg-elevated);border:2px solid var(--rh-blue);border-radius:10px;padding:0.8rem 1rem;text-align:center;min-width:110px;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-blue-light);text-transform:uppercase;">Phase 3</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;">Consolidate</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Merge, prune, resolve</div>
+          </div>
+          <svg width="28" height="20" viewBox="0 0 28 20"><line x1="2" y1="10" x2="22" y2="10" stroke="#0066CC" stroke-width="2" stroke-dasharray="4,3" style="animation:dash-flow 1.5s linear infinite;"/><polygon points="20,5 28,10 20,15" fill="#0066CC"/></svg>
+          <div style="background:var(--bg-elevated);border:2px solid var(--rh-green);border-radius:10px;padding:0.8rem 1rem;text-align:center;min-width:110px;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-green);text-transform:uppercase;">Phase 4</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.85rem;">Prune</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Remove stale entries</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key insight -->
+      <div class="animate-on-scroll" style="margin-top:2rem;display:flex;gap:2rem;flex-wrap:wrap;">
+        <div class="card" style="flex:1;min-width:250px;border-left:4px solid var(--rh-green);border-radius:0 12px 12px 0;">
+          <div class="stat-value" style="color:var(--rh-green);">6x</div>
+          <div class="stat-label">Task completion improvement</div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-top:0.5rem;">Harvey (legal AI, $5B valuation) reported 6x improvement after enabling Claude Dreaming. Agents remembered filetype workarounds and tool-specific patterns between sessions.</p>
+        </div>
+        <div class="card" style="flex:1;min-width:250px;border-left:4px solid var(--rh-purple);border-radius:0 12px 12px 0;">
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">The Governance Gate</div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">Claude Dreaming and Anthropic&rsquo;s Managed Agents both require <strong style="color:var(--text-primary);">human approval</strong> before reorganized memory is deployed. This prevents autonomous self-modification of organizational memory. The pattern: propose &rarr; review &rarr; approve/reject &rarr; deploy.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ADVERSARIAL MEMORY -->
+  <section id="adversarial">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ADVERSARIAL MEMORY</div>
+      <h2 class="display-lg animate-on-scroll">Memory Security Is Existential</h2>
+      <p class="lead animate-on-scroll">Stateless LLMs have bounded threat surfaces &mdash; the attack ends when the context window closes. Memory makes attacks <strong style="color:var(--text-primary);">persistent, propagating, and implicitly trusted</strong>. OWASP classified this as ASI06 in the 2026 Agentic AI Top 10.</p>
+
+      <!-- Attack vectors -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:2rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-top:3px solid var(--rh-red);">
+          <div class="tag tag-red" style="margin-bottom:0.5rem;">NeurIPS 2025</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">MINJA Attack</h3>
+          <div class="stat-value" style="color:var(--rh-red);font-size:1.5rem;margin:0.25rem 0;">&gt;95%</div>
+          <div class="stat-label">injection success rate</div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-top:0.5rem;">Injects malicious records via <em>query-only</em> interaction &mdash; no elevated privileges needed. Uses &ldquo;bridging steps&rdquo; and temporal decoupling. Existing defenses fail because they detect malicious <em>actions</em>, not corrupted <em>beliefs</em>.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-top:3px solid var(--rh-orange);">
+          <div class="tag tag-orange" style="margin-bottom:0.5rem;">Cascade Risk</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Memory Contamination</h3>
+          <div class="stat-value" style="color:var(--rh-orange);font-size:1.5rem;margin:0.25rem 0;">87%</div>
+          <div class="stat-label">downstream decisions poisoned</div>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-top:0.5rem;">One compromised agent&rsquo;s memory propagates to 87% of downstream agents within 4 hours in multi-agent systems. No external validation mechanism exists &mdash; agents trust their own memories implicitly.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-3" style="border-top:3px solid var(--rh-purple);">
+          <div class="tag tag-purple" style="margin-bottom:0.5rem;">December 2025</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">MemoryGraft &amp; SpAIware</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-top:0.5rem;"><strong style="color:var(--text-primary);">MemoryGraft</strong> implants malicious &ldquo;successful experiences&rdquo; into long-term memory &mdash; structurally indistinguishable from legitimate context. <strong style="color:var(--text-primary);">SpAIware</strong> persists across sessions through document injection.</p>
+        </div>
+      </div>
+
+      <!-- Defense taxonomy -->
+      <div class="animate-on-scroll" style="margin-top:2rem;">
+        <div class="h2" style="margin-bottom:0.75rem;">Defense by Memory Lifecycle Phase</div>
+        <div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap;">
+          <div style="flex:1;min-width:160px;background:rgba(238,0,0,0.05);border:1px solid var(--border-subtle);border-radius:10px 0 0 10px;padding:1rem;text-align:center;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-red);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;">Write-Time</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">PII/secrets scanning, schema validation, embedding similarity dedup, content policy gates</div>
+          </div>
+          <div style="flex:1;min-width:160px;background:rgba(0,149,150,0.05);border:1px solid var(--border-subtle);border-left:none;padding:1rem;text-align:center;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-teal);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;">Storage</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Provenance tracking, immutable versioning, scope isolation, Bayesian trust scoring</div>
+          </div>
+          <div style="flex:1;min-width:160px;background:rgba(0,102,204,0.05);border:1px solid var(--border-subtle);border-left:none;padding:1rem;text-align:center;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-blue-light);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;">Read-Time</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Confidence-weighted retrieval, contradiction detection, cross-source verification</div>
+          </div>
+          <div style="flex:1;min-width:160px;background:rgba(103,83,172,0.05);border:1px solid var(--border-subtle);border-left:none;border-radius:0 10px 10px 0;padding:1rem;text-align:center;">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--rh-purple);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;">Consolidation</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Human governance gate, inspectable output, memory quarantine for suspicious entries</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- BENCHMARKING -->
+  <section id="benchmarks">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">BENCHMARKING</div>
+      <h2 class="display-lg animate-on-scroll">Measuring Memory Quality</h2>
+      <p class="lead animate-on-scroll">Seven major benchmarks, each measuring different abilities at different scales. Vendors cite whichever benchmark favors their architecture. Understanding what each actually measures is essential for evaluation.</p>
+
+      <!-- Benchmark comparison -->
+      <div class="animate-on-scroll" style="margin-top:2rem;overflow-x:auto;">
+        <table class="compare-table" style="min-width:750px;">
+          <thead><tr><th>Benchmark</th><th>Scale</th><th>Abilities Tested</th><th>Top Score</th><th>Key Insight</th></tr></thead>
+          <tbody>
+            <tr><td class="col-dim">LongMemEval</td><td>~115K tokens</td><td>5 (extraction, multi-session, temporal)</td><td>94.4% (Mem0)</td><td>De facto industry standard; moderate scale</td></tr>
+            <tr><td class="col-dim">BEAM-1M</td><td>1M tokens</td><td>10 (adds contradiction, event ordering)</td><td>73.9% (Hindsight)</td><td>First production-scale benchmark</td></tr>
+            <tr><td class="col-dim">BEAM-10M</td><td>10M tokens</td><td>Same 10 abilities</td><td style="color:var(--rh-orange);font-weight:600;">64.1%</td><td style="color:var(--rh-orange);">~25% drop from 1M &rarr; 10M tokens</td></tr>
+            <tr><td class="col-dim">LoCoMo</td><td>~35 sessions</td><td>4 (single-hop, temporal, multi-hop, open)</td><td>92.5% (Mem0)</td><td>Compact; good for quick eval</td></tr>
+            <tr><td class="col-dim">STATE-Bench</td><td>450 tasks</td><td>Improvement with experience</td><td>(Microsoft, 2026)</td><td>Tests whether agents learn, not just recall</td></tr>
+            <tr><td class="col-dim">MemPalace (LongMemEval)</td><td>~115K tokens</td><td>Same 5 as LongMemEval</td><td>96.6%</td><td>Verbatim storage; local-only</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- The gap -->
+      <div class="animate-on-scroll" style="margin-top:2rem;padding:1.25rem;background:rgba(238,0,0,0.04);border:1px solid rgba(238,0,0,0.2);border-radius:12px;">
+        <div style="display:flex;align-items:flex-start;gap:1rem;">
+          <div style="font-size:1.5rem;flex-shrink:0;">&#9888;</div>
+          <div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:0.3rem;">The Benchmark-to-Production Gap</div>
+            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.5;">Headline scores (92-96%) come from moderate-scale benchmarks. At 10M tokens &mdash; roughly a year of daily agent conversations &mdash; the best system scores 64.1%. No benchmark tests compliance (GDPR erasure, HIPAA isolation), multi-tenant isolation, security (injection resistance), or production reliability under scale degradation. These are the dimensions that matter most for enterprise deployments.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- KV-CACHE -->
+  <section id="kv-cache">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">KV-CACHE OPTIMIZATION</div>
+      <h2 class="display-lg animate-on-scroll">Why Memory Ordering Affects Inference Cost</h2>
+      <p class="lead animate-on-scroll">The order in which memory items are assembled into the context window directly determines KV-cache hit rates. This is a cross-layer optimization that only a platform vendor with control over both the memory service and the inference engine can deliver.</p>
+
+      <!-- How it works -->
+      <div class="animate-on-scroll" style="margin-top:2rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+          <div class="card" style="border-left:4px solid var(--rh-red);border-radius:0 12px 12px 0;">
+            <div class="tag tag-red" style="margin-bottom:0.5rem;">The Problem</div>
+            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.5;">If 100 concurrent agents receive memory in a <strong style="color:var(--text-primary);">different order</strong> every request, each pays full prefill cost. KV-cache can&rsquo;t reuse any previous computation because the prefix has changed.</p>
+            <div style="margin-top:0.75rem;padding:0.5rem;background:var(--bg-card);border-radius:6px;font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);">
+              Cache miss &rarr; full recomputation &rarr; 2,850ms TTFT
+            </div>
+          </div>
+          <div class="card" style="border-left:4px solid var(--rh-green);border-radius:0 12px 12px 0;">
+            <div class="tag tag-green" style="margin-bottom:0.5rem;">The Solution</div>
+            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.5;">If memory is returned in a <strong style="color:var(--text-primary);">deterministic, stable order</strong> &mdash; static prefixes before dynamic content &mdash; all agents sharing the same memory tier pay prefill cost only once.</p>
+            <div style="margin-top:0.75rem;padding:0.5rem;background:var(--bg-card);border-radius:6px;font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);">
+              Cache hit &rarr; reuse KV pairs &rarr; 340ms TTFT (8.4x faster)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="animate-on-scroll" style="margin-top:2rem;display:flex;gap:2rem;flex-wrap:wrap;padding:1.25rem;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;">
+        <div style="text-align:center;flex:1;min-width:120px;">
+          <div class="stat-value" style="color:var(--rh-teal);">57x</div>
+          <div class="stat-label">TTFT improvement</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">llm-d prefix-cache-aware routing</div>
+        </div>
+        <div style="text-align:center;flex:1;min-width:120px;">
+          <div class="stat-value">87.4%</div>
+          <div class="stat-label">Cache hit rate</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">llm-d production telemetry</div>
+        </div>
+        <div style="text-align:center;flex:1;min-width:120px;">
+          <div class="stat-value" style="color:var(--rh-green);">74%</div>
+          <div class="stat-label">Hit rate with ordered memory</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Static prefixes before dynamic</div>
+        </div>
+        <div style="text-align:center;flex:1;min-width:120px;">
+          <div class="stat-value" style="color:var(--rh-red);">59%</div>
+          <div class="stat-label">Cost reduction</div>
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-top:0.15rem;">Deterministic ordering</div>
+        </div>
+      </div>
+
+      <!-- Ordering principle -->
+      <div class="animate-on-scroll" style="margin-top:1.5rem;padding:1.25rem;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;">
+        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--rh-red);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Ordering Principle</div>
+        <p style="font-size:0.92rem;color:var(--text-primary);line-height:1.55;max-width:72ch;">
+          High-stability, high-weight memories first (enterprise/org scope &mdash; shared by the most agents, change infrequently, maximum cache reuse). Dynamic, session-specific content last. Variable content (timestamps, session IDs) at the very end.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- MULTI-MODAL -->
+  <section id="multimodal">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MULTI-MODAL MEMORY</div>
+      <h2 class="display-lg animate-on-scroll">Beyond Text: A 12&ndash;24 Month Horizon</h2>
+      <p class="lead animate-on-scroll">Multi-modal <em>input processing</em> (a model that sees an image) is not multi-modal <em>memory</em> (an agent that remembers what it saw). The distinction matters for architecture.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-top:3px solid var(--rh-blue);">
+          <div class="tag tag-blue" style="margin-bottom:0.5rem;">Today</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Multi-Modal Processing</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">Model accepts images/audio/video as <em>transient inputs</em>. Reasons over them in context. Does not retain them after the session ends. The model &ldquo;sees&rdquo; but does not &ldquo;remember.&rdquo;</p>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-top:3px solid var(--rh-teal);">
+          <div class="tag tag-teal" style="margin-bottom:0.5rem;">Emerging</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Multi-Modal Memory</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;">Agent <em>persists, organizes, and retrieves</em> non-text experiences across sessions. Recalls a chart from a meeting, a frame from a scan. Requires encoding, storage, cross-modal retrieval, and consolidation.</p>
+        </div>
+      </div>
+
+      <!-- Phasing -->
+      <div class="animate-on-scroll" style="margin-top:2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        <div style="border-top:3px solid var(--rh-green);padding-top:1rem;">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--rh-green);text-transform:uppercase;letter-spacing:0.15em;">Near-Term</div>
+          <div style="font-family:var(--font-sans);font-weight:600;font-size:0.9rem;margin:0.3rem 0;">Convert-to-Text Bridge</div>
+          <p style="font-size:0.78rem;color:var(--text-secondary);">Caption images, transcribe audio, extract text from documents. Store the text representation. Low cost, works today.</p>
+        </div>
+        <div style="border-top:3px solid var(--rh-blue);padding-top:1rem;">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--rh-blue-light);text-transform:uppercase;letter-spacing:0.15em;">Medium-Term</div>
+          <div style="font-family:var(--font-sans);font-weight:600;font-size:0.9rem;margin:0.3rem 0;">Multi-Modal Embeddings</div>
+          <p style="font-size:0.78rem;color:var(--text-secondary);">Unified embedding space (CLIP, ImageBind, Gemini Embedding 2). Cross-modal retrieval. Storage asymmetry challenges.</p>
+        </div>
+        <div style="border-top:3px solid var(--rh-purple);padding-top:1rem;">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--rh-purple);text-transform:uppercase;letter-spacing:0.15em;">Longer-Term</div>
+          <div style="font-family:var(--font-sans);font-weight:600;font-size:0.9rem;margin:0.3rem 0;">Full Multi-Modal Providers</div>
+          <p style="font-size:0.78rem;color:var(--text-secondary);">Native multi-modal memory providers. OmniMem reported +411% F1 improvement. Schema extensibility (<span style="font-family:var(--font-mono);font-size:0.75rem;">source_modality</span> fields) should be baked in now.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CTA -->
+  <section id="resources" style="text-align:center;">
+    <div class="section-inner" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="section-label animate-on-scroll">CONTINUE THE SERIES</div>
+      <h2 class="display-lg animate-on-scroll">What&rsquo;s Next</h2>
+      <p class="lead animate-on-scroll" style="text-align:center;max-width:60ch;">
+        Parts 1&ndash;3 cover the concepts and research. Next: how agent memory plays out in regulated enterprise verticals, and the strategic direction.
+      </p>
+      <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;justify-content:center;">
+        <a href="agent-memory-foundations.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.9rem;transition:border-color 180ms,color 180ms;">
+          &#8592; Part 2: Foundations
+        </a>
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:var(--rh-red);color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.9rem;transition:background 180ms;">
+          View All Presentations &#x2192;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2rem 1.5rem;text-align:center;border-top:1px solid var(--border-subtle);">
+    <p style="font-size:0.8rem;color:var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-top:0.25rem;">Based on Phase 2 research (docs 09&ndash;16), Agent Memory &amp; Knowledge Research Series, 2026</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id)); });
+    }, { threshold: 0.25 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

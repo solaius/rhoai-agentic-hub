@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory — Foundations</title>
+  <meta name="description" content="Phase 1 research findings: the solution landscape, standards gaps, taxonomy evaluation, and recommended decomposition for agent memory." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:#151515;--bg-elevated:#1a1a1a;--bg-card:#202020;
+      --text-primary:#ffffff;--text-secondary:#d2d2d2;--text-muted:#8a8a8a;
+      --rh-red:#EE0000;--rh-red-dark:#A30000;--rh-teal:#009596;--rh-blue:#0066CC;--rh-blue-light:#4394e5;
+      --rh-purple:#6753AC;--rh-green:#3E8635;--rh-orange:#F4B400;
+      --border-subtle:#333333;--border-muted:#444444;
+      --font-sans:"Red Hat Display","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-text:"Red Hat Text","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-mono:"Red Hat Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      --fs-display-xl:2.8rem;--fs-display-lg:2rem;--fs-h2:1.5rem;--fs-body-lead:1.15rem;--fs-body:0.95rem;--fs-label:0.7rem;--fs-small:0.6rem;
+      --space-xs:0.5rem;--space-sm:0.75rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem;--space-2xl:3rem;
+      --content-max:1100px;--nav-height:56px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg-canvas);color:var(--text-primary);font-family:var(--font-text);font-size:var(--fs-body);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(21,21,21,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-subtle)}
+    .nav-inner{max-width:var(--content-max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1.5rem}
+    .nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none}
+    .hat{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--rh-red);color:white;font-family:var(--font-sans);font-weight:800;font-size:0.65rem;border-radius:4px}
+    .nav-title{font-family:var(--font-sans);font-weight:600;font-size:0.9rem;color:var(--text-primary)}
+    .nav-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+    .nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.78rem;font-family:var(--font-text);transition:color 0.2s;white-space:nowrap}
+    .nav-links a:hover,.nav-links a.active{color:var(--text-primary)}
+
+    section{padding:5rem 1.5rem;scroll-margin-top:calc(var(--nav-height) + 16px)}
+    .section-inner{max-width:var(--content-max);margin:0 auto}
+    .section-label{font-family:var(--font-mono);font-size:var(--fs-label);font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--rh-red);margin-bottom:var(--space-sm)}
+    .section-divider{width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(238,0,0,0.18),rgba(238,0,0,0.35),rgba(238,0,0,0.18),transparent)}
+
+    .display-xl{font-family:var(--font-sans);font-size:var(--fs-display-xl);line-height:1.05;letter-spacing:-0.03em;font-weight:800;color:var(--text-primary);margin:0}
+    .display-lg{font-family:var(--font-sans);font-size:var(--fs-display-lg);line-height:1.1;letter-spacing:-0.02em;font-weight:700;color:var(--text-primary);margin:0 0 var(--space-md)}
+    .h2{font-family:var(--font-sans);font-size:var(--fs-h2);font-weight:700;color:var(--text-primary);margin:0 0 var(--space-sm)}
+    .lead{font-size:var(--fs-body-lead);line-height:1.5;color:var(--text-secondary);margin:var(--space-sm) 0 0;max-width:80ch}
+    .body-text{font-size:var(--fs-body);line-height:1.65;color:var(--text-secondary);margin:var(--space-md) 0 0;max-width:72ch}
+    .accent{color:var(--rh-red)}
+
+    .hero{min-height:85vh;display:flex;align-items:center;position:relative;padding-top:calc(var(--nav-height) + 3rem);overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-80px;right:-120px;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle,rgba(238,0,0,0.14) 0%,transparent 70%);pointer-events:none}
+
+    .card{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;padding:1.5rem;transition:border-color 300ms,transform 200ms,box-shadow 300ms}
+    .card:hover{border-color:rgba(238,0,0,0.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(238,0,0,0.08)}
+    .tag{font-family:var(--font-mono);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;padding:0.2rem 0.6rem;border-radius:3px;display:inline-block}
+    .tag-red{background:rgba(238,0,0,0.12);color:var(--rh-red)}.tag-teal{background:rgba(0,149,150,0.12);color:var(--rh-teal)}
+    .tag-blue{background:rgba(0,102,204,0.12);color:var(--rh-blue-light)}.tag-green{background:rgba(62,134,53,0.12);color:var(--rh-green)}
+    .tag-purple{background:rgba(103,83,172,0.12);color:var(--rh-purple)}.tag-orange{background:rgba(244,180,0,0.12);color:var(--rh-orange)}
+    .stat-value{font-family:var(--font-sans);font-size:2rem;font-weight:800;line-height:1}
+    .stat-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.25rem}
+
+    .animate-on-scroll{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease-out,transform 0.6s ease-out}
+    .animate-on-scroll.visible{opacity:1;transform:translateY(0)}
+    .stagger-1{transition-delay:80ms}.stagger-2{transition-delay:160ms}.stagger-3{transition-delay:240ms}.stagger-4{transition-delay:320ms}
+
+    .quote{border-left:3px solid var(--rh-red);padding:1rem 1.5rem;background:rgba(238,0,0,0.04);border-radius:0 8px 8px 0;margin:1.5rem 0}
+    .quote p{font-family:var(--font-text);font-size:1rem;color:var(--text-primary);font-style:italic;line-height:1.6;margin:0}
+    .quote cite{font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;font-style:normal;display:block;margin-top:0.5rem}
+
+    .compare-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:0.82rem}
+    .compare-table th{font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0.6rem 0.75rem;text-align:left;border-bottom:2px solid var(--border-subtle);white-space:nowrap}
+    .compare-table td{padding:0.5rem 0.75rem;border-bottom:1px solid rgba(51,51,51,0.5);color:var(--text-secondary);vertical-align:top}
+    .compare-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .compare-table .col-dim{color:var(--text-muted);font-family:var(--font-text);font-weight:600;font-size:0.82rem;min-width:110px}
+    .gov-enterprise{color:var(--rh-green);font-weight:600}.gov-moderate{color:var(--rh-blue-light)}.gov-emerging{color:var(--rh-orange)}.gov-none{color:var(--text-muted)}
+
+    @keyframes dash-flow{to{stroke-dashoffset:-28}}
+    @keyframes glow-pulse{0%,100%{box-shadow:0 0 15px rgba(238,0,0,0.1)}50%{box-shadow:0 0 30px rgba(238,0,0,0.25)}}
+
+    @media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:180ms!important}.animate-on-scroll{opacity:1;transform:none}html{scroll-behavior:auto}}
+    @media(max-width:768px){:root{--fs-display-xl:2rem;--fs-display-lg:1.5rem;--fs-body-lead:1rem}section{padding:3rem 1.25rem}.nav-links{display:none}.hero{min-height:65vh}.taxonomy-grid{grid-template-columns:1fr!important}.camp-grid{grid-template-columns:1fr!important}}
+    @media(max-width:1024px){.nav-links{gap:0.8rem}}
+    @media print{*{print-color-adjust:exact;-webkit-print-color-adjust:exact}nav{display:none}}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html" style="text-decoration:none;">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory Series</span>
+      </a>
+      <div class="nav-links">
+        <a href="#landscape">Landscape</a>
+        <a href="#standards">Standards</a>
+        <a href="#taxonomy">Taxonomy</a>
+        <a href="#decomposition">Decomposition</a>
+        <a href="#approaches">Approaches</a>
+        <a href="#decisions">Decisions</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT MEMORY SERIES &mdash; PART 2</div>
+      <h1 class="display-xl animate-on-scroll" style="max-width:16ch;"><span class="accent">Foundations</span><br>Phase 1 Research</h1>
+      <p class="lead animate-on-scroll stagger-1" style="margin-top:1rem;">
+        What we found when we surveyed 16+ solutions, mapped the standards landscape, and evaluated four competing taxonomies. The research that informs how the agent memory problem space should be decomposed.
+      </p>
+      <div class="animate-on-scroll stagger-2" style="display:flex;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap;">
+        <div><div class="stat-value" style="color:var(--rh-red);">16+</div><div class="stat-label">Solutions surveyed</div></div>
+        <div><div class="stat-value">8</div><div class="stat-label">Research documents</div></div>
+        <div><div class="stat-value" style="color:var(--rh-teal);">7</div><div class="stat-label">Cross-solution gaps</div></div>
+        <div><div class="stat-value">4</div><div class="stat-label">Competing taxonomies</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SOLUTION LANDSCAPE -->
+  <section id="landscape">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE SOLUTION LANDSCAPE</div>
+      <h2 class="display-lg animate-on-scroll">16 Solutions, Three Camps</h2>
+      <p class="lead animate-on-scroll">The field divides into hyperscaler managed services, enterprise database-native, and open-source startups/frameworks. Each has strengths; none covers the full enterprise need.</p>
+
+      <!-- Comparison table -->
+      <div class="animate-on-scroll" style="margin-top:2rem;overflow-x:auto;">
+        <table class="compare-table" style="min-width:850px;">
+          <thead><tr>
+            <th>Solution</th><th>Category</th><th>License</th><th>Governance</th><th>Deployment</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="col-dim">Mem0</td><td>Memory startup</td><td>Apache 2.0 (OSS) + cloud</td><td class="gov-emerging">Emerging</td><td>Cloud, self-hosted Docker, local MCP</td></tr>
+            <tr><td class="col-dim">Letta (MemGPT)</td><td>Memory + agent platform</td><td>Apache 2.0</td><td class="gov-emerging">Emerging</td><td>Self-hosted, cloud API, desktop</td></tr>
+            <tr><td class="col-dim">Zep / Graphiti</td><td>Temporal knowledge graph</td><td>Graphiti: Apache 2.0; Cloud: proprietary</td><td class="gov-moderate">Moderate (cloud)</td><td>Cloud-only; Graphiti self-hostable</td></tr>
+            <tr><td class="col-dim">Cognee</td><td>Knowledge graph / memory</td><td>Apache 2.0 core</td><td class="gov-emerging">Emerging</td><td>Cloud, OSS self-hosted</td></tr>
+            <tr><td class="col-dim">OpenViking</td><td>Context database</td><td style="color:var(--rh-red);font-weight:600;">AGPL-3.0</td><td class="gov-none">None</td><td>Self-hosted, Docker</td></tr>
+            <tr><td class="col-dim">MemPalace</td><td>Memory / dev tool</td><td>MIT</td><td class="gov-none">None</td><td>Local-first, Docker</td></tr>
+            <tr><td class="col-dim">Oracle AI Agent Memory</td><td>Enterprise DB-native</td><td>Proprietary SDK</td><td class="gov-enterprise">Enterprise</td><td>Oracle Database (cloud / on-prem)</td></tr>
+            <tr><td class="col-dim">AWS AgentCore Memory</td><td>Hyperscaler managed</td><td>Proprietary</td><td class="gov-moderate">Moderate</td><td>AWS cloud-only</td></tr>
+            <tr><td class="col-dim">Google Memory Bank</td><td>Hyperscaler managed</td><td>Proprietary</td><td class="gov-moderate">Moderate</td><td>Google Cloud-only</td></tr>
+            <tr><td class="col-dim">OpenAI server-side</td><td>Provider-managed</td><td>Proprietary</td><td class="gov-none">Low</td><td>OpenAI cloud-only</td></tr>
+            <tr><td class="col-dim">Claude Dreaming</td><td>Provider consolidation</td><td>Proprietary</td><td class="gov-emerging">Emerging</td><td>Anthropic cloud-only</td></tr>
+            <tr><td class="col-dim">LangGraph / LangMem</td><td>Framework-native</td><td>Apache 2.0</td><td class="gov-emerging">Emerging</td><td>Self-hosted, LangSmith cloud</td></tr>
+            <tr><td class="col-dim">CrewAI</td><td>Framework-native</td><td>Apache 2.0 (OSS)</td><td class="gov-none">None (OSS)</td><td>Local, managed cloud</td></tr>
+            <tr><td class="col-dim">MemoryHub</td><td>Internal prototype</td><td>Apache 2.0</td><td class="gov-enterprise">Enterprise-oriented</td><td>OpenShift-native</td></tr>
+            <tr><td class="col-dim">Microsoft GraphRAG</td><td>Knowledge graph / RAG</td><td>MIT</td><td class="gov-none">None</td><td>Self-hosted</td></tr>
+            <tr><td class="col-dim">Interloom</td><td>Tacit knowledge</td><td>Proprietary</td><td class="gov-emerging">Emerging</td><td>Cloud SaaS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 7 Gaps -->
+      <div class="animate-on-scroll" style="margin-top:2.5rem;">
+        <div class="h2" style="margin-bottom:0.75rem;">Seven Cross-Solution Gaps</div>
+        <p class="body-text" style="margin-top:0;margin-bottom:1.25rem;">Despite 16+ solutions, seven gaps remain unfilled across the entire landscape:</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0.75rem;">
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-red);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 1: Governance + K8s + Air-Gap + Open</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">No solution combines all four. This is the whitespace.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-teal);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 2: Framework Portability</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Memories are locked to the framework that created them. No standard transfer format.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-blue);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 3: Inspectable Compaction</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Most compaction is opaque. EU AI Act requires human-readable output.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-purple);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 4: Multi-Session at Scale</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Hardest benchmark category across all systems. Mem0: 48.6% at 10M tokens.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-orange);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 5: One Substrate or Many?</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">The central design question. Oracle says one; multi-store advocates say it depends on scale.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-green);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 6: Quality Metrics</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">No standard metric for compaction quality. Benchmarks measure retrieval, not write-path quality.</p>
+          </div>
+          <div class="card" style="padding:1rem 1.25rem;border-left:3px solid var(--rh-red);border-radius:0 10px 10px 0;">
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;">Gap 7: Consolidation Risk</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">$62M+ into 5+ startups with near-identical approaches. Adopting one risks picking a non-survivor.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- STANDARDS -->
+  <section id="standards">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">STANDARDS &amp; PROTOCOLS</div>
+      <h2 class="display-lg animate-on-scroll">No Memory Standard Exists</h2>
+      <p class="lead animate-on-scroll">MCP standardizes how agents call tools. A2A standardizes how agents talk to each other. But neither defines a schema for agent memory. The memory layer sits between transport and storage with <strong style="color:var(--text-primary);">zero standards coverage</strong>.</p>
+
+      <!-- Standards stack diagram -->
+      <div class="animate-on-scroll" style="margin-top:2rem;max-width:650px;margin-left:auto;margin-right:auto;">
+        <div style="display:flex;flex-direction:column;gap:0;text-align:center;">
+          <div style="background:rgba(0,102,204,0.08);border:1px solid rgba(0,102,204,0.25);border-radius:10px 10px 0 0;padding:1rem;">
+            <div class="tag tag-blue" style="margin-bottom:0.3rem;">Standardized</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;">Agent-to-Agent Communication</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">A2A v1.0 &bull; AgentCards &bull; contextId</div>
+          </div>
+          <div style="background:rgba(238,0,0,0.08);border:1px solid rgba(238,0,0,0.3);border-top:none;padding:1.25rem;position:relative;">
+            <div style="position:absolute;top:-1px;left:20%;right:20%;height:3px;background:var(--rh-red);"></div>
+            <div class="tag tag-red" style="margin-bottom:0.3rem;">No Standard</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:1.05rem;color:var(--rh-red);">Agent Memory Layer</div>
+            <div style="font-family:var(--font-text);font-size:0.82rem;color:var(--text-secondary);margin-top:0.3rem;">No portable schema &bull; No standard wire format &bull; No memory API contract</div>
+          </div>
+          <div style="background:rgba(0,149,150,0.08);border:1px solid rgba(0,149,150,0.25);border-top:none;padding:1rem;">
+            <div class="tag tag-teal" style="margin-bottom:0.3rem;">Standardized</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;">Agent-to-Tool Transport</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">MCP &bull; tools/list &bull; tools/call &bull; Streamable HTTP</div>
+          </div>
+          <div style="background:rgba(103,83,172,0.06);border:1px solid rgba(103,83,172,0.2);border-top:none;border-radius:0 0 10px 10px;padding:1rem;">
+            <div class="tag tag-purple" style="margin-bottom:0.3rem;">Infrastructure</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;">Storage Substrate</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">PostgreSQL &bull; Redis &bull; Vector DBs &bull; Graph DBs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- What exists -->
+      <div class="animate-on-scroll" style="margin-top:2.5rem;">
+        <div class="h2" style="margin-bottom:0.75rem;">What Does Exist</div>
+        <div style="overflow-x:auto;">
+          <table class="compare-table">
+            <thead><tr><th>Convention / Spec</th><th>Status</th><th>What It Covers</th><th>What It Doesn&rsquo;t</th></tr></thead>
+            <tbody>
+              <tr><td class="col-dim">MCP memory tools</td><td>De facto pattern</td><td>Transport for memory operations; informal verb convergence (<span style="font-family:var(--font-mono);font-size:0.78rem;">add_memory</span>, <span style="font-family:var(--font-mono);font-size:0.78rem;">search_memories</span>)</td><td>No schema for memory records; no semantic contract</td></tr>
+              <tr><td class="col-dim">AGENTS.md / CLAUDE.md</td><td>AAIF project</td><td>Procedural memory for coding agents (project context files)</td><td>Not dynamic; human-authored only; no episodic memory</td></tr>
+              <tr><td class="col-dim">Open Responses</td><td>Emerging spec</td><td>Conversation state format; <span style="font-family:var(--font-mono);font-size:0.78rem;">previous_response_id</span> chaining; compaction</td><td>Working memory only; no cross-session persistence</td></tr>
+              <tr><td class="col-dim">A2A contextId</td><td>A2A v1.0</td><td>Session-scoped task grouping</td><td>Not memory; no cross-session; no schema for memory state</td></tr>
+              <tr><td class="col-dim">PAM (arXiv)</td><td>Academic paper</td><td>Full portability protocol with 5-type model, Merkle-DAG provenance, injection defense</td><td>Unadopted; not proposed to any standards body</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="animate-on-scroll" style="margin-top:1.5rem;padding:1.25rem;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;text-align:center;">
+        <p style="font-family:var(--font-sans);font-weight:600;font-size:1rem;color:var(--text-primary);max-width:60ch;margin:0 auto;">
+          A platform that ships memory primitives <em>before</em> standards converge gets to shape them. A platform that waits will inherit them.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- TAXONOMY -->
+  <section id="taxonomy">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">INDUSTRY LENSES</div>
+      <h2 class="display-lg animate-on-scroll">Three Lenses for Decomposing the Space</h2>
+      <p class="lead animate-on-scroll">The industry has converged on three analytical lenses for understanding agent memory. Each answers a different question &mdash; and a sound product architecture needs all three.</p>
+
+      <div class="taxonomy-grid animate-on-scroll" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-top:2rem;">
+        <!-- Lens 1: CoALA -->
+        <div class="card" style="border-top:3px solid var(--rh-teal);">
+          <div class="tag tag-teal" style="margin-bottom:0.75rem;">What is stored?</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">The CoALA 4-Type Model</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">The dominant academic and vendor taxonomy (Princeton, 2023). Used by Oracle, IBM, Mem0, and most major frameworks.</p>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Working</strong> &mdash; in-context, session-bound</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Episodic</strong> &mdash; what happened</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Semantic</strong> &mdash; durable facts</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Procedural</strong> &mdash; how to do things</li>
+          </ul>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border-subtle);font-style:italic;">Oracle&rsquo;s key claim: four access patterns over one substrate, not four systems.</div>
+        </div>
+
+        <!-- Lens 2: Scope -->
+        <div class="card" style="border-top:3px solid var(--rh-purple);">
+          <div class="tag tag-purple" style="margin-bottom:0.75rem;">Who can access what?</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Scope &amp; Governance Models</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">Orthogonal to the type model &mdash; classifies access control, not content type. Any memory of any CoALA type can sit at any scope tier.</p>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>Mem0: user / agent / run / app dimensions</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>Oracle: per-record scoping fields</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-purple);"></span>MemoryHub: 5&ndash;6 hierarchical tiers</li>
+          </ul>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border-subtle);font-style:italic;">Implementations vary; the need for record-level scope is universal.</div>
+        </div>
+
+        <!-- Lens 3: Memory vs RAG -->
+        <div class="card" style="border-top:3px solid var(--rh-blue);">
+          <div class="tag tag-blue" style="margin-bottom:0.75rem;">What data architecture?</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Memory vs. RAG Divide</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">A two-way split by write path. Different data architectures with different governance needs. Complementary, not alternatives.</p>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Memory</strong> &mdash; append-heavy, agent-written, consistency-critical (database concern)</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-blue-light);"></span><strong style="color:var(--text-primary);">RAG</strong> &mdash; batch-indexed, read-only, retrieval-optimized (search concern)</li>
+          </ul>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border-subtle);font-style:italic;">Conflating them in one feature produces an architecture that serves neither well.</div>
+        </div>
+      </div>
+
+      <div class="animate-on-scroll" style="margin-top:1.5rem;padding:1.25rem;background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;">
+        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--rh-red);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Synthesis</div>
+        <p style="font-family:var(--font-text);font-size:0.92rem;color:var(--text-primary);line-height:1.55;max-width:72ch;">
+          A product architecture needs all three lenses: the <strong>CoALA model</strong> defines the internal vocabulary (what the substrate stores and how it&rsquo;s accessed). The <strong>scope model</strong> defines governance (who can read/write). The <strong>Memory-vs-RAG divide</strong> is the architectural guardrail (don&rsquo;t conflate a database concern with a search concern).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- RECOMMENDED DECOMPOSITION -->
+  <section id="decomposition">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">PUTTING IT TOGETHER</div>
+      <h2 class="display-lg animate-on-scroll">3 Subsystems + 2 Cross-Cutting Dimensions</h2>
+      <p class="lead animate-on-scroll">Combining the three industry lenses produces a product-level decomposition: three concerns that need to be addressed (the memory substrate, context management over it, and organizational knowledge) plus two dimensions that apply to all of them.</p>
+
+      <!-- Architecture diagram -->
+      <div class="animate-on-scroll" style="margin-top:2rem;max-width:800px;margin-left:auto;margin-right:auto;">
+        <!-- Cross-cutting bar -->
+        <div style="background:rgba(103,83,172,0.08);border:1px solid rgba(103,83,172,0.3);border-radius:10px 10px 0 0;padding:1rem 1.25rem;text-align:center;">
+          <div class="tag tag-purple" style="margin-bottom:0.25rem;">Cross-Cutting</div>
+          <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;">Governance &amp; Scope</div>
+          <div style="font-size:0.78rem;color:var(--text-secondary);">Scope tiers &bull; RBAC &bull; Audit &bull; Erasure &bull; Provenance &bull; Compliance</div>
+        </div>
+        <div style="background:rgba(0,102,204,0.06);border:1px solid rgba(0,102,204,0.2);border-top:none;padding:0.6rem 1.25rem;text-align:center;">
+          <div style="font-family:var(--font-sans);font-weight:600;font-size:0.85rem;color:var(--rh-blue-light);">Deployment Model</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);">Server-side default &bull; Client-side hybrid for IDE/dev-workflow agents</div>
+        </div>
+        <!-- Three subsystems -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1px solid var(--border-subtle);border-top:none;border-radius:0 0 10px 10px;overflow:hidden;">
+          <div style="background:rgba(238,0,0,0.05);padding:1.25rem;border-right:1px solid var(--border-subtle);">
+            <div class="tag tag-red" style="margin-bottom:0.5rem;">Core Scope</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Agent Memory Substrate</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;margin-bottom:0.5rem;">One governed store exposing the four CoALA access patterns. Append-heavy, agent-written.</p>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">Working &bull; Episodic &bull; Semantic &bull; Procedural</div>
+          </div>
+          <div style="background:rgba(0,149,150,0.05);padding:1.25rem;border-right:1px solid var(--border-subtle);">
+            <div class="tag tag-teal" style="margin-bottom:0.5rem;">Capability Layer</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Context Engineering</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Operates <em>over</em> the substrate &mdash; named and measurable, tightly coupled to the memory store.</p>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:0.5rem;">Compaction &bull; Retrieval &bull; KV-cache</div>
+          </div>
+          <div style="background:rgba(0,102,204,0.04);padding:1.25rem;position:relative;">
+            <div class="tag tag-blue" style="margin-bottom:0.5rem;">Adjacent &bull; Future Scope</div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Agent Knowledge</div>
+            <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.4;">Distinct concern &mdash; enterprise-RAG / knowledge-graph shaped. <strong style="color:var(--text-primary);">Not</strong> semantic memory; different data architecture.</p>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:0.5rem;">Batch-indexed &bull; Read-mostly &bull; Separate scope</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key points about the decomposition -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;">
+        <div class="card animate-on-scroll" style="border-left:4px solid var(--rh-teal);border-radius:0 12px 12px 0;">
+          <div class="tag tag-teal" style="margin-bottom:0.5rem;">Why This Structure</div>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.3rem 0 0.3rem 1.2rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.6rem;width:6px;height:6px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Context engineering is tightly coupled to memory</strong> &mdash; the industry treats it as a sub-discipline, not an independent peer</li>
+            <li style="padding:0.3rem 0 0.3rem 1.2rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.6rem;width:6px;height:6px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Agent knowledge is a different data architecture</strong> &mdash; the Memory-vs-RAG lens confirms these are genuinely separate concerns</li>
+            <li style="padding:0.3rem 0 0.3rem 1.2rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.6rem;width:6px;height:6px;border-radius:50%;background:var(--rh-teal);"></span><strong style="color:var(--text-primary);">Governance is not a subsystem</strong> &mdash; it&rsquo;s the dimension that makes each subsystem <em>governed</em></li>
+          </ul>
+        </div>
+        <div class="card animate-on-scroll" style="border-left:4px solid var(--rh-blue);border-radius:0 12px 12px 0;">
+          <div class="tag tag-blue" style="margin-bottom:0.5rem;">Scope Implications</div>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.3rem 0 0.3rem 1.2rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.6rem;width:6px;height:6px;border-radius:50%;background:var(--rh-blue-light);"></span><strong style="color:var(--text-primary);">Memory Substrate + Context Engineering</strong> form the core initial scope</li>
+            <li style="padding:0.3rem 0 0.3rem 1.2rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.6rem;width:6px;height:6px;border-radius:50%;background:var(--rh-blue-light);"></span><strong style="color:var(--text-primary);">Agent Knowledge</strong> is a real need but a separate effort &mdash; different team, different timeline</li>
+            <li style="padding:0.3rem 0 0.3rem 1.2rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.6rem;width:6px;height:6px;border-radius:50%;background:var(--rh-blue-light);"></span><strong style="color:var(--text-primary);">Procedural memory overlaps the skills registry</strong> &mdash; a cross-domain boundary that must be defined</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- SOLUTION APPROACHES -->
+  <section id="approaches">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">SOLUTION APPROACHES</div>
+      <h2 class="display-lg animate-on-scroll">How Could This Be Built?</h2>
+      <p class="lead animate-on-scroll">Five broad approaches exist for delivering a governed agent memory capability. Each has distinct trade-offs on time-to-market, governance depth, and long-term flexibility. The implementation choice is an engineering decision &mdash; what matters at the strategy level is understanding the trade-offs.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem;margin-top:2rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-left:4px solid var(--rh-red);border-radius:0 12px 12px 0;">
+          <div class="tag tag-red" style="margin-bottom:0.5rem;">Option A</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Build Fresh</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.5rem;">Purpose-built from scratch. Maximum design control; highest cost and longest timeline.</p>
+          <div style="font-size:0.78rem;"><span style="color:var(--rh-green);">+</span> Full control over architecture and governance<br><span style="color:var(--rh-red);">−</span> Longest time to customer; highest investment</div>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-left:4px solid var(--rh-teal);border-radius:0 12px 12px 0;">
+          <div class="tag tag-teal" style="margin-bottom:0.5rem;">Option B</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Productize an Existing Prototype</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.5rem;">Take an existing implementation (MemoryHub, or others) and close the productization gaps.</p>
+          <div style="font-size:0.78rem;"><span style="color:var(--rh-green);">+</span> Faster to first customer; real code to evaluate<br><span style="color:var(--rh-red);">−</span> Inherits existing design decisions and gaps</div>
+        </div>
+        <div class="card animate-on-scroll stagger-3" style="border-left:4px solid var(--rh-blue);border-radius:0 12px 12px 0;">
+          <div class="tag tag-blue" style="margin-bottom:0.5rem;">Option C</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Extend an Existing API Surface</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.5rem;">Build governance on top of an existing memory-capable API (e.g., the Responses API surface).</p>
+          <div style="font-size:0.78rem;"><span style="color:var(--rh-green);">+</span> Leverages existing primitives; governance-focused effort<br><span style="color:var(--rh-red);">−</span> Constrained by the underlying API&rsquo;s design</div>
+        </div>
+        <div class="card animate-on-scroll stagger-4" style="border-left:4px solid var(--rh-purple);border-radius:0 12px 12px 0;">
+          <div class="tag tag-purple" style="margin-bottom:0.5rem;">Option D</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Upstream Contribution</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.5rem;">Contribute memory primitives and governance hooks into upstream projects and consume them.</p>
+          <div style="font-size:0.78rem;"><span style="color:var(--rh-green);">+</span> Standards-aligned; community-validated; Red Hat&rsquo;s traditional model<br><span style="color:var(--rh-red);">−</span> Timeline not Red-Hat-controlled; upstream priorities may diverge</div>
+        </div>
+        <div class="card animate-on-scroll" style="border-left:4px solid var(--rh-orange);border-radius:0 12px 12px 0;">
+          <div class="tag tag-orange" style="margin-bottom:0.5rem;">Option E</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;">Partner with a Memory Vendor</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.5rem;">Integrate a third-party memory solution (Mem0, Zep, etc.) as the primary substrate.</p>
+          <div style="font-size:0.78rem;"><span style="color:var(--rh-green);">+</span> Fastest to market; proven implementations<br><span style="color:var(--rh-red);">−</span> Consolidation risk ($62M+ into 5+ startups); governance gaps remain Red Hat&rsquo;s to close</div>
+        </div>
+      </div>
+
+      <p class="body-text animate-on-scroll" style="margin-top:1.5rem;">
+        In practice, most enterprise platforms combine approaches &mdash; different options suit different subsystems and different phases of delivery. The choice depends on governance requirements, timeline, and what already exists in the platform.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- KEY DECISIONS -->
+  <section id="decisions">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">KEY DECISIONS</div>
+      <h2 class="display-lg animate-on-scroll">What Must Be Decided</h2>
+      <p class="lead animate-on-scroll">The research surfaces decisions that block feature scoping. These are grouped by what they unlock.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;margin-top:2rem;">
+        <div class="card animate-on-scroll" style="border-top:3px solid var(--rh-red);">
+          <div class="tag tag-red" style="margin-bottom:0.5rem;">Blocks Everything</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Decomposition &amp; Scope</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);border-bottom:1px solid rgba(51,51,51,0.3);"><strong style="color:var(--text-primary);">Accept the decomposition?</strong> 3 subsystems + 2 cross-cutting, or retain 3 peer areas?</li>
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);border-bottom:1px solid rgba(51,51,51,0.3);"><strong style="color:var(--text-primary);">Scope boundary?</strong> Memory substrate only, or include Agent Knowledge?</li>
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Confirm the substrate verdict?</strong> One substrate for 4 memory types; separate subsystem for org knowledge?</li>
+          </ul>
+        </div>
+
+        <div class="card animate-on-scroll" style="border-top:3px solid var(--rh-orange);">
+          <div class="tag tag-orange" style="margin-bottom:0.5rem;">Highest Severity</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Governance &amp; Compliance</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);border-bottom:1px solid rgba(51,51,51,0.3);"><strong style="color:var(--text-primary);">Audit trail delivery plan?</strong> Neither candidate ships one. EU AI Act enforcement Aug 2026.</li>
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);border-bottom:1px solid rgba(51,51,51,0.3);"><strong style="color:var(--text-primary);">Memory as a registry asset?</strong> Is the service governed? Are individual records governed?</li>
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Actor-chain RBAC?</strong> How does shared memory enforce lowest-permission when Agent B reads on behalf of Agent A?</li>
+          </ul>
+        </div>
+
+        <div class="card animate-on-scroll" style="border-top:3px solid var(--rh-blue);">
+          <div class="tag tag-blue" style="margin-bottom:0.5rem;">Cross-Domain</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">Boundaries &amp; Standards</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);border-bottom:1px solid rgba(51,51,51,0.3);"><strong style="color:var(--text-primary);">Procedural memory boundary?</strong> Where does the skills registry end and the memory substrate begin?</li>
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);border-bottom:1px solid rgba(51,51,51,0.3);"><strong style="color:var(--text-primary);">Knowledge Sources extension?</strong> Is Agent Knowledge a new asset type or an extension of the existing one?</li>
+            <li style="padding:0.3rem 0;font-size:0.82rem;color:var(--text-secondary);"><strong style="color:var(--text-primary);">Standards program?</strong> MCP Memory Convention, A2A AgentCard memory binding, AAIF project &mdash; what timeline?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CTA -->
+  <section id="resources" style="text-align:center;">
+    <div class="section-inner" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="section-label animate-on-scroll">CONTINUE THE SERIES</div>
+      <h2 class="display-lg animate-on-scroll">What&rsquo;s Next</h2>
+      <p class="lead animate-on-scroll" style="text-align:center;max-width:60ch;">
+        This presentation covers Phase 1 research (docs 00&ndash;08). The series continues with deep dives into enterprise use cases, adversarial threats, and the RHOAI strategy.
+      </p>
+
+      <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;justify-content:center;">
+        <a href="agent-memory-starter-guide.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.9rem;transition:border-color 180ms,color 180ms;">
+          &#8592; Part 1: Starter Guide
+        </a>
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:var(--rh-red);color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.9rem;transition:background 180ms;">
+          View All Presentations &#x2192;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2rem 1.5rem;text-align:center;border-top:1px solid var(--border-subtle);">
+    <p style="font-size:0.8rem;color:var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-top:0.25rem;">Based on Phase 1 research (docs 00&ndash;08), Agent Memory &amp; Knowledge Research Series, 2026</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id)); });
+    }, { threshold: 0.25 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

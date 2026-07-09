@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory — Enterprise Use Cases</title>
+  <meta name="description" content="How healthcare, financial services, ITOps, legal, manufacturing, and defense each require governed agent memory — and why the requirements converge." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:#151515;--bg-elevated:#1a1a1a;--bg-card:#202020;
+      --text-primary:#ffffff;--text-secondary:#d2d2d2;--text-muted:#8a8a8a;
+      --rh-red:#EE0000;--rh-red-dark:#A30000;--rh-teal:#009596;--rh-blue:#0066CC;--rh-blue-light:#4394e5;
+      --rh-purple:#6753AC;--rh-green:#3E8635;--rh-orange:#F4B400;
+      --border-subtle:#333333;--border-muted:#444444;
+      --font-sans:"Red Hat Display","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-text:"Red Hat Text","Inter",-apple-system,"Segoe UI",system-ui,sans-serif;
+      --font-mono:"Red Hat Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      --fs-display-xl:2.8rem;--fs-display-lg:2rem;--fs-h2:1.5rem;--fs-body-lead:1.15rem;--fs-body:0.95rem;--fs-label:0.7rem;
+      --space-xs:0.5rem;--space-sm:0.75rem;--space-md:1rem;--space-lg:1.5rem;--space-xl:2rem;--space-2xl:3rem;
+      --content-max:1100px;--nav-height:56px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg-canvas);color:var(--text-primary);font-family:var(--font-text);font-size:var(--fs-body);line-height:1.6;-webkit-font-smoothing:antialiased}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(21,21,21,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-subtle)}
+    .nav-inner{max-width:var(--content-max);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1.5rem}
+    .nav-logo{display:flex;align-items:center;gap:0.75rem;text-decoration:none}
+    .hat{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--rh-red);color:white;font-family:var(--font-sans);font-weight:800;font-size:0.65rem;border-radius:4px}
+    .nav-title{font-family:var(--font-sans);font-weight:600;font-size:0.9rem;color:var(--text-primary)}
+    .nav-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+    .nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.78rem;font-family:var(--font-text);transition:color 0.2s;white-space:nowrap}
+    .nav-links a:hover,.nav-links a.active{color:var(--text-primary)}
+    section{padding:5rem 1.5rem;scroll-margin-top:calc(var(--nav-height) + 16px)}
+    .section-inner{max-width:var(--content-max);margin:0 auto}
+    .section-label{font-family:var(--font-mono);font-size:var(--fs-label);font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--rh-red);margin-bottom:var(--space-sm)}
+    .section-divider{width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(238,0,0,0.18),rgba(238,0,0,0.35),rgba(238,0,0,0.18),transparent)}
+    .display-xl{font-family:var(--font-sans);font-size:var(--fs-display-xl);line-height:1.05;letter-spacing:-0.03em;font-weight:800;color:var(--text-primary);margin:0}
+    .display-lg{font-family:var(--font-sans);font-size:var(--fs-display-lg);line-height:1.1;letter-spacing:-0.02em;font-weight:700;color:var(--text-primary);margin:0 0 var(--space-md)}
+    .h2{font-family:var(--font-sans);font-size:var(--fs-h2);font-weight:700;color:var(--text-primary);margin:0 0 var(--space-sm)}
+    .lead{font-size:var(--fs-body-lead);line-height:1.5;color:var(--text-secondary);margin:var(--space-sm) 0 0;max-width:80ch}
+    .body-text{font-size:var(--fs-body);line-height:1.65;color:var(--text-secondary);margin:var(--space-md) 0 0;max-width:72ch}
+    .accent{color:var(--rh-red)}
+    .hero{min-height:85vh;display:flex;align-items:center;position:relative;padding-top:calc(var(--nav-height) + 3rem);overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-80px;right:-120px;width:650px;height:650px;border-radius:50%;background:radial-gradient(circle,rgba(238,0,0,0.14) 0%,transparent 70%);pointer-events:none}
+    .card{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:12px;padding:1.5rem;transition:border-color 300ms,transform 200ms,box-shadow 300ms}
+    .card:hover{border-color:rgba(238,0,0,0.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(238,0,0,0.08)}
+    .tag{font-family:var(--font-mono);font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;padding:0.2rem 0.6rem;border-radius:3px;display:inline-block}
+    .tag-red{background:rgba(238,0,0,0.12);color:var(--rh-red)}.tag-teal{background:rgba(0,149,150,0.12);color:var(--rh-teal)}
+    .tag-blue{background:rgba(0,102,204,0.12);color:var(--rh-blue-light)}.tag-green{background:rgba(62,134,53,0.12);color:var(--rh-green)}
+    .tag-purple{background:rgba(103,83,172,0.12);color:var(--rh-purple)}.tag-orange{background:rgba(244,180,0,0.12);color:var(--rh-orange)}
+    .stat-value{font-family:var(--font-sans);font-size:2rem;font-weight:800;line-height:1}
+    .stat-label{font-family:var(--font-mono);font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:0.25rem}
+    .animate-on-scroll{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease-out,transform 0.6s ease-out}
+    .animate-on-scroll.visible{opacity:1;transform:translateY(0)}
+    .stagger-1{transition-delay:80ms}.stagger-2{transition-delay:160ms}.stagger-3{transition-delay:240ms}.stagger-4{transition-delay:320ms}.stagger-5{transition-delay:400ms}
+    .compare-table{width:100%;border-collapse:collapse;margin-top:1.5rem;font-size:0.82rem}
+    .compare-table th{font-family:var(--font-mono);font-size:0.68rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);padding:0.6rem 0.5rem;text-align:center;border-bottom:2px solid var(--border-subtle)}
+    .compare-table th:first-child{text-align:left}
+    .compare-table td{padding:0.5rem;border-bottom:1px solid rgba(51,51,51,0.5);color:var(--text-secondary);vertical-align:middle;text-align:center;font-size:0.78rem}
+    .compare-table td:first-child{text-align:left;font-family:var(--font-text);font-weight:600;color:var(--text-muted);font-size:0.82rem}
+    .compare-table tr:hover td{background:rgba(255,255,255,0.02)}
+    .req{font-weight:600}.req-y{color:var(--rh-green)}.req-n{color:var(--text-muted)}.req-c{color:var(--rh-orange)}.req-g{color:var(--rh-purple)}
+    @keyframes glow-pulse{0%,100%{box-shadow:0 0 15px rgba(238,0,0,0.1)}50%{box-shadow:0 0 30px rgba(238,0,0,0.25)}}
+    @media(prefers-reduced-motion:reduce){*{animation-duration:0.01ms!important;transition-duration:180ms!important}.animate-on-scroll{opacity:1;transform:none}html{scroll-behavior:auto}}
+    @media(max-width:768px){:root{--fs-display-xl:2rem;--fs-display-lg:1.5rem;--fs-body-lead:1rem}section{padding:3rem 1.25rem}.nav-links{display:none}.hero{min-height:65vh}.vert-grid{grid-template-columns:1fr!important}}
+    @media(max-width:1024px){.nav-links{gap:0.8rem}.vert-grid{grid-template-columns:1fr 1fr!important}}
+    @media print{*{print-color-adjust:exact;-webkit-print-color-adjust:exact}nav{display:none}}
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a class="nav-logo" href="index.html" style="text-decoration:none;">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory Series</span>
+      </a>
+      <div class="nav-links">
+        <a href="#gap">The Gap</a>
+        <a href="#verticals">Verticals</a>
+        <a href="#convergence">Convergence</a>
+        <a href="#compliance">Compliance</a>
+        <a href="#platform">Platform</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT MEMORY SERIES &mdash; PART 4</div>
+      <h1 class="display-xl animate-on-scroll" style="max-width:18ch;"><span class="accent">Enterprise</span><br>Use Cases</h1>
+      <p class="lead animate-on-scroll stagger-1" style="margin-top:1rem;">
+        Agent memory is not a coding-assistant feature. The largest revenue opportunities and hardest governance requirements come from healthcare, financial services, ITOps, legal, manufacturing, and defense. The mechanism is the same; the policy is different. That is the definition of a platform capability.
+      </p>
+      <div class="animate-on-scroll stagger-2" style="display:flex;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap;">
+        <div><div class="stat-value" style="color:var(--rh-red);">6</div><div class="stat-label">Verticals analyzed</div></div>
+        <div><div class="stat-value">$150B</div><div class="stat-label">Projected healthcare AI savings</div></div>
+        <div><div class="stat-value" style="color:var(--rh-orange);">64.1%</div><div class="stat-label">Best score at 10M tokens</div></div>
+        <div><div class="stat-value" style="color:var(--rh-green);">171%</div><div class="stat-label">Average enterprise AI ROI</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- THE BENCHMARK-TO-PRODUCTION GAP -->
+  <section id="gap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE REALITY CHECK</div>
+      <h2 class="display-lg animate-on-scroll">The Benchmark-to-Production Gap</h2>
+      <p class="lead animate-on-scroll">Memory benchmarks show strong headline numbers. Production deployments at scale face accuracy degradation that benchmarks don&rsquo;t capture. Every enterprise vertical hits the 10M-token boundary within months.</p>
+
+      <div class="animate-on-scroll" style="margin-top:2rem;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+        <div class="card" style="border-left:4px solid var(--rh-green);border-radius:0 12px 12px 0;">
+          <div class="tag tag-green" style="margin-bottom:0.5rem;">Benchmarks Show</div>
+          <div style="display:flex;gap:1.5rem;margin-top:0.5rem;">
+            <div><div class="stat-value" style="color:var(--rh-green);font-size:1.5rem;">92.5%</div><div class="stat-label">LoCoMo (~35 sessions)</div></div>
+            <div><div class="stat-value" style="color:var(--rh-green);font-size:1.5rem;">94.4%</div><div class="stat-label">LongMemEval (~115K tokens)</div></div>
+          </div>
+        </div>
+        <div class="card" style="border-left:4px solid var(--rh-red);border-radius:0 12px 12px 0;">
+          <div class="tag tag-red" style="margin-bottom:0.5rem;">Production Shows</div>
+          <div style="display:flex;gap:1.5rem;margin-top:0.5rem;">
+            <div><div class="stat-value" style="color:var(--rh-red);font-size:1.5rem;">64.1%</div><div class="stat-label">BEAM at 1M tokens</div></div>
+            <div><div class="stat-value" style="color:var(--rh-red);font-size:1.5rem;">48.6%</div><div class="stat-label">BEAM at 10M tokens</div></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="body-text animate-on-scroll">Three factors benchmarks don&rsquo;t capture: <strong style="color:var(--text-primary);">temporal drift</strong> (stale memories contradicting current reality), <strong style="color:var(--text-primary);">multi-agent contamination</strong> (cross-agent memory pollution), and <strong style="color:var(--text-primary);">write-path quality</strong> (deciding what&rsquo;s worth keeping from mostly noise).</p>
+
+      <!-- Scale calibration -->
+      <div class="animate-on-scroll" style="margin-top:2rem;overflow-x:auto;">
+        <div class="h2" style="margin-bottom:0.5rem;">What 10M Tokens Looks Like</div>
+        <table class="compare-table" style="text-align:left;">
+          <thead><tr><th>Vertical</th><th style="text-align:left;">10M Token Equivalent</th><th style="text-align:left;">Accumulation</th></tr></thead>
+          <tbody>
+            <tr><td>Healthcare</td><td style="text-align:left;">~6 months of a primary care physician&rsquo;s encounters</td><td style="text-align:left;">6 months</td></tr>
+            <tr><td>Financial Services</td><td style="text-align:left;">~3 months of compliance monitoring</td><td style="text-align:left;">3 months</td></tr>
+            <tr><td>ITOps/SRE</td><td style="text-align:left;">~2 months of incident response across a 200-node cluster</td><td style="text-align:left;">2 months</td></tr>
+            <tr><td>Legal</td><td style="text-align:left;">~4 weeks of matter management on an active M&amp;A deal</td><td style="text-align:left;">4 weeks</td></tr>
+            <tr><td>Manufacturing</td><td style="text-align:left;">~6 months of quality control on a single production line</td><td style="text-align:left;">6 months</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- VERTICALS -->
+  <section id="verticals">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">SIX VERTICALS</div>
+      <h2 class="display-lg animate-on-scroll">Where Agent Memory Matters Most</h2>
+      <p class="lead animate-on-scroll">Each vertical has different regulations, retention periods, and deployment constraints. But the platform requirements converge.</p>
+
+      <div class="vert-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem;">
+        <!-- Healthcare -->
+        <div class="card animate-on-scroll stagger-1" style="border-top:3px solid var(--rh-red);">
+          <div class="tag tag-red" style="margin-bottom:0.75rem;">Healthcare</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Patient Context Persistence</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">Clinicians spend more time on documentation than care. Agent memory enables longitudinal patient context across encounters &mdash; the agent that triaged in February references that context in June.</p>
+          <div style="font-size:0.78rem;color:var(--text-secondary);padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+            <strong style="color:var(--text-primary);">80%</strong> adoption, <strong style="color:var(--text-primary);">42%</strong> doc time reduction (AtlantiCare)<br>
+            <span style="color:var(--rh-orange);">HIPAA</span> &bull; 6+ year retention &bull; per-patient scope
+          </div>
+        </div>
+
+        <!-- Financial Services -->
+        <div class="card animate-on-scroll stagger-2" style="border-top:3px solid var(--rh-blue);">
+          <div class="tag tag-blue" style="margin-bottom:0.75rem;">Financial Services</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Audit Trail &amp; Compliance</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">JPMorgan runs 450+ AI agents in production. Every decision needs an audit trail that reconstructs <em>why</em>, not just <em>what</em> &mdash; retained 7 years under SEC/FINRA rules.</p>
+          <div style="font-size:0.78rem;color:var(--text-secondary);padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+            <strong style="color:var(--text-primary);">73%</strong> compliance incident reduction with audit trails<br>
+            <span style="color:var(--rh-orange);">SOX</span> &bull; <span style="color:var(--rh-orange);">SEC 17a-4</span> &bull; GDPR/SOX erasure collision
+          </div>
+        </div>
+
+        <!-- ITOps -->
+        <div class="card animate-on-scroll stagger-3" style="border-top:3px solid var(--rh-teal);">
+          <div class="tag tag-teal" style="margin-bottom:0.75rem;">ITOps / SRE</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Compounding Knowledge</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">Azure SRE Agent, PagerDuty, and AWS DevOps Agent all ship with persistent memory that learns from past incidents. Senior-responder knowledge spreads &ldquo;in weeks instead of years.&rdquo;</p>
+          <div style="font-size:0.78rem;color:var(--text-secondary);padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+            <strong style="color:var(--text-primary);">4.87 hrs</strong> saved per incident (SolarWinds)<br>
+            Procedural memory &bull; cross-shift context &bull; learned runbooks
+          </div>
+        </div>
+
+        <!-- Legal -->
+        <div class="card animate-on-scroll stagger-1" style="border-top:3px solid var(--rh-purple);">
+          <div class="tag tag-purple" style="margin-bottom:0.75rem;">Legal</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Case Memory &amp; Dreaming</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">Harvey ($5B, 42% of Am Law 100) reported 6x task completion with memory consolidation. Legal matters span months &mdash; agents need longitudinal case knowledge across hundreds of sessions.</p>
+          <div style="font-size:0.78rem;color:var(--text-secondary);padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+            <strong style="color:var(--text-primary);">6x</strong> task completion (Harvey + Dreaming)<br>
+            Attorney-client privilege &bull; ethical walls &bull; 6-10yr retention
+          </div>
+        </div>
+
+        <!-- Manufacturing -->
+        <div class="card animate-on-scroll stagger-2" style="border-top:3px solid var(--rh-green);">
+          <div class="tag tag-green" style="margin-bottom:0.75rem;">Manufacturing</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Defect Pattern Memory</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">Quality control agents detect defects at 5ms and write new patterns back into their repertoire. Value compounds only if patterns persist across shifts, runs, and facilities.</p>
+          <div style="font-size:0.78rem;color:var(--text-secondary);padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+            <strong style="color:var(--text-primary);">50-70%</strong> labor savings in inspection<br>
+            Edge deployment &bull; ISO 9001 &bull; 10-30yr equipment lifecycle
+          </div>
+        </div>
+
+        <!-- Defense -->
+        <div class="card animate-on-scroll stagger-3" style="border-top:3px solid var(--rh-orange);">
+          <div class="tag tag-orange" style="margin-bottom:0.75rem;">Defense / Government</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:1rem;margin-bottom:0.5rem;">Classification-Level Isolation</h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.45;margin-bottom:0.75rem;">Air-gapped networks, per-record classification marking, cross-domain guards for controlled information flow. The deployment model is the primary constraint.</p>
+          <div style="font-size:0.78rem;color:var(--text-secondary);padding-top:0.5rem;border-top:1px solid var(--border-subtle);">
+            <strong style="color:var(--text-primary);">80%</strong> of governments deploying agents by 2028 (Gartner)<br>
+            FISMA &bull; FedRAMP &bull; ITAR &bull; air-gap mandatory
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CONVERGENCE -->
+  <section id="convergence">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE CONVERGENCE</div>
+      <h2 class="display-lg animate-on-scroll">Six Verticals, Same Requirements</h2>
+      <p class="lead animate-on-scroll">Different regulations, different retention periods, different deployment models. But the platform capabilities converge.</p>
+
+      <div class="animate-on-scroll" style="margin-top:2rem;overflow-x:auto;">
+        <table class="compare-table" style="min-width:750px;">
+          <thead><tr>
+            <th style="text-align:left;">Capability</th><th>Health</th><th>Finance</th><th>ITOps</th><th>Legal</th><th>Mfg</th><th>Defense</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>Multi-tier scope isolation</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td></tr>
+            <tr><td>Immutable audit trail</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-c">Needed</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td></tr>
+            <tr><td>Inspectable compaction</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-c">Needed</td><td class="req req-y">Required</td><td class="req req-n">Useful</td><td class="req req-y">Required</td></tr>
+            <tr><td>Write-path governance</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td></tr>
+            <tr><td>Multi-agent shared memory</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-y">Required</td></tr>
+            <tr><td>Individual attribution</td><td class="req req-y">Required</td><td class="req req-y">Required</td><td class="req req-n">Useful</td><td class="req req-y">Required</td><td class="req req-n">Useful</td><td class="req req-y">Required</td></tr>
+            <tr><td>Erasure with retention</td><td class="req req-y">Required</td><td class="req req-c">Complex</td><td class="req req-n">Minimal</td><td class="req req-g">Governed</td><td class="req req-n">Minimal</td><td class="req req-g">Governed</td></tr>
+            <tr><td>Edge / air-gap deployment</td><td class="req req-n">Useful</td><td class="req req-n">Useful</td><td class="req req-n">Useful</td><td class="req req-n">Minimal</td><td class="req req-y">Required</td><td class="req req-y">Required</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- The insight -->
+      <div class="animate-on-scroll" style="margin-top:2rem;padding:1.5rem;background:var(--bg-elevated);border:1px solid var(--rh-red);border-radius:12px;text-align:center;animation:glow-pulse 4s ease-in-out infinite;">
+        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--rh-red);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:0.5rem;">Core Insight</div>
+        <p style="font-family:var(--font-sans);font-weight:700;font-size:1.15rem;color:var(--text-primary);max-width:55ch;margin:0 auto;">
+          The mechanism is the same. The policy is different. That is the definition of a platform capability.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- COMPLIANCE LANDSCAPE -->
+  <section id="compliance">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">REGULATORY LANDSCAPE</div>
+      <h2 class="display-lg animate-on-scroll">The Compliance Timeline</h2>
+      <p class="lead animate-on-scroll">Three regulatory frameworks are converging in 2026 to make governed memory a deployment prerequisite, not a feature.</p>
+
+      <div class="animate-on-scroll" style="margin-top:2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        <div class="card" style="border-top:3px solid var(--rh-red);">
+          <div class="tag tag-red" style="margin-bottom:0.5rem;">August 2, 2026</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">EU AI Act</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Tamper-evident logging, 6-month minimum</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Human oversight mechanisms</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Multi-agent chain compliance (Recitals 99-100)</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Up to &euro;20M or 4% of turnover for non-compliance</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-top:3px solid var(--rh-teal);">
+          <div class="tag tag-teal" style="margin-bottom:0.5rem;">2026 Update</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">HIPAA Security Rule</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Eliminates &ldquo;addressable&rdquo; safeguard distinction</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>AI systems explicitly in annual risk assessments</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Vector DB provenance mapping for PHI</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>BAAs required for AI with PHI access</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-top:3px solid var(--rh-blue);">
+          <div class="tag tag-blue" style="margin-bottom:0.5rem;">2026 Report</div>
+          <h3 style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;">FINRA Supervisory Risk</h3>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-blue-light);"></span>AI agents classified as distinct supervisory risk</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-blue-light);"></span>7-year audit trail, individual attribution</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-blue-light);"></span>Complete reasoning chain preservation</li>
+            <li style="padding:0.2rem 0 0.2rem 1rem;position:relative;font-size:0.8rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-blue-light);"></span>GDPR/SOX erasure collision</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- GDPR collision -->
+      <div class="animate-on-scroll" style="margin-top:2rem;padding:1.25rem;background:rgba(238,0,0,0.04);border:1px solid rgba(238,0,0,0.2);border-radius:12px;">
+        <div style="display:flex;align-items:flex-start;gap:1rem;">
+          <div style="font-size:1.5rem;flex-shrink:0;">&#9888;</div>
+          <div>
+            <div style="font-family:var(--font-sans);font-weight:700;font-size:0.95rem;color:var(--text-primary);margin-bottom:0.3rem;">The GDPR / Retention Collision</div>
+            <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.5;">GDPR Article 17 says <em>delete personal data on request</em>. SOX and SEC say <em>retain for 7 years</em>. EU AI Act says <em>keep logs for 6 months minimum</em>. For memory systems, this collision is a <strong style="color:var(--text-primary);">data architecture problem</strong>: selective erasure of personal identifiers while preserving the audit-relevant decision chain. No team-level implementation can solve this. It requires platform-level record metadata, provenance tracking, and policy-driven lifecycle management.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- PLATFORM ARGUMENT -->
+  <section id="platform">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE PLATFORM ARGUMENT</div>
+      <h2 class="display-lg animate-on-scroll">What a Platform Standardizes</h2>
+      <p class="lead animate-on-scroll">The convergence table reveals what should be built once at the platform level versus what each vertical configures.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:2rem;">
+        <div class="card animate-on-scroll stagger-1" style="border-left:4px solid var(--rh-red);border-radius:0 12px 12px 0;">
+          <div class="tag tag-red" style="margin-bottom:0.75rem;">Platform-Standardized</div>
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">The same across every vertical:</p>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Governed memory substrate with 4 access patterns</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Multi-tier scope isolation with RBAC</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Append-only, immutable audit trail</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Inspectable compaction</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Write-path governance hooks</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-red);"></span>Memory-over-MCP through a gateway</li>
+          </ul>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-left:4px solid var(--rh-teal);border-radius:0 12px 12px 0;">
+          <div class="tag tag-teal" style="margin-bottom:0.75rem;">Vertical-Customized</div>
+          <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:0.5rem;">Configured per deployment, not built per vertical:</p>
+          <ul style="list-style:none;padding:0;margin:0;">
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Scope tier definitions (patient vs. client vs. classification)</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Retention policies (6yr HIPAA / 7yr SOX / 30yr equipment)</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Erasure semantics (GDPR / SOX-trumps / records-authority)</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Compaction policies (what to preserve vs. compress)</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Deployment mode (cloud / on-prem / edge / air-gapped)</li>
+            <li style="padding:0.25rem 0 0.25rem 1rem;position:relative;font-size:0.85rem;color:var(--text-secondary);"><span style="position:absolute;left:0;top:0.55rem;width:5px;height:5px;border-radius:50%;background:var(--rh-teal);"></span>Write-path approval workflows</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- CTA -->
+  <section id="resources" style="text-align:center;">
+    <div class="section-inner" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="section-label animate-on-scroll">CONTINUE THE SERIES</div>
+      <h2 class="display-lg animate-on-scroll">What&rsquo;s Next</h2>
+      <p class="lead animate-on-scroll" style="text-align:center;max-width:60ch;">
+        Parts 1&ndash;4 cover the concepts, research, and enterprise demand. Next: the strategic direction &mdash; architecture, roadmap, and competitive positioning.
+      </p>
+      <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;justify-content:center;">
+        <a href="agent-memory-deep-dives.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:transparent;color:var(--text-secondary);border:1px solid var(--border-subtle);padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.9rem;transition:border-color 180ms,color 180ms;">
+          &#8592; Part 3: Deep Dives
+        </a>
+        <a href="index.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:var(--rh-red);color:white;padding:0.75rem 1.5rem;border-radius:6px;text-decoration:none;font-family:var(--font-sans);font-weight:600;font-size:0.9rem;transition:background 180ms;">
+          View All Presentations &#x2192;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding:2rem 1.5rem;text-align:center;border-top:1px solid var(--border-subtle);">
+    <p style="font-size:0.8rem;color:var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+    <p style="font-size:0.72rem;color:var(--text-muted);margin-top:0.25rem;">Based on Enterprise Use Case Patterns (doc 14), Agent Memory &amp; Knowledge Research Series, 2026</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id)); });
+    }, { threshold: 0.25 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

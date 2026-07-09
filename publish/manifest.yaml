@@ -6,3 +6,13 @@
   audience: public
   title: MCP Registry & Catalog
   description: Slide deck covering MCP Registry and Catalog capabilities, lifecycle governance, pre-loaded MCP servers, and the roadmap from Dev Preview through GA.
+- source: features/agent-memory/enablement/agent-memory-series/
+  dest: agent-memory/series/
+  audience: public
+  title: Agent Memory Presentation Series
+  description: Six-part interlinked HTML series — starter guide, foundations, deep dives, enterprise use cases, and strategy — for agent memory & knowledge enablement.
+- source: features/agent-memory/enablement/agent-memory-architecture-options/
+  dest: agent-memory/architecture-options/
+  audience: public
+  title: Agent Memory Architecture — Options & Roadmap
+  description: Architecture options and roadmap deck for agent memory on RHOAI.
