@@ -317,3 +317,20 @@ def test_artifact_assets_are_not_linted(tmp_path):
     write(root, "features/mcp-registry/enablement/deck/README.md", "no frontmatter here\n")
     errors, _ = lint_repo(root)
     assert errors == []
+
+
+def test_story_invalid_under_features(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/story-a.md", ENTRY.format(t="story", extra=""))
+    errors, _ = lint_repo(root)
+    assert any("type 'story' not in vocabulary" in e for e in errors)
+
+
+def test_narrative_artifact_descriptor_valid(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "narrative/enablement/deck/index.html", "<html></html>")
+    write(root, "narrative/enablement/deck/artifact.md",
+          ENTRY.format(t="artifact", extra="features: [mcp-registry]\n"))
+    errors, _ = lint_repo(root)
+    assert errors == []
