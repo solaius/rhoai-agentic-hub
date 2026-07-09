@@ -10,8 +10,6 @@
 - [Registry vs. Catalog separation](/features/platform/knowledge/decision-registry-vs-catalog.md) — Registry governs (system of record); Catalog discovers (consumption surface) — MLflow serves the registry role, Kubeflow (Hub) the catalog role.
 
 ## fact
-- [Red Hat's agentic AI four pillars](/features/platform/knowledge/fact-agentic-ai-four-pillars.md) — The four-pillar product framing for agentic AI — Build & BYOA, Govern & Secure (AgentOps), Deploy & Manage, AI Hub.
-- [Agentic AI messaging position — challenges, pillars, industry stats, personas](/features/platform/knowledge/fact-agentic-ai-messaging-position.md) — The customer-facing framing from the Apr 2026 Agentic AI Messaging Guide — three customer challenges, three solution pillars, industry stats, and the Builders/Operators personas.
 - [Agentic AI pod v2 (meeting transcript, 2026-04-14)](/features/platform/knowledge/fact-agentic-ai-pod-v2-transcript.md) — IBM/Red Hat agentic positioning, MCP catalog blog planning, and Summit content coordination.
 - [AI Asset Registries Sync (meeting transcript, 2026-04-07)](/features/platform/knowledge/fact-ai-asset-registries-sync-transcript.md) — The sync where the "Registry = MLflow, Catalog = Kubeflow" decision was made, plus early skills registry discussion.
 - [AI Gateway execution risks — Llama Stack bridge and SGLang/vLLM divergence](/features/platform/knowledge/fact-ai-gateway-execution-risks.md) — Two execution risks flagged at the AI Gateway F2F beyond the six binding architecture decisions — a dual-track maintenance burden and a possible vLLM ecosystem fork.
@@ -46,7 +44,6 @@
 - [OCP 5.0 OLM 1.0 dependency removal — installation strategy](/features/platform/knowledge/question-ocp5-olm-dependency-removal.md) — OLM 1.0 dependency mechanisms are going away in OCP 5.0; no alternative installation strategy defined yet for registry/gateway/operator components that rely on them.
 
 ## reference
-- [Agentic AI Strategy 2026](/features/platform/knowledge/ref-agentic-ai-strategy-2026.md) — Enterprise challenges, four strategic pillars, customer insights, and competitive analysis for Red Hat's agentic AI direction.
 - [Messaging guide: Agentic AI by Red Hat AI](/features/platform/knowledge/ref-agentic-messaging-guide.md) — Internal marketing messaging guide — customer challenges, solution pillars, RHOAI 3.4 capability statuses, simplified personas.
 - [AI Asset Registries (product requirements)](/features/platform/knowledge/ref-ai-asset-registries-prd.md) — The single most important source doc — full product requirements, core concepts, capabilities, and asset coverage for the whole registry proposal.
 - [opendatahub-io/ai-gateway-payload-processing (GitHub)](/features/platform/knowledge/ref-ai-gateway-payload-processing-repo.md) — The IPP (Inference Payload Processor) plugin implementation — model-provider-resolver, api-translation, apikey-injection, NeMo guardrails.

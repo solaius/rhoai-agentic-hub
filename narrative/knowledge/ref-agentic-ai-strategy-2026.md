@@ -3,7 +3,7 @@ type: reference
 title: Agentic AI Strategy 2026
 description: Enterprise challenges, four strategic pillars, customer insights, and competitive analysis for Red Hat's agentic AI direction.
 resource: https://docs.google.com/document/d/1d_XK88Gxwr8zuPJZQ8_fbvah-y7PX12CYf4BTbvNVPE
-tags: [platform, strategy, agentic-ai]
+tags: [narrative, strategy, agentic-ai]
 timestamp: 2026-07-06
 source: ai-asset-registry/docs/knowledge-registry.md §12 (as of 2026-07-05)
 ---

@@ -19,7 +19,7 @@ features:
   description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.
 - id: platform
   title: Platform
-  description: Cross-cutting AI Gateway, AI Hub UI, messaging/strategy, and org-wide process references.
+  description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
 - id: agent-memory
   title: Agent Memory
   description: Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.

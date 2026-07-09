@@ -8,3 +8,6 @@ Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement 
 - [strategy/](/features/mcp-gateway/strategy/)
 - [enablement/](/features/mcp-gateway/enablement/)
 - [work/](/features/mcp-gateway/work/)
+
+## Connections
+- story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.

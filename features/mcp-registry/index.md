@@ -8,3 +8,6 @@ The governance/system-of-record layer for MCP servers — lifecycle, data model,
 - [strategy/](/features/mcp-registry/strategy/)
 - [enablement/](/features/mcp-registry/enablement/)
 - [work/](/features/mcp-registry/work/)
+
+## Connections
+- story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.

@@ -8,3 +8,6 @@ Prompt/agent iteration studio — playground UX, usability research, studio inte
 - [strategy/](/features/gen-ai-studio/strategy/)
 - [enablement/](/features/gen-ai-studio/enablement/)
 - [work/](/features/gen-ai-studio/work/)
+
+## Connections
+- story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.

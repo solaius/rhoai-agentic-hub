@@ -6,7 +6,7 @@
 - [MCP Registry](/features/mcp-registry/index.md) — The governance/system-of-record layer for MCP servers — lifecycle, data model, and the deployment-time Lifecycle Operator.
 - [MCP Ecosystem](/features/mcp-ecosystem/index.md) — MCP server building, partner/community catalog, evaluation, and ecosystem tooling.
 - [Agent Registry](/features/agent-registry/index.md) — Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.
-- [Platform](/features/platform/index.md) — Cross-cutting AI Gateway, AI Hub UI, messaging/strategy, and org-wide process references.
+- [Platform](/features/platform/index.md) — Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
 - [Agent Memory](/features/agent-memory/index.md) — Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.
 - [Agent Ops](/features/agent-ops/index.md) — Agent operations — observability, SDLC oversight, AgentOps positioning and talk tracks.
 - [Gen AI Studio](/features/gen-ai-studio/index.md) — Prompt/agent iteration studio — playground UX, usability research, studio integration.

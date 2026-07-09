@@ -8,3 +8,6 @@ Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAI
 - [strategy/](/features/agent-memory/strategy/)
 - [enablement/](/features/agent-memory/enablement/)
 - [work/](/features/agent-memory/work/)
+
+## Connections
+- story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.

@@ -57,7 +57,7 @@ Grouped rather than given individual `person-` entries — see the R2 batch 4 MA
 | Noel O'Connor | Sales/field | Raised the seller-confusion risk on IBM/RH agentic positioning — see [decision-ibm-redhat-agentic-ai-positioning.md](/features/platform/knowledge/decision-ibm-redhat-agentic-ai-positioning.md) |
 | Jennifer Vargas | GTM/marketing | Warned that IBM owning "AI Governance"/"gateway" language in joint slides creates long-term seller-enablement risk — same decision as above |
 | Jessie Beach | Media team — ecosystem blog writing | |
-| Rosa Guntrip | PM/Marketing | Reviewed agentic messaging, suggested the 4-pillar structure — see [fact-agentic-ai-four-pillars.md](/features/platform/knowledge/fact-agentic-ai-four-pillars.md) |
+| Rosa Guntrip | PM/Marketing | Reviewed agentic messaging, suggested the 4-pillar structure — see [fact-agentic-ai-four-pillars.md](/narrative/knowledge/fact-agentic-ai-four-pillars.md) |
 
 ### Business development / ecosystem growth
 | Name | Role/Area | Notes |

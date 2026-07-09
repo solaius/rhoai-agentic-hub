@@ -7,7 +7,7 @@ tags: [agent-ops, zero-trust, security, identity]
 review_after: 2026-08-05
 source: ai-asset-registry/docs/knowledge-registry.md §8 (as of 2026-07-05)
 ---
-From Red Hat's Agentic AI Strategy (see [ref-agentic-ai-strategy-2026.md](/features/platform/knowledge/ref-agentic-ai-strategy-2026.md)), four zero-trust principles for agents:
+From Red Hat's Agentic AI Strategy (see [ref-agentic-ai-strategy-2026.md](/narrative/knowledge/ref-agentic-ai-strategy-2026.md)), four zero-trust principles for agents:
 
 - Agents need their own verifiable identities (SPIFFE/SPIRE) — not borrowed service accounts or shared credentials.
 - Fine-grained, dynamic access control rather than static role grants.

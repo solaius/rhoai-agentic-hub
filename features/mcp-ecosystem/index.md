@@ -8,3 +8,6 @@ MCP server building, partner/community catalog, evaluation, and ecosystem toolin
 - [strategy/](/features/mcp-ecosystem/strategy/)
 - [enablement/](/features/mcp-ecosystem/enablement/)
 - [work/](/features/mcp-ecosystem/work/)
+
+## Connections
+- story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.

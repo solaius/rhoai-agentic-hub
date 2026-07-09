@@ -8,3 +8,6 @@ Post-deployment agent registry, agent catalog/starter kits, agentic base images,
 - [strategy/](/features/agent-registry/strategy/)
 - [enablement/](/features/agent-registry/enablement/)
 - [work/](/features/agent-registry/work/)
+
+## Connections
+- story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.
