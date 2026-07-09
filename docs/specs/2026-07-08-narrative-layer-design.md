@@ -1,6 +1,6 @@
 # Narrative layer & connection axis — design spec (Phase 1)
 
-- **Status:** DRAFT — for section-by-section owner review
+- **Status:** APPROVED — all §11 rulings resolved with owner, 2026-07-08
 - **Date:** 2026-07-08
 - **Owner:** Peter Double
 - **Amends:** design decision D9 (see `/docs/architecture.md`); adds D12–D16
@@ -242,9 +242,10 @@ Also:
    (ISO) and `by` (enum above); `context` optional.
 5b. `persona:` enum — locked vocabulary hardcoded beside the other enums with
    a comment pointing at `fact-personas.md` (the source of truth); extending
-   the list means updating both together through the gate. Proposed values:
-   `ai-engineer | platform-engineer | agentops-admin | business-consumer`
-   (owner confirmation pending, §11 Q4).
+   the list means updating both together through the gate. Values
+   (owner-confirmed 2026-07-08): `ai-engineer | platform-engineer |
+   agentops-admin | business-consumer | data-scientist | cluster-admin |
+   rhoai-admin`.
 6. `features:` validation — list of ids present in `features/features.yaml`
    (schema gains a features.yaml loader); unknown id = **error**. Applies to
    knowledge entries and `artifact.md`.
@@ -330,7 +331,13 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
    agent-ops + gen-ai-studio). Owner may add a third at review.
 5. **Artifact descriptor backfill:** one `artifact.md` for the existing
    `features/mcp-registry/enablement/mcp-registry-catalog-deck/`.
-6. First `qa-` and `jtbd-` entries arrive through real use, not seeding.
+6. **Persona vocabulary recorded:** extend
+   `features/platform/knowledge/fact-personas.md` (additive) with a "JTBD
+   persona vocabulary" section listing all seven slugs — the four
+   registry/catalog UX personas plus `data-scientist`, `cluster-admin`,
+   `rhoai-admin` (owner additions, 2026-07-08) — so the fact and the lint
+   enum stay one system.
+7. First `qa-` and `jtbd-` entries arrive through real use, not seeding.
 
 ## 9. Phase 2 (recorded, deliberately deferred)
 
@@ -371,20 +378,18 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
    `platform`; move on-touch if ever.
 3. **`asks[].by` buckets** — **RESOLVED: confirmed** as proposed
    (`customer|partner|sales|ssa|pm|eng|exec|other`).
-4. **Persona values** — **RESOLVED: locked list.** Proposed vocabulary = the
-   hub's four product/UX personas (`fact-personas.md`): `ai-engineer`,
-   `platform-engineer`, `agentops-admin`, `business-consumer`. (The
+4. **Persona values** — **RESOLVED: locked list of seven** (owner,
+   2026-07-08): the hub's four product/UX personas (`ai-engineer`,
+   `platform-engineer`, `agentops-admin`, `business-consumer`) plus owner
+   additions `data-scientist`, `cluster-admin`, `rhoai-admin`. The
    Builders/Operators pair stays a marketing simplification, not a JTBD
-   persona.) **Pending:** owner confirmation of these four slugs as the
-   initial enum.
-5. **Third seed story** — **PENDING** owner call after clarification: seed
-   stories are the 2–3 starter `story-` entries written at launch so the
-   narrative layer isn't empty; two are proposed in §8.4; the question is
-   whether to add a third at launch for the builder/studio side or let it
-   emerge from real work. Default if no preference: start with two.
+   persona. `fact-personas.md` gains the vocabulary section (§8.6).
+5. **Third seed story** — **RESOLVED: start with two** (§8.4); further
+   stories emerge from real work.
 
 ---
 
-*After approval: implementation plan (task breakdown per the repo's
-spec → plan → build workflow), then build with section approvals. This spec
-document moves to `status: APPROVED` with rulings inlined.*
+*Approved 2026-07-08 with all rulings inlined. Implementation plan:
+`/docs/plans/2026-07-08-narrative-layer-plan.md` — build proceeds per the
+repo's spec → plan → build workflow, with the owner gate at the seed batch
+(§8).*
