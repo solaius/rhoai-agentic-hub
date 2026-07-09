@@ -103,3 +103,46 @@ def test_check_ignores_time_dependent_stale_view(tmp_path):
     write_all(root, today=TODAY)
     # far future: staleness membership changes, but freshness must stay clean
     assert check(root, today=datetime.date(2027, 1, 1)) == []
+
+
+def add_narrative(root: Path):
+    write(root, "narrative/knowledge/pillar-agents.md",
+          "---\ntype: pillar\ntitle: Agents\ndescription: control plane pillar\n"
+          "timestamp: 2026-07-01\nstatus: current\n---\nb\n")
+    write(root, "narrative/knowledge/story-governed-mcp.md",
+          "---\ntype: story\ntitle: Governed MCP\ndescription: registry to gateway\n"
+          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n"
+          "pillar: /narrative/knowledge/pillar-agents.md\nstatus: current\n---\nb\n")
+    write(root, "narrative/knowledge/decision-narrative-home.md",
+          "---\ntype: decision\ntitle: Narrative home\ndescription: top-level layer\n"
+          "timestamp: 2026-07-02\ndecided: 2026-07-02\nstatus: current\n---\nb\n")
+    write(root, "narrative/knowledge/person-joe.md",
+          "---\ntype: person\ntitle: Joe Strategist\ndescription: strategy owner\n"
+          "timestamp: 2026-07-01\nrole: VP\norg: Red Hat\n---\nb\n")
+    return root
+
+
+def test_narrative_indexes_generated(tmp_path):
+    built = build_all(add_narrative(make_repo(tmp_path)), today=TODAY)
+    assert "narrative/index.md" in built
+    idx = built["narrative/knowledge/index.md"]
+    assert "## pillar" in idx and "## story" in idx
+    assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in idx
+
+
+def test_narrative_entries_reach_shared_views(tmp_path):
+    built = build_all(add_narrative(make_repo(tmp_path)), today=TODAY)
+    assert "Narrative home" in built["views/decisions.md"]
+    assert "- narrative · [Joe Strategist](/narrative/knowledge/person-joe.md)" \
+        in built["views/people.md"]
+
+
+def test_no_narrative_dir_no_narrative_index(tmp_path):
+    built = build_all(make_repo(tmp_path), today=TODAY)
+    assert "narrative/index.md" not in built
+
+
+def test_convergence_with_narrative(tmp_path):
+    root = add_narrative(make_repo(tmp_path))
+    write_all(root, today=TODAY)
+    assert check(root, today=TODAY) == []
