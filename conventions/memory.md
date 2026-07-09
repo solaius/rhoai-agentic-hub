@@ -31,6 +31,9 @@ colleague would look up. "The 3.5 date moved" → `memory/profiles/roadmap.md`.
    process detail, customer-named risks or deals, and org-sensitive numbers
    (headcount, ratios) → restricted/. Partner/company names in
    public-partnership contexts are public.
+6. qa asker identity: customer/partner names and deal context behind a field
+   question → the `restricted/` sibling entry; the public `qa-` entry carries
+   only the role bucket (`asks[].by`).
 
 ## Staleness
 `review_after` (per file) wins; otherwise [staleness.yaml](/conventions/staleness.yaml)

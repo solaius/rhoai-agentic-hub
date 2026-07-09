@@ -22,11 +22,13 @@ explicit allowlist entry — see the trust model in
 ## Layout in one breath
 
 `features/<feature>/` holds all content for one feature area in an identical
-skeleton (`knowledge/ research/ strategy/ enablement/ work/`); `memory/` holds
-working context (current state, preferences, log); `conventions/` is the
-rulebook; `views/` and every `index.md` are generated — never hand-edited;
-`publish/manifest.yaml` is the only path to the public pages site;
-`restricted/` (gitignored) mirrors the layout for NDA content.
+skeleton (`knowledge/ research/ strategy/ enablement/ work/`); `narrative/`
+is the story layer above them (pillars, cross-feature stories, the strategy
+spine — same skeleton); `memory/` holds working context (current state,
+preferences, log); `conventions/` is the rulebook; `views/` and every
+`index.md` are generated — never hand-edited; `publish/manifest.yaml` is the
+only path to the public pages site; `restricted/` (gitignored) mirrors the
+layout for NDA content.
 
 ## Documentation
 

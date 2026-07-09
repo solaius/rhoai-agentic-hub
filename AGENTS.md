@@ -13,6 +13,7 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 |---|---|
 | `features/<id>/` | all content for one feature area — identical skeleton: `knowledge/ research/ strategy/ enablement/ work/` |
 | `features/features.yaml` | the routing table (which features exist) |
+| `narrative/` | the story layer: pillars, cross-feature stories, strategy spine — same skeleton as a feature |
 | `memory/` | working context: profiles (current state), facts, log |
 | `conventions/` | THE RULEBOOK — read before writing any content |
 | `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people) |
@@ -21,9 +22,10 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 | `docs/` | the guides: architecture, setup, working-here, memory, skills, publishing, tooling, mcp-servers, history |
 
 ## Writing rules (summary — details in /conventions/)
-- Filing = two questions: which feature (features.yaml) × which type
-  (/conventions/type-vocabulary.md). Working context vs domain knowledge
-  boundary: /conventions/memory.md.
+- Filing = which home — narrative/ (story-shaped) or which feature
+  (features.yaml) — × which type (/conventions/type-vocabulary.md).
+  Cross-feature spread: `features:` list. Working context vs domain
+  knowledge boundary: /conventions/memory.md.
 - Every entry: frontmatter with `type`, one-line `description`, `timestamp`.
   Filenames: `decision- fact- ref- person- question-` prefixes.
 - NEVER hand-edit generated files (features/index.md, */index.md, views/*,

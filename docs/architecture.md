@@ -55,6 +55,7 @@ CI-verified.
 |---|---|---|
 | `features/<id>/` | all content for one feature area | humans + skills |
 | `features/features.yaml` | the feature routing table | `hub.file` (partition creation) |
+| `narrative/<skeleton>` | the story layer: pillars, cross-feature stories, strategy spine | humans + skills |
 | `memory/` | working context: profiles, facts, log | the gate only |
 | `conventions/` | the normative rulebook | humans (rarely changes) |
 | `views/` | cross-cutting generated indexes | `hub_index.py` only |
@@ -64,13 +65,15 @@ CI-verified.
 | `docs/` | these guides | humans |
 | `.claude/skills/` | the skills (see [/docs/skills.md](/docs/skills.md)) | humans |
 
-## The two filing questions
+## The filing questions
 
 Every addition answers exactly two questions — this is the core standard that
 replaces per-addition judgment calls:
 
-1. **Which feature?** `features/features.yaml` is the routing table. Current
-   partitions: skills-registry, mcp-gateway, mcp-registry, mcp-ecosystem,
+1. **Which home?** Story-shaped content (pillars, cross-feature stories, the
+   strategy spine) → `narrative/`; everything else picks its feature:
+   `features/features.yaml` is the routing table. Current partitions:
+   skills-registry, mcp-gateway, mcp-registry, mcp-ecosystem,
    agent-registry, agent-memory, agent-ops, gen-ai-studio, and `platform`
    (the cross-cutting pseudo-feature for releases, people, personas, SKUs,
    org strategy). New partitions are created by `hub.file` on first use —
@@ -116,6 +119,10 @@ otherwise hide, derived entirely from entry frontmatter:
 | `views/people.md` | all `person` entries, grouped by feature |
 | `views/jira-map.md` | Jira keys found in `resource:` fields → the entry that covers them |
 | `views/stale-facts.md` | entries past `review_after` or the staleness defaults |
+| `views/narrative-map.md` | pillars → stories → the features each story connects |
+| `views/faq.md` | all `qa` entries — unanswered, most-asked (by `asks:` count), by feature |
+| `views/jtbd.md` | all `jtbd` entries by status × feature, evidence-count flagged |
+| `views/artifacts.md` | every enablement artifact + publish state from the manifest |
 
 ## The trust model
 
@@ -155,7 +162,7 @@ deleted — history stays traversable.
 
 ## The eleven design decisions
 
-The design spec settled these (D1–D11); they govern everything above.
+The design specs settled these (D1–D11; D12–D16 from [/docs/specs/2026-07-08-narrative-layer-design.md](/docs/specs/2026-07-08-narrative-layer-design.md)); they govern everything above.
 Full text: the [design spec](https://github.com/solaius/ai-asset-registry/blob/main/docs/superpowers/specs/2026-07-05-rhoai-agentic-hub-design.md).
 
 | # | decision |
@@ -171,6 +178,11 @@ Full text: the [design spec](https://github.com/solaius/ai-asset-registry/blob/m
 | D9 | feature-partition layout (one axis: feature × type) |
 | D10 | OKF v0.1 conventions + documented local extensions |
 | D11 | hybrid skill architecture: `hub.*` operational + first-party content + marketplace |
+| D12 | the connection layer is a top-level `narrative/` tree (peer of `features/`, same skeleton), never a pseudo-feature |
+| D13 | `features:` cross-reference field, validated against `features.yaml`; connections are declared then generated, never hand-maintained |
+| D14 | type vocabulary extension: `pillar`/`story` (narrative-only), `qa`/`jtbd` (any knowledge), `artifact` descriptors + four views |
+| D15 | execution status stays in Jira — `jtbd` tracks the job's truth (`candidate→validated→delivered`, `retired`), `jira:` points at delivery |
+| D16 | capture-first, publish-later: FAQ/JTBD views repo-internal; curated publishing and the Slack sweep are Phase 2, pulled by demand |
 
 ## Lineage
 

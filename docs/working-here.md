@@ -3,14 +3,17 @@
 ## The loop
 1. Work normally. When a durable item surfaces (decision, date change,
    preference, useful link) → `hub.capture` files it in seconds, gated.
-2. New source document/URL/transcript → `hub.file` (creates feature
+2. A field question answered (sales/SSA/PM/customer/partner) → `hub.capture`
+   files a `qa-` entry — or appends a dated item to an existing one's
+   `asks:` list. A validated user job → `jtbd-` entry.
+3. New source document/URL/transcript → `hub.file` (creates feature
    partitions on first use).
-3. Session end (or "consolidate memory") → `hub.consolidate` sweeps
+4. Session end (or "consolidate memory") → `hub.consolidate` sweeps
    `memory/.scratch/`, proposes promotions, you approve/reject each with a
    public-vs-restricted call, one commit.
-4. Ship an artifact → `hub.publish` (manifest entry, disclosure confirm,
+5. Ship an artifact → `hub.publish` (manifest entry, disclosure confirm,
    CI does the rest).
-5. Something from the old repo needed here → `hub.migrate` (reshapes to
+6. Something from the old repo needed here → `hub.migrate` (reshapes to
    conventions; never edits the old repo).
 
 ## Filing by example
@@ -22,6 +25,10 @@
 | new stakeholder | `features/platform/knowledge/person-…md` |
 | meeting transcript | `features/<f>/work/transcripts/` (gitignored) + a `ref-` entry |
 | SKU/pricing detail | `restricted/features/…` — NEVER tracked |
+| "does the registry work air-gapped?" (asked by an SSA) | `features/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
+| a user job for UX/Docs | `features/<f>/knowledge/jtbd-…md` (persona from the locked list) |
+| cross-feature strategy deck or write-up | `narrative/enablement/<slug>/` (+ `artifact.md`) or `narrative/{research,strategy}/` |
+| a strategic pillar or connective story | `narrative/knowledge/pillar-…md` / `story-…md` |
 
 Rules live in `/conventions/` — layout, type vocabulary, entry shapes, memory,
 URIs, publishing. When in doubt, read the matching conventions file; it is
