@@ -70,6 +70,16 @@ def _meta_of(path):
         return None
 
 
+def _load_artifacts(root):
+    """Yield (rootpath, meta) for enablement artifact descriptors."""
+    for pattern in ("features/*/enablement/*/artifact.md",
+                    "narrative/enablement/*/artifact.md"):
+        for desc in sorted(root.glob(pattern)):
+            meta = _meta_of(desc)
+            if meta:
+                yield "/" + desc.relative_to(root).as_posix(), meta
+
+
 def build_all(root, today=None):
     root = Path(root)
     today = today or datetime.date.today()
@@ -77,6 +87,16 @@ def build_all(root, today=None):
     feats = _features_table(root)
     entries = list(_load_entries(root, "*/knowledge/*.md"))
     entries += list(_load_entries(root, "knowledge/*.md", base="narrative"))
+
+    artifacts = list(_load_artifacts(root))
+    # connection axis (spec D13): features: declarations → per-feature backlinks
+    connections = {}
+    for rp, m, _ in entries:
+        for fid in (m.get("features") or []):
+            connections.setdefault(fid, []).append((rp, m))
+    for rp, m in artifacts:
+        for fid in (m.get("features") or []):
+            connections.setdefault(fid, []).append((rp, m))
 
     # features/index.md
     lines = [MARKER + "# Features", ""]
@@ -95,6 +115,13 @@ def build_all(root, today=None):
         lines = [MARKER + f"# {f.get('title', f['id'])}", "", f.get("description", ""), ""]
         for sub in ("knowledge", "research", "strategy", "enablement", "work"):
             lines.append(f"- [{sub}/](/features/{f['id']}/{sub}/)")
+        conns = [(rp, m) for rp, m in connections.get(f["id"], [])
+                 if not rp.startswith(f"/features/{f['id']}/")]
+        if conns:
+            lines.append("")
+            lines.append("## Connections")
+            for rp, m in sorted(conns):
+                lines.append(f"- {m.get('type', '?')} · {_line(rp, m)[2:]}")
         built[f"features/{f['id']}/index.md"] = "\n".join(lines) + "\n"
 
         if (fdir / "knowledge").is_dir():

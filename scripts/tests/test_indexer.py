@@ -146,3 +146,33 @@ def test_convergence_with_narrative(tmp_path):
     root = add_narrative(make_repo(tmp_path))
     write_all(root, today=TODAY)
     assert check(root, today=TODAY) == []
+
+
+def test_feature_connections_section(tmp_path):
+    root = add_narrative(make_repo(tmp_path))
+    built = build_all(root, today=TODAY)
+    idx = built["features/mcp-registry/index.md"]
+    assert "## Connections" in idx
+    assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in idx
+
+
+def test_connections_exclude_own_home_and_absent_when_empty(tmp_path):
+    root = make_repo(tmp_path)
+    # entry in mcp-registry listing itself must NOT create a self-backlink
+    write(root, "features/mcp-registry/knowledge/fact-self.md",
+          "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-01\n"
+          "features: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    assert "## Connections" not in idx
+
+
+def test_artifact_descriptor_creates_connection(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n"
+          "- id: mcp-gateway\n  title: MCP Gateway\n  description: d\n")
+    write(root, "features/mcp-gateway/enablement/deck/artifact.md",
+          "---\ntype: artifact\ntitle: Big Deck\ndescription: cross deck\n"
+          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    assert "[Big Deck](/features/mcp-gateway/enablement/deck/artifact.md)" in idx
