@@ -16,7 +16,7 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 | `narrative/` | the story layer: pillars, cross-feature stories, strategy spine — same skeleton as a feature |
 | `memory/` | working context: profiles (current state), facts, log |
 | `conventions/` | THE RULEBOOK — read before writing any content |
-| `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people) |
+| `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people, narrative-map, faq, jtbd, artifacts) |
 | `publish/manifest.yaml` | the ONLY path to the public site |
 | `restricted/` | gitignored local mirror for NDA content |
 | `docs/` | the guides: architecture, setup, working-here, memory, skills, publishing, tooling, mcp-servers, history |

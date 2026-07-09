@@ -76,12 +76,16 @@ replaces per-addition judgment calls:
    skills-registry, mcp-gateway, mcp-registry, mcp-ecosystem,
    agent-registry, agent-memory, agent-ops, gen-ai-studio, and `platform`
    (the cross-cutting pseudo-feature for releases, people, personas, SKUs,
-   org strategy). New partitions are created by `hub.file` on first use —
+   org process — story/strategy content lives in `narrative/`). New
+   partitions are created by `hub.file` on first use —
    never by hand.
 2. **Which type?** [/conventions/type-vocabulary.md](/conventions/type-vocabulary.md)
    defines the vocabulary: knowledge entries are `decision` / `fact` /
-   `reference` / `person` / `question` (with matching filename prefixes);
-   memory files are `profile` / `fact` / `preference` / `feedback`.
+   `reference` / `person` / `question` / `qa` / `jtbd` (with matching
+   filename prefixes); `pillar` / `story` exist only under
+   `narrative/knowledge/`; enablement artifacts may carry an `artifact.md`
+   descriptor; memory files are `profile` / `fact` / `preference` /
+   `feedback`.
 
 Every feature partition has the identical skeleton — subdirectories are
 created on first use, never pre-created empty, and anything else is a lint
@@ -163,7 +167,7 @@ deleted — history stays traversable.
 ## The design decisions
 
 The design specs settled these (D1–D11; D12–D16 from [/docs/specs/2026-07-08-narrative-layer-design.md](/docs/specs/2026-07-08-narrative-layer-design.md)); they govern everything above.
-Full text: the [design spec](https://github.com/solaius/ai-asset-registry/blob/main/docs/superpowers/specs/2026-07-05-rhoai-agentic-hub-design.md).
+Full text: the [original design spec](https://github.com/solaius/ai-asset-registry/blob/main/docs/superpowers/specs/2026-07-05-rhoai-agentic-hub-design.md) and the [connection-axis spec](/docs/specs/2026-07-08-narrative-layer-design.md).
 
 | # | decision |
 |---|---|

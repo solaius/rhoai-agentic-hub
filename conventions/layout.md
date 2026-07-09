@@ -20,7 +20,8 @@ use, never pre-created empty):
 | `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored) |
 
 Anything else directly under a feature is a lint **error**. `platform/` is the
-cross-cutting pseudo-feature (releases, people, personas, SKUs, org strategy).
+cross-cutting pseudo-feature (releases, people, personas, SKUs, org process —
+story/strategy content lives in /narrative/).
 
 ## The narrative layer
 `narrative/` is a peer of `features/` holding the connective story — pillars,
