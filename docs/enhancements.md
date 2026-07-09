@@ -16,29 +16,32 @@ including review. "When" is a best guess, not a schedule.
 
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
-| 1 | `hub.refresh-site` — refresh the migrated RHCL/Management hub sites from live sources | **High** — the hubs are now the live copies and have no update path; they start rotting today | Medium | Now |
-| 2 | Disclosure lint for enablement HTML (local-only pattern layer) | **High** — the scrub episode proved grep-gates + review are the only net; make the first net mechanical | Small–Medium | Now |
-| 3 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
-| 4 | Pre-commit gate hook installed by `hub.doctor` | High — kills the #1 CI failure (edit → forget reindex → red) | Small | Now |
-| 5 | Pages-site landing page upgrade (grouped, descriptor-driven) | High — the public front door; descriptors already carry the data | Small–Medium | Now/Next |
-| 6 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
-| 7 | Small-fix batch: recorded findings from the narrative build (see §Recorded small fixes) | Medium — cheap trust/polish wins in one sitting | Small | Next |
-| 8 | `rice-strats` port (rubric already lives here) | Medium–High in scoring season, idle otherwise | Medium | Next (before the next RICE pass) |
-| 9 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
-| 10 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
-| 11 | `restricted/` cross-machine sync (private mirror or git-crypt) | Medium — R5 will feel this pain first-hand | Medium | After R5 |
-| 12 | `hub_status.py` morning brief (one-command dashboard) | Medium — daily-loop QoL | Small | Whenever |
-| 13 | Published-site link checker in CI | Medium — automates what the migration did by hand | Small | Whenever |
-| 14 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
-| 15 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
-| 16 | Doctor: `~/.bashrc` env wiring + Jira/Slack connectivity probes (parked old-doctor coverage) | Medium — needed the first time Jira skills run on a hub-only machine | Small | With R5 |
-| 17 | Agent context pack (`hub_index.py --brief`) | Medium — cheaper session bootstrap for agents | Small–Medium | Later |
-| 18 | Human search over the published site (static index) | Medium — humans lack grep | Medium | Later |
-| 19 | Narrative growth: stories for Inference/Data/Safety & Governance pillars | Medium — content, not tooling; map has `_no stories yet_` ×3 | Small each | As stories emerge |
-| 20 | Weekly "what changed" digest view | Low–Medium — team-comms aid | Small | Later |
-| 21 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
-| 22 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
-| 23 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
+| 1 | `hub.intake` — feature intake skill with research | **High** — the #1 daily workflow (new feature or DP landing) has no guided path; today you manually split research into entries | Medium–Large | Now |
+| 2 | Jira hub skills — sweep, track, and sync Jiras per feature | **High** — Jira is the source of truth for delivery but has no intake pipeline into the hub; pm-toolkit has the client, hub has the filing conventions, nothing connects them | Medium | Now |
+| 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
+| 4 | `hub.refresh-site` — refresh the migrated RHCL/Management hub sites from live sources | **High** — the hubs are now the live copies and have no update path; they start rotting today | Medium | Now |
+| 5 | Disclosure lint for enablement HTML (local-only pattern layer) | **High** — the scrub episode proved grep-gates + review are the only net; make the first net mechanical | Small–Medium | Now |
+| 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
+| 7 | Pre-commit gate hook installed by `hub.doctor` | High — kills the #1 CI failure (edit → forget reindex → red) | Small | Now |
+| 8 | Pages-site landing page upgrade (grouped, descriptor-driven) | High — the public front door; descriptors already carry the data | Small–Medium | Now/Next |
+| 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
+| 10 | Small-fix batch: recorded findings from the narrative build (see §Recorded small fixes) | Medium — cheap trust/polish wins in one sitting | Small | Next |
+| 11 | `rice-strats` port (rubric already lives here) | Medium–High in scoring season, idle otherwise | Medium | Next (before the next RICE pass) |
+| 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
+| 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
+| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Medium — R5 will feel this pain first-hand | Medium | After R5 |
+| 15 | `hub_status.py` morning brief (one-command dashboard) | Medium — daily-loop QoL | Small | Whenever |
+| 16 | Published-site link checker in CI | Medium — automates what the migration did by hand | Small | Whenever |
+| 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
+| 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
+| 19 | Doctor: `~/.bashrc` env wiring + Jira/Slack connectivity probes (parked old-doctor coverage) | Medium — needed the first time Jira skills run on a hub-only machine | Small | With R5 |
+| 20 | Agent context pack (`hub_index.py --brief`) | Medium — cheaper session bootstrap for agents | Small–Medium | Later |
+| 21 | Human search over the published site (static index) | Medium — humans lack grep | Medium | Later |
+| 22 | Narrative growth: stories for Inference/Data/Safety & Governance pillars | Medium — content, not tooling; map has `_no stories yet_` ×3 | Small each | As stories emerge |
+| 23 | Weekly "what changed" digest view | Low–Medium — team-comms aid | Small | Later |
+| 24 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
+| 25 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
+| 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
 
 ---
 
@@ -103,7 +106,7 @@ harness independence.
 
 ## Human-usage enhancements
 
-**5 · Pages landing page upgrade.** The published site's generated index is
+**8 · Pages landing page upgrade.** The published site's generated index is
 a flat list. The publisher already has every artifact's title/description
 (manifest) and could group by area (mcp-gateway / mcp-ecosystem / …/
 narrative), add one-line descriptions, and a "new/updated" marker from the
@@ -111,37 +114,73 @@ publish snapshot. This is the page customers/stakeholders actually see —
 the highest-visibility small win available. (`scripts/hublib/publisher.py`
 landing-page generation + tests.)
 
-**9 · Curated FAQ / JTBD publishing.** Already specced (narrative spec §9):
+**12 · Curated FAQ / JTBD publishing.** Already specced (narrative spec §9):
 when qa volume justifies it, ship a curated FAQ page (per audience) and a
 JTBD catalog via `hub.publish` — pulled by demand, never auto-published raw
 views. Trigger: ~20+ answered qa entries, or UX/Docs asking for a URL.
 
-**12 · `hub_status.py` morning brief.** One command printing: stale items
+**15 · `hub_status.py` morning brief.** One command printing: stale items
 due (from stale-facts), open questions count by feature, unanswered qa,
 jtbd candidates lacking evidence, last log entries, un-descriptored
 enablement dirs, CI state of last push. The daily loop's "where was I."
 
-**18 · Search for humans.** Agents grep; humans can't. Cheapest real option:
+**21 · Search for humans.** Agents grep; humans can't. Cheapest real option:
 a static search page on the pages site (lunr/minisearch index generated
 from published content only — keeps the public/publish boundary intact).
 Defer until the published surface is bigger; GitHub search covers the repo
 meanwhile.
 
-**19 · Narrative growth (content).** The narrative map renders
+**22 · Narrative growth (content).** The narrative map renders
 `_no stories yet_` for Inference, Data, and Safety & Governance. As real
 cross-feature work touches those pillars, write the story entry — that's
 how the layer compounds. Candidate third story from the original design
 discussion: "from prompt to governed asset" (gen-ai-studio +
 skills-registry + mcp-registry).
 
-**20 · Weekly digest view.** `views/digest.md` (or a script emitting
+**23 · Weekly digest view.** `views/digest.md` (or a script emitting
 markdown for Slack/email): log entries + new/changed entries + published
 artifacts in the last N days. Useful the day someone besides Peter follows
 the hub; cheap to add then.
 
 ## Agent-usage enhancements
 
-**2 · Disclosure lint for enablement HTML — the scrub-episode lesson.**
+**1 · `hub.intake` — feature intake skill with research.** The highest-
+frequency PM workflow has no guided path: you learn about something (a new
+upstream project, a feature landing in DP, a competitive move) and need to
+get it into the hub as structured entries. Today that means `/deep-research`
+→ manually split output into `fact-`/`ref-`/`question-`/`decision-` entries
+→ scaffold a feature partition if new → `hub.reindex`. This skill would
+orchestrate the full flow: accept a topic or URL, run research (web,
+GitHub, GDocs via Google Workspace MCP), propose a feature home (existing
+partition or new one in `features.yaml`), extract typed entries through the
+gate, and reindex. Subsumes the "GDoc → structured entries" gap — reading
+a GDoc and extracting facts/decisions/questions becomes one intake source
+among many, not a separate skill.
+
+**2 · Jira hub skills — sweep, track, and sync.** Jira is the delivery
+source of truth but has no intake pipeline into the hub. pm-toolkit already
+has the async Jira client (`scripts/_base`, httpx, Pydantic v2) and skills
+(`rfe.*`, `assess-rfe`) — mine those for the client layer, then build hub-
+native skills on top: (a) `hub.jira-sweep` — given a feature id + JQL or
+component, query Jira and create/update `ref-` entries with `jira:` fields,
+feeding `views/jira-map.md`; (b) `hub.jira-sync` — periodic refresh that
+detects status changes (resolved, closed, won't-fix) and proposes entry
+updates through the gate; (c) optionally, backlink from `jtbd-` entries to
+their implementing Jiras. Design decision: whether the Jira client lives
+in hublib (duplicating pm-toolkit) or the hub imports pm-toolkit as a
+sibling — lean toward a thin adapter in hublib that calls the pm-toolkit
+client if available, degrades to "paste a Jira URL" otherwise.
+
+**3 · Feature staleness sweep.** Per-feature "what's outdated?" — compare
+each `fact-`/`ref-`/`question-` entry's `timestamp` and `review_after`
+against current sources (Jira status, GDoc last-modified, upstream repo
+activity). Flag entries that look stale, propose updates or `superseded`
+status through the gate. `customer-feedback-refresh` does this for the
+tracker; this generalizes the pattern to knowledge entries. Could run as
+a standalone skill or as a mode of `hub.intake` ("intake --refresh
+mcp-gateway").
+
+**5 · Disclosure lint for enablement HTML — the scrub-episode lesson.**
 Today the restricted-content heuristic scans only `knowledge/*.md`; the
 leaks that mattered lived in enablement HTML, and literal name lists can't
 be committed to a public repo. Design: `hub_lint.py` reads an OPTIONAL,
@@ -153,89 +192,89 @@ restricted), so this is a local-first net; CI keeps the generic heuristics.
 Also add the generic patterns learned this week (dollar figures,
 `signed.*agreement`) to the public heuristic.
 
-**4 · Pre-commit gate hook.** `hub.doctor setup` installs a git pre-commit
+**7 · Pre-commit gate hook.** `hub.doctor setup` installs a git pre-commit
 hook running `hub_lint.py` + `hub_index.py --check` (+ the disclosure lint
 above when present). Eliminates the most common CI failure and moves the
 disclosure net to the earliest possible moment.
 
-**17 · Agent context pack.** `python scripts/hub_index.py --brief` emits a
+**20 · Agent context pack.** `python scripts/hub_index.py --brief` emits a
 single size-budgeted markdown pack: memory index + features table +
 narrative map + open questions + stale queue, trimmed to ~N tokens.
 Sessions (especially non-Claude harnesses, see R6) bootstrap with one read
 instead of five.
 
-**14 · Slack sweep assist (spec Phase 2).** Periodic sweep of the channels
+**17 · Slack sweep assist (spec Phase 2).** Periodic sweep of the channels
 where Peter answers questions → drafts qa entries through the gate. Build
 only if `asks:` data shows Slack dominating; inherits xoxc/xoxd token
 brittleness — an assist, never the system of record.
 
-**15 · JTBD mining (spec Phase 2).** Extend `customer-feedback-refresh` to
+**18 · JTBD mining (spec Phase 2).** Extend `customer-feedback-refresh` to
 propose jtbd candidates from recurring qa entries + tracker interests
 (gated). Needs qa volume first.
 
-**qa → RICE evidence hook (spec Phase 2, rides with #8).** When
+**qa → RICE evidence hook (spec Phase 2, rides with #11).** When
 `rice-strats` is ported, its justification comments should cite `asks:`
 recurrence counts and qa Gaps sections as Reach/Impact evidence — the
 capture loop starts paying for itself in prioritization.
 
 ## Repo functionality & structure
 
-**1 · `hub.refresh-site`.** Successor to the old repo's
+**4 · `hub.refresh-site`.** Successor to the old repo's
 knowledge-hub-create / update-*-hub skills, now urgent: the RHCL and
 Management hub sites live HERE and nothing updates them anymore (the old
 update skills target the old repo's copies and are retired with it).
 Scope: sweep live sources (GDocs, repos, Jira, Slack) per site, propose
 page diffs through a gate, re-verify the disclosure rules on every touched
-page (reuse the #2 lint), republish. Port-and-adapt, not lift-and-shift —
+page (reuse the #5 lint), republish. Port-and-adapt, not lift-and-shift —
 and the disclosure-scrub rules from this migration become part of the
 skill's contract.
 
-**8 · `rice-strats` port.** Rubric already at
+**11 · `rice-strats` port.** Rubric already at
 `features/platform/strategy/rice-scoring-rubric.md`; the old skill needs
 its knowledge lookups repointed (feature partitions + narrative instead of
 the monolith) and the qa/RICE hook above designed in. Port before the next
 scoring cycle rather than during it.
 
-**10 · `audience: internal` target.** The manifest schema already accepts
+**13 · `audience: internal` target.** The manifest schema already accepts
 `internal`; nothing implements it. A second publish target (VPN'd GitLab
 Pages or a private pages repo) would give internal-only artifacts — the
 GA-readout class — a real home with the same manifest discipline, instead
 of the current binary public-or-archived. Design questions: where it
 hosts, how links between public and internal artifacts behave.
 
-**11 · `restricted/` sync.** Manual copy is the current contract and R5
+**14 · `restricted/` sync.** Manual copy is the current contract and R5
 will measure its pain. Options in rough preference order: a private
 GitLab/GitHub mirror holding only `restricted/` (same layout, separate
 repo, cloned into place), git-crypt in-repo (key management burden), or
 keep manual with a doctor-assisted rsync checklist. Decide after R5 data.
 
-**13 · Published-site link checker.** Post-publish CI step (or
+**16 · Published-site link checker.** Post-publish CI step (or
 `hub_publish.py --check-links`) that walks the pages repo's HTML for
 internal links/assets and fails on 404s — automates the click-through
 verification the migration did manually, and catches cross-artifact
-rewrite regressions when sites get refreshed (#1).
+rewrite regressions when sites get refreshed (#4).
 
-**16 · Remaining old-doctor coverage.** `~/.bashrc` sourcing of
+**19 · Remaining old-doctor coverage.** `~/.bashrc` sourcing of
 `restricted/.env` (so `JIRA_*` reaches every shell — required by `rfe.*` /
 `rice-strats` on a hub-only machine) plus Jira and Slack connectivity
 probes as new doctor sections. Natural companion to R5. (Per the
 2026-07-08 ruling: no LLM-provider credential handling in any form.)
 
-**21 · Multi-writer promotion.** Dormant by design (D1). Trigger: a second
+**24 · Multi-writer promotion.** Dormant by design (D1). Trigger: a second
 regular writer. Work: promote the working-here contributor stub to
 CONTRIBUTING.md, define PR-based gate discipline (memory promotions
 proposed in PR description, owner applies via capture), branch protection.
 
-**22 · `rhoai-atlas` template.** The charter's endgame idea: extract
+**25 · `rhoai-atlas` template.** The charter's endgame idea: extract
 hublib + conventions + skills into a template so other PMs/areas can stamp
 their own hub. Only worth it after multi-writer proves the conventions
 travel. Large.
 
-**23 · Analytics.** Know which published artifacts get read (privacy-light
+**26 · Analytics.** Know which published artifacts get read (privacy-light
 counter like GoatCounter). Informative for enablement ROI; adds an external
 dependency to an otherwise self-contained pipeline — deliberately last.
 
-## Recorded small fixes (batch these in one sitting — item 7)
+## Recorded small fixes (batch these in one sitting — item 10)
 
 Carried from the narrative-layer build reviews and migration, all verified
 non-blocking when recorded:
