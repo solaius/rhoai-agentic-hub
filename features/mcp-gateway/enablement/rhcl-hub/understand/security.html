@@ -142,7 +142,7 @@
       <h2>The "Dumb MCP Server" Pattern</h2>
 
       <div class="callout callout--quote">
-        <p><strong>From a customer security discussion (2026-05-04, confirmed by the Kagenti engineering team):</strong></p>
+        <p><strong>From a customer security discussion (May 2026, confirmed by the Kagenti engineering team):</strong></p>
         <p>"AuthBridge is designed to transparently handle offloading the majority of the auth work so that the MCP server can be quite dumb. The MCP server receives a validated token in its <code>Authorization</code> header. No token exchange, no credential management, and no auth code is required in the MCP server itself. The Envoy sidecar (injected by Kagenti) handles JWT validation transparently."</p>
       </div>
 
@@ -213,7 +213,7 @@
 
       <h2>Full Audit Trail</h2>
 
-      <p><strong>From a customer security discussion (2026-05-04):</strong></p>
+      <p><strong>From a customer security discussion (May 2026):</strong></p>
       <ul>
         <li>Keycloak emits events for token exchange activities (user → agent, agent → backend)</li>
         <li>Gateway logs every tool call with the <code>act</code> claim chain</li>

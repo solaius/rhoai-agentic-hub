@@ -99,14 +99,14 @@
           <h3>External Keycloak Support</h3>
           <p><strong>Question:</strong> Can you use any Keycloak instance, or does it need to be on the same cluster/namespace? (Customer Q3)</p>
           <p><strong>Answer:</strong> On the MCP Gateway side, Keycloak can be hosted anywhere — no co-location requirement. On the Kagenti side, tested with in-cluster Keycloak, but it should work with any external Keycloak as long as it is exposed. No shared SPIFFE trust domain is needed — SPIFFE is used as a client ID.</p>
-          <p><strong>Status:</strong> Resolved (confirmed and updated by the Kagenti engineering team, 2026-05-07)</p>
+          <p><strong>Status:</strong> Resolved (confirmed and updated by the Kagenti engineering team, May 2026)</p>
         </div>
 
         <div class="callout callout--source">
           <h3>Token Caching & Consecutive Calls</h3>
           <p><strong>Question:</strong> How does AuthBridge handle consecutive calls? Does it re-exchange every time? (Customer Q6, Q7)</p>
           <p><strong>Answer:</strong> No. AuthBridge's in-process cache stores exchanged tokens keyed by <code>(subjectToken, audience)</code> and serves them until TTL expiry (with a 30-second early-refresh buffer). Consecutive calls do not re-exchange. External cache (Redis) is not yet supported but Kagenti team is willing to add it.</p>
-          <p><strong>Status:</strong> Resolved (confirmed via code review + Kagenti engineering team, 2026-05-07)</p>
+          <p><strong>Status:</strong> Resolved (confirmed via code review + Kagenti engineering team, May 2026)</p>
         </div>
       </section>
 
@@ -118,7 +118,7 @@
             <li>Customer security discussion follow-ups, 2026-05-06 (engagement Q&A — internal)</li>
             <li>Slack: #mcp-gateway, #mcp-gateway-dev</li>
             <li>OCP MCP Server Team Discussions</li>
-            <li>Kagenti engineering discussions (2026-05-07)</li>
+            <li>Kagenti engineering discussions (May 2026)</li>
           </ul>
         </div>
         <div class="related-pages">

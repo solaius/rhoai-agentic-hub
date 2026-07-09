@@ -19,7 +19,7 @@
 
       <section class="card">
         <h2>Large Enterprise OEM Customer — Security Deep-Dive</h2>
-        <p><strong>Meeting Date:</strong> 2026-05-04<br>
+        <p><strong>Meeting Date:</strong> May 2026<br>
         <strong>Participants:</strong> Customer security and engineering leads (OEM customer); Red Hat account and engineering team</p>
 
         <h3>Focus: Authentication Architecture</h3>
@@ -46,7 +46,7 @@
 
         <h3>Key Outcome: "Dumb MCP Server" Validated</h3>
         <blockquote class="callout callout--quote">
-          <p><strong>Customer security lead</strong> (OEM customer, 2026-05-04):<br>
+          <p><strong>Customer security lead</strong> (OEM customer, May 2026):<br>
           "I just want it to get the access token in its header and not have to worry about anything else."</p>
         </blockquote>
         <blockquote class="callout callout--quote">
@@ -70,7 +70,7 @@
 
         <h3>POC Status</h3>
         <p>
-          <strong>Status:</strong> Pending customer internal approval (eval licenses being prepared as of May 4, 2026)<br>
+          <strong>Status:</strong> Pending customer internal approval (eval licenses being prepared as of May 2026)<br>
           <strong>Timeline:</strong> ~2 weeks for approvals (target: week after Red Hat Summit 2026)
         </p>
 
@@ -85,13 +85,13 @@
       </section>
 
       <section class="card">
-        <h2>Major Telecommunications Provider — Network APIs Platform POC</h2>
-        <p><strong>Meeting Date:</strong> 2026-05-07<br>
+        <h2>Major Telecommunications Provider — Platform APIs POC</h2>
+        <p><strong>Meeting Date:</strong> May 2026<br>
         <strong>Participants:</strong> Customer network engineering and platform leads; Red Hat account and engineering team</p>
 
         <h3>Focus: Multi-Team Internal MCP Platform</h3>
         <p>
-          The customer's Network APIs team is building an internal MCP platform for multiple teams within the organization. The goal:
+          The customer's platform-APIs team is building an internal MCP platform for multiple teams within the organization. The goal:
           stand up a centralized MCP Gateway that aggregates 20+ MCP servers and provides governed access to tools across
           the organization.
         </p>
@@ -99,12 +99,12 @@
         <h3>Multiple Teams Interested</h3>
         <ul>
           <li><strong>Network Planning team</strong> — lead use case</li>
-          <li><strong>GTS team</strong> — infrastructure platform for IT workloads</li>
-          <li><strong>AI Connect</strong> (external monetization use cases) — exploring MCP for customer-facing APIs</li>
+          <li><strong>Their central IT organization</strong> — infrastructure platform for IT workloads</li>
+          <li><strong>Their external AI-monetization program</strong> — exploring MCP for customer-facing APIs</li>
         </ul>
 
         <blockquote class="callout callout--quote">
-          <p><strong>Customer lead</strong> (telecommunications provider, 2026-05-07):<br>
+          <p><strong>Customer lead</strong> (telecommunications provider, May 2026):<br>
           "I am the MCP person in this company... I want to stand all this up and get some of these MCP things running."</p>
         </blockquote>
 
@@ -114,12 +114,12 @@
           This validates the gateway's production readiness and provides Red Hat with real-world feedback.
         </p>
         <blockquote class="callout callout--quote">
-          <p><strong>Red Hat engineering</strong> (2026-05-07):<br>
+          <p><strong>Red Hat engineering</strong> (May 2026):<br>
           "Gateway can be deployed anywhere and it is in a technical preview state. So it actually comes with support...
           we're marching towards a GA later this year."</p>
         </blockquote>
         <blockquote class="callout callout--quote">
-          <p><strong>Red Hat engineering</strong> (2026-05-07):<br>
+          <p><strong>Red Hat engineering</strong> (May 2026):<br>
           "From a gateway perspective, we actually want to be able to deploy it in your local environment because you get
           a real feel for the product instead of doing it in some demo environment where everything's optimal anyways."</p>
         </blockquote>
@@ -127,7 +127,7 @@
         <h3>Use Cases</h3>
         <p>The customer is evaluating two primary use cases:</p>
         <ol>
-          <li><strong>External monetization</strong> — expose network APIs via MCP for external partners</li>
+          <li><strong>External monetization</strong> — expose internal APIs via MCP for external partners</li>
           <li><strong>Internal automation</strong> — reduce tickets, speed up triage, automate onboarding</li>
         </ol>
         <p>
@@ -137,7 +137,7 @@
 
         <h3>POC Status</h3>
         <p>
-          <strong>Timeline:</strong> 2-week POC (as of May 7, 2026)<br>
+          <strong>Timeline:</strong> 2-week POC (as of May 2026)<br>
           <strong>Environment:</strong> OCP 4.20 upgrade pending; Red Hat providing AI clusters<br>
           <strong>Support:</strong> Red Hat engineers available for troubleshooting (direct engineer access offered)
         </p>
@@ -152,120 +152,13 @@
       </section>
 
       <section class="card">
-        <h2>Strategic Hardware Partner — Factory Gap Analysis</h2>
-        <p><strong>Analysis Date:</strong> 2026-06-11<br>
-        <strong>Context:</strong> Strategic hardware partner Factory partnership discussions — POC success criteria for MCP Gateway & Tool Routing (Section 2.5)</p>
+        <h2>Strategic Hardware Partner — Gap Analysis</h2>
+        <p><strong>Context:</strong> A strategic hardware partner's joint-solution POC discussions — evaluating MCP Gateway & Tool Routing capabilities against partner success criteria.</p>
 
-        <h3>10 Success Criteria Evaluated</h3>
-        <p>The partner evaluated the MCP Gateway against 10 success criteria for their factory POC:</p>
-
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Criterion</th>
-              <th>Status</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="status-gap">
-              <td>1</td>
-              <td>Central metadata registry</td>
-              <td><strong>Gap</strong></td>
-              <td>Registry integration planned for GA (Q4 2026)</td>
-            </tr>
-            <tr class="status-met">
-              <td>2</td>
-              <td>Unified interface contract & schema</td>
-              <td><strong>Met</strong></td>
-              <td>MCP JSON-RPC 2.0</td>
-            </tr>
-            <tr class="status-partial">
-              <td>3</td>
-              <td>Multi-transport (HTTP, SSE, WS, stdio)</td>
-              <td><strong>Partial</strong></td>
-              <td>HTTP/SSE only</td>
-            </tr>
-            <tr class="status-met">
-              <td>4</td>
-              <td>Policy-driven routing</td>
-              <td><strong>Met</strong></td>
-              <td>Envoy ext_proc + Gateway API</td>
-            </tr>
-            <tr class="status-gap">
-              <td>5</td>
-              <td>Health checks & circuit breakers</td>
-              <td><strong>Gap</strong></td>
-              <td>Planned for GA (Q4 2026)</td>
-            </tr>
-            <tr class="status-partial">
-              <td>6</td>
-              <td>Tool-level QoS (timeouts, concurrency, rate limits)</td>
-              <td><strong>Partial</strong></td>
-              <td>Rate limiting only</td>
-            </tr>
-            <tr class="status-met">
-              <td>7</td>
-              <td>Tool access allowlisting</td>
-              <td><strong>Met</strong></td>
-              <td>Authorino per-tool policies</td>
-            </tr>
-            <tr class="status-met">
-              <td>8</td>
-              <td>Credential brokering</td>
-              <td><strong>Met</strong></td>
-              <td>AuthBridge OBO + token exchange</td>
-            </tr>
-            <tr class="status-partial">
-              <td>9</td>
-              <td>Tool KPIs & observability</td>
-              <td><strong>Partial</strong></td>
-              <td>Metrics/traces/audit present; cost tracking gap</td>
-            </tr>
-            <tr class="status-partial">
-              <td>10</td>
-              <td>Tool versioning & lifecycle</td>
-              <td><strong>Partial</strong></td>
-              <td>Registry tracks lifecycle; gateway enforcement pending</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>Summary: 4 Met / 4 Partial / 2 Gaps</h3>
         <p>
-          The <strong>4 criteria fully met</strong> (#2, #4, #7, #8) are all in the hard problems domain —
-          authentication, authorization, policy routing, and credential brokering. These are differentiated capabilities
-          that solve enterprise problems the MCP protocol alone cannot.
+          A joint POC readiness assessment found most criteria met or partially met, with a small number of gaps
+          under active development; the detailed gap analysis is maintained internally.
         </p>
-        <p>
-          The <strong>2 gaps</strong> (#1, #5) are both planned for GA (Q4 2026) — registry integration and health checks.
-          Both are operational maturity features rather than architectural gaps.
-        </p>
-
-        <h3>Positioning Recommendations</h3>
-        <ol>
-          <li><strong>Lead with strengths:</strong> Auth (#7, #8) and policy routing (#4) should be the centerpiece of the POC demo</li>
-          <li><strong>Clarify transport requirements early:</strong> If the partner needs WebSocket or stdio end-to-end, this needs architectural discussion</li>
-          <li><strong>Leverage Envoy for infrastructure gaps:</strong> Health checks and timeouts are available at the Envoy layer even if not yet surfaced through MCP Gateway CRDs</li>
-          <li><strong>Demo registry and gateway separately:</strong> Show the registry lifecycle model, show the gateway routing/auth, and present the integration path as a GA milestone</li>
-          <li><strong>Frame observability as extensible:</strong> The OTEL and metrics foundation is solid; cost tracking can be positioned as a metric dimension to add, not a new system to build</li>
-        </ol>
-
-        <h3>POC Status</h3>
-        <p>
-          <strong>Status:</strong> Gap analysis complete; POC discussions ongoing<br>
-          <strong>Focus Areas:</strong> Auth strengths, transport clarification, registry integration roadmap
-        </p>
-
-        <h3>Key Takeaway</h3>
-        <div class="callout callout--insight">
-          <p>
-            The partner's gap analysis validates the gateway's architectural strengths in the hardest problems — auth, routing,
-            and governance. The gaps are in operational maturity (health checks) and integration plumbing (registry→gateway
-            auto-config), both of which are planned for GA.
-          </p>
-        </div>
       </section>
 
       <footer class="page-footer" data-verified="2026-06-21">
@@ -273,10 +166,10 @@
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li>Customer security discussion, 2026-05-04 (engagement Q&A — internal)</li>
+            <li>Customer security discussion (engagement Q&A — internal)</li>
             <li>Customer follow-up answers (engagement Q&A — internal)</li>
-            <li>Customer POC discussion, 2026-05-07 (internal)</li>
-            <li>Partner gap analysis, 2026-06-11 (POC gap analysis — internal)</li>
+            <li>Customer POC discussion (internal)</li>
+            <li>Partner gap analysis (POC gap analysis — internal)</li>
             <li>Source verification: internal</li>
           </ul>
         </div>
