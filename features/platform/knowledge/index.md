@@ -22,6 +22,7 @@
 - [Registry Proposal Discussion (meeting transcript, 2026-03-19)](/features/platform/knowledge/fact-registry-proposal-discussion-transcript.md) — Early meeting covering the Databricks upstream process and the registry's plugin architecture.
 - [RHOAI 3.4 agentic capabilities — status snapshot](/features/platform/knowledge/fact-rhoai-34-agentic-capabilities.md) — GA/Tech Preview/Dev Preview status for eleven agentic capabilities as of the Agentic AI Messaging Guide (Apr 2026) — a point-in-time snapshot, not a roadmap.
 - [Sharon/Peter 1:1 - 3.4 confirmation (meeting transcript, 2026-04-13)](/features/platform/knowledge/fact-sharon-peter-1-1-34-confirmation-transcript.md) — 3.4 sign-off confirmation covering partner splash blog, quickstarts, deprecation process, AI Hub concept, and MaaS/gateway resourcing.
+- [Slack Channels by Product Area](/features/platform/knowledge/fact-slack-channels-by-product-area.md) — Living index of 28+ Slack channels organized by product area — use to find discussion context when researching any topic.
 - [Stakeholder map — supporting cast](/features/platform/knowledge/fact-stakeholder-map.md) — Names, roles, and one-line context for roughly 80 people mentioned once or twice in the old registry, grouped by area, who didn't warrant a standalone person entry.
 - [Red Hat Summit 2026 (May 11-14, Atlanta) — AI asset registry content](/features/platform/knowledge/fact-summit-2026.md) — Summit 2026 dates, partner-catalog blog plan, demo scope, and other agentic content slated for the event.
 
@@ -53,4 +54,3 @@
 - [opendatahub-io/architecture-context (GitHub)](/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md) — Architecture documentation repo for OpenDataHub/RHOAI.
 - [PatternFly Design System](/features/platform/knowledge/ref-patternfly-design-system.md) — Red Hat's open source design system (v6.4.0) — the required component/token library for all RHOAI UI and prototypes.
 - [Requesting Red Hat AI Documentation](/features/platform/knowledge/ref-requesting-rhai-documentation.md) — RHAI CCS documentation request process guide — docs levels by release type, Jira intake, definitions of Ready/Done.
-- [Slack Channels by Product Area](/features/platform/knowledge/ref-slack-channels-by-product-area.md) — Living index of 28+ Slack channels organized by product area — use to find discussion context when researching any topic.
