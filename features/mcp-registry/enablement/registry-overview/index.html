@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Registry — 3.5 Dev Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&family=Red+Hat+Text:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rh-red: #EE0000;
+    --rh-red-dark: #A30000;
+    --rh-black: #151515;
+    --rh-gray-900: #1a1a1a;
+    --rh-gray-800: #252525;
+    --rh-gray-700: #2d2d2d;
+    --rh-gray-600: #3c3c3c;
+    --rh-gray-500: #6a6a6a;
+    --rh-gray-400: #8a8a8a;
+    --rh-gray-300: #b8bbbe;
+    --rh-gray-200: #d2d2d2;
+    --rh-white: #ffffff;
+    --rh-blue: #0066CC;
+    --rh-blue-light: #4394e5;
+    --rh-teal: #009596;
+    --rh-green: #3E8635;
+    --rh-orange: #F4B400;
+    --rh-purple: #6753AC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Red Hat Text', -apple-system, sans-serif;
+    background: var(--rh-black);
+    color: var(--rh-gray-200);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Red Hat Display', sans-serif;
+    color: var(--rh-white);
+    line-height: 1.2;
+  }
+
+  code, .mono {
+    font-family: 'Red Hat Mono', monospace;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-on-scroll {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+  /* Navigation */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(21, 21, 21, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--rh-gray-700);
+    padding: 0 2rem;
+  }
+  nav .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; height: 56px;
+  }
+  nav .logo {
+    font-family: 'Red Hat Display', sans-serif; font-weight: 700; font-size: 0.95rem;
+    color: var(--rh-white); display: flex; align-items: center; gap: 0.6rem;
+  }
+  nav .logo .hat {
+    width: 28px; height: 28px; background: var(--rh-red); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 900; color: white;
+  }
+  nav .nav-links { display: flex; gap: 0.25rem; }
+  nav .nav-links a {
+    color: var(--rh-gray-300); text-decoration: none; font-size: 0.82rem; font-weight: 500;
+    padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.2s;
+  }
+  nav .nav-links a:hover { color: var(--rh-white); background: var(--rh-gray-700); }
+
+  /* Sections */
+  section {
+    max-width: 1200px; margin: 0 auto; padding: 5rem 2rem;
+    scroll-margin-top: 72px;
+  }
+  .section-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.75rem;
+  }
+  .section-title { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
+  .section-subtitle { font-size: 1.1rem; color: var(--rh-gray-300); max-width: 720px; margin-bottom: 2.5rem; line-height: 1.7; }
+
+  .section-divider {
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(238, 0, 0, 0.18), rgba(238, 0, 0, 0.35), rgba(238, 0, 0, 0.18), transparent);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 70vh; display: flex; align-items: center;
+    padding-top: 56px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -200px; right: -200px; width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(238, 0, 0, 0.2) 0%, transparent 70%); pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+  }
+  .hero-content > * { opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
+  .hero-content > *:nth-child(1) { animation-delay: 0s; }
+  .hero-content > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-content > *:nth-child(4) { animation-delay: 0.45s; }
+  .hero h1 { font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 900; margin-bottom: 1.25rem; }
+  .hero h1 .accent {
+    background: linear-gradient(135deg, var(--rh-red), #ff4444);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero .tagline { font-size: 1.1rem; color: var(--rh-gray-400); max-width: 680px; margin-bottom: 2.5rem; line-height: 1.7; }
+  .hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
+  .hero-stat { display: flex; flex-direction: column; }
+  .hero-stat .number {
+    font-family: 'Red Hat Display', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--rh-white); line-height: 1.1;
+  }
+  .hero-stat .label { font-size: 0.82rem; color: var(--rh-gray-500); font-weight: 500; max-width: 150px; }
+
+  /* Problem */
+  .problem-scenario {
+    background: linear-gradient(135deg, rgba(238, 0, 0, 0.06), rgba(238, 0, 0, 0.02));
+    border: 1px solid rgba(238, 0, 0, 0.2);
+    border-radius: 12px; padding: 2rem 2.5rem; margin-bottom: 2.5rem; position: relative;
+  }
+  .problem-scenario::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--rh-red), #ff4444, var(--rh-red)); border-radius: 12px 12px 0 0;
+  }
+  .problem-scenario .scenario-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-red); margin-bottom: 0.75rem;
+  }
+  .problem-scenario p { font-size: 1rem; color: var(--rh-gray-200); line-height: 1.8; }
+  .problem-scenario strong { color: var(--rh-white); font-weight: 700; }
+
+  .step-flow { display: flex; align-items: center; gap: 0; margin-bottom: 2.5rem; flex-wrap: wrap; justify-content: center; }
+  .step-box {
+    background: var(--rh-gray-800); border: 1px solid var(--rh-gray-600); border-radius: 10px;
+    padding: 1rem 1.25rem; text-align: center; min-width: 140px; position: relative;
+  }
+  .step-box.manual { border-color: var(--rh-red); background: rgba(238, 0, 0, 0.06); }
+  .step-box .step-num {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; color: var(--rh-gray-500);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;
+  }
+  .step-box.manual .step-num { color: var(--rh-red); }
+  .step-box .step-name { font-size: 0.88rem; font-weight: 600; color: var(--rh-gray-200); }
+  .step-box.manual .step-name { color: #ff8888; }
+  .step-box .step-component { font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; color: var(--rh-gray-500); margin-top: 0.2rem; }
+  .step-box .manual-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.6rem; font-weight: 700;
+    color: var(--rh-red); background: rgba(238, 0, 0, 0.15); padding: 0.1rem 0.4rem;
+    border-radius: 3px; position: absolute; top: -8px; right: -8px;
+  }
+  .step-arrow { color: var(--rh-gray-600); font-size: 1.2rem; padding: 0 0.5rem; }
+
+  /* Registry Does */
+  .record-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .record-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 10px;
+    padding: 1.25rem; transition: border-color 0.3s;
+  }
+  .record-card:hover { border-color: var(--rh-gray-500); }
+  .record-card h4 { font-size: 0.92rem; margin-bottom: 0.35rem; color: var(--rh-white); }
+  .record-card p { font-size: 0.82rem; color: var(--rh-gray-400); line-height: 1.5; }
+  .record-card .field-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.72rem; color: var(--rh-teal);
+    background: rgba(0, 149, 150, 0.1); padding: 0.15rem 0.5rem; border-radius: 3px;
+    display: inline-block; margin-bottom: 0.5rem;
+  }
+
+  .not-box {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 10px;
+    padding: 1.25rem 1.5rem; display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .not-box .not-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-gray-500); margin-bottom: 0.3rem;
+  }
+  .not-box p { font-size: 0.88rem; color: var(--rh-gray-400); }
+
+  /* Components Table */
+  .comp-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: var(--rh-gray-900); border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rh-gray-700);
+  }
+  .comp-table th {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.72rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-gray-400);
+    padding: 0.85rem 1.25rem; text-align: left; background: var(--rh-gray-800);
+    border-bottom: 1px solid var(--rh-gray-700);
+  }
+  .comp-table td {
+    padding: 0.75rem 1.25rem; font-size: 0.88rem;
+    border-bottom: 1px solid var(--rh-gray-800); color: var(--rh-gray-300);
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: var(--rh-gray-800); }
+  .comp-name { font-weight: 600; color: var(--rh-white); }
+  .comp-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; padding: 0.15rem 0.4rem;
+    border-radius: 3px; display: inline-block;
+  }
+  .comp-tag.reads { background: rgba(0, 149, 150, 0.15); color: var(--rh-teal); }
+  .comp-tag.writes { background: rgba(103, 83, 172, 0.15); color: #9a86d6; }
+  .comp-tag.none { background: var(--rh-gray-800); color: var(--rh-gray-500); }
+
+  /* User Stories */
+  .stories-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .story-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 12px;
+    padding: 1.5rem; transition: all 0.3s; position: relative;
+  }
+  .story-card:hover { border-color: var(--rh-gray-500); transform: translateY(-1px); }
+  .story-card .story-num {
+    font-family: 'Red Hat Display', sans-serif; font-size: 1.8rem; font-weight: 900;
+    color: var(--rh-gray-700); line-height: 1; position: absolute; top: 1rem; right: 1.25rem; opacity: 0.4;
+  }
+  .story-card h4 { font-size: 1rem; margin-bottom: 0.5rem; padding-right: 2rem; }
+  .story-card .story-actor {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.72rem; color: var(--rh-red);
+    margin-bottom: 0.5rem; font-weight: 600;
+  }
+  .story-card .story-want { font-size: 0.88rem; color: var(--rh-gray-300); margin-bottom: 0.75rem; line-height: 1.5; }
+  .story-card .story-notes { list-style: none; padding: 0; }
+  .story-card .story-notes li {
+    font-size: 0.8rem; color: var(--rh-gray-400); padding: 0.2rem 0; padding-left: 1rem; position: relative; line-height: 1.4;
+  }
+  .story-card .story-notes li::before {
+    content: ''; position: absolute; left: 0; top: 0.5rem; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--rh-gray-600);
+  }
+  .story-card .cross-comp {
+    margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--rh-gray-800);
+    font-size: 0.8rem; color: var(--rh-gray-500); font-style: italic;
+  }
+
+  /* Flow Comparison */
+  .flow-comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .flow-panel { background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 16px; padding: 2rem; }
+  .flow-panel.target { border-color: var(--rh-green); background: linear-gradient(135deg, var(--rh-gray-900), rgba(62, 134, 53, 0.05)); }
+  .flow-panel h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+  .flow-panel .flow-version {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; color: var(--rh-gray-500); margin-bottom: 1.25rem;
+  }
+  .flow-steps { display: flex; flex-direction: column; gap: 0; }
+  .flow-step { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.5rem 0; position: relative; }
+  .flow-step:not(:last-child)::after {
+    content: ''; position: absolute; left: 13px; top: 2rem; bottom: -0.1rem; width: 2px; background: var(--rh-gray-700);
+  }
+  .flow-dot {
+    width: 28px; height: 28px; min-width: 28px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; font-weight: 700;
+    background: var(--rh-gray-700); color: var(--rh-gray-300); z-index: 1;
+  }
+  .flow-panel.target .flow-dot { background: var(--rh-green); color: white; }
+  .flow-step .manual-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; color: var(--rh-orange);
+    background: rgba(244, 180, 0, 0.1); padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.5rem;
+  }
+  .flow-step .auto-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; color: var(--rh-green);
+    background: rgba(62, 134, 53, 0.1); padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.5rem;
+  }
+  .flow-step-text { padding-top: 0.2rem; }
+  .flow-step-text .step-title { font-size: 0.88rem; font-weight: 600; color: var(--rh-gray-200); }
+  .flow-step-text .step-detail { font-size: 0.78rem; color: var(--rh-gray-500); }
+
+  /* Scope */
+  .scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .scope-panel { background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 12px; padding: 1.75rem; }
+  .scope-panel.in-scope { border-color: var(--rh-green); }
+  .scope-panel h3 { font-size: 1rem; margin-bottom: 1rem; }
+  .scope-panel.in-scope h3 { color: #6abf62; }
+  .scope-panel.out-scope h3 { color: var(--rh-gray-400); }
+  .scope-panel ul { list-style: none; padding: 0; }
+  .scope-panel li {
+    font-size: 0.85rem; color: var(--rh-gray-300); padding: 0.3rem 0; padding-left: 1.2rem; position: relative;
+  }
+  .scope-panel li::before {
+    content: ''; position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%;
+  }
+  .scope-panel.in-scope li::before { background: var(--rh-green); }
+  .scope-panel.out-scope li::before { background: var(--rh-gray-600); }
+
+  /* Publish State Banner */
+  .state-banner {
+    background: var(--rh-gray-800); border: 1px solid var(--rh-gray-600); border-radius: 16px;
+    padding: 2.5rem; text-align: center; margin-bottom: 2rem;
+  }
+  .state-banner h3 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .state-banner .sub { font-size: 0.95rem; color: var(--rh-gray-400); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+  .state-pills { display: flex; justify-content: center; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+  .state-pill {
+    font-family: 'Red Hat Display', sans-serif; font-size: 1.1rem; font-weight: 700;
+    padding: 0.6rem 1.5rem; border-radius: 8px; border: 2px solid;
+  }
+  .state-pill.draft { border-color: var(--rh-gray-500); color: var(--rh-gray-300); background: var(--rh-gray-900); }
+  .state-pill.published { border-color: var(--rh-green); color: #6abf62; background: rgba(62, 134, 53, 0.1); }
+  .state-pill.deprecated { border-color: var(--rh-orange); color: var(--rh-orange); background: rgba(244, 180, 0, 0.06); }
+  .state-arrow { color: var(--rh-gray-600); font-size: 1.5rem; }
+
+  /* Changelog */
+  .changelog {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 12px;
+    padding: 1.5rem 2rem;
+  }
+  .changelog[open] { padding-bottom: 2rem; }
+  .changelog summary {
+    cursor: pointer; list-style: none; display: flex; align-items: center; gap: 0.25rem;
+    padding: 0.25rem 0; user-select: none;
+  }
+  .changelog summary::-webkit-details-marker { display: none; }
+  .changelog summary::before {
+    content: '\25B6'; font-size: 0.6rem; color: var(--rh-gray-500); margin-right: 0.5rem;
+    transition: transform 0.2s;
+  }
+  .changelog[open] summary::before { transform: rotate(90deg); }
+  .changelog-version {
+    margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rh-gray-800);
+  }
+  .changelog-version:first-of-type { margin-top: 1.25rem; }
+  .changelog-version h4 {
+    font-size: 0.95rem; color: var(--rh-white); margin-bottom: 0.25rem;
+  }
+  .changelog-date {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; font-weight: 400;
+    color: var(--rh-gray-500); margin-left: 0.5rem;
+  }
+  .changelog-context {
+    font-size: 0.82rem; color: var(--rh-gray-400); margin-bottom: 0.75rem; line-height: 1.5;
+  }
+  .changelog-group { margin-bottom: 1rem; }
+  .changelog-group:last-child { margin-bottom: 0; }
+  .changelog-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    padding: 0.15rem 0.5rem; border-radius: 3px; display: inline-block; margin-bottom: 0.4rem;
+  }
+  .changelog-label.added { color: var(--rh-green); background: rgba(62, 134, 53, 0.12); }
+  .changelog-label.changed { color: var(--rh-blue-light); background: rgba(67, 148, 229, 0.12); }
+  .changelog-label.removed { color: var(--rh-red); background: rgba(238, 0, 0, 0.1); }
+  .changelog-group ul { list-style: none; padding: 0; }
+  .changelog-group li {
+    font-size: 0.82rem; color: var(--rh-gray-300); padding: 0.2rem 0 0.2rem 1rem;
+    position: relative; line-height: 1.5;
+  }
+  .changelog-group li::before {
+    content: ''; position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--rh-gray-600);
+  }
+  .changelog-group li strong { color: var(--rh-white); font-weight: 600; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--rh-gray-700); padding: 3rem 2rem; text-align: center; }
+  footer p { font-size: 0.82rem; color: var(--rh-gray-500); }
+  footer a { color: var(--rh-red); text-decoration: none; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .record-grid { grid-template-columns: 1fr; }
+    .stories-grid { grid-template-columns: 1fr; }
+    .flow-comparison, .scope-grid { grid-template-columns: 1fr; }
+    .step-flow { flex-direction: column; align-items: stretch; }
+    .step-arrow { transform: rotate(90deg); text-align: center; }
+    nav .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    section { padding: 3.5rem 1.25rem; }
+    .hero { min-height: auto; padding-top: 80px; padding-bottom: 3rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .hero-stats { gap: 2rem; }
+    .hero-stat .number { font-size: 2rem; }
+    .section-title { font-size: 1.6rem; }
+    .state-pills { flex-direction: column; gap: 0.75rem; }
+    .state-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="hat">RH</div>
+      MCP Registry
+    </div>
+    <div class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#registry">Registry</a>
+      <a href="#components">Components</a>
+      <a href="#stories">Stories</a>
+      <a href="#flow">Flow</a>
+      <a href="#scope">Scope</a>
+      <a href="#prototype">Prototype</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="section-label">Red Hat OpenShift AI &mdash; 3.5 Dev Preview</div>
+      <h1><span class="accent">MCP Registry</span><br>Targeted User Stories</h1>
+      <p class="tagline">
+        The operational governance layer for MCP servers in RHOAI. Tracks identity, version,
+        lifecycle state, ownership, and deployment metadata for every MCP that has been
+        operationalized &mdash; deployed to the cluster or registered as a remote endpoint.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="number">11</span>
+          <span class="label">Targeted user stories for 3.5 DP</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">4</span>
+          <span class="label">Lifecycle states: active, deprecated, disabled, retired</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">2</span>
+          <span class="label">Entry paths: cluster deploy &amp; remote register</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Problem -->
+<section id="problem">
+  <div class="section-label">The Problem</div>
+  <h2 class="section-title">Five Steps, Two Manual Hand-offs, Zero Governance</h2>
+  <p class="section-subtitle">
+    Today, getting an MCP server from discovery to consumption requires five disconnected steps across four systems.
+    Steps 3 and 4 are manual and ungoverned. No single place tracks what exists, what state it is in, or who can use it.
+  </p>
+
+  <div class="step-flow">
+    <div class="step-box">
+      <div class="step-num">Step 1</div>
+      <div class="step-name">Discover</div>
+      <div class="step-component">Catalog</div>
+    </div>
+    <div class="step-arrow">&rarr;</div>
+    <div class="step-box">
+      <div class="step-num">Step 2</div>
+      <div class="step-name">Deploy</div>
+      <div class="step-component">Lifecycle Operator</div>
+    </div>
+    <div class="step-arrow">&rarr;</div>
+    <div class="step-box manual">
+      <div class="manual-tag">MANUAL</div>
+      <div class="step-num">Step 3</div>
+      <div class="step-name">Register in Gateway</div>
+      <div class="step-component">MCP Gateway</div>
+    </div>
+    <div class="step-arrow">&rarr;</div>
+    <div class="step-box manual">
+      <div class="manual-tag">MANUAL</div>
+      <div class="step-num">Step 4</div>
+      <div class="step-name">Update ConfigMap</div>
+      <div class="step-component">Studio config</div>
+    </div>
+    <div class="step-arrow">&rarr;</div>
+    <div class="step-box">
+      <div class="step-num">Step 5</div>
+      <div class="step-name">Consume</div>
+      <div class="step-component">Gen AI Studio</div>
+    </div>
+  </div>
+
+  <div class="problem-scenario">
+    <div class="scenario-label">What's Missing</div>
+    <p>
+      There is no single place that tracks <strong>what MCP servers exist</strong>,
+      <strong>what state they are in</strong>, <strong>which are intended for consumption</strong>,
+      or <strong>how a deployed instance relates to the asset it was deployed from</strong>.
+      The MCP Registry fills this gap by becoming the governed record that other components read from.
+    </p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Publish State -->
+<section id="registry">
+  <div class="section-label">The Registry</div>
+  <h2 class="section-title">What the MCP Registry Does</h2>
+  <p class="section-subtitle">
+    The registry stores metadata-first records for operationalized MCP servers. Each record carries the fields below.
+    Downstream components use lifecycle state to decide what to enforce, surface, or block.
+  </p>
+
+  <div class="state-banner animate-on-scroll">
+    <h3>Lifecycle State Governs Operationalized Assets</h3>
+    <p class="sub">
+      The registry governs MCPs that have been <strong style="color: var(--rh-white);">operationalized</strong> &mdash;
+      deployed to the cluster or registered as a remote endpoint. Governance begins at that point.
+      Draft and approval states are Catalog-side concerns.
+    </p>
+    <div class="state-pills">
+      <div class="state-pill published">Active</div>
+      <div class="state-arrow">&rarr;</div>
+      <div class="state-pill deprecated">Deprecated</div>
+      <div class="state-arrow">&rarr;</div>
+      <div class="state-pill draft">Disabled</div>
+      <div class="state-arrow">&rarr;</div>
+      <div class="state-pill" style="border-color: var(--rh-gray-600); color: var(--rh-gray-400); background: var(--rh-gray-900);">Retired</div>
+    </div>
+  </div>
+
+  <div class="record-grid">
+    <div class="record-card animate-on-scroll">
+      <div class="field-tag">identity</div>
+      <h4>Identity &amp; Version</h4>
+      <p>Stable name, version string, descriptive metadata. Each MCP server is a governed asset with versioned records.</p>
+    </div>
+    <div class="record-card animate-on-scroll">
+      <div class="field-tag">server_json</div>
+      <h4>MCP Payload</h4>
+      <p>The canonical server definition aligned with the upstream MCP registry schema. Immutable per version.</p>
+    </div>
+    <div class="record-card animate-on-scroll">
+      <div class="field-tag">lifecycle_state</div>
+      <h4>Lifecycle State</h4>
+      <p>Active, deprecated, disabled, or retired. Only active MCPs are eligible for gateway enforcement and Studio consumption.</p>
+    </div>
+    <div class="record-card animate-on-scroll">
+      <div class="field-tag">hosting_model</div>
+      <h4>Hosting Model</h4>
+      <p>Cluster-deployed or remote-registered. Both use one normalized record shape with type-specific metadata fields.</p>
+    </div>
+    <div class="record-card animate-on-scroll">
+      <div class="field-tag">deployment_ref</div>
+      <h4>Deployment / Registration Metadata</h4>
+      <p>Namespace, image reference, deployment association (cluster); endpoint URL, connection details (remote). Core to the record, not optional.</p>
+    </div>
+    <div class="record-card animate-on-scroll">
+      <div class="field-tag">namespace</div>
+      <h4>Namespace / Workspace Scope</h4>
+      <p>Visibility boundary for RBAC-aware access. Users and integrations see only records within their scope.</p>
+    </div>
+  </div>
+
+  <div class="not-box animate-on-scroll" style="margin-bottom: 1rem;">
+    <div style="font-size: 1.2rem; color: var(--rh-teal);">&#9432;</div>
+    <div>
+      <div class="not-label">Mandatory vs. Optional Metadata</div>
+      <p>Identity fields (name, version, publish state) are mandatory on every record. Extended metadata (description, tags, labels, deployment references) is optional and can be populated incrementally as the record matures.</p>
+    </div>
+  </div>
+
+  <div class="not-box animate-on-scroll">
+    <div style="font-size: 1.5rem; color: var(--rh-gray-500);">&ne;</div>
+    <div>
+      <div class="not-label">What the registry does not do</div>
+      <p>Host MCP runtimes, enforce gateway policies, deploy services, or replace the catalog. It stores the governed state that those components consume.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Components -->
+<section id="components">
+  <div class="section-label">Integration</div>
+  <h2 class="section-title">Component Boundaries</h2>
+  <p class="section-subtitle">
+    Each component retains its existing responsibility. The registry adds the governed state layer they all read from
+    instead of each maintaining separate truth.
+  </p>
+
+  <table class="comp-table animate-on-scroll">
+    <thead>
+      <tr>
+        <th>Component</th>
+        <th>Responsibility</th>
+        <th>Reads from Registry</th>
+        <th>Writes to Registry</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="comp-name">MCP Registry</span></td>
+        <td>Identity, versioning, lifecycle state, metadata</td>
+        <td>&mdash;</td>
+        <td>&mdash;</td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Catalog</span><br><span style="font-size: 0.75rem; color: var(--rh-gray-500);">Kubeflow Hub</span></td>
+        <td>Discovery and browsing</td>
+        <td><span class="comp-tag reads">Active/deprecated MCPs</span></td>
+        <td><span class="comp-tag none">No</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">Lifecycle Operator</span><br><span style="font-size: 0.75rem; color: var(--rh-gray-500);">k8s-sigs</span></td>
+        <td>Deployment (MCPServer CRD)</td>
+        <td><span class="comp-tag none">No (3.5 DP)</span></td>
+        <td><span class="comp-tag writes">Deployment refs</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">MCP Gateway</span><br><span style="font-size: 0.75rem; color: var(--rh-gray-500);">Kuadrant</span></td>
+        <td>Runtime mediation &amp; enforcement</td>
+        <td><span class="comp-tag reads">Active MCP metadata</span></td>
+        <td><span class="comp-tag none">No</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-name">AAA / Studio</span></td>
+        <td>Consumption for AI engineers</td>
+        <td><span class="comp-tag reads">Active + scoped</span></td>
+        <td><span class="comp-tag none">No</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- User Stories -->
+<section id="stories">
+  <div class="section-label">3.5 Dev Preview Scope</div>
+  <h2 class="section-title">Targeted User Stories</h2>
+  <p class="section-subtitle">
+    Eleven stories defining the minimum user-visible and system-visible behaviors for the first MCP Registry deliverable.
+    Each story describes who acts, what changes, and which component interaction it implies.
+  </p>
+
+  <div class="stories-grid">
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">01</div>
+      <div class="story-actor">Platform Engineer</div>
+      <h4>Register a cluster-deployed MCP server</h4>
+      <p class="story-want">Create a governed registry record for an MCP deployed to the cluster (Red Hat-provided, customer-created, or third-party MCPs deployed to customer infrastructure).</p>
+      <ul class="story-notes">
+        <li>Metadata-first reference, not the runtime itself</li>
+        <li>Canonical MCP payload aligned with upstream MCP registry schema</li>
+        <li>Mandatory: name, version, description, hosting model, lifecycle state</li>
+        <li>Optional: readme, tools list, parameters, runtime prerequisites</li>
+      </ul>
+      <div class="cross-comp">Core registry write surface. Governance begins at deployment.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">02</div>
+      <div class="story-actor">Platform Engineer / AI Engineer</div>
+      <h4>Register a remote MCP server</h4>
+      <p class="story-want">Create a governed registry record for an externally hosted MCP (e.g., GitHub-hosted, SaaS MCP endpoints) without requiring the registry to host the runtime.</p>
+      <ul class="story-notes">
+        <li>Stores endpoint URL and connection details</li>
+        <li>Same normalized record shape as cluster-deployed MCPs</li>
+        <li>Version defaults to "latest" when unspecified &mdash; declared, not enforced</li>
+        <li>Mandatory and optional metadata same as cluster-deployed path</li>
+      </ul>
+      <div class="cross-comp">Components consume one normalized record regardless of hosting model.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">03</div>
+      <div class="story-actor">Platform Engineer / Integration</div>
+      <h4>Retrieve and list MCP records</h4>
+      <p class="story-want">Retrieve a single record by identifier and version, or list records with structured field filtering.</p>
+      <ul class="story-notes">
+        <li>Filter by name (exact or substring), version, lifecycle state, namespace/workspace, owner, hosting model</li>
+        <li>Results filtered by caller's RBAC scope</li>
+      </ul>
+      <div class="cross-comp">Core read surface for catalog, gateway, and AAA/Studio.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">04</div>
+      <div class="story-actor">Platform Engineer</div>
+      <h4>Manage operational lifecycle state</h4>
+      <p class="story-want">Transition MCP records between active, deprecated, disabled, and retired states. Every transition requires a mandatory comment and is logged with user, action, timestamp, and comment.</p>
+      <ul class="story-notes">
+        <li>Active: in use, fully operational</li>
+        <li>Deprecated: functional but teams should transition</li>
+        <li>Disabled: blocked from new use; retained for governance</li>
+        <li>Retired: end-of-life; retained for audit only</li>
+      </ul>
+      <div class="cross-comp">Components filter on lifecycle state. Draft/approval are Catalog-side concerns.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">05</div>
+      <div class="story-actor">Catalog (Integration)</div>
+      <h4>Provide lifecycle status feedback to the catalog</h4>
+      <p class="story-want">Catalog queries registry for lifecycle status of operationalized MCPs to enrich catalog discovery with operational state.</p>
+      <ul class="story-notes">
+        <li>Catalog queries multiple lifecycle states (active + deprecated) to detect removals and show warnings</li>
+        <li>Discovery precedes governance &mdash; Catalog is the discovery surface, Registry is the governance truth</li>
+      </ul>
+      <div class="cross-comp">Registry feeds status back to Catalog. Catalog does not define governance state.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">06</div>
+      <div class="story-actor">Platform Engineer</div>
+      <h4>Record deployment and registration metadata</h4>
+      <p class="story-want">Store deployment or registration details (namespace, image reference, endpoint URL, deployment association) as core registry metadata.</p>
+      <ul class="story-notes">
+        <li>Registry does not deploy &mdash; lifecycle operator does</li>
+        <li>Deployment/registration metadata are core record fields, not optional extensions</li>
+        <li>In 3.5 DP, associations may be written manually</li>
+      </ul>
+      <div class="cross-comp">Bridges "what is governed" and "what is running."</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">07</div>
+      <div class="story-actor">MCP Gateway (Integration)</div>
+      <h4>Provide gateway-relevant MCP metadata</h4>
+      <p class="story-want">Gateway retrieves active MCP metadata for runtime enforcement with sub-200ms lookups.</p>
+      <ul class="story-notes">
+        <li>Gateway remains the runtime enforcement layer</li>
+        <li>Registry stores the deployment endpoint (from lifecycle operator); gateway creates its own mediated route</li>
+        <li>Gateway endpoint is a property of gateway configuration, not the registry</li>
+        <li>Full automation is a later-phase goal</li>
+      </ul>
+      <div class="cross-comp">Registry becomes governed source for gateway metadata.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">08</div>
+      <div class="story-actor">AAA / Studio (Integration)</div>
+      <h4>Surface operationalized MCPs to AAA / Studio</h4>
+      <p class="story-want">AAA/Studio queries active, scope-filtered MCPs so AI engineers see only what is intended for consumption.</p>
+      <ul class="story-notes">
+        <li>Governed alternative to config-map-driven exposure</li>
+      </ul>
+      <div class="cross-comp">Shift from static config to registry-governed consumption.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">09</div>
+      <div class="story-actor">Platform Engineer / AI Engineer</div>
+      <h4>Enforce scoped visibility</h4>
+      <p class="story-want">Restrict registry views to namespace/workspace-appropriate records via RBAC. Applies to both management and consumption queries.</p>
+      <ul class="story-notes">
+        <li>Namespace/workspace-based visibility boundary</li>
+        <li>Does not require a policy engine</li>
+      </ul>
+      <div class="cross-comp">All consuming surfaces receive scope-filtered views.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">10</div>
+      <div class="story-actor">Platform Engineer</div>
+      <h4>Preserve version history and manage lifecycle across versions</h4>
+      <p class="story-want">Retain prior versions with independent lifecycle states for orderly transitions.</p>
+      <ul class="story-notes">
+        <li>Each version has its own lifecycle state</li>
+        <li>Consuming components see deprecation/disabled status per version</li>
+      </ul>
+      <div class="cross-comp">Catalog and Studio guide users toward current versions.</div>
+    </div>
+
+    <div class="story-card animate-on-scroll">
+      <div class="story-num">11</div>
+      <div class="story-actor">Platform Engineer</div>
+      <h4>Register MCPs deployed outside the catalog path</h4>
+      <p class="story-want">Register directly-deployed or pre-existing MCPs so all operationalized MCPs are governed, regardless of entry path.</p>
+      <ul class="story-notes">
+        <li>MCPs deployed before the registry existed can have records created after the fact</li>
+        <li>Lifecycle operator may write a deployment reference back to the registry after deployment</li>
+        <li>If the MCP originated from the catalog, its catalog metadata (provenance, approval status) may be annotated on the registry record</li>
+        <li>Ensures no deployed MCP server remains ungoverned</li>
+      </ul>
+      <div class="cross-comp">Closes the "deploy &rarr; never registered" gap. Supports pre-3.5 migrations.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Flow Comparison -->
+<section id="flow">
+  <div class="section-label">Lifecycle</div>
+  <h2 class="section-title">Current vs. Target Flow</h2>
+  <p class="section-subtitle">
+    The registry becomes the governed source of truth. In 3.5 DP, not every handoff is fully automated &mdash;
+    but components operate on registry state rather than disconnected artifacts.
+  </p>
+  <div class="flow-comparison">
+    <div class="flow-panel">
+      <h3>Today (RHOAI 3.4)</h3>
+      <div class="flow-version">Fragmented &amp; Manual</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-dot">1</div>
+          <div class="flow-step-text">
+            <span class="step-title">Discover in Catalog</span>
+            <div class="step-detail">Browse available MCP servers</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">2</div>
+          <div class="flow-step-text">
+            <span class="step-title">Deploy via Operator</span>
+            <div class="step-detail">MCPServer CRD &rarr; Deployment + Service</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">3</div>
+          <div class="flow-step-text">
+            <span class="step-title">Register in Gateway</span>
+            <span class="manual-tag">manual</span>
+            <div class="step-detail">Manually create gateway registration</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">4</div>
+          <div class="flow-step-text">
+            <span class="step-title">Update ConfigMap</span>
+            <span class="manual-tag">manual</span>
+            <div class="step-detail">Manually configure Studio access</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">5</div>
+          <div class="flow-step-text">
+            <span class="step-title">Consume in Studio</span>
+            <div class="step-detail">Available in Gen AI Studio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-panel target">
+      <h3>Target (RHOAI 3.5+)</h3>
+      <div class="flow-version" style="color: var(--rh-green);">Catalog &rarr; Registry Governed</div>
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="flow-dot">1</div>
+          <div class="flow-step-text">
+            <span class="step-title">Discover in Catalog</span>
+            <span class="auto-tag">discovery</span>
+            <div class="step-detail">Browse curated, approved MCP servers</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">2</div>
+          <div class="flow-step-text">
+            <span class="step-title">Deploy or Register</span>
+            <span class="auto-tag">operationalize</span>
+            <div class="step-detail">Deploy to cluster or register remote endpoint</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">3</div>
+          <div class="flow-step-text">
+            <span class="step-title">Registry Records State</span>
+            <span class="auto-tag">governed</span>
+            <div class="step-detail">Identity, version, lifecycle state, metadata</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">4</div>
+          <div class="flow-step-text">
+            <span class="step-title">Gateway Enforces</span>
+            <span class="auto-tag">reads registry</span>
+            <div class="step-detail">Auth, authz, tool-level policy from active MCPs</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-dot">5</div>
+          <div class="flow-step-text">
+            <span class="step-title">Consume via Studio</span>
+            <span class="auto-tag">reads registry</span>
+            <div class="step-detail">Active, scope-filtered MCPs for AI engineers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Scope -->
+<section id="scope">
+  <div class="section-label">Boundaries</div>
+  <h2 class="section-title">3.5 Dev Preview Scope</h2>
+  <p class="section-subtitle">
+    For 3.5 DP, the registry stores enough state for components to read from it.
+    Full automation of every handoff is a later-phase goal.
+  </p>
+  <div class="scope-grid">
+    <div class="scope-panel in-scope animate-on-scroll">
+      <h3>In Scope</h3>
+      <ul>
+        <li>Register MCP servers (cluster-deployed and remote-registered) as governed records</li>
+        <li>Metadata-first records with mandatory and optional fields</li>
+        <li>Lifecycle state management (active / deprecated / disabled / retired) with audit trail</li>
+        <li>Scoped visibility (namespace/workspace-based, RBAC-enforced)</li>
+        <li>Read access for catalog, gateway, and AAA/Studio integrations</li>
+        <li>Lifecycle status feedback from registry to catalog</li>
+        <li>Deployment and registration metadata as core record fields</li>
+        <li>Version history with independent lifecycle per version</li>
+        <li>Registration of MCPs that bypassed the catalog path, including pre-3.5 deployments</li>
+      </ul>
+    </div>
+    <div class="scope-panel out-scope animate-on-scroll">
+      <h3>Out of Scope</h3>
+      <ul>
+        <li>MCP ingestion, curation, scanning, signing, or approval workflows (Catalog-side)</li>
+        <li>Draft or pre-approval states (Catalog-side)</li>
+        <li>Approval workflows, review gates, or policy enforcement engines</li>
+        <li>Full automated lifecycle handoffs between components</li>
+        <li>Detailed API, CRD, or data model design</li>
+        <li>Full multi-asset registry framework</li>
+        <li>Disconnected sync/mirroring</li>
+        <li>UI/UX design</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Prototype -->
+<section id="prototype">
+  <div class="section-label">Interactive Preview</div>
+  <h2 class="section-title">Registry Prototype</h2>
+  <p class="section-subtitle">
+    An early interactive prototype showing how MCP servers would appear as a first-class asset type
+    in MLflow's existing model registry patterns. This is a v0 frontend-only mockup &mdash; no backend,
+    no real data &mdash; built to give stakeholders a tangible feel for the registry UX before any code is written.
+  </p>
+  <div class="animate-on-scroll" style="text-align: center; margin-top: 2rem;">
+    <a href="../ui-prototype/" style="
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, rgba(0, 102, 204, 0.15), rgba(106, 83, 172, 0.15));
+      border: 1px solid var(--rh-blue);
+      border-radius: 12px;
+      color: var(--rh-blue-light);
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    " onmouseover="this.style.background='linear-gradient(135deg, rgba(0,102,204,0.25), rgba(106,83,172,0.25))';this.style.borderColor='var(--rh-blue-light)'" onmouseout="this.style.background='linear-gradient(135deg, rgba(0,102,204,0.15), rgba(106,83,172,0.15))';this.style.borderColor='var(--rh-blue)'">
+      <svg width="20" height="20" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="12" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="4.5" r="1" fill="currentColor"/><circle cx="5" cy="11.5" r="1" fill="currentColor"/></svg>
+      Open MCP Registry Prototype
+    </a>
+    <p style="margin-top: 1rem; font-size: 0.82rem; color: var(--rh-gray-500);">
+      v0 &mdash; Simulated functional prototype &middot; MLflow 3.10 design system &middot; All 10 launch MCP servers &middot; MVP / Future feature toggle
+    </p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Changelog -->
+<section id="changelog" style="padding-bottom: 2rem;">
+  <details class="changelog">
+    <summary>
+      <span class="section-label" style="margin-bottom: 0; display: inline;">Changelog</span>
+      <span style="font-size: 0.82rem; color: var(--rh-gray-500); margin-left: 0.5rem;">Revision history</span>
+    </summary>
+
+    <div class="changelog-version">
+      <h4>v2.0 <span class="changelog-date">2026-05-07</span></h4>
+      <p class="changelog-context">Major revision: Catalog&rarr;Registry flow alignment, lifecycle state model, engineering feedback from Dan Kuc and Chris Hambridge.</p>
+
+      <div class="changelog-group">
+        <div class="changelog-label changed">Changed</div>
+        <ul>
+          <li><strong>Asset flow</strong> &mdash; Reversed from Registry&rarr;Catalog to Catalog&rarr;Deploy/Register&rarr;Registry&rarr;Gateway&rarr;Studio. Discovery precedes governance.</li>
+          <li><strong>Lifecycle states</strong> &mdash; Replaced draft/published/deprecated with active/deprecated/disabled/retired. Draft and approval are Catalog-side concerns.</li>
+          <li><strong>Entry paths</strong> &mdash; Renamed internal/external to cluster-deployed/remote-registered with expanded examples (third-party MCPs, SaaS endpoints).</li>
+          <li><strong>Mandatory/optional metadata</strong> &mdash; Defined mandatory fields (name, version, description, hosting model, lifecycle state) and optional fields (readme, tools list, parameters, runtime prerequisites).</li>
+          <li><strong>All 11 stories</strong> &mdash; Updated titles, actors, descriptions, and acceptance notes to match Catalog&rarr;Registry flow and lifecycle state model.</li>
+          <li><strong>Target flow</strong> &mdash; Rewritten to show Catalog&rarr;operationalize&rarr;Registry&rarr;Gateway&rarr;Studio instead of Registry-first flow.</li>
+          <li><strong>Scope</strong> &mdash; Updated in-scope and out-of-scope to reflect lifecycle states, two entry paths, audit trail, and Catalog-side exclusions.</li>
+          <li><strong>Component table</strong> &mdash; Updated all "Published" references to "Active" lifecycle state terminology.</li>
+          <li><strong>Terminology</strong> &mdash; Replaced upstream/downstream flow language with "precedes/follows" to avoid conflict with Red Hat product terminology.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="changelog-version">
+      <h4>v1.1 <span class="changelog-date">2026-04-15</span></h4>
+      <p class="changelog-context">Updates from Chris Hambridge's review of MCP Registry MVP Requirements doc.</p>
+
+      <div class="changelog-group">
+        <div class="changelog-label added">Added</div>
+        <ul>
+          <li><strong>Story 11</strong> &mdash; Register an already-deployed MCP server. Covers the "catalog &rarr; deploy &rarr; never registered" gap where lifecycle operator writes a deployment reference back to the registry.</li>
+          <li><strong>Registry section</strong> &mdash; Mandatory vs. optional metadata note. Identity fields (name, version, publish state) are mandatory; extended metadata is optional and can be populated incrementally.</li>
+        </ul>
+      </div>
+
+      <div class="changelog-group">
+        <div class="changelog-label changed">Changed</div>
+        <ul>
+          <li><strong>Story 02</strong> &mdash; Added note: version defaults to "latest" when unspecified for external MCPs (declared, not enforced).</li>
+          <li><strong>Story 03</strong> &mdash; Replaced "basic filtering" with structured field filtering. Enumerated filter fields: name, publish state, workspace scope, hosting model, version.</li>
+          <li><strong>Story 05</strong> &mdash; Added note: catalog sync queries published + deprecated (multi-state) so users see deprecation warnings.</li>
+          <li><strong>Story 07</strong> &mdash; Added clarification: registry stores deployment endpoint (from lifecycle operator); gateway creates its own mediated route.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="changelog-version">
+      <h4>v1.0 <span class="changelog-date">2026-04-08</span></h4>
+      <p class="changelog-context">Initial version with 10 targeted user stories for RHOAI 3.5 Dev Preview.</p>
+    </div>
+  </details>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>
+    <p>
+      MCP Registry &mdash; 3.5 Dev Preview Overview &mdash; Red Hat OpenShift AI &mdash;
+      <a href="https://redhat.atlassian.net/browse/RHAIRFE-1370">RHAIRFE-1370</a>
+      &mdash; Peter Double, Principal PM &mdash; May 2026
+    </p>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

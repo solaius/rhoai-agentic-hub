@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCP Gateway — Tool-Call Authorization & Audit — Red Hat OpenShift AI</title>
+  <meta name="description" content="How MCP Gateway closes the Authorization Gap with enterprise-grade tool-call authorization, cryptographic audit trails, and defense-in-depth security for agentic AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === NAVIGATION === */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hat {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--rh-red);
+      color: white;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 0.65rem;
+      border-radius: 4px;
+    }
+    .nav-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-family: var(--font-text);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* === SECTIONS === */
+    section {
+      padding: 5rem 1.5rem;
+      scroll-margin-top: calc(var(--nav-height) + 16px);
+    }
+    .section-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; }
+    .accent     { color: var(--rh-red); }
+
+    /* === HERO === */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding-top: calc(var(--nav-height) + 3rem);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -100px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238, 0, 0, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+    }
+
+    /* === SCROLL ANIMATIONS === */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* === STATUS BADGES === */
+    .badge { font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.2rem 0.6rem; border-radius: 3px; display: inline-block; }
+    .badge-available { background: rgba(62,134,53,0.18); color: var(--rh-green); }
+    .badge-tp { background: rgba(244,180,0,0.15); color: var(--rh-orange); }
+    .badge-planned { background: rgba(0,102,204,0.12); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.25); }
+    .badge-gap { background: rgba(238,0,0,0.1); color: #f56e6e; border: 1px solid rgba(238,0,0,0.2); }
+
+    /* === DEFINITION BOXES === */
+    .def-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .def-term {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .def-desc {
+      font-family: var(--font-text);
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* === FLOW DIAGRAMS === */
+    .flow-h { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center; }
+    .flow-node {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+      min-width: 130px;
+      flex: 0 1 auto;
+    }
+    .flow-arrow { color: var(--rh-red); font-size: 1.2rem; opacity: 0.6; flex-shrink: 0; }
+
+    /* === JWT CODE BLOCKS === */
+    .jwt-block {
+      background: #0d1117;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: #c9d1d9;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .jwt-key { color: #79c0ff; }
+    .jwt-str { color: #a5d6ff; }
+    .jwt-hi  { color: var(--rh-red); font-weight: 600; }
+    .jwt-comment { color: #6e7681; font-style: italic; }
+
+    /* === LAYER STACK === */
+    .layer-stack { display: flex; flex-direction: column; gap: 0; max-width: 800px; margin: 2rem auto; }
+    .layer-item {
+      display: flex;
+      align-items: stretch;
+      border: 1px solid var(--border-subtle);
+      margin-top: -1px;
+    }
+    .layer-item:first-child { border-radius: 10px 10px 0 0; }
+    .layer-item:last-child { border-radius: 0 0 10px 10px; }
+    .layer-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: white;
+    }
+    .layer-body {
+      flex: 1;
+      padding: 1rem 1.25rem;
+      background: var(--bg-elevated);
+    }
+    .layer-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .layer-desc {
+      font-family: var(--font-text);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+      line-height: 1.5;
+    }
+
+    /* === CREDENTIAL TIERS === */
+    .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem; }
+
+    /* === CALLOUT === */
+    .callout {
+      border-left: 3px solid var(--rh-red);
+      padding: 1rem 1.5rem;
+      background: rgba(238,0,0,0.04);
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+    }
+    .callout p { font-family: var(--font-text); font-size: 0.92rem; color: var(--text-primary); line-height: 1.6; margin: 0; }
+    .callout .callout-attr { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+      .flow-h { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+      .tier-grid { grid-template-columns: 1fr; }
+      .two-col-compare { grid-template-columns: 1fr !important; }
+    }
+    @media (max-width: 1024px) {
+      .nav-links { gap: 1rem; }
+    }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* === PRINT === */
+    @media print {
+      *, *::before, *::after { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      nav { position: static; }
+      body { background: var(--bg-canvas); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">MCP Gateway Security</span>
+      </div>
+      <div class="nav-links">
+        <a href="#gap">The Gap</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#two-gates">Authorization</a>
+        <a href="#token-flow">Token Flow</a>
+        <a href="#identity">Identity</a>
+        <a href="#five-layers">5 Layers</a>
+        <a href="#credentials">Credentials</a>
+        <a href="#audit">Audit</a>
+        <a href="#next">Next Steps</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== 1. HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RED HAT OPENSHIFT AI &bull; MCP GATEWAY</div>
+      <h1 class="display-xl animate-on-scroll"><span class="accent">Tool-Call Authorization</span><br>& Full Audit Trail</h1>
+      <p class="lead animate-on-scroll">Enterprise-grade governance for agentic AI — closing the gap between "this agent is authenticated" and "this agent is authorized to call this specific tool, with these specific arguments, on behalf of this specific user."</p>
+
+      <div class="animate-on-scroll" style="display: flex; gap: 2.5rem; margin-top: 2rem; flex-wrap: wrap;">
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">5</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Authorization Layers</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">Zero</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Static Credentials</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">E2E</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Cryptographic Audit</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 2. THE AUTHORIZATION GAP ===== -->
+  <section id="gap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE PROBLEM</div>
+      <h2 class="display-lg animate-on-scroll">The Authorization Gap</h2>
+      <p class="lead animate-on-scroll">Most agentic AI platforms solve <em>authentication</em> — proving an agent's identity. But authentication alone does not answer the harder questions: <strong style="color: var(--text-primary);">what can this agent do?</strong></p>
+
+      <!-- Key definition -->
+      <div class="def-box animate-on-scroll" style="margin-top: 2rem; border-left: 3px solid var(--rh-red);">
+        <div class="def-term">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#EE0000" stroke-width="2"/><text x="10" y="14" text-anchor="middle" fill="#EE0000" font-family="Red Hat Display" font-weight="800" font-size="12">!</text></svg>
+          The Authorization Gap
+        </div>
+        <div class="def-desc">The absence of an enforcement layer between "this agent has a valid token" and "this agent is authorized to perform this specific action." Without it, any authenticated agent can call any tool, access any data, and perform any operation — with no way to prove what happened after the fact.</div>
+      </div>
+
+      <!-- Before / After comparison -->
+      <div class="two-col-compare animate-on-scroll" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+        <div style="background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02)); border: 1px solid rgba(238,0,0,0.2); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--rh-red), #ff4444);"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.75rem;">WITHOUT AUTHORIZATION</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">Agent + Valid Token = Full Access</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              Agent calls <code style="font-family: var(--font-mono); font-size: 0.78rem; background: rgba(238,0,0,0.08); padding: 0.1rem 0.35rem; border-radius: 3px;">transfer_funds</code> — succeeds
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              Agent queries 10,000 customer records — succeeds
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-red);"></span>
+              No audit trail of what happened or who authorized it
+            </li>
+          </ul>
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(62,134,53,0.06), rgba(62,134,53,0.02)); border: 1px solid rgba(62,134,53,0.2); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--rh-green), #63993D);"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-green); margin-bottom: 0.75rem;">WITH MCP GATEWAY AUTHORIZATION</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">Agent + Valid Token + Policy = Scoped Access</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              Agent calls <code style="font-family: var(--font-mono); font-size: 0.78rem; background: rgba(62,134,53,0.08); padding: 0.1rem 0.35rem; border-radius: 3px;">transfer_funds</code> — <strong style="color: var(--rh-red);">401 Denied</strong> (no role mapping)
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              Agent queries customers — scoped to its tenant's records only
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 6px; height: 6px; border-radius: 50%; background: var(--rh-green);"></span>
+              Every action logged with user, agent, tool, timestamp, and decision
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Enterprise scenarios -->
+      <h3 class="animate-on-scroll" style="font-family: var(--font-sans); font-weight: 700; font-size: var(--fs-h2); color: var(--text-primary); margin-top: 3rem; margin-bottom: 1rem;">Why This Matters for Regulated Industries</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;" class="animate-on-scroll">
+        <div style="background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02)); border: 1px solid rgba(238,0,0,0.15); border-radius: 12px; padding: 1.25rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-red);"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.5rem;">FINANCIAL SERVICES</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">"Agent identity and access control is the top concern. We cannot audit which agents use which tools."</p>
+        </div>
+        <div style="background: linear-gradient(135deg, rgba(0,102,204,0.06), rgba(0,102,204,0.02)); border: 1px solid rgba(0,102,204,0.15); border-radius: 12px; padding: 1.25rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-blue);"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-blue-light); margin-bottom: 0.5rem;">GOVERNMENT</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">FedRAMP and FISMA require demonstrable access control, least-privilege enforcement, and complete audit trails for every system action.</p>
+        </div>
+        <div style="background: linear-gradient(135deg, rgba(103,83,172,0.06), rgba(103,83,172,0.02)); border: 1px solid rgba(103,83,172,0.15); border-radius: 12px; padding: 1.25rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-purple);"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: #876fd4; margin-bottom: 0.5rem;">ENTERPRISE SaaS</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">"We cannot move agents to production without audit trails. Guardrails, safety, moderation, evaluations, and auditability are non-negotiable."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 3. ARCHITECTURE OVERVIEW ===== -->
+  <section id="architecture">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ARCHITECTURE</div>
+      <h2 class="display-lg animate-on-scroll">Where Authorization Lives</h2>
+      <p class="lead animate-on-scroll">MCP Gateway is an Envoy-based gateway built on the Red Hat Connectivity Link (RHCL) platform. Authorization is enforced at the gateway layer — <strong style="color: var(--text-primary);">before</strong> requests reach MCP servers. The MCP server itself stays "dumb" — no auth code required.</p>
+
+      <!-- Architecture flow diagram -->
+      <div class="animate-on-scroll" style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2rem; margin-top: 2rem;">
+        <div style="font-family: var(--font-mono); font-size: var(--fs-label); color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1.5rem;">RHCL STACK — REQUEST PATH</div>
+
+        <div class="flow-h">
+          <div class="flow-node" style="border-color: var(--rh-blue); border-width: 2px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.25rem;">CLIENT</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">Agent / User</div>
+          </div>
+
+          <div class="flow-arrow">&#x2192;</div>
+
+          <div class="flow-node" style="border-color: var(--rh-teal); border-width: 2px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.25rem;">ENVOY</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">Ingress Gateway</div>
+            <div style="font-family: var(--font-text); font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">TLS termination</div>
+          </div>
+
+          <div class="flow-arrow">&#x2192;</div>
+
+          <div class="flow-node" style="border-color: var(--rh-red); border-width: 2px; background: rgba(238,0,0,0.05);">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.25rem;">AUTHORINO</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">Auth Engine</div>
+            <div style="font-family: var(--font-text); font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">AuthN + AuthZ</div>
+          </div>
+
+          <div class="flow-arrow">&#x2192;</div>
+
+          <div class="flow-node" style="border-color: var(--rh-red); border-width: 2px; background: rgba(238,0,0,0.05);">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.25rem;">EXT_PROC</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">MCP Router</div>
+            <div style="font-family: var(--font-text); font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">Protocol parsing</div>
+          </div>
+
+          <div class="flow-arrow">&#x2192;</div>
+
+          <div class="flow-node" style="border-color: var(--rh-teal); border-width: 2px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.25rem;">BACKEND</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.88rem; color: var(--text-primary);">MCP Server</div>
+            <div style="font-family: var(--font-text); font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem;">No auth code</div>
+          </div>
+        </div>
+
+        <!-- Supporting components row -->
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem; justify-content: center; flex-wrap: wrap;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.1em;">RATE LIMITING</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.78rem; color: var(--text-primary);">Limitador</div>
+          </div>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.1em;">IDENTITY</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.78rem; color: var(--text-primary);">Keycloak</div>
+          </div>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em;">WORKLOAD ID</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.78rem; color: var(--text-primary);">SPIFFE / SPIRE</div>
+          </div>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.1em;">TOKEN EXCHANGE</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.78rem; color: var(--text-primary);">AuthBridge</div>
+          </div>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.5rem 1rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em;">SECRETS</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.78rem; color: var(--text-primary);">HashiCorp Vault</div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div style="display: flex; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 0.4rem;"><span style="width: 12px; height: 3px; background: var(--rh-red); border-radius: 1px;"></span> Authorization enforced here</div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;"><span style="width: 12px; height: 3px; background: var(--rh-teal); border-radius: 1px;"></span> Traffic routing</div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;"><span style="width: 12px; height: 3px; background: var(--rh-blue); border-radius: 1px;"></span> Client</div>
+        </div>
+      </div>
+
+      <!-- Key concepts -->
+      <h3 class="animate-on-scroll" style="font-family: var(--font-sans); font-weight: 700; font-size: var(--fs-h2); color: var(--text-primary); margin-top: 2.5rem; margin-bottom: 1rem;">Key Concepts</h3>
+
+      <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-teal);">
+        <div class="def-term"><span class="badge badge-available">Available</span> MCP Gateway</div>
+        <div class="def-desc">An Envoy-based gateway for Model Context Protocol (MCP) servers. Provides runtime connectivity, enforcement, and observability for MCP traffic. Built by the Kuadrant team, ships as part of Red Hat Connectivity Link (RHCL).</div>
+      </div>
+      <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-red);">
+        <div class="def-term"><span class="badge badge-available">Available</span> Authorino</div>
+        <div class="def-desc">The authentication and authorization engine within RHCL. Evaluates identity, access policies, and token claims as an Envoy ext_authz filter. This is where per-tool authorization decisions are made.</div>
+      </div>
+      <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-blue);">
+        <div class="def-term"><span class="badge badge-available">Available</span> AuthBridge</div>
+        <div class="def-desc">A token exchange proxy (part of Kagenti) injected as an Envoy sidecar. Transparently handles RFC 8693 token exchange so MCP servers never see raw user credentials. Includes in-process token caching.</div>
+      </div>
+      <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-purple);">
+        <div class="def-term"><span class="badge badge-available">Available</span> RHCL (Red Hat Connectivity Link)</div>
+        <div class="def-desc">The connectivity management platform underlying MCP Gateway. Implemented as a WASM plugin for Envoy — not a standalone gateway. This means organizations using OpenShift Service Mesh or Istio do not need major infrastructure changes.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 4. TWO-LEVEL AUTHORIZATION ===== -->
+  <section id="two-gates">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AUTHORIZATION MODEL</div>
+      <h2 class="display-lg animate-on-scroll">Two-Gate Authorization</h2>
+      <p class="lead animate-on-scroll">Every request passes through <strong style="color: var(--text-primary);">two policy decision points</strong> (PDPs) before reaching the MCP server. Both are enforced at the gateway — the MCP server receives only pre-authorized requests.</p>
+
+      <!-- Two-gate flow -->
+      <div class="animate-on-scroll" style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2rem; margin-top: 2rem;">
+
+        <div style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 0; align-items: center;">
+
+          <!-- Incoming request -->
+          <div style="text-align: center; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem;">INCOMING</div>
+            <div style="background: var(--bg-card); border: 2px solid var(--rh-blue); border-radius: 10px; padding: 1rem;">
+              <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">Agent Request</div>
+              <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem;">tools/call: search</div>
+              <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">+ JWT Bearer Token</div>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div style="color: var(--rh-red); font-size: 1.5rem; opacity: 0.6;">&#x2192;</div>
+
+          <!-- Gate 1 -->
+          <div style="text-align: center; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem;">GATE 1 — SERVER PDP</div>
+            <div style="background: rgba(238,0,0,0.05); border: 2px solid var(--rh-red); border-radius: 10px; padding: 1rem;">
+              <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">Can this identity access<br>this MCP server?</div>
+              <div style="margin-top: 0.75rem; background: #0d1117; border-radius: 6px; padding: 0.6rem; text-align: left;">
+                <div style="font-family: var(--font-mono); font-size: 0.68rem; color: #79c0ff;">resource_access</div>
+                <div style="font-family: var(--font-mono); font-size: 0.68rem; color: #a5d6ff; padding-left: 0.75rem;">[mcp_gateway]</div>
+                <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--rh-green); padding-left: 1rem;">&#x2713; server_host_access</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arrow -->
+          <div style="color: var(--rh-red); font-size: 1.5rem; opacity: 0.6;">&#x2192;</div>
+
+          <!-- Gate 2 -->
+          <div style="text-align: center; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem;">GATE 2 — TOOL PDP</div>
+            <div style="background: rgba(238,0,0,0.05); border: 2px solid var(--rh-red); border-radius: 10px; padding: 1rem;">
+              <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--text-primary);">Can this identity call<br>this specific tool?</div>
+              <div style="margin-top: 0.75rem; background: #0d1117; border-radius: 6px; padding: 0.6rem; text-align: left;">
+                <div style="font-family: var(--font-mono); font-size: 0.68rem; color: #79c0ff;">tools/call:</div>
+                <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--rh-green); padding-left: 0.75rem;">&#x2713; search</div>
+                <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--rh-red); padding-left: 0.75rem;">&#x2717; transfer_funds</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Outcome -->
+        <div style="display: flex; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border-subtle); justify-content: center; flex-wrap: wrap;">
+          <div style="background: rgba(62,134,53,0.08); border: 1px solid rgba(62,134,53,0.2); border-radius: 8px; padding: 0.75rem 1.25rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase;">BOTH PASS</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.85rem; color: var(--text-primary);">Request → MCP Server</div>
+          </div>
+          <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 8px; padding: 0.75rem 1.25rem; text-align: center;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase;">EITHER FAILS</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.85rem; color: var(--text-primary);">401 Unauthorized</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout animate-on-scroll" style="margin-top: 1.5rem;">
+        <p><strong>The MCP server stays "dumb."</strong> AuthBridge transparently offloads all auth so the MCP server receives a validated token in its Authorization header. No token exchange, no credential management, and no auth code is required in the MCP server itself. The Envoy sidecar handles JWT validation transparently.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 5. TOKEN FLOW ===== -->
+  <section id="token-flow">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">TOKEN EXCHANGE</div>
+      <h2 class="display-lg animate-on-scroll">RFC 8693 Two-Hop Token Exchange</h2>
+      <p class="lead animate-on-scroll">No token passthrough. Every hop gets a fresh, scoped token. The <code style="font-family: var(--font-mono); font-size: 0.95rem; background: rgba(238,0,0,0.06); padding: 0.15rem 0.5rem; border-radius: 4px;">act</code> (actor) claim chain grows at each hop — creating a cryptographic delegation trail.</p>
+
+      <!-- Token flow SVG -->
+      <div class="animate-on-scroll" style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2rem; margin-top: 2rem; overflow-x: auto;">
+
+        <svg viewBox="0 0 1000 320" style="width: 100%; min-width: 700px; height: auto;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Connection lines -->
+          <line x1="175" y1="60" x2="390" y2="60" stroke="#EE0000" stroke-width="2" stroke-dasharray="8,5" style="animation: dash-flow 2s linear infinite;" />
+          <polygon points="388,53 400,60 388,67" fill="#EE0000" />
+
+          <line x1="590" y1="60" x2="780" y2="60" stroke="#EE0000" stroke-width="2" stroke-dasharray="8,5" style="animation: dash-flow 2s linear infinite; animation-delay: 0.5s;" />
+          <polygon points="778,53 790,60 778,67" fill="#EE0000" />
+
+          <!-- Hop labels -->
+          <text x="283" y="40" text-anchor="middle" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600" letter-spacing="0.15em">HOP 1</text>
+          <text x="685" y="40" text-anchor="middle" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600" letter-spacing="0.15em">HOP 2</text>
+
+          <!-- Node 1: User/Agent -->
+          <rect x="20" y="30" width="155" height="60" rx="10" fill="#1a1a1a" stroke="#0066CC" stroke-width="2" />
+          <text x="97" y="53" text-anchor="middle" fill="#4394e5" font-family="Red Hat Mono" font-size="9" font-weight="600" letter-spacing="0.1em">USER / AGENT</text>
+          <text x="97" y="72" text-anchor="middle" fill="#ffffff" font-family="Red Hat Display" font-size="12" font-weight="600">Original Token</text>
+
+          <!-- Node 2: AuthBridge -->
+          <rect x="400" y="30" width="190" height="60" rx="10" fill="#1a1a1a" stroke="#EE0000" stroke-width="2" />
+          <text x="495" y="53" text-anchor="middle" fill="#EE0000" font-family="Red Hat Mono" font-size="9" font-weight="600" letter-spacing="0.1em">AUTHBRIDGE</text>
+          <text x="495" y="72" text-anchor="middle" fill="#ffffff" font-family="Red Hat Display" font-size="12" font-weight="600">Token Exchange</text>
+
+          <!-- Node 3: MCP Server -->
+          <rect x="790" y="30" width="180" height="60" rx="10" fill="#1a1a1a" stroke="#009596" stroke-width="2" />
+          <text x="880" y="53" text-anchor="middle" fill="#009596" font-family="Red Hat Mono" font-size="9" font-weight="600" letter-spacing="0.1em">MCP SERVER</text>
+          <text x="880" y="72" text-anchor="middle" fill="#ffffff" font-family="Red Hat Display" font-size="12" font-weight="600">Scoped Token</text>
+
+          <!-- JWT payload boxes -->
+          <!-- Token at Hop 1 -->
+          <rect x="20" y="120" width="300" height="180" rx="8" fill="#0d1117" stroke="#333333" stroke-width="1" />
+          <text x="35" y="143" fill="#6e7681" font-family="Red Hat Mono" font-size="9" font-style="italic">// After Hop 1 — gateway-scoped</text>
+          <text x="35" y="163" fill="#79c0ff" font-family="Red Hat Mono" font-size="10">"sub"<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"user-jane-doe"</tspan></text>
+          <text x="35" y="183" fill="#79c0ff" font-family="Red Hat Mono" font-size="10">"aud"<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"mcp-gateway"</tspan></text>
+          <text x="35" y="203" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600">"act"<tspan fill="#c9d1d9" font-weight="400">: {</tspan></text>
+          <text x="50" y="223" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600">"sub"<tspan fill="#c9d1d9" font-weight="400">: </tspan><tspan fill="#a5d6ff" font-weight="400">"agent-customer-support"</tspan></text>
+          <text x="35" y="243" fill="#c9d1d9" font-family="Red Hat Mono" font-size="10">}</text>
+          <text x="35" y="268" fill="#79c0ff" font-family="Red Hat Mono" font-size="10">"scope"<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"tools:search tools:list"</tspan></text>
+          <text x="35" y="290" fill="#6e7681" font-family="Red Hat Mono" font-size="8">sub preserved ↑  aud narrowed ↑  act chain started ↑</text>
+
+          <!-- Token at Hop 2 -->
+          <rect x="370" y="120" width="340" height="195" rx="8" fill="#0d1117" stroke="#333333" stroke-width="1" />
+          <text x="385" y="143" fill="#6e7681" font-family="Red Hat Mono" font-size="9" font-style="italic">// After Hop 2 — server-scoped</text>
+          <text x="385" y="163" fill="#79c0ff" font-family="Red Hat Mono" font-size="10">"sub"<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"user-jane-doe"</tspan></text>
+          <text x="385" y="183" fill="#79c0ff" font-family="Red Hat Mono" font-size="10">"aud"<tspan fill="#c9d1d9">: </tspan><tspan fill="#a5d6ff">"crm-mcp-server"</tspan></text>
+          <text x="385" y="203" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600">"act"<tspan fill="#c9d1d9" font-weight="400">: {</tspan></text>
+          <text x="400" y="223" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600">"sub"<tspan fill="#c9d1d9" font-weight="400">: </tspan><tspan fill="#a5d6ff" font-weight="400">"mcp-gateway"</tspan><tspan fill="#c9d1d9" font-weight="400">,</tspan></text>
+          <text x="400" y="243" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600">"act"<tspan fill="#c9d1d9" font-weight="400">: {</tspan></text>
+          <text x="415" y="263" fill="#EE0000" font-family="Red Hat Mono" font-size="10" font-weight="600">"sub"<tspan fill="#c9d1d9" font-weight="400">: </tspan><tspan fill="#a5d6ff" font-weight="400">"agent-customer-support"</tspan></text>
+          <text x="400" y="283" fill="#c9d1d9" font-family="Red Hat Mono" font-size="10">}}</text>
+          <text x="385" y="305" fill="#6e7681" font-family="Red Hat Mono" font-size="8">Nested act chain = full delegation audit trail</text>
+
+          <!-- Annotations -->
+          <rect x="760" y="130" width="210" height="130" rx="8" fill="rgba(238,0,0,0.05)" stroke="rgba(238,0,0,0.2)" stroke-width="1" />
+          <text x="775" y="153" fill="#EE0000" font-family="Red Hat Mono" font-size="9" font-weight="600" letter-spacing="0.1em">AT EACH HOP</text>
+          <text x="775" y="175" fill="#d2d2d2" font-family="Red Hat Text" font-size="10">&#x25B8; <tspan fill="#79c0ff" font-family="Red Hat Mono">sub</tspan> — preserved</text>
+          <text x="775" y="195" fill="#d2d2d2" font-family="Red Hat Text" font-size="10">&#x25B8; <tspan fill="#79c0ff" font-family="Red Hat Mono">aud</tspan> — narrows</text>
+          <text x="775" y="215" fill="#d2d2d2" font-family="Red Hat Text" font-size="10">&#x25B8; <tspan fill="#EE0000" font-family="Red Hat Mono" font-weight="600">act</tspan> — chain grows</text>
+          <text x="775" y="240" fill="#d2d2d2" font-family="Red Hat Text" font-size="10">&#x25B8; <tspan fill="#79c0ff" font-family="Red Hat Mono">scope</tspan> — tightens</text>
+        </svg>
+
+        <style>
+          @keyframes dash-flow { to { stroke-dashoffset: -26; } }
+        </style>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+        <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-green);">
+          <div class="def-term">No Token Passthrough</div>
+          <div class="def-desc">Every hop gets a fresh, scoped token. If a jailbroken agent tries to reuse a user's token directly, the gateway rejects it because the token audience and scope don't match.</div>
+        </div>
+        <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-green);">
+          <div class="def-term">Token Caching</div>
+          <div class="def-desc">AuthBridge caches exchanged tokens in-process (SHA-256 keyed, 10K entries, 30-second early-refresh buffer). Consecutive calls don't re-exchange — the cached token is served until TTL expiry.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 6. AGENT IDENTITY ===== -->
+  <section id="identity">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AGENT IDENTITY</div>
+      <h2 class="display-lg animate-on-scroll">Workload Identity for AI Agents</h2>
+      <p class="lead animate-on-scroll">Agents get their own cryptographic identity — not inherited from pod service accounts. No static credentials. Auto-rotating certificates. Full zero-trust alignment.</p>
+
+      <!-- Tiered approach -->
+      <div class="two-col-compare animate-on-scroll" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+
+        <!-- Tier 1 -->
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-orange);"></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <span class="badge badge-available">Available</span>
+            <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.15em;">TIER 1</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.5rem;">OpenShell Token Masking</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>
+              Prevents agents from seeing raw user credentials
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>
+              Uses HTTP_PROXY/HTTPS_PROXY env vars
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>
+              Can run centrally outside individual pods
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-orange);"></span>
+              Simple to adopt — minimal infrastructure change
+            </li>
+          </ul>
+        </div>
+
+        <!-- Tier 2 -->
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-green);"></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <span class="badge badge-available">Available</span>
+            <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em;">TIER 2</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.5rem;">SPIFFE/SPIRE + AuthBridge</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>
+              Each agent gets its own SPIFFE SVID (X.509 certificate)
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>
+              Auto-rotating — no static credentials to manage
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>
+              Full actor-chain tracking via nested <code style="font-family: var(--font-mono); font-size: 0.78rem; background: rgba(238,0,0,0.08); padding: 0.1rem 0.35rem; border-radius: 3px;">act</code> claims
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>
+              OPA policy enforcement across the delegation chain
+            </li>
+            <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+              <span style="position: absolute; left: 0; top: 0.6rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>
+              Kagenti auto-registers agents with Keycloak via SPIFFE ID
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Privilege escalation prevention -->
+      <div class="callout animate-on-scroll" style="margin-top: 1.5rem;">
+        <p><strong>Privilege escalation prevention:</strong> When Agent A calls Agent B, both agents' SPIFFE IDs are stored in the token's <code style="font-family: var(--font-mono); font-size: 0.85rem;">act</code> claim chain. OPA enforces the <strong>lowest permission level</strong> across the entire chain. Example: if a developer gives an AI coding assistant an HR access token, the coding assistant's workload identity means the system can deny access even with the valid token — because the agent's identity doesn't have HR permissions.</p>
+      </div>
+
+      <div class="def-box animate-on-scroll" style="border-left: 3px solid var(--rh-purple); margin-top: 1rem;">
+        <div class="def-term">Enterprise IdP Federation</div>
+        <div class="def-desc">Keycloak identity-brokers with enterprise IdPs (Okta, EntraID, PingIdentity) via OIDC federation. Protocol mappers translate group claims from the source IdP token to the Keycloak-minted token. Sync timing is configurable: sync at first login only, or sync every authentication. No LDAP sync required.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 7. FIVE AUTHORIZATION LAYERS ===== -->
+  <section id="five-layers">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">DEFENSE IN DEPTH</div>
+      <h2 class="display-lg animate-on-scroll">Five Authorization Layers</h2>
+      <p class="lead animate-on-scroll">Authorization is not a single check — it's a stack of independent layers, each catching what the others miss. From "can this agent call this tool?" to "are these arguments policy-compliant?"</p>
+
+      <div class="layer-stack animate-on-scroll" style="margin-top: 2rem;">
+
+        <!-- Layer 1 -->
+        <div class="layer-item">
+          <div class="layer-num" style="background: var(--rh-green);">1</div>
+          <div class="layer-body">
+            <div class="layer-title">
+              Agent-to-Tool Authorization
+              <span class="badge badge-available">Available</span>
+            </div>
+            <div class="layer-desc"><strong>Can this agent call this tool?</strong> — Identity-aware tool filtering at the MCP Gateway. Allow/deny lists per tool, per identity. Enforced via Authorino before the request reaches the MCP server. Example: Customer support agent can call <code style="font-family: var(--font-mono); font-size: 0.78rem;">search</code> but not <code style="font-family: var(--font-mono); font-size: 0.78rem;">transfer_funds</code>.</div>
+          </div>
+        </div>
+
+        <!-- Layer 2 -->
+        <div class="layer-item">
+          <div class="layer-num" style="background: var(--rh-green);">2</div>
+          <div class="layer-body">
+            <div class="layer-title">
+              Agent-to-Data Authorization
+              <span class="badge badge-available">Available</span>
+            </div>
+            <div class="layer-desc"><strong>Can this agent access this resource?</strong> — Group-based tenancy generalized across MCP tool catalogs, vector stores, file storage, and guardrails. Each microservice performs its own authorization checks; the gateway establishes identity via headers. Gateway header stripping prevents spoofing.</div>
+          </div>
+        </div>
+
+        <!-- Layer 3 -->
+        <div class="layer-item">
+          <div class="layer-num" style="background: var(--rh-green);">3</div>
+          <div class="layer-body">
+            <div class="layer-title">
+              Delegation Authorization
+              <span class="badge badge-available">Available</span>
+            </div>
+            <div class="layer-desc"><strong>Is the agent acting within the user's scoped permissions?</strong> — RFC 8693 token exchange + nested <code style="font-family: var(--font-mono); font-size: 0.78rem;">act</code> claim chain. OPA enforces the lowest permission level across the delegation chain. Prevents privilege escalation even when agents chain together.</div>
+          </div>
+        </div>
+
+        <!-- Layer 4 -->
+        <div class="layer-item">
+          <div class="layer-num" style="background: var(--rh-teal);">4</div>
+          <div class="layer-body">
+            <div class="layer-title">
+              Tenant Boundary Enforcement
+              <span class="badge badge-available">Available</span>
+            </div>
+            <div class="layer-desc"><strong>Are tenant isolation boundaries maintained?</strong> — Cross-tenant traffic denied by default via NetworkPolicy. Multiple gateway instances per cluster for hard tenant segregation. Explicit admin authorization required for any cross-tenant access.</div>
+          </div>
+        </div>
+
+        <!-- Layer 5 -->
+        <div class="layer-item">
+          <div class="layer-num" style="background: rgba(244,180,0,0.8);">5</div>
+          <div class="layer-body">
+            <div class="layer-title">
+              Argument-Level Validation
+              <span class="badge badge-planned">Planned</span>
+            </div>
+            <div class="layer-desc"><strong>Do the tool-call arguments comply with business policy?</strong> — Even an authorized agent calling an authorized tool can violate policy by passing bad arguments. Example: a refund agent calling <code style="font-family: var(--font-mono); font-size: 0.78rem;">process_refund</code> with an amount exceeding the $500 limit, or targeting an ineligible order. Action rails validate arguments against configurable business rules before the call executes.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Additional planned guardrails -->
+      <h3 class="animate-on-scroll" style="font-family: var(--font-sans); font-weight: 700; font-size: var(--fs-h2); color: var(--text-primary); margin-top: 2.5rem; margin-bottom: 1rem;">Additional Guardrail Layers <span class="badge badge-planned" style="vertical-align: middle;">Planned</span></h3>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;" class="animate-on-scroll">
+        <div class="def-box" style="border-left: 3px solid var(--rh-blue);">
+          <div class="def-term" style="font-size: 0.9rem;">Trajectory Rails</div>
+          <div class="def-desc">Detect suspicious patterns across <em>sequences</em> of tool calls — not just individual calls. Catches multi-step attacks that look innocent individually.</div>
+        </div>
+        <div class="def-box" style="border-left: 3px solid var(--rh-orange);">
+          <div class="def-term" style="font-size: 0.9rem;">Budget Rails</div>
+          <div class="def-desc">Per-session limits on token usage, tool-call count, and tool-call rate. Enforced before each tool call to prevent runaway agents.</div>
+        </div>
+        <div class="def-box" style="border-left: 3px solid var(--rh-purple);">
+          <div class="def-term" style="font-size: 0.9rem;">Intent-Alignment Rails</div>
+          <div class="def-desc">Block agent tool calls that contradict the user's original intent. Prevents agents from drifting beyond their assigned task scope.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 8. CREDENTIAL MANAGEMENT ===== -->
+  <section id="credentials">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">CREDENTIAL MANAGEMENT</div>
+      <h2 class="display-lg animate-on-scroll">Three-Tier Credential Strategy</h2>
+      <p class="lead animate-on-scroll">Different backends need different credential patterns. The MCP Gateway supports three tiers — choosing the right one for each backend service while keeping MCP servers credential-free.</p>
+
+      <div class="tier-grid animate-on-scroll" style="margin-top: 2rem;">
+
+        <!-- Tier 1: Vault -->
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-purple);"></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <span class="badge badge-tp">Tech Preview</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.5rem;">Tier 1: HashiCorp Vault</div>
+          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">STORED CREDENTIALS</div>
+          <div class="def-desc">For backends that don't support OAuth2 natively. Per-user or per-service PATs and API keys stored securely in Vault and injected at runtime.</div>
+          <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">USE CASES</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.25rem;">GitHub PATs, Jira API tokens, custom API keys</div>
+          </div>
+        </div>
+
+        <!-- Tier 2: Token Exchange -->
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-green);"></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <span class="badge badge-available">Available</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.5rem;">Tier 2: OAuth2 Token Exchange</div>
+          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">PRIMARY FLOW — NO STORED CREDENTIALS</div>
+          <div class="def-desc">RFC 8693 token exchange via AuthBridge. Tokens are exchanged and scoped at each hop. No credentials stored — the token itself carries the authorization. This is the recommended approach.</div>
+          <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">USE CASES</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.25rem;">Any OAuth2-capable backend, internal microservices</div>
+          </div>
+        </div>
+
+        <!-- Tier 3: Direct Token -->
+        <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rh-teal);"></div>
+          <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+            <span class="badge badge-available">Available</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.5rem;">Tier 3: Direct Token Passing</div>
+          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;">SAME TRUST DOMAIN</div>
+          <div class="def-desc">For internal services within the same Keycloak realm. The gateway-scoped token is passed directly — no additional exchange needed. Fastest path, lowest latency.</div>
+          <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle);">
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">USE CASES</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.25rem;">Internal RHOAI services, same-cluster MCP servers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 9. AUDIT TRAIL ===== -->
+  <section id="audit">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">AUDIT & COMPLIANCE</div>
+      <h2 class="display-lg animate-on-scroll">Full Audit Trail — User to Backend</h2>
+      <p class="lead animate-on-scroll">Four layers of audit data, each capturing different aspects of the authorization story. Together they answer: <strong style="color: var(--text-primary);">who did what, when, on whose behalf, and was it authorized?</strong></p>
+
+      <!-- Audit layers diagram -->
+      <div class="animate-on-scroll" style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 2rem; margin-top: 2rem;">
+        <div style="font-family: var(--font-mono); font-size: var(--fs-label); color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 1.5rem;">END-TO-END AUDIT FLOW</div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+
+          <!-- Layer 1 -->
+          <div style="border-top: 3px solid var(--rh-purple); padding-top: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="badge badge-available">Available</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem;">LAYER 1</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">Identity Events</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">Keycloak emits events for every Token Exchange activity. Combined with the <code style="font-family: var(--font-mono); font-size: 0.72rem;">act</code> claim chain in JWTs, the full delegation chain is traceable.</div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">CAPTURES:</div>
+            <ul style="list-style: none; padding: 0; margin: 0.25rem 0 0;">
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Who authenticated</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Token exchanges</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Delegation chains</li>
+            </ul>
+          </div>
+
+          <!-- Layer 2 -->
+          <div style="border-top: 3px solid var(--rh-red); padding-top: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="badge badge-available">Available</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem;">LAYER 2</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">Gateway Logs</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">Per-tool metrics and audit logging at the MCP Gateway level. Every tool call, every authorization decision, every rate limit enforcement.</div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">CAPTURES:</div>
+            <ul style="list-style: none; padding: 0; margin: 0.25rem 0 0;">
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Tool call decisions</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; AuthZ allow/deny</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Rate limit events</li>
+            </ul>
+          </div>
+
+          <!-- Layer 3 -->
+          <div style="border-top: 3px solid var(--rh-teal); padding-top: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="badge badge-tp">Tech Preview</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem;">LAYER 3</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">OTEL Traces</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">Router-level OpenTelemetry tracing links every request to a distributed trace. Guardrail decisions (allow/block/redact) produce OTEL spans linked to the agent's execution trace.</div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">CAPTURES:</div>
+            <ul style="list-style: none; padding: 0; margin: 0.25rem 0 0;">
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Request traces</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Guardrail decisions</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Latency data</li>
+            </ul>
+          </div>
+
+          <!-- Layer 4 -->
+          <div style="border-top: 3px solid var(--rh-blue); padding-top: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <span class="badge badge-planned">Planned</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem;">LAYER 4</div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.5rem;">Registry Lifecycle</div>
+            <div style="font-family: var(--font-text); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.75rem;">Every lifecycle state change, ownership update, and scope modification logged in the MCP Registry with user, action, timestamp, and comment.</div>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">CAPTURES:</div>
+            <ul style="list-style: none; padding: 0; margin: 0.25rem 0 0;">
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Version changes</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Approval workflows</li>
+              <li style="font-size: 0.78rem; color: var(--text-secondary); padding: 0.15rem 0;">&#x2022; Provenance data</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Known gap -->
+      <div class="animate-on-scroll" style="background: rgba(238,0,0,0.04); border: 1px solid rgba(238,0,0,0.15); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <span class="badge badge-gap">Known Gap</span>
+          <span style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Centralized Audit Log Aggregation</span>
+        </div>
+        <div class="def-desc">Today, the full audit trail is reconstructed from Keycloak events + gateway logs + MCP server logs. A centralized view that correlates all four layers into a single audit query interface is not yet available. Each layer produces its own logs and events, and correlation is done at the log aggregation layer (e.g., OpenShift Logging, Grafana, Splunk). A unified audit API is on the roadmap.</div>
+      </div>
+
+      <!-- The act claim as proof -->
+      <h3 class="animate-on-scroll" style="font-family: var(--font-sans); font-weight: 700; font-size: var(--fs-h2); color: var(--text-primary); margin-top: 2.5rem; margin-bottom: 1rem;">The <code style="font-family: var(--font-mono); background: rgba(238,0,0,0.06); padding: 0.15rem 0.5rem; border-radius: 4px;">act</code> Claim: Cryptographic Proof of Delegation</h3>
+      <p class="body animate-on-scroll">The nested <code style="font-family: var(--font-mono);">act</code> claim in the JWT is the cornerstone of the audit trail. It provides a cryptographically signed record of every entity in the delegation chain — from the original user, through each agent, to the backend service. This is not a log entry that can be tampered with; it's embedded in the token itself and signed by Keycloak.</p>
+
+      <div class="animate-on-scroll" style="margin-top: 1rem;">
+        <div class="jwt-block">{
+  <span class="jwt-comment">// This token proves:</span>
+  <span class="jwt-comment">// 1. Jane Doe (user) authorized the action</span>
+  <span class="jwt-comment">// 2. The customer-support agent acted on her behalf</span>
+  <span class="jwt-comment">// 3. The MCP Gateway routed the request</span>
+  <span class="jwt-comment">// 4. The CRM MCP Server is the final audience</span>
+
+  <span class="jwt-key">"sub"</span>: <span class="jwt-str">"jane.doe@example.com"</span>,
+  <span class="jwt-key">"aud"</span>: <span class="jwt-str">"crm-mcp-server"</span>,
+  <span class="jwt-key">"iss"</span>: <span class="jwt-str">"https://keycloak.example.com/realms/prod"</span>,
+  <span class="jwt-key">"iat"</span>: 1750291200,
+  <span class="jwt-key">"exp"</span>: 1750294800,
+  <span class="jwt-hi">"act"</span>: {
+    <span class="jwt-hi">"sub"</span>: <span class="jwt-str">"spiffe://cluster.local/ns/ai/sa/mcp-gateway"</span>,
+    <span class="jwt-hi">"act"</span>: {
+      <span class="jwt-hi">"sub"</span>: <span class="jwt-str">"spiffe://cluster.local/ns/ai/sa/agent-customer-support"</span>
+    }
+  }
+}</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 10. MATURITY ROADMAP ===== -->
+  <section id="maturity">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MATURITY & ROADMAP</div>
+      <h2 class="display-lg animate-on-scroll">What's Available Today vs. Coming Next</h2>
+      <p class="lead animate-on-scroll">A clear view of what you can deploy in your pilot now, what's in Technical Preview, and what's on the roadmap.</p>
+
+      <!-- Timeline -->
+      <div class="animate-on-scroll" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem;">
+
+        <!-- Available Now -->
+        <div style="border-top: 3px solid var(--rh-green); padding-top: 1rem; background: var(--bg-elevated); border-radius: 0 0 12px 12px; padding: 1.25rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">AVAILABLE NOW</div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.75rem;">Deploy in Your Pilot</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              OAuth 2.0 authentication
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              Two-gate server + tool authorization
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              RFC 8693 token exchange + act chain
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              SPIFFE/SPIRE agent identity
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              Virtual MCP servers
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              Per-tool metrics + audit logging
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              Enterprise IdP federation (Okta, EntraID)
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-green);">&#x2713;</span>
+              Rate limiting via Limitador
+            </li>
+          </ul>
+        </div>
+
+        <!-- Technical Preview -->
+        <div style="border-top: 3px solid var(--rh-orange); padding-top: 1rem; background: var(--bg-elevated); border-radius: 0 0 12px 12px; padding: 1.25rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">TECHNICAL PREVIEW — RHCL 1.3.3+</div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.75rem;">Available for Testing</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-orange);">&#x25B8;</span>
+              Vault integration for secrets
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-orange);">&#x25B8;</span>
+              Router OTEL tracing
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-orange);">&#x25B8;</span>
+              Content guardrails at gateway
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-orange);">&#x25B8;</span>
+              Isolated gateway deployment
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-orange);">&#x25B8;</span>
+              MCP Elicitation support
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-orange);">&#x25B8;</span>
+              Hosts for Virtual MCP Servers
+            </li>
+          </ul>
+        </div>
+
+        <!-- GA Roadmap -->
+        <div style="border-top: 3px solid var(--rh-blue); padding-top: 1rem; background: var(--bg-elevated); border-radius: 0 0 12px 12px; padding: 1.25rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">PLANNED — Q4 2026 GA</div>
+          <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.75rem;">On the Roadmap</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              MCP Gateway Operator
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              Security plugin (DDoS, bot mgmt)
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              Argument-level action rails
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              Trajectory / budget rails
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              MCP Registry integration
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              Centralized audit log view
+            </li>
+            <li style="font-size: 0.82rem; color: var(--text-secondary); padding: 0.25rem 0 0.25rem 1rem; position: relative;">
+              <span style="position: absolute; left: 0; color: var(--rh-blue-light);">&#x25CB;</span>
+              Session management + HA failover
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 11. CTA / NEXT STEPS ===== -->
+  <section id="next" style="text-align: center;">
+    <div class="section-inner" style="display: flex; flex-direction: column; align-items: center;">
+      <div class="section-label animate-on-scroll">NEXT STEPS</div>
+      <h2 class="display-lg animate-on-scroll">Ready for Your Pilot?</h2>
+      <p class="lead animate-on-scroll" style="text-align: center; max-width: 65ch;">MCP Gateway gives you enterprise-grade tool-call authorization and audit trails today. Here's how to get started with your OpenShift AI lab environment.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2.5rem; text-align: left; max-width: 900px;" class="animate-on-scroll">
+        <div class="def-box" style="border-left: 3px solid var(--rh-green);">
+          <div class="def-term" style="font-size: 0.9rem;">
+            <span style="font-family: var(--font-sans); font-weight: 800; font-size: 1.2rem; color: var(--rh-green);">1</span>
+            Deploy MCP Gateway
+          </div>
+          <div class="def-desc">Install MCP Gateway via Helm chart in your OpenShift AI cluster. Configure Keycloak realm, create MCP server registrations, and verify the <code style="font-family: var(--font-mono); font-size: 0.72rem;">/mcp</code> endpoint responds.</div>
+        </div>
+        <div class="def-box" style="border-left: 3px solid var(--rh-blue);">
+          <div class="def-term" style="font-size: 0.9rem;">
+            <span style="font-family: var(--font-sans); font-weight: 800; font-size: 1.2rem; color: var(--rh-blue);">2</span>
+            Configure AuthZ Policies
+          </div>
+          <div class="def-desc">Define Authorino policies mapping Keycloak roles to tool-level access. Set up identity-aware tool filtering. Test both gates with your agent workloads.</div>
+        </div>
+        <div class="def-box" style="border-left: 3px solid var(--rh-purple);">
+          <div class="def-term" style="font-size: 0.9rem;">
+            <span style="font-family: var(--font-sans); font-weight: 800; font-size: 1.2rem; color: var(--rh-purple);">3</span>
+            Demonstrate to Customers
+          </div>
+          <div class="def-desc">Walk through the authorization gap scenario, show the two-gate flow with a live tool call, and display the <code style="font-family: var(--font-mono); font-size: 0.72rem;">act</code> claim chain as proof of audit trail.</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; justify-content: center;" class="animate-on-scroll">
+        <a href="https://github.com/Kuadrant/mcp-gateway" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--rh-red); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; transition: background 180ms;">
+          MCP Gateway Repository &#x2192;
+        </a>
+        <a href="https://github.com/kagenti/kagenti" style="display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; transition: border-color 180ms, color 180ms;">
+          Kagenti + AuthBridge
+        </a>
+      </div>
+
+      <div style="display: flex; gap: 2rem; margin-top: 2rem; font-size: 0.85rem; flex-wrap: wrap; justify-content: center;" class="animate-on-scroll">
+        <a href="https://github.com/kagenti/kagenti/blob/main/kagenti/examples/identity/token_exchange.md" style="color: var(--rh-blue-light); text-decoration: none;">Token Exchange Guide</a>
+        <a href="https://docs.redhat.com/en/documentation/red_hat_connectivity_link" style="color: var(--rh-blue-light); text-decoration: none;">RHCL Documentation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Peter Double &mdash; Principal Product Manager, MCP & AI Asset Registries — Red Hat OpenShift AI</p>
+    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">June 2026 &mdash; Content reflects current architecture and roadmap as of this date</p>
+  </footer>
+
+  <!-- ===== SCROLL ANIMATION OBSERVER ===== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)'
+              : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

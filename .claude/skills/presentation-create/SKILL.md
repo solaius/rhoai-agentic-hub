@@ -305,10 +305,10 @@ The old repo's root `index.html` landing-page example doesn't carry over — in 
 
 None of the presentation examples below have been migrated into the hub yet (that's `hub.migrate`'s job), so they're linked at their live GitHub Pages URLs in the old `ai-asset-registry` repo. They demonstrate the style, flow, and quality bar this skill should match:
 
-- [mcp-gateway-presentation.html](https://solaius.github.io/ai-asset-registry/mcps/mcp-gateway/mcp-gateway-presentation.html) — **Slide deck format**, 10 slides, client-facing
-- [mcp-registry-catalog-deck.html](https://solaius.github.io/ai-asset-registry/mcps/mcp-registry/mcp-registry-catalog-deck.html) — **Slide deck format**, 9 slides, client-facing
-- [mcp-ecosystem.html](https://solaius.github.io/ai-asset-registry/mcps/ecosystem/mcp-ecosystem.html) — **Scrolling format**, full MCP ecosystem overview
-- [mcp-registry-overview.html](https://solaius.github.io/ai-asset-registry/mcps/mcp-registry/mcp-registry-overview.html) — **Scrolling format**, MVP scope overview
-- [mcp-ingestion-pipeline.html](https://solaius.github.io/ai-asset-registry/mcps/ingestion-pipeline/mcp-ingestion-pipeline.html) — **Scrolling format** with Cytoscape.js pipeline diagram
+- [mcp-gateway-presentation.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-gateway/presentation/) — **Slide deck format**, 10 slides, client-facing
+- [mcp-registry-catalog-deck.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-registry/catalog-deck/) — **Slide deck format**, 9 slides, client-facing
+- [mcp-ecosystem.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-ecosystem/deck/) — **Scrolling format**, full MCP ecosystem overview
+- [mcp-registry-overview.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-registry/overview/) — **Scrolling format**, MVP scope overview
+- [mcp-ingestion-pipeline.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-ecosystem/ingestion-pipeline/) — **Scrolling format** with Cytoscape.js pipeline diagram
 
 Each targets a different persona with different goals, but they share the same design language. New presentations should match this quality bar. Once an example is migrated into a feature's `enablement/`, update its entry here to the hub path.

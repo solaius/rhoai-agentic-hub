@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MCP 2026-07-28 RC — RHOAI Impact Analysis</title>
+  <meta name="description" content="Impact analysis of the MCP 2026-07-28 Release Candidate spec changes on Red Hat OpenShift AI architecture: Gateway, Registry, OGX, Catalog, and Lifecycle Operator." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .hat {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--rh-red); color: white;
+      font-family: var(--font-sans); font-weight: 800; font-size: 0.65rem; border-radius: 4px;
+    }
+    .nav-title { font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none; font-size: 0.8rem;
+      font-family: var(--font-text); transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    section {
+      padding: 5rem 1.5rem;
+      scroll-margin-top: calc(var(--nav-height) + 16px);
+    }
+    .section-inner { max-width: var(--content-max); margin: 0 auto; }
+    .section-label {
+      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .h2 { font-family: var(--font-sans); font-size: var(--fs-h2); line-height: 1.2; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-sm); }
+    .lead { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; }
+    .accent { color: var(--rh-red); }
+
+    .hero {
+      min-height: 80vh; display: flex; align-items: center;
+      position: relative; padding-top: calc(var(--nav-height) + 3rem);
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50px; right: -100px;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238, 0, 0, 0.4); transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+    }
+
+    .animate-on-scroll {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+    .stagger-1 { transition-delay: 80ms; }
+    .stagger-2 { transition-delay: 160ms; }
+    .stagger-3 { transition-delay: 240ms; }
+    .stagger-4 { transition-delay: 320ms; }
+    .stagger-5 { transition-delay: 400ms; }
+    .stagger-6 { transition-delay: 480ms; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+      .impact-grid, .change-grid, .sep-grid, .auth-grid, .deprecation-grid { grid-template-columns: 1fr !important; }
+      .flow-steps { flex-direction: column !important; }
+      .flow-connector { transform: rotate(90deg); }
+      .component-diagram { flex-direction: column !important; }
+    }
+    @media (max-width: 1024px) {
+      .nav-links { gap: 1rem; }
+    }
+
+    a.source-link {
+      color: var(--rh-blue-light); text-decoration: none; font-family: var(--font-mono);
+      font-size: 0.75rem; transition: color 0.2s;
+    }
+    a.source-link:hover { color: var(--text-primary); text-decoration: underline; }
+
+    .tag {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em; padding: 0.15rem 0.5rem; border-radius: 3px;
+    }
+    .tag-critical { background: rgba(238,0,0,0.15); color: var(--rh-red); }
+    .tag-high { background: rgba(244,180,0,0.15); color: var(--rh-orange); }
+    .tag-medium { background: rgba(0,102,204,0.15); color: var(--rh-blue-light); }
+    .tag-low { background: rgba(62,134,53,0.15); color: var(--rh-green); }
+    .tag-breaking { background: rgba(238,0,0,0.2); color: #ff6666; border: 1px solid rgba(238,0,0,0.3); }
+    .tag-positive { background: rgba(62,134,53,0.15); color: var(--rh-green); }
+    .tag-sep { background: rgba(103,83,172,0.15); color: #a090d0; }
+
+    .code-inline {
+      font-family: var(--font-mono); font-size: 0.82em; background: rgba(255,255,255,0.06);
+      padding: 0.1em 0.4em; border-radius: 4px; color: #e0e0e0;
+    }
+
+    .code-block {
+      font-family: var(--font-mono); font-size: 0.8rem; background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-subtle); border-radius: 8px;
+      padding: 1rem 1.25rem; overflow-x: auto; line-height: 1.7; color: #d2d2d2;
+      white-space: pre; margin: 1rem 0;
+    }
+    .code-block .kw { color: #a090d0; }
+    .code-block .str { color: #87BB62; }
+    .code-block .cm { color: #666; }
+    .code-block .val { color: #F4B400; }
+
+    .bullet-list { list-style: none; padding: 0; margin: 0.75rem 0 0; }
+    .bullet-list li {
+      padding: 0.3rem 0 0.3rem 1.1rem; position: relative;
+      font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;
+    }
+    .bullet-list li::before {
+      content: ''; position: absolute; left: 0; top: 0.6rem;
+      width: 5px; height: 5px; border-radius: 50%; background: var(--rh-red);
+    }
+    .bullet-list li.teal::before { background: var(--rh-teal); }
+    .bullet-list li.blue::before { background: var(--rh-blue-light); }
+    .bullet-list li.green::before { background: var(--rh-green); }
+    .bullet-list li.orange::before { background: var(--rh-orange); }
+    .bullet-list li.purple::before { background: var(--rh-purple); }
+
+    .impact-card {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 0 12px 12px 0; padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms;
+    }
+    .impact-card:hover { border-color: rgba(238, 0, 0, 0.3); transform: translateY(-1px); }
+    .impact-card.critical { border-left: 4px solid var(--rh-red); }
+    .impact-card.high { border-left: 4px solid var(--rh-orange); }
+    .impact-card.medium { border-left: 4px solid var(--rh-blue-light); }
+    .impact-card.low { border-left: 4px solid var(--rh-green); }
+
+    table.spec-table {
+      width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 1rem;
+    }
+    table.spec-table th {
+      text-align: left; font-family: var(--font-mono); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted);
+      padding: 0.5rem 0.75rem; border-bottom: 2px solid var(--border-subtle);
+    }
+    table.spec-table td {
+      padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(51,51,51,0.5);
+      color: var(--text-secondary); vertical-align: top;
+    }
+    table.spec-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .callout {
+      border-left: 3px solid var(--rh-red); padding: 1rem 1.5rem;
+      background: rgba(238,0,0,0.04); border-radius: 0 8px 8px 0; margin: 1.5rem 0;
+    }
+    .callout.positive { border-left-color: var(--rh-green); background: rgba(62,134,53,0.04); }
+    .callout.warning { border-left-color: var(--rh-orange); background: rgba(244,180,0,0.04); }
+
+    .sep-ref {
+      font-family: var(--font-mono); font-size: 0.75rem; color: #a090d0;
+      background: rgba(103,83,172,0.1); padding: 0.1em 0.4em; border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">MCP Spec RC Impact</span>
+      </div>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#stateless">Stateless Core</a>
+        <a href="#breaking">Breaking Changes</a>
+        <a href="#gateway">Gateway</a>
+        <a href="#ogx">OGX</a>
+        <a href="#registry">Registry</a>
+        <a href="#other">Other Components</a>
+        <a href="#assessment">Assessment</a>
+        <a href="#seps">SEP Index</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MCP PROTOCOL — RELEASE CANDIDATE</div>
+      <h1 class="display-xl animate-on-scroll" style="max-width: 18ch;"><span class="accent">2026-07-28 RC</span> Impact on RHOAI</h1>
+      <p class="lead animate-on-scroll">The largest revision of the Model Context Protocol since launch eliminates protocol-level sessions, removes the initialize handshake, redesigns the Tasks API, and hardens authorization. This analysis maps every change against RHOAI 3.4&hairsp;/&hairsp;3.5 architecture.</p>
+
+      <div class="animate-on-scroll" style="display: flex; gap: 2.5rem; margin-top: 2rem; flex-wrap: wrap;">
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">22</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">SEPs Merged</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">7</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Breaking Changes</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-orange);">3</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Deprecations</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-teal);">10 wk</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">RC Validation Window</div>
+        </div>
+      </div>
+
+      <div class="animate-on-scroll" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">RC locked May 21 &rarr; Final spec July 28, 2026</span>
+        <a class="source-link" href="https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/" target="_blank" rel="noopener">blog.modelcontextprotocol.io &nearr;</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== SPEC OVERVIEW ===== -->
+  <section id="overview">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">WHAT CHANGED</div>
+      <h2 class="display-lg animate-on-scroll">Spec Overview</h2>
+      <p class="lead animate-on-scroll">Six SEPs collectively eliminate protocol-level statefulness. Combined with auth hardening, a redesigned Tasks API, and a new extensions framework, this is a fundamental shift in how MCP works at the wire level.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem;" class="change-grid">
+
+        <div class="card animate-on-scroll stagger-1" style="border-top: 3px solid var(--rh-red);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Stateless Core</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Sessions &amp; Init Removed</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">Protocol-level sessions eliminated. <span class="code-inline">Mcp-Session-Id</span> header deleted. <span class="code-inline">initialize</span>/<span class="code-inline">initialized</span> handshake removed. Per-request capabilities in <span class="code-inline">_meta</span>.</p>
+          <div style="margin-top: 0.5rem;"><span class="sep-ref">SEP-2567</span> <span class="sep-ref">SEP-2575</span></div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-2" style="border-top: 3px solid var(--rh-teal);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Transport</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Required Routing Headers</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;"><span class="code-inline">Mcp-Method</span> and <span class="code-inline">Mcp-Name</span> headers now required on Streamable HTTP. Servers must reject header/body disagreement.</p>
+          <div style="margin-top: 0.5rem;"><span class="sep-ref">SEP-2243</span></div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-3" style="border-top: 3px solid var(--rh-orange);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Tasks</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Tasks Moved to Extension</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">Redesigned lifecycle. <span class="code-inline">tasks/list</span> removed. Server-directed creation with explicit handles. Breaking for <span class="code-inline">2025-11-25</span> experimental API.</p>
+          <div style="margin-top: 0.5rem;"><span class="sep-ref">SEP-2663</span></div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-4" style="border-top: 3px solid var(--rh-purple);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Authorization</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">6 Auth SEPs</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">RFC 9207 issuer validation, OIDC <span class="code-inline">application_type</span>, credential binding, refresh tokens, scope accumulation, <span class="code-inline">.well-known</span> discovery.</p>
+          <div style="margin-top: 0.5rem;"><span class="sep-ref">SEP-2468</span> <span class="sep-ref">SEP-837</span> <span class="sep-ref">SEP-2352</span></div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-5" style="border-top: 3px solid var(--rh-blue-light);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Extensions</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Extensions Framework</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;">Reverse-DNS IDs, independent versioning, dedicated ext-* repos. MCP Apps extension for interactive HTML UIs. Extensions Track in SEP process.</p>
+          <div style="margin-top: 0.5rem;"><span class="sep-ref">SEP-2133</span> <span class="sep-ref">SEP-1865</span></div>
+        </div>
+
+        <div class="card animate-on-scroll stagger-6" style="border-top: 3px solid var(--rh-green);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Caching &amp; Observability</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">TTL, Scope &amp; Traces</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5;"><span class="code-inline">ttlMs</span> and <span class="code-inline">cacheScope</span> on list/read results. W3C Trace Context via <span class="code-inline">_meta</span> with OpenTelemetry compatibility.</p>
+          <div style="margin-top: 0.5rem;"><span class="sep-ref">SEP-2549</span> <span class="sep-ref">SEP-414</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== STATELESS CORE ===== -->
+  <section id="stateless">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ARCHITECTURE SHIFT</div>
+      <h2 class="display-lg animate-on-scroll">The Stateless Protocol Core</h2>
+      <p class="lead animate-on-scroll">The single biggest change in this RC. Six SEPs collectively eliminate protocol-level statefulness, transforming how every component in the RHOAI stack interacts with MCP servers.</p>
+
+      <!-- Before/After comparison -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;" class="change-grid">
+        <div class="animate-on-scroll" style="background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02)); border: 1px solid rgba(238,0,0,0.2); border-radius: 12px; padding: 1.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">Before (2025-11-25)</div>
+          <div class="code-block"><span class="cm">// Connection setup required</span>
+<span class="kw">POST</span> /mcp
+<span class="str">"method"</span>: <span class="str">"initialize"</span>
+<span class="str">"params"</span>: { clientInfo, capabilities }
+
+<span class="cm">// Server responds with session</span>
+<span class="kw">Mcp-Session-Id:</span> <span class="val">abc-123</span>
+
+<span class="cm">// All subsequent requests pinned</span>
+<span class="kw">POST</span> /mcp
+<span class="kw">Mcp-Session-Id:</span> <span class="val">abc-123</span>
+<span class="str">"method"</span>: <span class="str">"tools/call"</span></div>
+          <ul class="bullet-list">
+            <li>Sticky routing required</li>
+            <li>Shared session stores for HA</li>
+            <li>Body inspection for routing</li>
+            <li>Single-instance affinity</li>
+          </ul>
+        </div>
+
+        <div class="animate-on-scroll stagger-1" style="background: linear-gradient(135deg, rgba(62,134,53,0.06), rgba(62,134,53,0.02)); border: 1px solid rgba(62,134,53,0.2); border-radius: 12px; padding: 1.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">After (2026-07-28)</div>
+          <div class="code-block"><span class="cm">// No handshake — direct call</span>
+<span class="kw">POST</span> /mcp
+<span class="kw">MCP-Protocol-Version:</span> <span class="val">2026-07-28</span>
+<span class="kw">Mcp-Method:</span> <span class="val">tools/call</span>
+<span class="kw">Mcp-Name:</span> <span class="val">search</span>
+Content-Type: application/json
+
+{
+  <span class="str">"_meta"</span>: {
+    <span class="str">"clientInfo"</span>: { <span class="str">"name"</span>: <span class="str">"rhoai"</span> }
+  },
+  <span class="str">"method"</span>: <span class="str">"tools/call"</span>
+}</div>
+          <ul class="bullet-list">
+            <li class="green">Any request hits any instance</li>
+            <li class="green">Header-based routing (no body parse)</li>
+            <li class="green">Standard K8s load balancing works</li>
+            <li class="green">No session stores needed</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Key mechanisms -->
+      <h3 class="h2 animate-on-scroll" style="margin-top: 3rem;">Key Mechanisms</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;" class="change-grid">
+        <div class="card animate-on-scroll">
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem;">Explicit Handle Pattern</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Servers that need cross-call state mint explicit handles (e.g., <span class="code-inline">basket_id</span>, <span class="code-inline">browser_id</span>). The model threads these as ordinary tool arguments. State is visible to the model, not hidden in protocol-level sessions.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-1">
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem;">Capabilities via <span class="code-inline">server/discover</span></div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Client capabilities travel in <span class="code-inline">_meta</span> on every request. Server capabilities are fetched on-demand via <span class="code-inline">server/discover</span> and cached using <span class="code-inline">ttlMs</span>/<span class="code-inline">cacheScope</span> fields.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-2">
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem;">Multi Round-Trip Requests <span class="sep-ref">SEP-2322</span></div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Replaces holding SSE streams open. Server returns <span class="code-inline">InputRequiredResult</span> with <span class="code-inline">requestState</span> token. Client gathers input, re-issues the call with the token. Any server instance can handle the retry.</p>
+        </div>
+        <div class="card animate-on-scroll stagger-3">
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.5rem;">Cache-Control Model <span class="sep-ref">SEP-2549</span></div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">List and read results carry <span class="code-inline">ttlMs</span> (freshness) and <span class="code-inline">cacheScope</span> (shareability). Eliminates need for long-lived SSE streams to detect <span class="code-inline">tools/list</span> changes. Critical for multi-tenant deployments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== BREAKING CHANGES ===== -->
+  <section id="breaking">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">BREAKING CHANGES</div>
+      <h2 class="display-lg animate-on-scroll">7 Breaking Changes</h2>
+      <p class="lead animate-on-scroll">Every breaking change in the RC, with the protocol-level detail engineers need to assess implementation impact.</p>
+
+      <table class="spec-table animate-on-scroll" style="margin-top: 1.5rem;">
+        <thead>
+          <tr>
+            <th style="width: 5%;">#</th>
+            <th style="width: 30%;">Change</th>
+            <th style="width: 15%;">SEP</th>
+            <th style="width: 50%;">Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">1</td>
+            <td><strong style="color: var(--text-primary);">Initialize handshake removed</strong></td>
+            <td><span class="sep-ref">SEP-2575</span></td>
+            <td><span class="code-inline">initialize</span>/<span class="code-inline">initialized</span> methods deleted. Client info and capabilities now in <span class="code-inline">_meta</span> per-request. <span class="code-inline">server/discover</span> replaces capability negotiation.</td>
+          </tr>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">2</td>
+            <td><strong style="color: var(--text-primary);">Sessions eliminated</strong></td>
+            <td><span class="sep-ref">SEP-2567</span></td>
+            <td><span class="code-inline">Mcp-Session-Id</span> header removed. Protocol-level session concept gone. No sticky routing, no shared session stores at protocol layer.</td>
+          </tr>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">3</td>
+            <td><strong style="color: var(--text-primary);">Required routing headers</strong></td>
+            <td><span class="sep-ref">SEP-2243</span></td>
+            <td><span class="code-inline">Mcp-Method</span> and <span class="code-inline">Mcp-Name</span> required on Streamable HTTP. Servers must reject requests where headers and body disagree.</td>
+          </tr>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">4</td>
+            <td><strong style="color: var(--text-primary);">Tasks API redesigned</strong></td>
+            <td><span class="sep-ref">SEP-2663</span></td>
+            <td>Moved from core to extension. <span class="code-inline">tasks/list</span> removed. Creation is server-directed. Client drives via <span class="code-inline">tasks/get</span>/<span class="code-inline">tasks/update</span>/<span class="code-inline">tasks/cancel</span> with task handles.</td>
+          </tr>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">5</td>
+            <td><strong style="color: var(--text-primary);">Error code changed</strong></td>
+            <td><span class="sep-ref">SEP-2164</span></td>
+            <td>Missing resource error code: <span class="code-inline">-32002</span> (MCP-custom) &rarr; <span class="code-inline">-32602</span> (JSON-RPC standard Invalid Params).</td>
+          </tr>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">6</td>
+            <td><strong style="color: var(--text-primary);">Per-request client info</strong></td>
+            <td><span class="sep-ref">SEP-2575</span></td>
+            <td>Client info and capabilities must be sent in <span class="code-inline">_meta</span> on every request, not negotiated once at connection time.</td>
+          </tr>
+          <tr>
+            <td style="color: var(--rh-red); font-weight: 700;">7</td>
+            <td><strong style="color: var(--text-primary);">Server request scoping</strong></td>
+            <td><span class="sep-ref">SEP-2260</span></td>
+            <td>Server-initiated requests may only be issued while actively processing a client request. Was recommendation, now <strong style="color: var(--text-primary);">required</strong>.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== MCP GATEWAY IMPACT ===== -->
+  <section id="gateway">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll"><span class="tag tag-critical">CRITICAL</span>&ensp;COMPONENT IMPACT</div>
+      <h2 class="display-lg animate-on-scroll">MCP Gateway</h2>
+      <p class="lead animate-on-scroll">The most impacted component. The Gateway's routing, session management, and auth layers are all directly affected. However, many changes are net-positive for the Envoy-based architecture.</p>
+      <div class="animate-on-scroll" style="margin-top: 0.5rem;">
+        <a class="source-link" href="https://github.com/Kuadrant/mcp-gateway" target="_blank" rel="noopener">github.com/Kuadrant/mcp-gateway &nearr;</a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;" class="impact-grid">
+
+        <div class="impact-card critical animate-on-scroll">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-critical">Critical</span>
+            <span class="tag tag-breaking">Breaking</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Session Elimination &rarr; Routing Model</div>
+          <ul class="bullet-list">
+            <li>Gateway currently uses <span class="code-inline">Mcp-Session-Id</span> for sticky routing &mdash; header is removed</li>
+            <li>ext_proc component's session-based routing logic must be replaced</li>
+            <li>Shared session stores become unnecessary at protocol layer</li>
+            <li>"Session Management" planned for GA (Q4 2026) needs redefinition as application-level, not protocol-level</li>
+          </ul>
+        </div>
+
+        <div class="impact-card critical animate-on-scroll stagger-1">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-critical">Critical</span>
+            <span class="tag tag-breaking">Breaking</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Initialize Removal &rarr; Broker</div>
+          <ul class="bullet-list">
+            <li>Broker handles <span class="code-inline">initialize</span>/<span class="code-inline">initialized</span> as part of connection setup &mdash; deleted</li>
+            <li>Must parse <span class="code-inline">_meta</span> per-request instead of caching from initialization</li>
+            <li>Capability negotiation cache invalidated &mdash; use <span class="code-inline">ttlMs</span>-based caching</li>
+          </ul>
+        </div>
+
+        <div class="impact-card high animate-on-scroll stagger-2">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-high">High</span>
+            <span class="tag tag-positive">Positive</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Required Headers &rarr; Router (ext_proc)</div>
+          <ul class="bullet-list">
+            <li class="green"><span class="code-inline">Mcp-Method</span> + <span class="code-inline">Mcp-Name</span> enable header-only routing &mdash; no JSON-RPC body parsing needed</li>
+            <li class="green">Perfect fit for Envoy ext_proc &mdash; reduces latency, simplifies Router</li>
+            <li class="green">Rate-limiting and access policies can now key on headers directly</li>
+            <li>Must validate header-body agreement and reject mismatches</li>
+          </ul>
+        </div>
+
+        <div class="impact-card high animate-on-scroll stagger-3">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-high">High</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Auth Hardening &rarr; Authorino Integration</div>
+          <ul class="bullet-list">
+            <li class="purple">RFC 9207 <span class="code-inline">iss</span> validation required on auth responses</li>
+            <li class="purple">Credential binding to issuing authorization server's <span class="code-inline">issuer</span></li>
+            <li class="purple">OIDC <span class="code-inline">application_type</span> in Dynamic Client Registration</li>
+            <li>Authorino handles much of this, but Gateway's MCP-specific auth layer needs updating</li>
+          </ul>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-4">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-medium">Medium</span>
+            <span class="tag tag-positive">Positive</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Caching &rarr; Cache Component</div>
+          <ul class="bullet-list">
+            <li class="green"><span class="code-inline">ttlMs</span> enables smart caching without long-lived SSE streams</li>
+            <li class="green"><span class="code-inline">cacheScope</span> indicates per-user vs shared &mdash; critical for multi-tenant RHOAI</li>
+            <li class="green">Gateway Cache component can implement native TTL-based invalidation</li>
+          </ul>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-5">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-medium">Medium</span>
+            <span class="tag tag-positive">Positive</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">W3C Trace Context &rarr; OTEL</div>
+          <ul class="bullet-list">
+            <li class="green">Standardized <span class="code-inline">traceparent</span>/<span class="code-inline">tracestate</span>/<span class="code-inline">baggage</span> in <span class="code-inline">_meta</span></li>
+            <li class="green">Gateway OTEL tracing (planned TP) now has a standard propagation format</li>
+            <li class="green">End-to-end traces: Studio &rarr; Gateway &rarr; MCP Server &rarr; downstream</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout positive animate-on-scroll" style="margin-top: 2rem;">
+        <p style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; margin: 0;"><strong>Net assessment:</strong> The stateless model is architecturally better for the Gateway. Eliminates session stores, enables standard K8s load balancing, and header-based routing simplifies the ext_proc component. But the rework is significant &mdash; session routing, initialize handling, and auth layers all need updates before GA.</p>
+      </div>
+
+      <!-- Gateway roadmap alignment -->
+      <h3 class="h2 animate-on-scroll" style="margin-top: 3rem;">Gateway Roadmap Alignment</h3>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;" class="change-grid">
+        <div class="animate-on-scroll" style="border-top: 3px solid var(--rh-green); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em;">DP (Feb 2026) &mdash; Shipped</div>
+          <ul class="bullet-list" style="margin-top: 0.75rem;">
+            <li>OAuth auth <span class="tag tag-high" style="font-size: 0.5rem;">REWORK</span></li>
+            <li>Fine-grained access <span class="tag tag-high" style="font-size: 0.5rem;">REWORK</span></li>
+            <li>Virtual MCP servers</li>
+          </ul>
+        </div>
+        <div class="animate-on-scroll stagger-1" style="border-top: 3px solid var(--rh-blue-light); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em;">TP (Apr 2026) &mdash; In Progress</div>
+          <ul class="bullet-list" style="margin-top: 0.75rem;">
+            <li>Vault integration</li>
+            <li>Elicitation <span class="tag tag-high" style="font-size: 0.5rem;">SEP-2322</span></li>
+            <li>Content guardrails</li>
+            <li class="green">OTEL tracing <span class="tag tag-positive" style="font-size: 0.5rem;">ALIGNED</span></li>
+          </ul>
+        </div>
+        <div class="animate-on-scroll stagger-2" style="border-top: 3px solid var(--rh-purple); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.15em;">GA (Q4 2026) &mdash; Planned</div>
+          <ul class="bullet-list" style="margin-top: 0.75rem;">
+            <li>MCP Registry integration</li>
+            <li>Session management <span class="tag tag-critical" style="font-size: 0.5rem;">REDEFINE</span></li>
+            <li class="green">HA <span class="tag tag-positive" style="font-size: 0.5rem;">SIMPLER</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== OGX IMPACT ===== -->
+  <section id="ogx">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll"><span class="tag tag-high">HIGH</span>&ensp;COMPONENT IMPACT</div>
+      <h2 class="display-lg animate-on-scroll">OGX / Llama Stack Operator</h2>
+      <p class="lead animate-on-scroll">The Tasks API redesign is a breaking change for agent workflows running on Llama Stack distributions. OGX must adopt the extension-based Tasks API or lose long-running task support.</p>
+      <div class="animate-on-scroll" style="margin-top: 0.5rem;">
+        <a class="source-link" href="https://github.com/red-hat-data-services/ogx-k8s-operator" target="_blank" rel="noopener">github.com/red-hat-data-services/ogx-k8s-operator &nearr;</a>
+        &ensp;
+        <a class="source-link" href="https://github.com/meta-llama/llama-stack" target="_blank" rel="noopener">github.com/meta-llama/llama-stack &nearr;</a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;" class="impact-grid">
+
+        <div class="impact-card high animate-on-scroll">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-high">High</span>
+            <span class="tag tag-breaking">Breaking</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Tasks API Redesign <span class="sep-ref">SEP-2663</span></div>
+          <ul class="bullet-list">
+            <li>Tasks moved from core experimental to <strong style="color: var(--text-primary);">extension</strong></li>
+            <li><span class="code-inline">tasks/list</span> removed entirely &mdash; cannot be scoped without sessions</li>
+            <li>Task creation is now server-directed: client advertises extension, server decides when to use</li>
+            <li>Client drives lifecycle: <span class="code-inline">tasks/get</span>, <span class="code-inline">tasks/update</span>, <span class="code-inline">tasks/cancel</span></li>
+            <li>Any OGX agent distribution using the <span class="code-inline">2025-11-25</span> experimental API will break</li>
+          </ul>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-1">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-medium">Medium</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Extension Negotiation</div>
+          <ul class="bullet-list">
+            <li>OGX operator must advertise Tasks extension support in per-request <span class="code-inline">_meta</span></li>
+            <li>Extensions negotiated via <span class="code-inline">extensions</span> map on capabilities</li>
+            <li>Llama Stack distributions may need updates to support the new extension model</li>
+            <li>Distribution CRDs (starter, remote-vllm, etc.) unaffected &mdash; these are deployment config, not protocol</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tasks lifecycle comparison -->
+      <h3 class="h2 animate-on-scroll" style="margin-top: 2rem;">Tasks Lifecycle: Before &amp; After</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;" class="change-grid">
+        <div class="animate-on-scroll" style="background: rgba(238,0,0,0.03); border: 1px solid rgba(238,0,0,0.15); border-radius: 12px; padding: 1.25rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">2025-11-25 (Experimental)</div>
+          <div class="code-block" style="font-size: 0.75rem;"><span class="cm">// Core protocol, session-scoped</span>
+<span class="kw">tasks/create</span>  &rarr; server creates task
+<span class="kw">tasks/list</span>    &rarr; list all tasks in session
+<span class="kw">tasks/get</span>     &rarr; check status
+<span class="kw">tasks/cancel</span>  &rarr; abort</div>
+        </div>
+        <div class="animate-on-scroll stagger-1" style="background: rgba(62,134,53,0.03); border: 1px solid rgba(62,134,53,0.15); border-radius: 12px; padding: 1.25rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">2026-07-28 (Extension)</div>
+          <div class="code-block" style="font-size: 0.75rem;"><span class="cm">// Extension, stateless, handle-based</span>
+<span class="kw">tools/call</span>    &rarr; server returns task handle
+<span class="kw">tasks/get</span>     &rarr; poll status via handle
+<span class="kw">tasks/update</span>  &rarr; send input to task
+<span class="kw">tasks/cancel</span>  &rarr; abort via handle
+<span class="cm">// tasks/list REMOVED</span></div>
+        </div>
+      </div>
+
+      <div class="callout warning animate-on-scroll" style="margin-top: 1.5rem;">
+        <p style="font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; margin: 0;"><strong>Action required:</strong> Assess whether Llama Stack distributions in RHOAI 3.4 use the experimental Tasks API for agent workflows. If yes, this is a blocker requiring coordination with Meta/Llama Stack upstream.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== MCP REGISTRY IMPACT ===== -->
+  <section id="registry">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll"><span class="tag tag-high">HIGH</span>&ensp;COMPONENT IMPACT</div>
+      <h2 class="display-lg animate-on-scroll">MCP Registry</h2>
+      <p class="lead animate-on-scroll">Registry governance metadata is independent of the MCP spec (good), but the canonical <span class="code-inline">server_json</span> payload, extension tracking, and JSON Schema storage all need updates.</p>
+      <div class="animate-on-scroll" style="margin-top: 0.5rem;">
+        <a class="source-link" href="https://github.com/kubeflow/model-registry" target="_blank" rel="noopener">github.com/kubeflow/model-registry (renaming to kubeflow/hub) &nearr;</a>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;" class="impact-grid">
+
+        <div class="impact-card high animate-on-scroll">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-high">High</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">server_json Payload Format</div>
+          <ul class="bullet-list">
+            <li>Canonical MCP payload stored per registry entry needs updating for new protocol version</li>
+            <li>New <span class="code-inline">MCP-Protocol-Version: 2026-07-28</span> header format</li>
+            <li><span class="code-inline">_meta</span> structure changes (client info, capabilities)</li>
+            <li>Handle-based state model changes how Registry tracks active server state</li>
+          </ul>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-1">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-medium">Medium</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Extension Tracking</div>
+          <ul class="bullet-list">
+            <li>Registry must track which extensions an MCP server supports as governance metadata</li>
+            <li>Extensions use reverse-DNS IDs, version independently of core spec</li>
+            <li>Tasks extension support becomes a registerable capability</li>
+            <li>MCP Apps extension (interactive HTML UIs) has security review implications</li>
+          </ul>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-2">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-medium">Medium</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">JSON Schema 2020-12 <span class="sep-ref">SEP-2106</span></div>
+          <ul class="bullet-list">
+            <li>Tool <span class="code-inline">inputSchema</span>/<span class="code-inline">outputSchema</span> now support <span class="code-inline">oneOf</span>, <span class="code-inline">anyOf</span>, <span class="code-inline">allOf</span>, <span class="code-inline">$ref</span>, <span class="code-inline">$defs</span></li>
+            <li>Registry's tool metadata storage must handle richer schemas</li>
+            <li>Must NOT auto-dereference external <span class="code-inline">$ref</span> URIs (security)</li>
+            <li>Should bound schema depth and validation time</li>
+          </ul>
+        </div>
+
+        <div class="impact-card low animate-on-scroll stagger-3">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="tag tag-low">Low</span>
+            <span class="tag tag-positive">Positive</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem;">Governance Independence</div>
+          <ul class="bullet-list">
+            <li class="green">Four governance tracks (Lifecycle, Approval, Verification, Certification) are RHOAI-defined, not spec-defined</li>
+            <li class="green">Lifecycle states, audit trail, mandatory comments &mdash; unaffected</li>
+            <li class="green">Registry's value proposition (governance gap) is strengthened by spec going stateless</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== OTHER COMPONENTS ===== -->
+  <section id="other">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll"><span class="tag tag-medium">MEDIUM</span>&ensp;COMPONENT IMPACT</div>
+      <h2 class="display-lg animate-on-scroll">Catalog, Lifecycle Operator &amp; Studio</h2>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 2rem;" class="change-grid">
+
+        <!-- Catalog -->
+        <div class="card animate-on-scroll" style="border-top: 3px solid var(--rh-teal);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">MCP Catalog</div>
+          <ul class="bullet-list" style="margin-top: 0;">
+            <li class="teal"><strong style="color: var(--text-primary);">Caching TTLs</strong>: Respect <span class="code-inline">ttlMs</span>/<span class="code-inline">cacheScope</span> for tool/resource discovery freshness</li>
+            <li class="teal"><strong style="color: var(--text-primary);">Extension awareness</strong>: Surface which extensions an MCP server supports in discovery UI</li>
+            <li class="teal"><strong style="color: var(--text-primary);">Richer schemas</strong>: Render JSON Schema 2020-12 tool definitions (composition, conditionals)</li>
+            <li class="teal"><strong style="color: var(--text-primary);">Auth changes</strong>: OIDC <span class="code-inline">application_type</span> and credential binding affect catalog auth</li>
+          </ul>
+        </div>
+
+        <!-- Lifecycle Operator -->
+        <div class="card animate-on-scroll stagger-1" style="border-top: 3px solid var(--rh-blue-light);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">MCP Lifecycle Operator</div>
+          <ul class="bullet-list" style="margin-top: 0;">
+            <li class="blue"><strong style="color: var(--text-primary);">Health probes</strong>: Can&rsquo;t use <span class="code-inline">initialize</span> to verify liveness &mdash; use <span class="code-inline">server/discover</span> instead</li>
+            <li class="blue"><strong style="color: var(--text-primary);">Simpler deployments</strong>: Stateless model means no session affinity annotations needed on Pods</li>
+            <li class="blue"><strong style="color: var(--text-primary);">MCPServer CRD</strong>: May need new fields for protocol version and supported extensions</li>
+          </ul>
+          <div style="margin-top: 0.75rem;">
+            <a class="source-link" href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" target="_blank" rel="noopener">kubernetes-sigs/mcp-lifecycle-operator &nearr;</a>
+          </div>
+        </div>
+
+        <!-- Studio/AAA -->
+        <div class="card animate-on-scroll stagger-2" style="border-top: 3px solid var(--rh-purple);">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Studio / AAA</div>
+          <ul class="bullet-list" style="margin-top: 0;">
+            <li class="purple"><strong style="color: var(--text-primary);">OIDC app_type</strong>: Must declare <span class="code-inline">application_type</span> during Dynamic Client Registration</li>
+            <li class="purple"><strong style="color: var(--text-primary);">Multi round-trip UX</strong>: <span class="code-inline">InputRequiredResult</span> replaces SSE-held elicitation &mdash; new UI patterns needed</li>
+            <li class="purple"><strong style="color: var(--text-primary);">MCP Apps</strong>: Could render interactive HTML UIs from MCP servers (sandboxed iframes) &mdash; security review needed</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Deprecations -->
+      <h3 class="h2 animate-on-scroll" style="margin-top: 3rem;">Deprecations <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted);">&mdash; 12-month protection window</span></h3>
+      <p class="body animate-on-scroll">Annotation-only deprecations under <span class="sep-ref">SEP-2577</span>. Methods, types, and capability flags continue to work. Removal requires a separate SEP and at least 12 months notice.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;" class="deprecation-grid">
+        <div class="card animate-on-scroll" style="border-top: 3px solid var(--rh-orange);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); margin-bottom: 0.5rem;">DEPRECATED</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Roots</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Replaced by tool parameters, resource URIs, or server configuration.</p>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">RHOAI impact: <span style="color: var(--rh-green);">Low</span></div>
+        </div>
+        <div class="card animate-on-scroll stagger-1" style="border-top: 3px solid var(--rh-orange);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); margin-bottom: 0.5rem;">DEPRECATED</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Sampling</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Replaced by direct integration with LLM provider APIs.</p>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">RHOAI impact: <span style="color: var(--rh-blue-light);">Medium</span> &mdash; check MCP server usage</div>
+        </div>
+        <div class="card animate-on-scroll stagger-2" style="border-top: 3px solid var(--rh-orange);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); margin-bottom: 0.5rem;">DEPRECATED</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem;">Logging</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Replaced by <span class="code-inline">stderr</span> for stdio transports; OpenTelemetry for structured observability.</p>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">RHOAI impact: <span style="color: var(--rh-green);">Positive</span> &mdash; aligns with OTEL stack</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== STRATEGIC ASSESSMENT ===== -->
+  <section id="assessment">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">STRATEGIC ASSESSMENT</div>
+      <h2 class="display-lg animate-on-scroll">Impact Summary</h2>
+
+      <!-- Component impact summary table -->
+      <table class="spec-table animate-on-scroll" style="margin-top: 1rem;">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Severity</th>
+            <th>Key Changes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color: var(--text-primary);">MCP Gateway</strong></td>
+            <td><span class="tag tag-critical">Critical</span></td>
+            <td>Session elimination, header-based routing, auth hardening, caching, trace context, stateless routing</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--text-primary);">OGX / Llama Stack</strong></td>
+            <td><span class="tag tag-high">High</span></td>
+            <td>Tasks API completely redesigned, new extension model for long-running workflows</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--text-primary);">MCP Registry</strong></td>
+            <td><span class="tag tag-high">High</span></td>
+            <td><span class="code-inline">server_json</span> format update, extension tracking, richer JSON Schema, handle-based state</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--text-primary);">MCP Catalog</strong></td>
+            <td><span class="tag tag-medium">Medium</span></td>
+            <td>Caching TTLs, extension awareness, richer schema rendering, auth changes</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--text-primary);">Lifecycle Operator</strong></td>
+            <td><span class="tag tag-medium">Medium</span></td>
+            <td>Health probes (no more initialize), stateless deployment becomes simpler</td>
+          </tr>
+          <tr>
+            <td><strong style="color: var(--text-primary);">Studio / AAA</strong></td>
+            <td><span class="tag tag-medium">Medium</span></td>
+            <td>OIDC app_type for DCR, multi round-trip UX, MCP Apps rendering</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Positive / Concerning split -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem;" class="change-grid">
+
+        <div class="animate-on-scroll" style="background: linear-gradient(135deg, rgba(62,134,53,0.06), rgba(62,134,53,0.02)); border: 1px solid rgba(62,134,53,0.2); border-radius: 12px; padding: 1.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">What's Good</div>
+          <ul class="bullet-list">
+            <li class="green"><strong style="color: var(--text-primary);">Stateless = K8s-native.</strong> Eliminates sticky routing, shared session stores, and single-instance affinity. Standard Kubernetes load balancing just works.</li>
+            <li class="green"><strong style="color: var(--text-primary);">Header-based routing.</strong> Perfect for Envoy ext_proc. Reduces Gateway latency by eliminating JSON-RPC body parsing for routing decisions.</li>
+            <li class="green"><strong style="color: var(--text-primary);">Native caching.</strong> <span class="code-inline">ttlMs</span>/<span class="code-inline">cacheScope</span> gives Gateway and Catalog smart caching without long-lived SSE streams.</li>
+            <li class="green"><strong style="color: var(--text-primary);">OTEL alignment.</strong> W3C Trace Context propagation aligns with RHOAI's existing observability stack.</li>
+            <li class="green"><strong style="color: var(--text-primary);">Simpler HA.</strong> No session stores means fewer moving parts for high availability.</li>
+            <li class="green"><strong style="color: var(--text-primary);">Logging deprecation.</strong> Move to OTEL aligns with what RHOAI already uses.</li>
+          </ul>
+        </div>
+
+        <div class="animate-on-scroll stagger-1" style="background: linear-gradient(135deg, rgba(244,180,0,0.06), rgba(244,180,0,0.02)); border: 1px solid rgba(244,180,0,0.2); border-radius: 12px; padding: 1.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">Concerns</div>
+          <ul class="bullet-list">
+            <li class="orange"><strong style="color: var(--text-primary);">Gateway rework scope.</strong> Session routing, initialize handling, and auth layers all need updates before GA. Significant implementation effort.</li>
+            <li class="orange"><strong style="color: var(--text-primary);">10-week RC window.</strong> May 21 &rarr; July 28 is tight for the scope of Gateway changes. SDK tier system expects Tier 1 support in this window.</li>
+            <li class="orange"><strong style="color: var(--text-primary);">OGX Tasks API.</strong> Breaking change for agent workflows. Need to assess Llama Stack upstream timeline for extension adoption.</li>
+            <li class="orange"><strong style="color: var(--text-primary);">Gateway session management.</strong> Planned GA feature needs complete redefinition &mdash; what does "session management" mean in a stateless protocol?</li>
+            <li class="orange"><strong style="color: var(--text-primary);">MCP Apps security.</strong> Interactive HTML UIs in sandboxed iframes has significant security review implications for RHOAI's compliance posture.</li>
+            <li class="orange"><strong style="color: var(--text-primary);">Auth migration.</strong> 6 auth SEPs require coordination between Gateway, Authorino, and Catalog teams.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Recommended actions -->
+      <h3 class="h2 animate-on-scroll" style="margin-top: 3rem;">Recommended Actions</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1rem;">
+        <div class="impact-card critical animate-on-scroll" style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--rh-red); min-width: 2rem; text-align: center;">1</div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem;">Flag to Kuadrant/Gateway team immediately</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Session elimination and routing changes are architecturally positive but require significant rework. Needs planning within the 10-week RC window.</p>
+          </div>
+        </div>
+
+        <div class="impact-card high animate-on-scroll stagger-1" style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--rh-orange); min-width: 2rem; text-align: center;">2</div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem;">Assess OGX Tasks API usage</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Determine if Llama Stack distributions in RHOAI 3.4 use the experimental Tasks API. Coordinate with Meta upstream if so.</p>
+          </div>
+        </div>
+
+        <div class="impact-card high animate-on-scroll stagger-2" style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--rh-orange); min-width: 2rem; text-align: center;">3</div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem;">Update MCP Registry <span class="code-inline">server_json</span> schema</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Add protocol version tracking, extension metadata, and JSON Schema 2020-12 support to the Registry data model before 3.5 Dev Preview.</p>
+          </div>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-3" style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--rh-blue-light); min-width: 2rem; text-align: center;">4</div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem;">Coordinate auth hardening across teams</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">6 auth SEPs affect Gateway, Catalog, and Studio. RFC 9207 issuer validation and credential binding need coordinated implementation.</p>
+          </div>
+        </div>
+
+        <div class="impact-card medium animate-on-scroll stagger-4" style="display: flex; gap: 1rem; align-items: flex-start;">
+          <div style="font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; color: var(--rh-blue-light); min-width: 2rem; text-align: center;">5</div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem;">Redefine Gateway "Session Management" feature</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">Protocol-level sessions no longer exist. Redefine as application-level state management with explicit handles, or descope for GA.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== SEP INDEX ===== -->
+  <section id="seps">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">REFERENCE</div>
+      <h2 class="display-lg animate-on-scroll">Complete SEP Index</h2>
+      <p class="lead animate-on-scroll">All 22 SEPs merged in this release candidate, with RHOAI impact assessment for each.</p>
+
+      <table class="spec-table animate-on-scroll" style="margin-top: 1.5rem;">
+        <thead>
+          <tr>
+            <th>SEP</th>
+            <th>Subject</th>
+            <th>Category</th>
+            <th>RHOAI Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="sep-ref">SEP-414</span></td>
+            <td>W3C Trace Context propagation</td>
+            <td>Observability</td>
+            <td><span class="tag tag-medium">Medium</span> <span class="tag tag-positive">Positive</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-837</span></td>
+            <td>OIDC application_type in DCR</td>
+            <td>Auth</td>
+            <td><span class="tag tag-high">High</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-1777</span></td>
+            <td>SDK tier system</td>
+            <td>Governance</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-1865</span></td>
+            <td>MCP Apps (interactive HTML UIs)</td>
+            <td>Extension</td>
+            <td><span class="tag tag-medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2106</span></td>
+            <td>JSON Schema 2020-12 for tools</td>
+            <td>Schema</td>
+            <td><span class="tag tag-medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2133</span></td>
+            <td>Extensions framework</td>
+            <td>Architecture</td>
+            <td><span class="tag tag-medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2164</span></td>
+            <td>Error code -32002 &rarr; -32602</td>
+            <td>Protocol</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2207</span></td>
+            <td>Refresh token documentation</td>
+            <td>Auth</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2243</span></td>
+            <td>Mcp-Method/Mcp-Name required headers</td>
+            <td>Transport</td>
+            <td><span class="tag tag-high">High</span> <span class="tag tag-positive">Positive</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2260</span></td>
+            <td>Server-initiated request scoping</td>
+            <td>Protocol</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2322</span></td>
+            <td>Multi round-trip requests</td>
+            <td>Protocol</td>
+            <td><span class="tag tag-medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2350</span></td>
+            <td>Scope accumulation clarification</td>
+            <td>Auth</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2351</span></td>
+            <td>.well-known discovery suffix</td>
+            <td>Auth</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2352</span></td>
+            <td>Credential binding &amp; re-registration</td>
+            <td>Auth</td>
+            <td><span class="tag tag-high">High</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2468</span></td>
+            <td>RFC 9207 issuer validation</td>
+            <td>Auth</td>
+            <td><span class="tag tag-high">High</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2484</span></td>
+            <td>Conformance suite requirement</td>
+            <td>Governance</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2549</span></td>
+            <td>ttlMs / cacheScope caching</td>
+            <td>Caching</td>
+            <td><span class="tag tag-medium">Medium</span> <span class="tag tag-positive">Positive</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2567</span></td>
+            <td>Session removal</td>
+            <td>Protocol</td>
+            <td><span class="tag tag-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2575</span></td>
+            <td>Initialize handshake removal</td>
+            <td>Protocol</td>
+            <td><span class="tag tag-critical">Critical</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2577</span></td>
+            <td>Roots / Sampling / Logging deprecation</td>
+            <td>Deprecation</td>
+            <td><span class="tag tag-medium">Medium</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2596</span></td>
+            <td>Feature lifecycle policy</td>
+            <td>Governance</td>
+            <td><span class="tag tag-low">Low</span></td>
+          </tr>
+          <tr>
+            <td><span class="sep-ref">SEP-2663</span></td>
+            <td>Tasks extension redesign</td>
+            <td>Extension</td>
+            <td><span class="tag tag-high">High</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Source links -->
+      <h3 class="h2 animate-on-scroll" style="margin-top: 3rem;">Source Documentation</h3>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;" class="change-grid">
+        <div class="card animate-on-scroll">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">MCP Spec &amp; Upstream</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/" target="_blank" rel="noopener">MCP 2026-07-28 RC Blog Post &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://spec.modelcontextprotocol.io/" target="_blank" rel="noopener">MCP Specification &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://github.com/modelcontextprotocol/specification" target="_blank" rel="noopener">github.com/modelcontextprotocol/specification &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://github.com/Kuadrant/mcp-gateway" target="_blank" rel="noopener">github.com/Kuadrant/mcp-gateway &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" target="_blank" rel="noopener">github.com/kubernetes-sigs/mcp-lifecycle-operator &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://github.com/kubeflow/model-registry" target="_blank" rel="noopener">github.com/kubeflow/model-registry (kubeflow/hub) &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://github.com/meta-llama/llama-stack" target="_blank" rel="noopener">github.com/meta-llama/llama-stack &nearr;</a></li>
+          </ul>
+        </div>
+        <div class="card animate-on-scroll stagger-1">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">RHOAI Architecture Docs</div>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://github.com/red-hat-data-services/ogx-k8s-operator" target="_blank" rel="noopener">github.com/red-hat-data-services/ogx-k8s-operator &nearr;</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" style="color: var(--text-muted); cursor: default;">docs/knowledge-review/components/mcp-gateway.md</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" style="color: var(--text-muted); cursor: default;">docs/knowledge-review/components/mcp-registry.md</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" style="color: var(--text-muted); cursor: default;">docs/knowledge-review/components/mcp-catalog.md</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" style="color: var(--text-muted); cursor: default;">docs/knowledge-review/components/mcp-lifecycle-operator.md</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" style="color: var(--text-muted); cursor: default;">docs/knowledge-review/integration/platform-integration.md</a></li>
+            <li style="padding: 0.3rem 0;"><a class="source-link" href="https://redhat.atlassian.net/browse/RHAIRFE-1370" target="_blank" rel="noopener">RHAIRFE-1370 (MCP Registry) &nearr;</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries &mdash; Red Hat OpenShift AI</p>
+    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">Analysis date: June 2026 &nbsp;|&nbsp; MCP RC locked: May 21, 2026 &nbsp;|&nbsp; Final spec: July 28, 2026</p>
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)'
+              : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

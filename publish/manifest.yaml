@@ -16,3 +16,53 @@
   audience: public
   title: Agent Memory Architecture — Options & Roadmap
   description: Architecture options and roadmap deck for agent memory on RHOAI.
+- source: features/mcp-gateway/enablement/mcp-gateway-overview/
+  dest: mcp-gateway/overview/
+  audience: public
+  title: MCP Gateway — Enterprise Overview
+  description: Scrolling one-pager positioning "The Enterprise MCP Gateway" for RHOAI.
+- source: features/mcp-gateway/enablement/mcp-gateway-presentation/
+  dest: mcp-gateway/presentation/
+  audience: public
+  title: MCP Gateway — Slide Deck
+  description: Keyboard-navigated slide deck presenting MCP Gateway for RHOAI.
+- source: features/mcp-gateway/enablement/authz-audit/
+  dest: mcp-gateway/authz-audit/
+  audience: public
+  title: MCP Gateway — Tool-Call Authorization & Audit
+  description: Deck covering tool-call authorization and audit trail design.
+- source: features/mcp-ecosystem/enablement/mcp-ecosystem-deck/
+  dest: mcp-ecosystem/deck/
+  audience: public
+  title: The MCP Ecosystem on OpenShift AI
+  description: Scrolling overview deck of the MCP ecosystem (Gateway, Catalog, Lifecycle Operator) with custom illustration assets.
+- source: features/mcp-registry/enablement/registry-overview/
+  dest: mcp-registry/overview/
+  audience: public
+  title: MCP Registry — Targeted User Stories
+  description: Scrolling deck framing the Registry problem/solution via targeted user stories for RHOAI 3.5 Dev Preview.
+- source: features/mcp-registry/enablement/registry-ui-prototype/
+  dest: mcp-registry/ui-prototype/
+  audience: public
+  title: MCP Registry UI Prototype (MLflow-style)
+  description: Interactive client-rendered mockups ("MLflow — MCP Servers") of the Registry list/detail/version UI; v0.2 is the more developed iteration.
+- source: features/skills-registry/enablement/strategy-presentation/
+  dest: skills-registry/strategy-presentation/
+  audience: public
+  title: Skills Registry Strategy
+  description: '"Skills Are the Next AI Asset Class" — strategy deck for the Skills Registry proposal.'
+- source: narrative/enablement/mcp-spec-rc-impact/
+  dest: narrative/mcp-spec-rc-impact/
+  audience: public
+  title: MCP 2026-07-28 RC — RHOAI Impact Analysis
+  description: Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
+- source: features/mcp-ecosystem/enablement/mcp-catalog-blog-preview/
+  dest: mcp-ecosystem/mcp-catalog-blog-preview/
+  audience: public
+  title: Blog preview — "The MCP catalog is here"
+  description: Red Hat blog mockup preview announcing the MCP catalog, with partner/vendor logo assets.
+- source: features/mcp-ecosystem/enablement/ingestion-pipeline/
+  dest: mcp-ecosystem/ingestion-pipeline/
+  audience: public
+  title: MCP Ingestion Pipeline
+  description: Scrolling deck with an inline Cytoscape.js diagram of the end-to-end MCP ingestion pipeline.

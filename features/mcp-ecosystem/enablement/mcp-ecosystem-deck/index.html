@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The MCP Ecosystem on OpenShift AI</title>
+  <meta name="description" content="A walkthrough of the MCP ecosystem on Red Hat OpenShift AI — catalog, registry, gateway, lifecycle operator, and the path from source to production." />
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --accent-catalog:  #73BCF7;
+      --accent-registry: #4caf50;
+      --accent-operator: #FFD54F;
+      --accent-gateway:  #CE93D8;
+      --accent-pipeline: #EE0000;
+      --accent-virtual:  #FF8A65;
+      --accent-consume:  #4dd0e1;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --stagger-delay:    80ms;
+      --transition-exit:  220ms;
+      --transition-enter: 350ms;
+      --ease-out-pop:     cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* === BASE === */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    main.deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-canvas);
+    }
+
+    /* === SLIDE LAYOUT === */
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      min-height: 100vh;
+      padding: 3rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition:
+        opacity var(--transition-exit) ease-in,
+        transform var(--transition-exit) ease-in,
+        visibility 0s linear var(--transition-exit);
+    }
+
+    /* === SLIDE VISIBILITY === */
+    main.deck[data-slide-current="1"] .slide[data-slide="1"],
+    main.deck[data-slide-current="2"] .slide[data-slide="2"],
+    main.deck[data-slide-current="3"] .slide[data-slide="3"],
+    main.deck[data-slide-current="4"] .slide[data-slide="4"],
+    main.deck[data-slide-current="5"] .slide[data-slide="5"],
+    main.deck[data-slide-current="6"] .slide[data-slide="6"],
+    main.deck[data-slide-current="7"] .slide[data-slide="7"],
+    main.deck[data-slide-current="8"] .slide[data-slide="8"],
+    main.deck[data-slide-current="9"] .slide[data-slide="9"],
+    main.deck[data-slide-current="10"] .slide[data-slide="10"] {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1);
+      transition:
+        opacity var(--transition-enter) var(--ease-out-pop),
+        transform var(--transition-enter) var(--ease-out-pop),
+        visibility 0s linear 0s;
+    }
+
+    /* === SLIDE INNER === */
+    .slide-inner {
+      max-width: var(--content-max);
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* === EYEBROW === */
+    .slide-eyebrow {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .slide-logo {
+      position: absolute;
+      top: 3rem;
+      right: 4rem;
+      height: 24px;
+      width: auto;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 80ch; }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; }
+
+    /* === MOTION LIBRARY === */
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes scale-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+    /* === ANIMATION TRIGGERS === */
+    main.deck .slide.current .anim-fade-up     { animation: fade-up    400ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-fade-in     { animation: fade-in    400ms ease-out both;           animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-right { animation: slide-right 500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-left  { animation: slide-left  500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-scale-in    { animation: scale-in   450ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+
+    /* === CONTROLS === */
+    .deck-controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      background: rgba(21, 21, 21, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      z-index: 50;
+    }
+    .deck-controls button {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      border: none;
+      color: var(--rh-red);
+      font-size: 1.3rem;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 180ms ease-out, color 180ms ease-out;
+    }
+    .deck-controls button:hover:not(:disabled) { background: rgba(238, 0, 0, 0.15); color: #ff4444; }
+    .deck-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .deck-dots {
+      display: flex;
+      gap: 0.35rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .deck-dots button {
+      width: 10px;
+      height: 10px;
+      padding: 0;
+      border-radius: 50%;
+      background: var(--text-muted);
+      transition: background 180ms ease-out, transform 180ms ease-out;
+      color: transparent;
+      font-size: 0;
+    }
+    .deck-dots button[aria-current="true"] {
+      background: var(--rh-red);
+      transform: scale(1.4);
+      box-shadow: 0 0 12px rgba(238, 0, 0, 0.5);
+    }
+    .deck-dots button:hover {
+      background: #ff4444;
+    }
+    .deck-counter {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      padding: 0 var(--space-sm);
+      border-left: 1px solid var(--border-subtle);
+    }
+    .deck-controls button:focus-visible,
+    .deck-dots button:focus-visible {
+      outline: 2px solid var(--rh-red);
+      outline-offset: 2px;
+    }
+
+    /* === OVERVIEW === */
+    .deck-overview {
+      position: fixed;
+      inset: 0;
+      background: rgba(21, 21, 21, 0.97);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      padding: 4rem 3rem;
+      overflow-y: auto;
+    }
+    .deck-overview[hidden] { display: none; }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .overview-thumb {
+      aspect-ratio: 16 / 10;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 1rem;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: var(--font-sans);
+      transition: border-color 180ms, transform 180ms;
+    }
+    .overview-thumb:hover,
+    .overview-thumb:focus-visible {
+      border-color: var(--rh-red);
+      transform: translateY(-2px);
+      outline: none;
+    }
+    .overview-thumb .num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--rh-red);
+      letter-spacing: 0.15em;
+    }
+    .overview-thumb .ttl {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+    .overview-thumb .beat {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    /* === NOTES === */
+    .deck-notes {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      background: rgba(21, 21, 21, 0.95);
+      border-top: 1px solid var(--rh-red);
+      padding: 1rem 1.5rem;
+      z-index: 60;
+      transform: translateY(0);
+    }
+    .deck-notes[hidden] { display: none; }
+    .notes-label { color: var(--rh-red); font-size: var(--fs-label); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin: 0 0 0.3rem; }
+    .notes-body { color: var(--text-secondary); font-size: 0.9rem; margin: 0; }
+    .deck-notes kbd { font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 0.15rem 0.4rem; border-radius: 3px; color: var(--rh-red); }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 180ms !important; }
+      main.deck .slide.current .anim-fade-up,
+      main.deck .slide.current .anim-slide-right,
+      main.deck .slide.current .anim-slide-left,
+      main.deck .slide.current .anim-scale-in,
+      main.deck .slide.current .anim-fade-in { animation: fade-in 180ms ease-out both; }
+    }
+
+    /* === PRINT === */
+    @media print {
+      html, body, main.deck { overflow: visible; height: auto; }
+      main.deck { background: #fff !important; }
+      .deck-controls, .deck-overview, .deck-notes { display: none !important; }
+      .slide {
+        position: relative;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        pointer-events: auto;
+        page-break-after: always;
+        break-after: page;
+        background: #fff;
+        color: #1a1a1a;
+        padding: 0.5in;
+        min-height: auto;
+      }
+      .display-xl, .display-lg, .lead, .body { color: #1a1a1a !important; }
+      .slide-eyebrow { color: var(--rh-red-dark) !important; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      :root {
+        --fs-display-xl: 1.8rem;
+        --fs-display-lg: 1.4rem;
+        --fs-body-lead:  1rem;
+      }
+      .slide { padding: 2rem 1.25rem; }
+      .deck-controls { padding: 0.3rem 0.6rem; gap: 0.5rem; }
+      .deck-controls button { width: 32px; height: 32px; font-size: 1.05rem; }
+      .deck-dots button { width: 8px; height: 8px; }
+      .overview-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* === SLIDE 1: Ecosystem Map === */
+    .eco-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      margin-top: var(--space-md);
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 14px 28px 18px;
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .eco-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      max-width: 700px;
+    }
+    .eco-sources {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .eco-source {
+      background: linear-gradient(180deg, #1e1e1e, #161616);
+      border: 1px solid #3a3a3a;
+      color: var(--text-secondary);
+      padding: 6px 18px;
+      border-radius: 8px;
+      font-size: var(--fs-small);
+      font-weight: 600;
+      text-align: center;
+      min-width: 120px;
+      transition: border-color 300ms ease, box-shadow 300ms ease, transform 300ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .eco-source::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    }
+    .eco-source:hover {
+      border-color: var(--text-muted);
+      box-shadow: 0 0 16px rgba(255,255,255,0.08);
+      transform: translateY(-1px);
+    }
+    .eco-source-label {
+      font-size: var(--fs-small);
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      text-align: center;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    @keyframes arrow-pulse {
+      0%, 100% { opacity: 0.5; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(3px); }
+    }
+    .eco-arrow {
+      color: var(--rh-red);
+      font-size: 0.8rem;
+      text-align: center;
+      letter-spacing: 0.5em;
+      padding: 2px 0;
+      filter: drop-shadow(0 0 3px rgba(238,0,0,0.3));
+    }
+    .eco-arrow span {
+      display: inline-block;
+      animation: arrow-pulse 1.8s ease-in-out infinite;
+    }
+    .eco-arrow span:nth-child(2) { animation-delay: 0.2s; }
+    .eco-arrow span:nth-child(3) { animation-delay: 0.4s; }
+    .eco-pipeline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(180deg, #221010, #1a0c0c);
+      border: 1px solid rgba(238,0,0,0.4);
+      border-top: 2px solid var(--accent-pipeline);
+      box-shadow: 0 0 24px rgba(238,0,0,0.1), inset 0 1px 0 rgba(238,0,0,0.08);
+      padding: 10px 20px;
+      border-radius: 8px;
+      max-width: 700px;
+      width: 100%;
+      justify-content: center;
+    }
+    .eco-pipeline-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--accent-pipeline);
+      white-space: nowrap;
+    }
+    .eco-pipeline-stages {
+      display: flex;
+      gap: 6px;
+    }
+    @keyframes stage-flow {
+      0%, 100% { border-color: #442222; }
+      50% { border-color: #883333; }
+    }
+    .eco-pipeline-stages span {
+      background: #2a1515;
+      border: 1px solid #442222;
+      color: #cc8888;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: var(--fs-small);
+      font-weight: 500;
+      animation: stage-flow 2.4s ease-in-out infinite;
+    }
+    .eco-pipeline-stages span:nth-child(1) { animation-delay: 0s; }
+    .eco-pipeline-stages span:nth-child(2) { animation-delay: 0.3s; }
+    .eco-pipeline-stages span:nth-child(3) { animation-delay: 0.6s; }
+    .eco-pipeline-stages span:nth-child(4) { animation-delay: 0.9s; }
+    .eco-pipeline-stages span:nth-child(5) { animation-delay: 1.2s; }
+    @keyframes registry-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(76,175,80,0.1), 0 0 40px rgba(76,175,80,0.04); }
+      50% { box-shadow: 0 0 28px rgba(76,175,80,0.2), 0 0 56px rgba(76,175,80,0.08); }
+    }
+    .eco-registry {
+      background: linear-gradient(180deg, #1a2a1a, #142014);
+      border: 2px solid var(--accent-registry);
+      padding: 10px 28px;
+      border-radius: 10px;
+      text-align: center;
+      animation: registry-glow 3s ease-in-out infinite;
+      position: relative;
+    }
+    .eco-registry::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, rgba(76,175,80,0.15), transparent, rgba(76,175,80,0.15));
+      z-index: -1;
+    }
+    .eco-registry-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-registry);
+    }
+    .eco-registry-desc {
+      font-size: var(--fs-small);
+      color: #6a9b6c;
+      margin-top: 2px;
+    }
+    .eco-registry-badge {
+      display: inline-block;
+      font-size: 0.5rem;
+      background: #2a3a2a;
+      border: 1px solid var(--accent-registry);
+      color: #81c784;
+      padding: 2px 10px;
+      border-radius: 3px;
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .eco-flow-label {
+      font-size: 0.5rem;
+      color: var(--accent-registry);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      text-align: center;
+      opacity: 0.6;
+    }
+    .eco-components {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      max-width: 700px;
+      width: 100%;
+    }
+    .eco-component {
+      flex: 1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 300ms ease, box-shadow 300ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .eco-component::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .eco-comp-catalog::before { background: var(--accent-catalog); }
+    .eco-comp-operator::before { background: var(--accent-operator); }
+    .eco-comp-gateway::before { background: var(--accent-gateway); }
+    .eco-component:hover {
+      transform: translateY(-2px);
+    }
+    .eco-component-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      margin-bottom: 2px;
+    }
+    .eco-component-desc {
+      font-size: 0.5rem;
+      opacity: 0.7;
+    }
+    .eco-comp-catalog {
+      background: linear-gradient(135deg, #151525, #151520);
+      border: 1px solid var(--accent-catalog);
+      color: var(--accent-catalog);
+      box-shadow: 0 0 16px rgba(115,188,247,0.06);
+    }
+    .eco-comp-operator {
+      background: linear-gradient(135deg, #252515, #201f15);
+      border: 1px solid var(--accent-operator);
+      color: var(--accent-operator);
+      box-shadow: 0 0 16px rgba(255,213,79,0.06);
+    }
+    .eco-comp-gateway {
+      background: linear-gradient(135deg, #251525, #201520);
+      border: 1px solid var(--accent-gateway);
+      color: var(--accent-gateway);
+      box-shadow: 0 0 16px rgba(206,147,216,0.06);
+    }
+    .eco-consumption {
+      background: linear-gradient(180deg, #122020, #0e1a1a);
+      border: 1px solid rgba(77,208,225,0.4);
+      border-top: 2px solid var(--accent-consume);
+      box-shadow: 0 0 20px rgba(77,208,225,0.08);
+      padding: 8px 20px;
+      border-radius: 8px;
+      text-align: center;
+      max-width: 700px;
+      width: 100%;
+    }
+    .eco-consumption-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--accent-consume);
+    }
+    .eco-consumption-desc {
+      font-size: 0.5rem;
+      color: #6ba8b0;
+      margin-top: 2px;
+    }
+
+    /* === TWO-LANE ECOSYSTEM DIAGRAM (Slide 2) === */
+    .dia {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: center;
+      margin-top: var(--space-sm);
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 14px 28px 18px;
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
+    }
+    .dia-label {
+      font-size: var(--fs-small);
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      text-align: center;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .dia-arrow {
+      color: var(--rh-red);
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 0.5em;
+      padding: 1px 0;
+      filter: drop-shadow(0 0 3px rgba(238,0,0,0.3));
+    }
+    .dia-arrow span {
+      display: inline-block;
+      animation: arrow-pulse 1.8s ease-in-out infinite;
+    }
+    .dia-arrow span:nth-child(2) { animation-delay: 0.2s; }
+    .dia-pipeline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(180deg, #221010, #1a0c0c);
+      border: 1px solid rgba(238,0,0,0.4);
+      border-top: 2px solid var(--accent-pipeline);
+      box-shadow: 0 0 24px rgba(238,0,0,0.1), inset 0 1px 0 rgba(238,0,0,0.08);
+      padding: 8px 18px;
+      border-radius: 8px;
+      max-width: 700px;
+      width: 100%;
+      justify-content: center;
+    }
+    .dia-pipeline-title {
+      font-weight: 700;
+      font-size: 0.7rem;
+      color: var(--accent-pipeline);
+      white-space: nowrap;
+    }
+    .dia-pipeline-stages {
+      display: flex;
+      gap: 5px;
+    }
+    .dia-pipeline-stages span {
+      background: #2a1515;
+      border: 1px solid #442222;
+      color: #cc8888;
+      padding: 2px 7px;
+      border-radius: 3px;
+      font-size: var(--fs-small);
+      font-weight: 500;
+      animation: stage-flow 2.4s ease-in-out infinite;
+    }
+    .dia-pipeline-stages span:nth-child(1) { animation-delay: 0s; }
+    .dia-pipeline-stages span:nth-child(2) { animation-delay: 0.3s; }
+    .dia-pipeline-stages span:nth-child(3) { animation-delay: 0.6s; }
+    .dia-pipeline-stages span:nth-child(4) { animation-delay: 0.9s; }
+    .dia-box {
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .dia-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .dia-box-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      margin-bottom: 2px;
+    }
+    .dia-box-desc {
+      font-size: 0.5rem;
+      opacity: 0.7;
+    }
+    .box-catalog {
+      background: linear-gradient(135deg, #151525, #151520);
+      border: 1px solid var(--accent-catalog);
+      color: var(--accent-catalog);
+      box-shadow: 0 0 16px rgba(115,188,247,0.06);
+    }
+    .box-catalog::before { background: var(--accent-catalog); }
+    .box-operator {
+      background: linear-gradient(135deg, #252515, #201f15);
+      border: 1px solid var(--accent-operator);
+      color: var(--accent-operator);
+      box-shadow: 0 0 16px rgba(255,213,79,0.06);
+    }
+    .box-operator::before { background: var(--accent-operator); }
+    .box-operator-optional {
+      background: linear-gradient(135deg, #252515, #201f15);
+      border: 1px dashed rgba(255,213,79,0.5);
+      color: var(--accent-operator);
+      box-shadow: none;
+      opacity: 0.7;
+    }
+    .box-operator-optional::before { background: var(--accent-operator); opacity: 0.5; }
+    .box-registry {
+      background: linear-gradient(180deg, #1a2a1a, #142014);
+      border: 2px solid var(--accent-registry);
+      color: var(--accent-registry);
+      animation: registry-glow 3s ease-in-out infinite;
+    }
+    .box-registry::before { background: var(--accent-registry); }
+    .box-gateway {
+      background: linear-gradient(135deg, #251525, #201520);
+      border: 1px solid var(--accent-gateway);
+      color: var(--accent-gateway);
+      box-shadow: 0 0 16px rgba(206,147,216,0.06);
+    }
+    .box-gateway::before { background: var(--accent-gateway); }
+    .box-consume {
+      background: linear-gradient(180deg, #122020, #0e1a1a);
+      border: 1px solid rgba(77,208,225,0.4);
+      border-top: 2px solid var(--accent-consume);
+      box-shadow: 0 0 20px rgba(77,208,225,0.08);
+    }
+    .box-direct {
+      background: linear-gradient(135deg, #1a1a1a, #161616);
+      border: 1px solid var(--text-muted);
+      color: var(--text-secondary);
+      box-shadow: 0 0 16px rgba(255,255,255,0.03);
+    }
+    .box-direct::before { background: var(--text-muted); }
+    .dia-flow-label {
+      font-size: 0.48rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-align: center;
+      opacity: 0.7;
+    }
+    .dia-sources {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .dia-source {
+      background: linear-gradient(180deg, #1e1e1e, #161616);
+      border: 1px solid #3a3a3a;
+      color: var(--text-secondary);
+      padding: 5px 16px;
+      border-radius: 8px;
+      font-size: var(--fs-small);
+      font-weight: 600;
+      text-align: center;
+      min-width: 90px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dia-source::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    }
+    .dia-lane-label {
+      font-size: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 3px;
+      margin-bottom: 2px;
+    }
+
+    /* === COMPONENT DEEP-DIVE LAYOUT === */
+    .component-slide {
+      max-width: var(--content-max);
+    }
+    .component-oneliner {
+      font-size: var(--fs-body-lead);
+      color: var(--text-secondary);
+      margin: var(--space-xs) 0 var(--space-lg);
+      max-width: 70ch;
+    }
+    .component-caps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: var(--space-md);
+    }
+    .component-caps.caps-horizontal {
+      flex-direction: row;
+    }
+    .caps-horizontal .cap-item {
+      flex: 1;
+    }
+    .caps-with-image {
+      display: flex;
+      gap: var(--space-lg);
+      align-items: stretch;
+      margin-top: var(--space-md);
+    }
+    .caps-with-image .component-caps {
+      flex: 1;
+      margin-top: 0;
+      justify-content: center;
+    }
+    .caps-image {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      max-height: 340px;
+      overflow: hidden;
+    }
+    .caps-image img {
+      object-fit: contain;
+      max-height: 340px;
+    }
+    .cap-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      border-left: 3px solid var(--border-subtle);
+    }
+    .cap-title {
+      font-weight: 700;
+      font-size: var(--fs-body);
+      margin-bottom: 2px;
+    }
+    .cap-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .component-badge {
+      display: block;
+      width: fit-content;
+      font-size: var(--fs-small);
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin: var(--space-md) auto 0;
+      letter-spacing: 0.04em;
+      text-align: center;
+    }
+
+    /* === SLIDE 3: Partner grid === */
+    .partner-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: var(--space-lg);
+    }
+    .partner-column h3 {
+      font-size: var(--fs-body);
+      font-weight: 700;
+      margin-bottom: var(--space-sm);
+      letter-spacing: 0.02em;
+    }
+    .partner-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .partner-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+    .partner-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .partner-logo {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+    .partner-logo-light {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      object-fit: contain;
+      background: rgba(255,255,255,0.85);
+      border-radius: 3px;
+      padding: 2px;
+    }
+    .partner-category {
+      font-size: var(--fs-small);
+      color: var(--text-muted);
+      margin-left: auto;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .partner-note {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: var(--space-md);
+      font-style: italic;
+    }
+
+    /* === SLIDE 4: Operator CRD flow === */
+    .operator-flow {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin-top: var(--space-lg);
+      flex-wrap: wrap;
+    }
+    .operator-flow-box {
+      padding: 14px 20px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .operator-flow-arrow {
+      color: var(--accent-operator);
+      font-size: 1.5rem;
+    }
+
+    /* === SLIDE 5: Gateway funnel === */
+    .gateway-diagram {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin-top: var(--space-lg);
+    }
+    .gateway-servers {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .gateway-server {
+      padding: 8px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+    .gateway-box {
+      padding: 20px 24px;
+      background: linear-gradient(135deg, #251525, #201520);
+      border: 2px solid var(--accent-gateway);
+      border-radius: 8px;
+      text-align: center;
+      min-width: 140px;
+    }
+    .gateway-box-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--accent-gateway);
+    }
+    .gateway-box-desc {
+      font-size: var(--fs-small);
+      color: #b07cc0;
+      margin-top: 4px;
+    }
+    .gateway-agent {
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #152020, #152525);
+      border: 1px solid var(--accent-consume);
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--accent-consume);
+    }
+    .gateway-arrow {
+      color: var(--accent-gateway);
+      font-size: 1.5rem;
+    }
+
+    /* === SLIDE 6: Registry governance tracks === */
+    .gov-tracks {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: var(--space-lg);
+    }
+    .gov-track {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-top: 3px solid var(--accent-registry);
+      border-radius: 0 0 6px 6px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+    .gov-track-title {
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--accent-registry);
+      margin-bottom: 8px;
+    }
+    .gov-track-states {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .gov-state {
+      font-size: var(--fs-small);
+      color: var(--text-muted);
+      padding: 3px 6px;
+      background: var(--bg-card);
+      border-radius: 3px;
+    }
+
+    /* === SLIDE 7: Pipeline flow === */
+    .pipeline-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 12px;
+      margin-top: var(--space-xl);
+    }
+    @keyframes pipeline-stage-in {
+      from { opacity: 0; transform: translateX(-20px) scale(0.95); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    .pipeline-stage {
+      flex: 1;
+      min-width: 100px;
+      padding: 18px 14px;
+      background: linear-gradient(180deg, #2a1515, #1f1212);
+      border: 1px solid #442222;
+      border-top: 3px solid var(--accent-pipeline);
+      text-align: center;
+      position: relative;
+      transition: box-shadow 300ms ease, border-color 300ms ease;
+    }
+    .slide.current .pipeline-stage {
+      animation: pipeline-stage-in 450ms var(--ease-out-pop) both;
+    }
+    .slide.current .pipeline-stage:nth-child(1) { animation-delay: 0.1s; }
+    .slide.current .pipeline-stage:nth-child(2) { animation-delay: 0.25s; }
+    .slide.current .pipeline-stage:nth-child(3) { animation-delay: 0.4s; }
+    .slide.current .pipeline-stage:nth-child(4) { animation-delay: 0.55s; }
+    .slide.current .pipeline-stage:nth-child(5) { animation-delay: 0.7s; }
+    .slide.current .pipeline-stage:nth-child(6) { animation-delay: 0.85s; }
+    .slide.current .pipeline-stage:nth-child(7) { animation-delay: 1.0s; }
+    .slide.current .pipeline-stage:nth-child(8) { animation-delay: 1.15s; }
+    .slide.current .pipeline-stage:nth-child(9) { animation-delay: 1.3s; }
+    .slide.current .pipeline-stage:nth-child(10) { animation-delay: 1.45s; }
+    .slide.current .pipeline-stage:nth-child(11) { animation-delay: 1.6s; }
+    .pipeline-stage:first-child { border-radius: 8px 0 0 8px; }
+    .pipeline-stage:last-child { border-radius: 0 8px 8px 0; }
+    .pipeline-stage:hover {
+      box-shadow: 0 0 20px rgba(238,0,0,0.2);
+      border-color: #663333;
+    }
+    .pipeline-stage-icon {
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .pipeline-stage-title {
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--accent-pipeline);
+      margin-bottom: 4px;
+    }
+    .pipeline-stage-desc {
+      font-size: var(--fs-small);
+      color: #cc8888;
+      line-height: 1.4;
+    }
+    @keyframes arrow-sweep {
+      0%, 100% { opacity: 0.4; transform: translateY(-50%) translateX(0); }
+      50% { opacity: 1; transform: translateY(-50%) translateX(3px); }
+    }
+    .pipeline-stage-arrow {
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-pipeline);
+      font-size: 1.1rem;
+      z-index: 2;
+      animation: arrow-sweep 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 4px rgba(238,0,0,0.4));
+    }
+    .pipeline-callout {
+      text-align: center;
+      margin-top: var(--space-lg);
+      font-size: var(--fs-body);
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* === SLIDE 8: Roadmap === */
+    .roadmap-grid {
+      margin-top: var(--space-lg);
+    }
+    .roadmap-header {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr 1fr;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+    .roadmap-col {
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 6px 6px 0 0;
+    }
+    .roadmap-col-version {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .roadmap-col-date {
+      font-size: var(--fs-small);
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .roadmap-col-34 { background: #1a2a1a; border-bottom: 2px solid var(--accent-registry); }
+    .roadmap-col-34 .roadmap-col-version { color: #81c784; }
+    .roadmap-col-35 { background: #151525; border-bottom: 2px solid var(--accent-catalog); }
+    .roadmap-col-35 .roadmap-col-version { color: var(--accent-catalog); }
+    .roadmap-col-36 { background: #251525; border-bottom: 2px solid var(--accent-gateway); }
+    .roadmap-col-36 .roadmap-col-version { color: var(--accent-gateway); }
+    .roadmap-row {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr 1fr;
+      gap: 2px;
+      margin-bottom: 2px;
+    }
+    .roadmap-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg-card);
+      border-radius: 4px 0 0 4px;
+    }
+    .roadmap-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .roadmap-name {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .roadmap-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      background: var(--bg-elevated);
+    }
+    .roadmap-badge {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.55rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .rb-dp { background: #1a2a1a; border: 1px solid var(--accent-registry); color: #81c784; }
+    .rb-tp { background: #151d30; border: 1px solid #5b9bd5; color: #82b8e0; }
+    .rb-ga { background: #251525; border: 1px solid var(--accent-gateway); color: var(--accent-gateway); }
+    .rb-none { color: var(--text-muted); font-size: var(--fs-small); }
+    .roadmap-legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: var(--space-md);
+    }
+    .roadmap-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--fs-small);
+      color: var(--text-muted);
+    }
+    .roadmap-note {
+      text-align: center;
+      font-size: var(--fs-small);
+      color: var(--text-muted);
+      margin-top: var(--space-sm);
+      font-style: italic;
+    }
+    .roadmap-now {
+      position: relative;
+    }
+    .roadmap-now::after {
+      content: "NOW";
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.5rem;
+      color: #81c784;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    /* === SLIDE 9: Demo transition === */
+    .demo-slide {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+    .demo-list {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+    .demo-list li {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      font-size: var(--fs-body-lead);
+      color: var(--text-secondary);
+      padding: 12px 20px;
+      background: var(--bg-elevated);
+      border-left: 3px solid var(--rh-red);
+      border-radius: 0 6px 6px 0;
+    }
+    .demo-num {
+      font-family: var(--font-mono);
+      color: var(--rh-red);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      min-width: 2rem;
+    }
+    .demo-byline {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin-top: var(--space-xl);
+    }
+
+    /* === Red Hat badge === */
+    .rh-brand {
+      position: fixed;
+      bottom: 12px;
+      right: 16px;
+      font-size: var(--fs-small);
+      color: var(--rh-red);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      z-index: 40;
+      pointer-events: none;
+    }
+    /* === SLIDE TITLE (Intro) === */
+    .title-slide {
+      justify-content: center;
+      align-items: flex-start;
+      text-align: left;
+    }
+    .title-slide .slide-logo { display: none; }
+    .title-logo {
+      height: 40px;
+      width: auto;
+      margin-bottom: var(--space-sm);
+    }
+    .title-slide .title-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+    .title-slide .title-main {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .title-slide .title-sub {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+      max-width: 50ch;
+      line-height: 1.45;
+    }
+    .title-slide .title-divider {
+      width: 80px;
+      height: 3px;
+      background: var(--rh-red);
+      border-radius: 2px;
+      margin: var(--space-sm) 0;
+    }
+    .title-slide .title-presenter {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .title-slide .title-role {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" id="deck" data-slide-current="1">
+    <section class="slide title-slide" data-slide="1" aria-label="Slide 1: Title">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="title-content">
+        <img class="title-logo anim-fade-up" src="assets/red-hat-logo.svg" alt="Red Hat" style="--index:0">
+        <h1 class="title-main anim-fade-up" style="--index:1">The MCP Ecosystem<br>on OpenShift AI</h1>
+        <p class="title-sub anim-fade-up" style="--index:2">A platform approach for discovering, deploying, securing, and governing MCP servers</p>
+        <div class="title-divider anim-fade-up" style="--index:3"></div>
+        <p class="title-presenter anim-fade-up" style="--index:4">Peter Double</p>
+        <p class="title-role anim-fade-up" style="--index:5">Principal Product Manager</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2" aria-label="Slide 2: The MCP Ecosystem">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner" data-stagger>
+        <p class="slide-eyebrow anim-fade-up">Ecosystem</p>
+        <h2 class="display-lg anim-fade-up">The MCP Ecosystem on OpenShift AI</h2>
+        <p class="lead anim-fade-up" style="margin-bottom:var(--space-xs);">A platform approach for discovering, deploying, securing, and governing MCP servers</p>
+
+        <div class="dia anim-scale-in" id="dia-ecosystem" style="position:relative;">
+          <div style="display:grid;grid-template-columns:1fr 1px 0.5fr;column-gap:12px;row-gap:4px;width:100%;max-width:740px;">
+
+            <!-- Row 0: Sources (curated column only) -->
+            <div style="text-align:center;">
+              <div class="dia-label" style="margin-bottom:4px;">MCP Sources</div>
+              <div class="dia-sources" style="justify-content:center;flex-wrap:nowrap;">
+                <div class="dia-source" style="min-width:auto;padding:5px 14px;">Red Hat</div>
+                <div class="dia-source" style="min-width:auto;padding:5px 14px;">ISV Partners</div>
+                <div class="dia-source" style="min-width:auto;padding:5px 14px;">Community</div>
+                <div class="dia-source" style="min-width:auto;padding:5px 14px;" id="source-diy">Internal / DIY</div>
+              </div>
+            </div>
+            <div></div>
+            <div></div>
+
+            <!-- Row 1: Arrows -->
+            <div class="dia-arrow" style="text-align:center;"><span>&#9662;</span>&ensp;<span>&#9662;</span></div>
+            <div></div>
+            <div></div>
+
+            <!-- Row 2: Lane labels -->
+            <div style="text-align:center;">
+              <div class="dia-lane-label" style="background:rgba(115,188,247,0.12);color:var(--accent-catalog);display:inline-block;">Curated Path</div>
+            </div>
+            <div style="background:linear-gradient(180deg,transparent,var(--border-muted),transparent);"></div>
+            <div id="direct-path-label" style="text-align:center;">
+              <div class="dia-lane-label" style="background:rgba(255,255,255,0.06);color:var(--text-secondary);display:inline-block;">Direct Path</div>
+            </div>
+
+            <!-- Row 3: Pipeline | Deploy/Register -->
+            <div>
+              <div class="dia-pipeline" style="max-width:100%;">
+                <span class="dia-pipeline-title">Pipeline</span>
+                <div class="dia-pipeline-stages">
+                  <span>Validate</span><span>Scan</span><span>Sign</span><span>Certify</span>
+                </div>
+              </div>
+            </div>
+            <div style="background:linear-gradient(180deg,transparent,var(--border-muted),transparent);"></div>
+            <div style="display:flex;align-items:flex-start;">
+              <div class="dia-box box-direct" style="width:100%;">
+                <div class="dia-box-title" style="color:var(--text-primary);">Deploy / Register</div>
+                <div class="dia-box-desc" style="color:var(--text-muted);">Manual Deployment</div>
+              </div>
+            </div>
+
+            <!-- Row 4: Arrow | dashed connector -->
+            <div class="dia-arrow" style="text-align:center;"><span>&#9662;</span></div>
+            <div style="background:linear-gradient(180deg,transparent,var(--border-muted),transparent);"></div>
+            <div style="display:flex;justify-content:center;">
+              <div style="width:0;border-left:2px dashed rgba(138,138,138,0.5);min-height:10px;"></div>
+            </div>
+
+            <!-- Row 5: Catalog | dashed connector -->
+            <div>
+              <div class="dia-box box-catalog" style="width:100%;">
+                <div class="dia-box-title">MCP Catalog</div>
+                <div class="dia-box-desc">Discovery &bull; Browse &bull; Approval</div>
+              </div>
+            </div>
+            <div style="background:linear-gradient(180deg,transparent,var(--border-muted),transparent);"></div>
+            <div style="display:flex;justify-content:center;">
+              <div style="width:0;border-left:2px dashed rgba(138,138,138,0.5);min-height:10px;"></div>
+            </div>
+
+            <!-- Row 6: Arrow | dashed connector -->
+            <div class="dia-arrow" style="text-align:center;"><span>&#9662;</span></div>
+            <div style="background:linear-gradient(180deg,transparent,var(--border-muted),transparent);"></div>
+            <div style="display:flex;justify-content:center;">
+              <div style="width:0;border-left:2px dashed rgba(138,138,138,0.5);min-height:10px;"></div>
+            </div>
+
+            <!-- Row 7: Operator (curated) | Operator (optional) -->
+            <div>
+              <div class="dia-box box-operator" style="width:100%;">
+                <div class="dia-box-title">Lifecycle Operator</div>
+                <div class="dia-box-desc">Deploy &bull; Configure</div>
+              </div>
+            </div>
+            <div style="background:linear-gradient(180deg,transparent,var(--border-muted),transparent);"></div>
+            <div>
+              <div class="dia-box box-operator-optional" style="width:100%;">
+                <div class="dia-box-title" style="opacity:0.8;">Lifecycle Operator</div>
+                <div class="dia-box-desc" style="color:var(--text-muted);">optional</div>
+              </div>
+            </div>
+
+            <!-- Row 8: Flow labels -->
+            <div class="dia-flow-label" style="color:var(--accent-operator);text-align:center;">deployment ref &darr;</div>
+            <div></div>
+            <div class="dia-flow-label" style="color:var(--text-muted);text-align:center;">register &darr;</div>
+          </div>
+
+          <!-- Converge at Registry -->
+          <div class="dia-box box-registry" style="max-width:740px;width:100%;padding:10px 24px;">
+            <div class="dia-box-title" style="font-size:0.85rem;">MCP Registry</div>
+            <div class="dia-box-desc" style="color:#6a9b6c;">Govern &bull; Version &bull; Lifecycle State &bull; Scope</div>
+          </div>
+          <div class="dia-flow-label" style="color:var(--accent-registry);">active MCPs &darr;</div>
+          <div class="dia-box box-gateway" style="max-width:740px;width:100%;padding:8px 24px;">
+            <div class="dia-box-title">MCP Gateway</div>
+            <div class="dia-box-desc">Secure &bull; Aggregate &bull; Enforce</div>
+          </div>
+          <div class="dia-arrow"><span>&#9662;</span></div>
+          <div class="dia-box box-consume" style="max-width:740px;width:100%;padding:6px 20px;">
+            <div class="dia-box-title" style="font-size:0.7rem;color:var(--accent-consume);">AI Assets &bull; Playground &bull; Agents</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3" aria-label="Slide 3: MCP Catalog">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner component-slide" data-stagger>
+        <p class="slide-eyebrow anim-fade-up" style="color:var(--accent-catalog);">Discovery</p>
+        <h2 class="display-xl anim-fade-up">MCP Catalog</h2>
+        <p class="component-oneliner anim-fade-up">A trusted storefront for discovering and launching MCP servers</p>
+        <div class="caps-with-image anim-fade-up">
+          <div class="caps-image">
+            <img src="assets/mcp_catalog.png" alt="MCP Catalog — browse and deploy MCP servers" style="max-width:100%;border-radius:8px;">
+          </div>
+          <div class="component-caps">
+            <div class="cap-item" style="border-left-color:var(--accent-catalog);">
+              <div>
+                <div class="cap-title" style="color:var(--accent-catalog);">Curated ecosystem</div>
+                <div class="cap-desc">Pre-loaded Red Hat, partner, and community MCP servers ready to deploy</div>
+              </div>
+            </div>
+            <div class="cap-item" style="border-left-color:var(--accent-catalog);">
+              <div>
+                <div class="cap-title" style="color:var(--accent-catalog);">Browse and filter</div>
+                <div class="cap-desc">Search by category, provider, capability, and trust tier</div>
+              </div>
+            </div>
+            <div class="cap-item" style="border-left-color:var(--accent-catalog);">
+              <div>
+                <div class="cap-title" style="color:var(--accent-catalog);">One-click deployment</div>
+                <div class="cap-desc">Launch MCP servers directly into your OpenShift AI environment</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="component-badge anim-fade-up" style="background:#151525;border:1px solid var(--accent-catalog);color:var(--accent-catalog);">Dev Preview 3.4 &middot; Dev Preview 3.5 &middot; Tech Preview 3.6 EA1 &middot; General Availability 3.6+</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4" aria-label="Slide 4: Pre-Loaded MCP Servers">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner" data-stagger>
+        <p class="slide-eyebrow anim-fade-up" style="color:var(--accent-catalog);">Ecosystem</p>
+        <h2 class="display-xl anim-fade-up">Ready-to-Use MCP Servers</h2>
+        <div class="partner-grid anim-fade-up" style="grid-template-columns:1fr 1fr 1fr;">
+          <div class="partner-column">
+            <h3 style="color:var(--rh-red);">Red Hat</h3>
+            <div class="partner-list">
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgaWQ9ImI2YmRkMmI0LTUyYWItNDg4YS05YTMwLTFlNmQxZDdkZDJkNCIKICAgZGF0YS1uYW1lPSJMYXllciAxIgogICB2aWV3Qm94PSIwIDAgMTkyLjMwMDAxIDE0NiIKICAgdmVyc2lvbj0iMS4xIgogICBzb2RpcG9kaTpkb2NuYW1lPSJsb2dvLnN2ZyIKICAgd2lkdGg9IjE5Mi4zIgogICBoZWlnaHQ9IjE0NiIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC45Mi41ICgyMDYwZWMxZjlmLCAyMDIwLTA0LTA4KSI+CiAgPG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhMTUiPgogICAgPHJkZjpSREY+CiAgICAgIDxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KICAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMSIKICAgICBvYmplY3R0b2xlcmFuY2U9IjEwIgogICAgIGdyaWR0b2xlcmFuY2U9IjEwIgogICAgIGd1aWRldG9sZXJhbmNlPSIxMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIKICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iMTkyMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMDA3IgogICAgIGlkPSJuYW1lZHZpZXcxMyIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgZml0LW1hcmdpbi10b3A9IjEiCiAgICAgZml0LW1hcmdpbi1yaWdodD0iMSIKICAgICBmaXQtbWFyZ2luLWJvdHRvbT0iMSIKICAgICBmaXQtbWFyZ2luLWxlZnQ9IjEiCiAgICAgaW5rc2NhcGU6em9vbT0iMC40NTkzMDA0MyIKICAgICBpbmtzY2FwZTpjeD0iMzA2Ljg5OTk5IgogICAgIGlua3NjYXBlOmN5PSI3MyIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9ImI2YmRkMmI0LTUyYWItNDg4YS05YTMwLTFlNmQxZDdkZDJkNCIgLz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8c3R5bGUKICAgICAgIGlkPSJzdHlsZTIiPi5hNzM3NDU5Yy1lOGM3LTRhZmEtODAwOC1mNmNmZDE1Y2NkYTJ7ZmlsbDojZTAwO308L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aAogICAgIGNsYXNzPSJhNzM3NDU5Yy1lOGM3LTRhZmEtODAwOC1mNmNmZDE1Y2NkYTIiCiAgICAgZD0ibSAxMjgsODQgYyAxMi41LDAgMzAuNiwtMi42IDMwLjYsLTE3LjUgYSAxOS41MywxOS41MyAwIDAgMCAtMC4zLC0zLjQgTCAxNTAuOSwzMC43IEMgMTQ5LjIsMjMuNiAxNDcuNywyMC4zIDEzNS4yLDE0LjEgMTI1LjUsOS4xIDEwNC40LDEgOTguMSwxIDkyLjIsMSA5MC41LDguNSA4My42LDguNSA3Ni45LDguNSA3MiwyLjkgNjUuNywyLjkgYyAtNiwwIC05LjksNC4xIC0xMi45LDEyLjUgMCwwIC04LjQsMjMuNyAtOS41LDI3LjIgYSA2LjE1LDYuMTUgMCAwIDAgLTAuMiwxLjkgQyA0Myw1My43IDc5LjMsODMuOSAxMjgsODQgbSAzMi41LC0xMS40IGMgMS43LDguMiAxLjcsOS4xIDEuNywxMC4xIDAsMTQgLTE1LjcsMjEuOCAtMzYuNCwyMS44IEMgNzksMTA0LjUgMzguMSw3Ny4xIDM4LjEsNTkgYSAxOC4zNSwxOC4zNSAwIDAgMSAxLjUsLTcuMyBDIDIyLjgsNTIuNSAxLDU1LjUgMSw3NC43IDEsMTA2LjIgNzUuNiwxNDUgMTM0LjYsMTQ1IGMgNDUuMywwIDU2LjcsLTIwLjUgNTYuNywtMzYuNyAwLC0xMi43IC0xMSwtMjcuMSAtMzAuOCwtMzUuNyIKICAgICBpZD0icGF0aDgiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKICAgICBzdHlsZT0iZmlsbDojZWUwMDAwIiAvPgogIDxwYXRoCiAgICAgZD0ibSAxNjAuNSw3Mi42IGMgMS43LDguMiAxLjcsOS4xIDEuNywxMC4xIDAsMTQgLTE1LjcsMjEuOCAtMzYuNCwyMS44IEMgNzksMTA0LjUgMzguMSw3Ny4xIDM4LjEsNTkgYSAxOC4zNSwxOC4zNSAwIDAgMSAxLjUsLTcuMyBsIDMuNywtOS4xIGEgNi4xNSw2LjE1IDAgMCAwIC0wLjIsMS45IGMgMCw5LjIgMzYuMywzOS40IDg0LjksMzkuNCAxMi41LDAgMzAuNiwtMi42IDMwLjYsLTE3LjUgQSAxOS41MywxOS41MyAwIDAgMCAxNTguMyw2MyBaIgogICAgIGlkPSJwYXRoMTAiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KPC9zdmc+Cg==" alt="Red Hat">OpenShift</div>
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgaWQ9ImI2YmRkMmI0LTUyYWItNDg4YS05YTMwLTFlNmQxZDdkZDJkNCIKICAgZGF0YS1uYW1lPSJMYXllciAxIgogICB2aWV3Qm94PSIwIDAgMTkyLjMwMDAxIDE0NiIKICAgdmVyc2lvbj0iMS4xIgogICBzb2RpcG9kaTpkb2NuYW1lPSJsb2dvLnN2ZyIKICAgd2lkdGg9IjE5Mi4zIgogICBoZWlnaHQ9IjE0NiIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC45Mi41ICgyMDYwZWMxZjlmLCAyMDIwLTA0LTA4KSI+CiAgPG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhMTUiPgogICAgPHJkZjpSREY+CiAgICAgIDxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KICAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMSIKICAgICBvYmplY3R0b2xlcmFuY2U9IjEwIgogICAgIGdyaWR0b2xlcmFuY2U9IjEwIgogICAgIGd1aWRldG9sZXJhbmNlPSIxMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIKICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iMTkyMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMDA3IgogICAgIGlkPSJuYW1lZHZpZXcxMyIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgZml0LW1hcmdpbi10b3A9IjEiCiAgICAgZml0LW1hcmdpbi1yaWdodD0iMSIKICAgICBmaXQtbWFyZ2luLWJvdHRvbT0iMSIKICAgICBmaXQtbWFyZ2luLWxlZnQ9IjEiCiAgICAgaW5rc2NhcGU6em9vbT0iMC40NTkzMDA0MyIKICAgICBpbmtzY2FwZTpjeD0iMzA2Ljg5OTk5IgogICAgIGlua3NjYXBlOmN5PSI3MyIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9ImI2YmRkMmI0LTUyYWItNDg4YS05YTMwLTFlNmQxZDdkZDJkNCIgLz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8c3R5bGUKICAgICAgIGlkPSJzdHlsZTIiPi5hNzM3NDU5Yy1lOGM3LTRhZmEtODAwOC1mNmNmZDE1Y2NkYTJ7ZmlsbDojZTAwO308L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aAogICAgIGNsYXNzPSJhNzM3NDU5Yy1lOGM3LTRhZmEtODAwOC1mNmNmZDE1Y2NkYTIiCiAgICAgZD0ibSAxMjgsODQgYyAxMi41LDAgMzAuNiwtMi42IDMwLjYsLTE3LjUgYSAxOS41MywxOS41MyAwIDAgMCAtMC4zLC0zLjQgTCAxNTAuOSwzMC43IEMgMTQ5LjIsMjMuNiAxNDcuNywyMC4zIDEzNS4yLDE0LjEgMTI1LjUsOS4xIDEwNC40LDEgOTguMSwxIDkyLjIsMSA5MC41LDguNSA4My42LDguNSA3Ni45LDguNSA3MiwyLjkgNjUuNywyLjkgYyAtNiwwIC05LjksNC4xIC0xMi45LDEyLjUgMCwwIC04LjQsMjMuNyAtOS41LDI3LjIgYSA2LjE1LDYuMTUgMCAwIDAgLTAuMiwxLjkgQyA0Myw1My43IDc5LjMsODMuOSAxMjgsODQgbSAzMi41LC0xMS40IGMgMS43LDguMiAxLjcsOS4xIDEuNywxMC4xIDAsMTQgLTE1LjcsMjEuOCAtMzYuNCwyMS44IEMgNzksMTA0LjUgMzguMSw3Ny4xIDM4LjEsNTkgYSAxOC4zNSwxOC4zNSAwIDAgMSAxLjUsLTcuMyBDIDIyLjgsNTIuNSAxLDU1LjUgMSw3NC43IDEsMTA2LjIgNzUuNiwxNDUgMTM0LjYsMTQ1IGMgNDUuMywwIDU2LjcsLTIwLjUgNTYuNywtMzYuNyAwLC0xMi43IC0xMSwtMjcuMSAtMzAuOCwtMzUuNyIKICAgICBpZD0icGF0aDgiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKICAgICBzdHlsZT0iZmlsbDojZWUwMDAwIiAvPgogIDxwYXRoCiAgICAgZD0ibSAxNjAuNSw3Mi42IGMgMS43LDguMiAxLjcsOS4xIDEuNywxMC4xIDAsMTQgLTE1LjcsMjEuOCAtMzYuNCwyMS44IEMgNzksMTA0LjUgMzguMSw3Ny4xIDM4LjEsNTkgYSAxOC4zNSwxOC4zNSAwIDAgMSAxLjUsLTcuMyBsIDMuNywtOS4xIGEgNi4xNSw2LjE1IDAgMCAwIC0wLjIsMS45IGMgMCw5LjIgMzYuMywzOS40IDg0LjksMzkuNCAxMi41LDAgMzAuNiwtMi42IDMwLjYsLTE3LjUgQSAxOS41MywxOS41MyAwIDAgMCAxNTguMyw2MyBaIgogICAgIGlkPSJwYXRoMTAiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KPC9zdmc+Cg==" alt="Red Hat">Ansible Automation Platform</div>
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgaWQ9ImI2YmRkMmI0LTUyYWItNDg4YS05YTMwLTFlNmQxZDdkZDJkNCIKICAgZGF0YS1uYW1lPSJMYXllciAxIgogICB2aWV3Qm94PSIwIDAgMTkyLjMwMDAxIDE0NiIKICAgdmVyc2lvbj0iMS4xIgogICBzb2RpcG9kaTpkb2NuYW1lPSJsb2dvLnN2ZyIKICAgd2lkdGg9IjE5Mi4zIgogICBoZWlnaHQ9IjE0NiIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC45Mi41ICgyMDYwZWMxZjlmLCAyMDIwLTA0LTA4KSI+CiAgPG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhMTUiPgogICAgPHJkZjpSREY+CiAgICAgIDxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KICAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMSIKICAgICBvYmplY3R0b2xlcmFuY2U9IjEwIgogICAgIGdyaWR0b2xlcmFuY2U9IjEwIgogICAgIGd1aWRldG9sZXJhbmNlPSIxMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIKICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iMTkyMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMDA3IgogICAgIGlkPSJuYW1lZHZpZXcxMyIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgZml0LW1hcmdpbi10b3A9IjEiCiAgICAgZml0LW1hcmdpbi1yaWdodD0iMSIKICAgICBmaXQtbWFyZ2luLWJvdHRvbT0iMSIKICAgICBmaXQtbWFyZ2luLWxlZnQ9IjEiCiAgICAgaW5rc2NhcGU6em9vbT0iMC40NTkzMDA0MyIKICAgICBpbmtzY2FwZTpjeD0iMzA2Ljg5OTk5IgogICAgIGlua3NjYXBlOmN5PSI3MyIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9ImI2YmRkMmI0LTUyYWItNDg4YS05YTMwLTFlNmQxZDdkZDJkNCIgLz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8c3R5bGUKICAgICAgIGlkPSJzdHlsZTIiPi5hNzM3NDU5Yy1lOGM3LTRhZmEtODAwOC1mNmNmZDE1Y2NkYTJ7ZmlsbDojZTAwO308L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aAogICAgIGNsYXNzPSJhNzM3NDU5Yy1lOGM3LTRhZmEtODAwOC1mNmNmZDE1Y2NkYTIiCiAgICAgZD0ibSAxMjgsODQgYyAxMi41LDAgMzAuNiwtMi42IDMwLjYsLTE3LjUgYSAxOS41MywxOS41MyAwIDAgMCAtMC4zLC0zLjQgTCAxNTAuOSwzMC43IEMgMTQ5LjIsMjMuNiAxNDcuNywyMC4zIDEzNS4yLDE0LjEgMTI1LjUsOS4xIDEwNC40LDEgOTguMSwxIDkyLjIsMSA5MC41LDguNSA4My42LDguNSA3Ni45LDguNSA3MiwyLjkgNjUuNywyLjkgYyAtNiwwIC05LjksNC4xIC0xMi45LDEyLjUgMCwwIC04LjQsMjMuNyAtOS41LDI3LjIgYSA2LjE1LDYuMTUgMCAwIDAgLTAuMiwxLjkgQyA0Myw1My43IDc5LjMsODMuOSAxMjgsODQgbSAzMi41LC0xMS40IGMgMS43LDguMiAxLjcsOS4xIDEuNywxMC4xIDAsMTQgLTE1LjcsMjEuOCAtMzYuNCwyMS44IEMgNzksMTA0LjUgMzguMSw3Ny4xIDM4LjEsNTkgYSAxOC4zNSwxOC4zNSAwIDAgMSAxLjUsLTcuMyBDIDIyLjgsNTIuNSAxLDU1LjUgMSw3NC43IDEsMTA2LjIgNzUuNiwxNDUgMTM0LjYsMTQ1IGMgNDUuMywwIDU2LjcsLTIwLjUgNTYuNywtMzYuNyAwLC0xMi43IC0xMSwtMjcuMSAtMzAuOCwtMzUuNyIKICAgICBpZD0icGF0aDgiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIKICAgICBzdHlsZT0iZmlsbDojZWUwMDAwIiAvPgogIDxwYXRoCiAgICAgZD0ibSAxNjAuNSw3Mi42IGMgMS43LDguMiAxLjcsOS4xIDEuNywxMC4xIDAsMTQgLTE1LjcsMjEuOCAtMzYuNCwyMS44IEMgNzksMTA0LjUgMzguMSw3Ny4xIDM4LjEsNTkgYSAxOC4zNSwxOC4zNSAwIDAgMSAxLjUsLTcuMyBsIDMuNywtOS4xIGEgNi4xNSw2LjE1IDAgMCAwIC0wLjIsMS45IGMgMCw5LjIgMzYuMywzOS40IDg0LjksMzkuNCAxMi41LDAgMzAuNiwtMi42IDMwLjYsLTE3LjUgQSAxOS41MywxOS41MyAwIDAgMCAxNTguMyw2MyBaIgogICAgIGlkPSJwYXRoMTAiCiAgICAgaW5rc2NhcGU6Y29ubmVjdG9yLWN1cnZhdHVyZT0iMCIgLz4KPC9zdmc+Cg==" alt="Red Hat">Insights</div>
+            </div>
+          </div>
+          <div class="partner-column">
+            <h3 style="color:var(--accent-catalog);">Technology Partners</h3>
+            <div class="partner-list">
+              <div class="partner-item"><img class="partner-logo-light" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE1NDYgMTU0NSIgd2lkdGg9IjE1NDYiIGhlaWdodD0iMTU0NSI+PHN0eWxlPi5he2ZpbGw6IzE3MzM2MX08L3N0eWxlPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xhc3M9ImEiIGQ9Im05ODkuNyA4MjAuM2MtMzMuNiAxLjItNjcuNyAxLjgtMTAxLjIgMS44IDMxIDEzLjcgNjIgMjYuNyA5Mi41IDQxbDEwOS4yIDQ5LjFjMzUuNCAxNi43IDcyIDMzLjUgMTA3LjQgNTAuOWwtMTEuOCAyOC41Yy0zNy44LTEyLjQtNzUuMS0yNi43LTExMi4zLTM5LjdsLTExMS44LTQyLjJxLTQ3LjItMTgtOTMuNy0zNi42IDguNyA4LjYgMTcuNCAxOCA4LjcgOC42IDE3LjMgMTggOC43IDkuMyAxNy40IDE4bDE3LjQgMTguNiA4MiA4Ni45YzI2LjcgMjkuOCA1NCA1OC40IDgwIDg4LjhsLTIxLjcgMjEuN2MtMzAuNC0yNi4xLTU5LjYtNTMuNC04OC44LTgwLjFsLTg2LjktODEuM2MtMjQuOC0yMy42LTQ5LTQ2LjYtNzMuMi03MC4yIDEyLjQgMzEuMSAyNC44IDYyLjcgMzYuNiA5NC40bDQyLjIgMTExLjFjMTMuNyAzNy45IDI3LjMgNzUuMSAzOS43IDExM2wtMjcuOSAxMS4yYy0xOC0zNS40LTM0LjEtNzEuNC01MS41LTEwNy40bC00OS4xLTEwOC43cS0yMC40LTQ2LjUtNDAuMy05Mi41Yy0wLjYgMzMuNi0xLjMgNjcuMS0yLjUgMTAwLjZsLTMuNyAxMTkuMmMtMS45IDM5LjctMy4xIDc5LjUtNi4yIDExOS4yaC0zMC40Yy0zLjItMzkuNy00LjQtNzkuNS02LjMtMTE5LjJsLTMuNy0xMTkuMmMtMi41LTY5LjUtMi41LTEzOS43LTMuMS0yMDkuOC03MC4xIDAtMTQwLjMtMC42LTIxMC40LTIuNWwtMTE5LjItMy4xYy0zOS44LTEuOS03OS41LTMuMS0xMTkuMi02LjJ2LTMzLjVjMzkuNy0yLjUgNzkuNC0zLjggMTE5LjItNi4ybDExOS4yLTMuMXE0OS0xLjMgOTguNy0xLjljLTMwLjQtMTIuNC02MC4yLTI1LjUtOTAuNy0zOS4xbC0xMDguNi00OC40Yy0zNi0xNy40LTcyLjYtMzMuNi0xMDgtNTEuNmwxMy0zMWMzNy45IDEyLjQgNzUuMSAyNi43IDExMi40IDQwLjNsMTExLjcgNDIuM2MzMC40IDExLjggNjAuOSAyNC4yIDkxLjMgMzYuNnEtMzQuMi0zNS40LTY4LjMtNzEuNGwtODItODYuM2MtMjYuNi0yOS44LTU0LTU4LjMtODAtODguOGwyMy42LTIzLjZjMzAuNCAyNi4xIDU4LjkgNTMuNCA4OC43IDgwLjFsODYuOSA4MnE4LjcgOCAxNy40IDE2LjcgOS4zIDguNyAxOCAxNy40IDguNyA4LjcgMTcuNCAxNi44IDkuMyA4LjcgMTggMTcuNGMtMTIuNC0zMC41LTI0LjgtNjAuOS0zNi05MS45bC00Mi44LTExMS4xYy0xMy4xLTM3LjMtMjcuMy03NC41LTQwLjQtMTEyLjRsMzEuMS0xM2MxOCAzNS4zIDM0LjEgNzIgNTEuNSAxMDhsNDguNCAxMDguNmMxMy43IDMwLjQgMjYuNyA2MC4yIDM5LjcgOTAuNyAwLTMzIDAuNy02NS45IDEuMy05OC44bDMuNy0xMTkuMWMxLjktMzkuOCAzLjEtNzkuNSA1LjYtMTE5LjJoMzQuMWMyLjUgMzkuNyAzLjggNzkuNCA1LjYgMTE5LjJsMy43IDExOS4xYzEuOSA3MC4yIDEuOSAxNDAuMyAyLjUgMjA5LjkgNjkuNiAwLjYgMTM5LjcgMS4yIDIwOS45IDMuMWwxMTkuMiAzLjdjMzkuNyAyLjUgNzkuNCAzLjcgMTE5LjEgNi44djMwLjVjLTM5LjcgMi40LTc5LjQgNC4zLTExOS4xIDYuMnoiLz48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsYXNzPSJhIiBkPSJtNzczLjMgMTU0NC4xYy00MjcuMiAwLTc3Mi42LTM0NS03NzIuNi03NzEuOSAwLTQyNi45IDM0NS40LTc3MiA3NzIuNi03NzIgNDI3LjMgMCA3NzIuNiAzNDUuMSA3NzIuNiA3NzIgMCA0MjYuOS0zNDUuMyA3NzEuOS03NzIuNiA3NzEuOXptNzAwLjYtNzcxLjljMC0zODcuMS0zMTMtNzAwLTcwMC4zLTcwMC0zODcuMiAwLTcwMC4yIDMxMi45LTcwMC4yIDcwMCAwIDM4NyAzMTMgNjk5LjkgNzAwLjIgNjk5LjkgMzg3LjMgMCA3MDAuMy0zMTIuOSA3MDAuMy02OTkuOXoiLz48L3N2Zz4=" alt="Confluent">Confluent Cloud</div>
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MzIuNjcgNzMyLjM3Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjZmUzZTAwOwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICNmZWZlZmU7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM0Ni44LC4zNWMxNDIuODQtNS45OSwyNzQuNjQsNjYuMzUsMzQyLjE4LDE5Mi4yMywxMjAuMzYsMjI0LjMyLTIwLjI4LDUwMS41MS0yNzEuMTEsNTM2LjIyQzE4MS4xNSw3NjEuNTQtMjIuMzIsNTY1LjIxLDEuOTcsMzI3LjU3QzIwLjAyLDE1MSwxNjguNTksNy44MiwzNDYuOC4zNVpNMTk1LjE2LDIzNi4zN2MtNDUuMzMsMS41Ny02OS45Nyw0NC42OS01MS41OCw4NS4zNiwzLjcsOC4xNyw5LjI4LDE1LjgyLDE1LjY0LDIyLjA5LTM0LjcxLDI4LjIxLTI1LjEzLDc4LjQsOC45OCwxMDIuNjksMTAuMzYsNy4zOCwyMi4yNywxMS42NSwzNC44NywxMy4zNiwxNi4wOCwyLjE4LDM3LjM3LDQuNjcsNTMuNDEsNS4zLDYuMjkuMjUsMTEuMzgtLjUsMTIuODUtNy41OGwtLjI0LTIwNi44NWMtMS4xOC00LjIzLTQuNjMtNy41MS05LjAzLTguMzEtMjAuNzEtLjczLTQ0LjQ5LTYuNzctNjQuOS02LjA2Wk01MzQuMzQsMjM2LjM3Yy0yMC40Mi41Ny00MS44MSw0LjczLTYyLjI0LDYuMTUtNC4wOS45Ny03LjM3LDQuMjEtOC41OCw4LjIxbC0uMjQsMjA2Ljg1YzEuNTQsNi45Miw2LjA2LDcuODEsMTIuMzMsNy41OCwxNS45OS0uNTcsMzcuNDEtMy4wOSw1My40MS01LjMxLDEzLjItMS44MywyNC41Mi01LjYxLDM1LjM5LTEzLjM2LDM0LjExLTI0LjI5LDQzLjY4LTc0LjQ3LDguOTgtMTAyLjY5LDE2LjYzLTE2LjE3LDI1LjUyLTQwLjI5LDIwLjI3LTYzLjI3LTYuMjgtMjcuNDgtMzEuNjItNDQuOTUtNTkuMzItNDQuMThaTS4zNjYuMzEsNDcxLjQ3Yy0xLjMzLDkuMDMtMTAuNTMsMTMuMzctMTguMjIsMTYuMTItNS45OCwyLjE0LTEyLjY0LDMuNTctMTguOSw0LjY5LTcuMjgsMS4zLTE2LjA3LDEuMzQtMjIuODQsMi44NS05LjcyLDIuMTctNy43NSwyMi41LDIuNiwyMy40OCwyMC4xOS0uNzIsNDEuMjMsMS4xMiw2MS4zMy4wNSwzMi44Mi0xLjc1LDYwLjM1LTI3LjkzLDYyLjA4LTYxLjA0LDEuODQtMzUuMTgtLjgzLTcxLjE3LS42Ny0xMDYuMzEtNC43OC0zMC4wOS0zMS4zMi01Mi4zLTYxLjQxLTUzLjg4LTE5LjYzLTEuMDMtNDAuMS43OS01OS44Mi0uMDItNS4zNC4wMi05Ljg3LDQuNDItMTAuMjIsOS43bC4wMywxNTMuMDljLS4wMiw0LjM4LDQuNTMsMTEuMjgsOS4xNywxMS4yOGg1Ni44OFoiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik0xOTUuMTYsMjM2LjM3YzIwLjQxLS43MSw0NC4xOSw1LjMzLDY0LjksNi4wNiw0LjQuNzksNy44NSw0LjA3LDkuMDMsOC4zMWwuMjQsMjA2Ljg1Yy0xLjQ4LDcuMDgtNi41Niw3LjgzLTEyLjg1LDcuNTgtMTYuMDQtLjYzLTM3LjMzLTMuMTItNTMuNDEtNS4zLTEyLjU5LTEuNzEtMjQuNTEtNS45OC0zNC44Ny0xMy4zNi0zNC4xMS0yNC4yOS00My42OS03NC40OC04Ljk4LTEwMi42OS02LjM2LTYuMjgtMTEuOTUtMTMuOTItMTUuNjQtMjIuMDktMTguMzktNDAuNjYsNi4yNS04My43OSw1MS41OC04NS4zNloiLz4KICA8cGF0aCBjbGFzcz0iY2xzLTIiIGQ9Ik01MzQuMzQsMjM2LjM3YzI3LjctLjc3LDUzLjA0LDE2LjcsNTkuMzIsNDQuMTgsNS4yNSwyMi45OC0zLjY0LDQ3LjEtMjAuMjcsNjMuMjcsMzQuNywyOC4yMiwyNS4xMyw3OC40LTguOTgsMTAyLjY5LTEwLjg4LDcuNzUtMjIuMiwxMS41Mi0zNS4zOSwxMy4zNi0xNi4wMSwyLjIyLTM3LjQyLDQuNzMtNTMuNDEsNS4zMS02LjI3LjIyLTEwLjc5LS42Ny0xMi4zMy03LjU4bC4yNC0yMDYuODVjMS4yMS00LDQuNDgtNy4yNSw4LjU4LTguMjEsMjAuNDMtMS40Myw0MS44Mi01LjU5LDYyLjI0LTYuMTVaIi8+CiAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzY2LjMxLDQ3MS40N2gtNTYuODhjLTQuNjQsMC05LjE5LTYuOS05LjE3LTExLjI4bC0uMDMtMTUzLjA5Yy4zNS01LjI4LDQuODQtOS42OCwxMC4yMi05LjcsMTkuNzIuODEsNDAuMTktMS4wMSw1OS44Mi4wMiwzMC4wOSwxLjU4LDU2LjYzLDIzLjc5LDYxLjQxLDUzLjg4LS4xNiwzNS4xNCwyLjUyLDcxLjEzLjY3LDEwNi4zMS0xLjczLDMzLjExLTI5LjI2LDU5LjI5LTYyLjA4LDYxLjA0LTIwLjEsMS4wNy00MS4xMy0uNzctNjEuMzMtLjA1LTEwLjM2LS45OC0xMi4zMi0yMS4zMS0yLjYtMjMuNDgsNi43Ny0xLjUxLDE1LjU1LTEuNTUsMjIuODQtMi44NSw2LjI2LTEuMTIsMTIuOTItMi41NSwxOC45LTQuNjksNy42OS0yLjc0LDE2Ljg5LTcuMDksMTguMjItMTYuMTJaIi8+Cjwvc3ZnPg==" alt="EDB">EDB Postgres&reg; AI</div>
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MzQuOTMgNDM0LjkzIj4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjZmZmOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00MzQuOTMsMHY0MzQuOTNIMFYwaDQzNC45M1pNMTkwLjQyLDM4Ljk1TDQ5LjY4LDExOC4yOWwuMDUsMTk2LjEsNTEuOTcsMjkuNjZ2LTE5My42Nmw4OC43Mi01NC4xdi01Ny4zNFpNMjQ2LjY4LDI5Ni40NWw1MS41Ny0yOS41Ny40OS0xOTQuNTJjLjQ5LTQtMS4zMi00LjkxLTMuNjItNy4yLTMuMjktMy4zLTI3LjczLTE2LjYtMzQuMDEtMjAuMDgtNC4zMy0yLjQtOS41LTUuNjQtMTQuNDQtNi4xMnYxNTMuNjNoLTU2LjI2di01Ni4yNmMtNC45NC40OC0xMC4xMSwzLjcyLTE0LjQ0LDYuMTItNi4yOCwzLjQ4LTMwLjcyLDE2Ljc5LTM0LjAxLDIwLjA4LTIuMjksMi4yOS00LjEsMy4yLTMuNjIsNy4ybC41NSwxOTQuNDYsNTEuNTIsMjkuNjN2LTE1My42M2g1Ni4yNnY1Ni4yNlpNMzM1LjM5LDg4LjcydjE5My42NmwtODguNzIsNTAuODV2NjIuNzVsMTQwLjc0LTgxLjUxLS41MS0xOTMuOTctNTEuNTItMzEuNzlaIi8+CiAgPHBhdGggZD0iTTI0Ni42OCwyOTYuNDV2LTU2LjI2aC01Ni4yNnYxNTMuNjNsLTUxLjUyLTI5LjYzLS41NS0xOTQuNDZjLS40OS00LDEuMzItNC45MSwzLjYyLTcuMiwzLjI5LTMuMywyNy43My0xNi42LDM0LjAxLTIwLjA4LDQuMzMtMi40LDkuNS01LjY0LDE0LjQ0LTYuMTJ2NTYuMjZoNTYuMjZWMzguOTVjNC45NC40OCwxMC4xMSwzLjcyLDE0LjQ0LDYuMTIsNi4yOCwzLjQ4LDMwLjcyLDE2Ljc5LDM0LjAxLDIwLjA4LDIuMjksMi4yOSw0LjEsMy4yLDMuNjIsNy4ybC0uNDksMTk0LjUyLTUxLjU3LDI5LjU3WiIvPgogIDxwb2x5Z29uIHBvaW50cz0iMTkwLjQyIDM4Ljk1IDE5MC40MiA5Ni4yOSAxMDEuNyAxNTAuMzkgMTAxLjcgMzQ0LjA1IDQ5LjczIDMxNC4zOSA0OS42OCAxMTguMjkgMTkwLjQyIDM4Ljk1Ii8+CiAgPHBvbHlnb24gcG9pbnRzPSIzMzUuMzkgODguNzIgMzg2LjkxIDEyMC41MSAzODcuNDIgMzE0LjQ4IDI0Ni42OCAzOTUuOTggMjQ2LjY4IDMzMy4yMyAzMzUuMzkgMjgyLjM4IDMzNS4zOSA4OC43MiIvPgo8L3N2Zz4=" alt="HashiCorp">HashiCorp (Terraform)</div>
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgcm9sZT0icHJlc2VudGF0aW9uIiBkYXRhLXNsdWctaWQ9ImF6dXJlIiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgPGRlZnM+DQogICAgPGxpbmVhckdyYWRpZW50IGlkPSJhenVyZV9hYjQwYjM4NS1mOTU4LTQyMGYtYmZhYi03MTRiZTE2Nzc0MjYtZDllM2U4NDQiIHgxPSItOTYwLjYwNiIgeTE9IjI4My4zOTciIHgyPSItMTAzMi41MTEiIHkyPSI3MC45NzIiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgLTEgMTA3NSAzMTgpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+DQogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMxMTRhOGIiPjwvc3RvcD4NCiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzA2NjliYyI+PC9zdG9wPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPGxpbmVhckdyYWRpZW50IGlkPSJhenVyZV9mNDBhZjkwZC03MmViLTQ5YjMtOTRiMi0yNTEwZjEwNzE3MjItZjhkODYzNjEiIHgxPSItOTM4LjE0NCIgeTE9IjE4NC40MDIiIHgyPSItOTU0Ljc3OCIgeTI9IjE3OC43NzgiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgLTEgMTA3NSAzMTgpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+DQogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3Atb3BhY2l0eT0iLjMiPjwvc3RvcD4NCiAgICAgIDxzdG9wIG9mZnNldD0iLjA3MSIgc3RvcC1vcGFjaXR5PSIuMiI+PC9zdG9wPg0KICAgICAgPHN0b3Agb2Zmc2V0PSIuMzIxIiBzdG9wLW9wYWNpdHk9Ii4xIj48L3N0b3A+DQogICAgICA8c3RvcCBvZmZzZXQ9Ii42MjMiIHN0b3Atb3BhY2l0eT0iLjA1Ij48L3N0b3A+DQogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3Atb3BhY2l0eT0iMCI+PC9zdG9wPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogICAgPGxpbmVhckdyYWRpZW50IGlkPSJhenVyZV9lMzgyZDc0Mi03ZDUxLTQ5NzQtYTI1Ni0yNGUxODJlZWYwNTMtZWE4MGZmYzciIHgxPSItOTQ3LjI5MiIgeTE9IjI4OS41OTQiIHgyPSItODY4LjM2MyIgeTI9Ijc5LjMwOCIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAtMSAxMDc1IDMxOCkiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4NCiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzNjY2JmNCI+PC9zdG9wPg0KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMjg5MmRmIj48L3N0b3A+DQogICAgPC9saW5lYXJHcmFkaWVudD4NCiAgPC9kZWZzPg0KICA8cGF0aCBkPSJNODkuMTU4IDE4LjI2Nmg2OS4yMzhMODYuNTIzIDIzMS4yMjRhMTEuMDQxIDExLjA0MSAwIDAxLTEwLjQ2MSA3LjUxSDIyLjE3OWExMS4wMjMgMTEuMDIzIDAgMDEtMTAuNDQ1LTE0LjU0OGw2Ni45NjMtMTk4LjQxYTExLjA0IDExLjA0IDAgMDExMC40NjEtNy41MXoiIGZpbGw9InVybCgjYXp1cmVfYWI0MGIzODUtZjk1OC00MjBmLWJmYWItNzE0YmUxNjc3NDI2LWQ5ZTNlODQ0KSI+PC9wYXRoPg0KICA8cGF0aCBkPSJNMTg5Ljc3IDE2MS4xMDRINzkuOTc2YTUuMDgzIDUuMDgzIDAgMDAtMy40NjggOC44bDcwLjU1MiA2NS44NDdhMTEuMDkxIDExLjA5MSAwIDAwNy41NjcgMi45ODNoNjIuMTY3eiIgZmlsbD0iIzAwNzhkNCI+PC9wYXRoPg0KICA8cGF0aCBkPSJNODkuMTU4IDE4LjI2NmExMC45NSAxMC45NSAwIDAwLTEwLjQ4MyA3LjY1NEwxMS44MTcgMjI0LjAwNmExMS4wMSAxMS4wMSAwIDAwMTAuMzkzIDE0LjcyOGg1NS4yNzRhMTEuODE0IDExLjgxNCAwIDAwOS4wNjktNy43MTRsMTMuMzMtMzkuMjkgNDcuNjI1IDQ0LjQxOGExMS4yNjcgMTEuMjY3IDAgMDA3LjA4OSAyLjU4Nmg2MS45MzdsLTI3LjE2Ni03Ny42My03OS4xOS4wMTggNDguNDctMTQyLjg1NnoiIGZpbGw9InVybCgjYXp1cmVfZjQwYWY5MGQtNzJlYi00OWIzLTk0YjItMjUxMGYxMDcxNzIyLWY4ZDg2MzYxKSI+PC9wYXRoPg0KICA8cGF0aCBkPSJNMTc3LjU5MiAyNS43NjRhMTEuMDIzIDExLjAyMyAwIDAwLTEwLjQ0NC03LjQ5OEg4OS45ODRhMTEuMDI0IDExLjAyNCAwIDAxMTAuNDQ1IDcuNDk4bDY2Ljk2NyAxOTguNDIxYTExLjAyNCAxMS4wMjQgMCAwMS0xMC40NDUgMTQuNTQ5aDc3LjE2NGExMS4wMjQgMTEuMDI0IDAgMDAxMC40NDQtMTQuNTQ5eiIgZmlsbD0idXJsKCNhenVyZV9lMzgyZDc0Mi03ZDUxLTQ5NzQtYTI1Ni0yNGUxODJlZWYwNTMtZWE4MGZmYzcpIj48L3BhdGg+DQo8L3N2Zz4=" alt="Azure">Microsoft Azure</div>
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE1NzIgMTU5MSIgd2lkdGg9IjE1NzIiIGhlaWdodD0iMTU5MSI+Cgk8dGl0bGU+RHluYXRyYWNlX0xvZ29fY29sb3JfcG9zaXRpdmVfaG9yaXpvbnRhbC1zdmc8L3RpdGxlPgoJPHN0eWxlPgoJCS5zMCB7IGZpbGw6ICMxNDk2ZmYgfSAKCQkuczEgeyBmaWxsOiAjMTI4NGVhIH0gCgkJLnMyIHsgZmlsbDogI2I0ZGMwMCB9IAoJCS5zMyB7IGZpbGw6ICM2ZjJkYTggfSAKCQkuczQgeyBmaWxsOiAjNTkxZjkxIH0gCgkJLnM1IHsgZmlsbDogIzczYmUyOCB9IAoJPC9zdHlsZT4KCTxnIGlkPSJWYXJpYW50cyI+CgkJPGcgaWQ9IkxheWVyIj4KCQkJPGcgaWQ9IkxheWVyIj4KCQkJCTxwYXRoIGlkPSJMYXllciIgY2xhc3M9InMwIiBkPSJtNTMwLjggMTMzLjVjLTIwLjQgMTA3LjktNDUuNCAyNjgtNTkgNDMwLjQtMjMuOCAyODYuMS05LjEgNDc4LTkuMSA0NzhsLTQwMyAzODIuNmMwIDAtMzAuNi0yMTQuNi00Ni41LTQ1Ni40LTkuMS0xNDkuOS0xMi41LTI4MS42LTEyLjUtMzYxLjEgMC00LjUgMi4yLTkuMSAyLjItMTMuNiAwLTUuNyA2LjktNTkuMSA1OS4xLTEwOSA1Ni43LTU0LjUgNDc1LjctMzgyLjcgNDY4LjgtMzUwLjl6Ii8+CgkJCQk8cGF0aCBpZD0iTGF5ZXIiIGNsYXNzPSJzMSIgZD0ibTUzMC44IDEzMy41Yy0yMC40IDEwNy45LTQ1LjQgMjY4LTU5IDQzMC40IDAgMC00NDYuMS01My40LTQ3MS4xIDU0LjUgMC01LjcgNy45LTcxLjYgNjAuMS0xMjEuNSA1Ni44LTU0LjUgNDc2LjktMzk1LjIgNDcwLTM2My40eiIvPgoJCQkJPHBhdGggaWQ9IkxheWVyIiBjbGFzcz0iczIiIGQ9Im00OC40IDQ4Mi4xYzExNS44LTExMC4xIDQwNC4xLTM4My44IDQ2MC45LTQzOC4zIDUyLjItNDkuOSAxMDcuOC00My4xIDExMy41LTQzLjEgNzguMyA0LjUgMjE2LjggMTQuNyAzNzQuNiAzNCAyNDAuNyAyOC40IDQ1MS45IDY4LjIgNDUxLjkgNjguMmwtNDAzLjEgMzgyLjZjMCAwLTE4OS41LTIzLjgtNDc2LjgtMTQuNy0xNjIuMyA0LjUtMzIzLjUgMjEuNS00MzIuNSAzNi4zLTIxLjYgMi4zLTc0LjkgMTMuNi0xMDcuOCA1NS42LTE1LjkgMjEuNi0yMy45IDM1LjItMjguNCA1NC41IDAtOS4xIDAtMTcgMC0yNC45IDAtNC42LTQuNi02MC4yIDQ3LjctMTEwLjJ6Ii8+CgkJCQk8cGF0aCBpZD0iTGF5ZXIiIGNsYXNzPSJzMyIgZD0ibTEwNjYuNyAxNTI0LjVjLTUyLjIgNDkuOS0xMDcuOSA2MC4xLTExMy41IDYwLjEtNS43IDAtMTQuOCA0LjYtMjAuNSA0LjYtNzkuNC00LjYtMjEwLTEzLjYtMzU3LjYtMzAuNy0yNDAuNy0yNy4yLTQ1NC4xLTY5LjItNDU0LjEtNjkuMmw0MDMtMzgzLjhjMCAwIDE5MC43IDIzLjggNDc4IDE0LjcgMTYyLjMtNS42IDMyMy41LTIzLjggNDMyLjUtMzguNiAzMS44LTMuNC0zMTEuMSAzODguNC0zNjcuOCA0NDIuOXoiLz4KCQkJCTxwYXRoIGlkPSJMYXllciIgY2xhc3M9InM0IiBkPSJtMTA1Ni41IDE1MzQuN2MtNTIuMyA0OS45LTEyNi4xIDUzLjQtMTMxLjcgNTMuNCAxMDcuOC0xOS40IDc3LjItNDY3LjkgNzcuMi00NjcuOSAxNjIuMy01LjYgMzIzLjUtMjMuOCA0MzIuNS0zOC42IDMxLjgtMy40LTMyMS4zIDM5OC42LTM3OCA0NTMuMXoiLz4KCQkJCTxwYXRoIGlkPSJMYXllciIgY2xhc3M9InM1IiBkPSJtOTQ4LjYgMTU5MC4zYy03LjkgMC0xNS45LTEuMS0yNS0xLjEgMjAuNS0zLjQgMzQuMS0xMC4yIDU1LjctMjYuMSA0My4xLTMwLjcgNTYuNy04NC4xIDYxLjMtMTA1LjYgMTkuMy0xMDcuOSA0NS40LTI2OCA1Ny45LTQzMC40IDIyLjctMjg2LjEgOS00NzYuOSA5LTQ3Ni45bDQwMy4xLTM4My43YzAgMCAyOS41IDIxMy40IDQ2LjUgNDU1LjMgMTAuMiAxNTcuOCAxMy42IDI5Ny41IDE0LjggMzc0LjcgMCA1LjcgNC41IDYxLjMtNDcuNyAxMTEuMy01Ni44IDU0LjUtMzQ1LjEgMzI5LjItNDU5LjggNDM5LjQtNTQuNSA0OS45LTExMC4xIDQzLjEtMTE1LjggNDMuMXoiLz4KCQkJPC9nPgoJCTwvZz4KCTwvZz4KPC9zdmc+" alt="Dynatrace">Dynatrace</div>
+            </div>
+          </div>
+          <div class="partner-column">
+            <h3 style="color:var(--accent-consume);">Community</h3>
+            <div class="partner-list">
+              <div class="partner-item"><img class="partner-logo" src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI1MDAiIHZpZXdCb3g9IjguNzM4IC01LjAzNjIyODM0IDE3LjQ1OTkyNDIyIDM5LjQwNjE5NDg0IiB3aWR0aD0iMjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtMTUuOS4wODcuODU0IDEuNjA0Yy4xOTIuMjk2LjQuNTU4LjY0NS44MDJhMjIuNDA2IDIyLjQwNiAwIDAgMSAyLjAwNCAyLjI2NmMxLjQ0NyAxLjkgMi40MjMgNC4wMSAzLjEyIDYuMjkyLjQxOCAxLjM5NC42NDUgMi44MjQuNjYyIDQuMjcuMDcgNC4zMjMtMS40MTIgOC4wMzUtNC40IDExLjEyYTEyLjcgMTIuNyAwIDAgMSAtMS41NyAxLjM0MmMtLjI5NiAwLS40MzYtLjIyNy0uNTU4LS40MzZhMy41ODkgMy41ODkgMCAwIDEgLS40MzYtMS4yNTVjLS4xMDUtLjUyMy0uMTc0LTEuMDQ2LS4xNC0xLjU4NnYtLjI0NGMtLjAyNC0uMDUyLS4yODUtMjQuMDUyLS4xODEtMjQuMTc1eiIgZmlsbD0iIzU5OTYzNiIvPjxwYXRoIGQ9Im0xNS45LjAzNGMtLjAzNS0uMDctLjA3LS4wMTctLjEwNS4wMTcuMDE3LjM1LS4xMDUuNjYyLS4yOTYuOTYtLjIxLjI5Ni0uNDg4LjUyMy0uNzY3Ljc2Ny0xLjU1IDEuMzQyLTIuNzcgMi45NjMtMy43NDcgNC43NzYtMS4zIDIuNDQtMS45NyA1LjA1NS0yLjE2IDcuODA4LS4wODcuOTkzLjMxNCA0LjQ5Ny42MjcgNS41MDguODU0IDIuNjg0IDIuMzg4IDQuOTMzIDQuMzc1IDYuODg1LjQ4OC40NyAxLjAxLjkwNiAxLjU1IDEuMzI1LjE1NyAwIC4xNzQtLjE0LjIxLS4yNDRhNC43OCA0Ljc4IDAgMCAwIC4xNTctLjY4bC4zNS0yLjYxNHoiIGZpbGw9IiM2Y2FjNDgiLz48cGF0aCBkPSJtMTYuNzU0IDI4Ljg0NWMuMDM1LS40LjIyNy0uNzMyLjQzNi0xLjA2My0uMjEtLjA4Ny0uMzY2LS4yNi0uNDg4LS40NTNhMy4yMzUgMy4yMzUgMCAwIDEgLS4yNi0uNTc1Yy0uMjQ0LS43MzItLjI5Ni0xLjUtLjM2Ni0yLjI0OHYtLjQ1M2MtLjA4Ny4wNy0uMTA1LjY2Mi0uMTA1Ljc1YTE3LjM3IDE3LjM3IDAgMCAxIC0uMzE0IDIuMzUzYy0uMDUyLjMxNC0uMDg3LjYyNy0uMjguOTA2IDAgLjAzNSAwIC4wNy4wMTcuMTIyLjMxNC45MjQuNCAxLjg2NS40NTMgMi44MjR2LjM1YzAgLjQxOC0uMDE3LjMzLjMzLjQ3LjE0LjA1Mi4yOTYuMDcuNDM2LjE3NC4xMDUgMCAuMTIyLS4wODcuMTIyLS4xNTdsLS4wNTItLjU3NXYtMS42MDRjLS4wMTctLjI4LjAzNS0uNTU4LjA3LS44MnoiIGZpbGw9IiNjMmJmYmYiLz48L3N2Zz4=" alt="MongoDB">MongoDB</div>
+              <div class="partner-item"><img class="partner-logo-light" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyOTMuMjkgMTkwLjk1Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjMjMxZjIwOwogICAgICB9CiAgICA8L3N0eWxlPgogIDwvZGVmcz4KICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0yOTEuOTgsMWMtLjc5LS42Ny0xLjgtMS4wMy0yLjg0LTEtMi44NCwwLTYuNSwxLjkyLTguNDYsM2wtLjc5LjRjLTMuMywxLjYtNi45LDIuNTEtMTAuNTcsMi42Ni0zLjc2LjEyLTcsLjM0LTExLjIyLjc3LTI1LDIuNTgtMzYuMTUsMjEuNzQtNDYuODksNDAuMjctNS44NCwxMC4wOC0xMS44OCwyMC41LTIwLjE2LDI4LjU3LTEuNzIsMS42Ni0zLjU0LDMuMjEtNS40Niw0LjYzLTguNTcsNi4zOS0xOS4zMywxMC45LTI3Ljc0LDE0LjEyLTguMDcsMy4wOC0xNi44Niw1Ljg1LTI1LjM3LDguNTMtNy43OCwyLjQ1LTE1LjE0LDQuNzYtMjEuOSw3LjI4LTMuMDUsMS4xMy01LjY0LDItNy45MywyLjc2LTYuMTUsMi0xMC42LDMuNTMtMTcuMDgsOC0yLjUzLDEuNzMtNS4wNywzLjYtNi44LDUtNS4xNSw0LjExLTkuNzEsOC45MS0xMy41NCwxNC4yNy0zLjMsNC45NS03LjExLDkuNTQtMTEuMzcsMTMuNjktMS4zNiwxLjM0LTMuOCwyLTcuNDMsMi00LjI3LDAtOS40My0uODgtMTQuOTEtMS44MXMtMTEuNDYtMi0xNi40Ni0yYy00LjA3LDAtNy4xNy42Ni05LjUsMiwwLDAtMy45LDIuMjgtNS41Niw1LjIzbDEuNjIuNzNjMi41MSwxLjM2LDQuODQsMy4wNCw2LjkzLDUsMi4xNiwyLjAxLDQuNTgsMy43NCw3LjE5LDUuMTIuODQuMzIsMS42LjgxLDIuMjQsMS40NS0uNjksMS0xLjY5LDIuMjktMi43NCwzLjY3LTUuNzcsNy41NS05LjEzLDEyLjMyLTcuMiwxNC45Mi45Mi40OCwxLjk2LjcyLDMsLjY4LDEyLjU5LDAsMTkuMzQtMy4yNywyNy45LTcuNDEsMi40Ny0xLjIsNS0yLjQ0LDgtMy43LDUtMi4xNywxMC4zOC01LjYzLDE2LjA4LTkuMjksNy41NS00Ljg1LDE1LjM2LTkuODcsMjIuOTItMTIuMyw2LjIzLTEuOSwxMi43Mi0yLjgxLDE5LjIzLTIuNyw4LDAsMTYuNDIsMS4wNywyNC41NCwyLjExLDYuMDYuNzgsMTIuMzIsMS41OCwxOC40NywyLDIuMzkuMTQsNC42LjIxLDYuNzYuMjEsMi44OCwwLDUuNzUtLjE0LDguNjEtLjQ1bC42OC0uMjRjNC4zMi0yLjY1LDYuMzQtOC4zNCw4LjI5LTEzLjg0LDEuMjYtMy41NCwyLjMyLTYuNzIsNC04Ljc0LjEtLjEuMjEtLjE5LjMzLS4yNy4xNi0uMDkuMzYtLjA2LjQ5LjA4LjAyLjA1LjAyLjExLDAsLjE2LTEsMjEuNTEtOS42NywzNS4xNi0xOC40Miw0Ny4zbC01Ljk0LDYuMjNzOC4xOCwwLDEyLjg0LTEuOGMxNy01LjA0LDI5Ljg0LTE2LjI4LDM5LjE4LTM0LjE0LDIuMy00LjU4LDQuMzYtOS4yOSw2LjE2LTE0LjA5LjE2LS40LDEuNjQtMS4xNCwxLjQ5LjkzLDAsLjYxLS4wOCwxLjI5LS4xMywyaDBjMCwuNDItLjA2Ljg1LS4wOCwxLjI4LS4yNSwzLTEsOS4zNC0xLDkuMzRsNS4yNS0yLjgxYzEyLjY2LTgsMjIuNDItMjQuMTQsMjkuODItNDkuMjUsMy4wOS0xMC40Niw1LjM0LTIwLjg1LDcuMzMtMzAsMi4zOC0xMSw0LjQzLTIwLjQzLDYuNzgtMjQuMDksMy42OS01Ljc0LDkuMzItOS42MiwxNC43Ny0xMy4zOS43NS0uNTEsMS40OS0xLDIuMjItMS41NCw2Ljg2LTQuODEsMTMuNjctMTAuMzYsMTUuMTYtMjAuNzF2LS4yM2MxLjE0LTcuNzIuMjEtOS42NC0uNzktMTAuNTlaIi8+Cjwvc3ZnPg==" alt="MariaDB">MariaDB</div>
+            </div>
+          </div>
+        </div>
+        <p class="partner-note anim-fade-up">Ecosystem grows each release &mdash; partners onboard through Red Hat's certification pipeline</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5" aria-label="Slide 5: Lifecycle Operator">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner component-slide" data-stagger>
+        <p class="slide-eyebrow anim-fade-up" style="color:var(--accent-operator);">Deployment</p>
+        <h2 class="display-xl anim-fade-up">MCP Lifecycle Operator</h2>
+        <p class="component-oneliner anim-fade-up">Deploy and operate MCP servers as Kubernetes-native workloads</p>
+        <div class="component-caps caps-horizontal anim-fade-up">
+          <div class="cap-item" style="border-left-color:var(--accent-operator);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-operator);">Declarative deployment</div>
+              <div class="cap-desc">MCPServer CRD creates Deployment + Service, automatically configured</div>
+            </div>
+          </div>
+          <div class="cap-item" style="border-left-color:var(--accent-operator);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-operator);">Automated operations</div>
+              <div class="cap-desc">Handles services, configuration, connectivity, and upgrades</div>
+            </div>
+          </div>
+          <div class="cap-item" style="border-left-color:var(--accent-operator);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-operator);">OpenShift-native</div>
+              <div class="cap-desc">Managed like any other workload &mdash; same tooling, same observability, same team</div>
+            </div>
+          </div>
+        </div>
+        <div class="anim-fade-up" style="text-align:center;margin-top:var(--space-sm);">
+          <img src="assets/Lifecycle_operator.png" alt="MCP Lifecycle Operator — MCPServer CRD to Deployment to Service flow" style="max-width:520px;width:100%;border-radius:8px;">
+        </div>
+        <div class="component-badge anim-fade-up" style="background:#252515;border:1px solid var(--accent-operator);color:var(--accent-operator);">Dev Preview 3.4 &middot; Dev Preview 3.5 &middot; Tech Preview 3.6 EA1 &middot; General Availability 3.6+</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6" aria-label="Slide 6: MCP Gateway">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner component-slide" data-stagger>
+        <p class="slide-eyebrow anim-fade-up" style="color:var(--accent-gateway);">Security &amp; Control</p>
+        <h2 class="display-xl anim-fade-up">MCP Gateway</h2>
+        <p class="component-oneliner anim-fade-up">A secure control point for accessing and governing MCP tools</p>
+        <div class="component-caps caps-horizontal anim-fade-up">
+          <div class="cap-item" style="border-left-color:var(--accent-gateway);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-gateway);">Centralized access control</div>
+              <div class="cap-desc">Authentication, authorization, and policy enforcement per tool</div>
+            </div>
+          </div>
+          <div class="cap-item" style="border-left-color:var(--accent-gateway);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-gateway);">Tool aggregation</div>
+              <div class="cap-desc">Virtual MCP servers combine tools from multiple backends into a single endpoint</div>
+            </div>
+          </div>
+          <div class="cap-item" style="border-left-color:var(--accent-gateway);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-gateway);">Observability</div>
+              <div class="cap-desc">Monitor, audit, and trace MCP tool usage across the platform</div>
+            </div>
+          </div>
+        </div>
+        <div class="anim-fade-up" style="text-align:center;margin-top:var(--space-sm);">
+          <img src="assets/mcp_gateway.png" alt="MCP Gateway — MCP servers funneling through gateway to agents" style="max-width:520px;width:100%;border-radius:8px;">
+        </div>
+        <div class="component-badge anim-fade-up" style="background:#251525;border:1px solid var(--accent-gateway);color:var(--accent-gateway);">Tech Preview 3.4 &middot; Tech Preview 2 3.5 &middot; General Availability 3.6 EA1</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7" aria-label="Slide 7: MCP Registry">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner component-slide" data-stagger>
+        <p class="slide-eyebrow anim-fade-up" style="color:var(--accent-registry);">Governance</p>
+        <h2 class="display-xl anim-fade-up">MCP Registry</h2>
+        <p class="component-oneliner anim-fade-up">The system of record for MCP server governance and lifecycle</p>
+        <div class="component-caps anim-fade-up">
+          <div class="cap-item" style="border-left-color:var(--accent-registry);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-registry);">Governed metadata store</div>
+              <div class="cap-desc">Identity, version, ownership, provenance, and deployment metadata for operationalized MCPs</div>
+            </div>
+          </div>
+          <div class="cap-item" style="border-left-color:var(--accent-registry);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-registry);">Two entry paths</div>
+              <div class="cap-desc">Cluster-deployed MCPs and remote-registered endpoints &mdash; both produce the same governed record</div>
+            </div>
+          </div>
+          <div class="cap-item" style="border-left-color:var(--accent-registry);">
+            <div>
+              <div class="cap-title" style="color:var(--accent-registry);">Lifecycle governance</div>
+              <div class="cap-desc">Active &rarr; Deprecated &rarr; Disabled &rarr; Retired with mandatory audit trail on every transition</div>
+            </div>
+          </div>
+        </div>
+        <div class="gov-tracks anim-scale-in">
+          <div class="gov-track">
+            <div class="gov-track-title">Operational Lifecycle</div>
+            <div class="gov-track-states">
+              <div class="gov-state">Active</div>
+              <div class="gov-state">Deprecated</div>
+              <div class="gov-state">Disabled</div>
+              <div class="gov-state">Retired</div>
+            </div>
+          </div>
+          <div class="gov-track">
+            <div class="gov-track-title">Entry Paths</div>
+            <div class="gov-track-states">
+              <div class="gov-state">Cluster-deployed</div>
+              <div class="gov-state">Remote-registered</div>
+            </div>
+          </div>
+          <div class="gov-track">
+            <div class="gov-track-title">Catalog-side <span style="font-weight:400;color:var(--text-muted);font-size:0.55rem;">(not Registry)</span></div>
+            <div class="gov-track-states">
+              <div class="gov-state" style="opacity:0.5;">Draft</div>
+              <div class="gov-state" style="opacity:0.5;">Approval</div>
+              <div class="gov-state" style="opacity:0.5;">Scanning</div>
+              <div class="gov-state" style="opacity:0.5;">Signing</div>
+            </div>
+          </div>
+          <div class="gov-track">
+            <div class="gov-track-title">Verification <span style="font-weight:400;color:var(--text-muted);font-size:0.55rem;">(future)</span></div>
+            <div class="gov-track-states">
+              <div class="gov-state">Unverified</div>
+              <div class="gov-state">Verified</div>
+            </div>
+          </div>
+        </div>
+        <div class="component-badge anim-fade-up" style="background:#1a2a1a;border:1px solid var(--accent-registry);color:var(--accent-registry);">Dev Preview 3.5 &middot; Tech Preview 3.6 EA1 &middot; General Availability 3.6+</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8" aria-label="Slide 8: The MCP Pipeline">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner" data-stagger>
+        <p class="slide-eyebrow anim-fade-up" style="color:var(--accent-pipeline);">Supply Chain</p>
+        <h2 class="display-xl anim-fade-up">From Source to Production</h2>
+        <p class="component-oneliner anim-fade-up">Enterprise-grade ingestion, validation, and certification for MCP servers</p>
+        <div class="pipeline-flow">
+          <div class="pipeline-stage">
+            <span class="pipeline-stage-icon">&#128229;</span>
+            <div class="pipeline-stage-title">Ingress</div>
+            <div class="pipeline-stage-desc">ISV, internal, community sources</div>
+            <span class="pipeline-stage-arrow">&#9654;</span>
+          </div>
+          <div class="pipeline-stage">
+            <span class="pipeline-stage-icon">&#9989;</span>
+            <div class="pipeline-stage-title">Validate</div>
+            <div class="pipeline-stage-desc">Schema, transport, tools</div>
+            <span class="pipeline-stage-arrow">&#9654;</span>
+          </div>
+          <div class="pipeline-stage">
+            <span class="pipeline-stage-icon">&#128269;</span>
+            <div class="pipeline-stage-title">Scan</div>
+            <div class="pipeline-stage-desc">CVE, SBOM, SAST</div>
+            <span class="pipeline-stage-arrow">&#9654;</span>
+          </div>
+          <div class="pipeline-stage">
+            <span class="pipeline-stage-icon">&#128274;</span>
+            <div class="pipeline-stage-title">Sign</div>
+            <div class="pipeline-stage-desc">Provenance, attestation</div>
+            <span class="pipeline-stage-arrow">&#9654;</span>
+          </div>
+          <div class="pipeline-stage">
+            <span class="pipeline-stage-icon">&#127942;</span>
+            <div class="pipeline-stage-title">Certify</div>
+            <div class="pipeline-stage-desc">Red Hat certification</div>
+            <span class="pipeline-stage-arrow">&#9654;</span>
+          </div>
+          <div class="pipeline-stage">
+            <span class="pipeline-stage-icon">&#128640;</span>
+            <div class="pipeline-stage-title">Publish</div>
+            <div class="pipeline-stage-desc">To Catalog</div>
+          </div>
+        </div>
+        <p class="pipeline-callout anim-fade-up">The ingestion pipeline provides enterprise-grade supply chain security for every MCP server</p>
+        <div class="component-badge anim-fade-up" style="background:#2a1515;border:1px solid var(--accent-pipeline);color:var(--accent-pipeline);">Roadmap item · Expected as Tech Preview in RHOAI 3.6</div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9" aria-label="Slide 9: Roadmap">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner" data-stagger>
+        <p class="slide-eyebrow anim-fade-up">Roadmap</p>
+        <h2 class="display-lg anim-fade-up">Where We Are &amp; Where We're Going</h2>
+        <p class="lead anim-fade-up" style="margin-bottom:var(--space-sm);">MCP ecosystem maturity across OpenShift AI releases</p>
+        <div class="roadmap-grid anim-fade-up">
+          <div class="roadmap-header">
+            <div></div>
+            <div class="roadmap-col roadmap-col-34 roadmap-now">
+              <div class="roadmap-col-version">RHOAI 3.4</div>
+              <div class="roadmap-col-date">May 14, 2026</div>
+            </div>
+            <div class="roadmap-col roadmap-col-35">
+              <div class="roadmap-col-version">RHOAI 3.5</div>
+              <div class="roadmap-col-date">2H 2026</div>
+            </div>
+            <div class="roadmap-col roadmap-col-36">
+              <div class="roadmap-col-version">RHOAI 3.6 EA1</div>
+              <div class="roadmap-col-date">Target</div>
+            </div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background:var(--accent-catalog);"></span><span class="roadmap-name">MCP Catalog</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background:var(--accent-registry);"></span><span class="roadmap-name">MCP Registry</span></div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background:var(--accent-operator);"></span><span class="roadmap-name">Lifecycle Operator</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-dp">Dev Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background:var(--accent-gateway);"></span><span class="roadmap-name">MCP Gateway</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview 2</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-ga">General Availability</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background:var(--accent-pipeline);"></span><span class="roadmap-name">Ingestion Pipeline</span></div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+          </div>
+          <div class="roadmap-row">
+            <div class="roadmap-label"><span class="roadmap-dot" style="background:var(--accent-virtual);"></span><span class="roadmap-name">Virtual Server &amp; Tool Catalog</span></div>
+            <div class="roadmap-cell"><span class="rb-none">&mdash;</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-tp">Tech Preview</span></div>
+            <div class="roadmap-cell"><span class="roadmap-badge rb-ga">General Availability</span></div>
+          </div>
+        </div>
+        <div class="roadmap-legend anim-fade-up">
+          <div class="roadmap-legend-item"><span class="roadmap-badge rb-dp" style="font-size:0.5rem;">Dev Preview</span> Early access, feedback</div>
+          <div class="roadmap-legend-item"><span class="roadmap-badge rb-tp" style="font-size:0.5rem;">Tech Preview</span> Feature-complete, not supported</div>
+          <div class="roadmap-legend-item"><span class="roadmap-badge rb-ga" style="font-size:0.5rem;">General Availability</span> Production-ready, supported</div>
+        </div>
+        <p class="roadmap-note anim-fade-up">Schedule subject to change</p>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10" aria-label="Slide 10: Demo transition">
+      <img class="slide-logo" src="assets/red-hat-logo.svg" alt="Red Hat">
+      <div class="slide-inner demo-slide" data-stagger>
+        <h2 class="display-xl anim-fade-up">Let Me Show You</h2>
+        <ol class="demo-list">
+          <li class="anim-slide-right"><span class="demo-num">01</span>Browse the MCP Catalog</li>
+          <li class="anim-slide-right"><span class="demo-num">02</span>Deploy an MCP server</li>
+          <li class="anim-slide-right"><span class="demo-num">03</span>Test it in the Playground</li>
+        </ol>
+        <p class="demo-byline anim-fade-up">Peter Double &middot; Red Hat</p>
+      </div>
+    </section>
+
+    <div class="rh-brand" aria-hidden="true">Red Hat OpenShift AI</div>
+  </main>
+
+  <nav class="deck-controls" aria-label="Deck navigation">
+    <button class="btn-prev" type="button" aria-label="Previous slide" data-action="prev">&#8592;</button>
+    <ol class="deck-dots" role="tablist" aria-label="Slide progress">
+      <li><button type="button" role="tab" aria-label="Go to slide 1" data-goto="1"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 2" data-goto="2"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 3" data-goto="3"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 4" data-goto="4"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 5" data-goto="5"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 6" data-goto="6"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 7" data-goto="7"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 8" data-goto="8"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 9" data-goto="9"></button></li>
+      <li><button type="button" role="tab" aria-label="Go to slide 10" data-goto="10"></button></li>
+    </ol>
+    <button class="btn-next" type="button" aria-label="Next slide" data-action="next">&#8594;</button>
+    <span class="deck-counter" aria-live="polite">01 / 10</span>
+  </nav>
+
+  <section class="deck-overview" hidden aria-label="Slide overview grid">
+    <div class="overview-grid" role="list">
+      <button class="overview-thumb" type="button" role="listitem" data-goto="1"><span class="num">01</span><span class="ttl">Title</span><span class="beat">Intro</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="2"><span class="num">02</span><span class="ttl">The MCP Ecosystem</span><span class="beat">Ecosystem</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="3"><span class="num">03</span><span class="ttl">MCP Catalog</span><span class="beat">Discovery</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="4"><span class="num">04</span><span class="ttl">Pre-Loaded MCP Servers</span><span class="beat">Ecosystem</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="5"><span class="num">05</span><span class="ttl">Lifecycle Operator</span><span class="beat">Deployment</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="6"><span class="num">06</span><span class="ttl">MCP Gateway</span><span class="beat">Security</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="7"><span class="num">07</span><span class="ttl">MCP Registry</span><span class="beat">Governance</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="8"><span class="num">08</span><span class="ttl">From Source to Production</span><span class="beat">Supply Chain</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="9"><span class="num">09</span><span class="ttl">Where We Are &amp; Where We're Going</span><span class="beat">Roadmap</span></button>
+      <button class="overview-thumb" type="button" role="listitem" data-goto="10"><span class="num">10</span><span class="ttl">Let Me Show You</span><span class="beat">Demo</span></button>
+    </div>
+  </section>
+
+  <aside class="deck-notes" hidden aria-label="Presenter notes">
+    <div class="notes-inner">
+      <p class="notes-label">Presenter notes</p>
+      <p class="notes-body">Press <kbd>P</kbd> to toggle notes. Press <kbd>Esc</kbd> for slide overview.</p>
+    </div>
+  </aside>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var TOTAL = 10;
+      var deck = document.getElementById('deck');
+      var dots = Array.from(document.querySelectorAll('.deck-dots button'));
+      var btnPrev = document.querySelector('.btn-prev');
+      var btnNext = document.querySelector('.btn-next');
+      var counter = document.querySelector('.deck-counter');
+      var overview = document.querySelector('.deck-overview');
+      var notes = document.querySelector('.deck-notes');
+      var reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      var state = { current: 1, overviewOpen: false, notesOpen: false };
+
+      function clamp(n) { return Math.max(1, Math.min(TOTAL, n)); }
+
+      function render() {
+        deck.setAttribute('data-slide-current', String(state.current));
+        counter.textContent = String(state.current).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+        dots.forEach(function (d, i) {
+          if (i + 1 === state.current) d.setAttribute('aria-current', 'true');
+          else d.removeAttribute('aria-current');
+        });
+        Array.from(deck.querySelectorAll('.slide')).forEach(function (s) {
+          var n = parseInt(s.getAttribute('data-slide'), 10);
+          if (n === state.current) {
+            s.classList.add('current');
+            s.removeAttribute('aria-hidden');
+          } else {
+            s.classList.remove('current');
+            s.setAttribute('aria-hidden', 'true');
+          }
+        });
+        btnPrev.disabled = state.current === 1;
+        btnNext.disabled = state.current === TOTAL;
+        requestAnimationFrame(fireSlideAnimations);
+      }
+
+      function goTo(n) {
+        var next = clamp(n);
+        if (next === state.current) return;
+        state.current = next;
+        render();
+        syncHash();
+      }
+      function next() { goTo(state.current + 1); }
+      function prev() { goTo(state.current - 1); }
+
+      function syncHash() {
+        var h = '#s=' + state.current;
+        if (location.hash !== h) history.replaceState(null, '', h);
+      }
+      function readHash() {
+        var m = /^#s=(\d{1,2})$/.exec(location.hash || '');
+        if (m) return clamp(parseInt(m[1], 10));
+        return 1;
+      }
+
+      var digitBuffer = '';
+      var digitTimer = null;
+      function clearBuffer() { digitBuffer = ''; if (digitTimer) { clearTimeout(digitTimer); digitTimer = null; } }
+
+      function onKey(e) {
+        if (state.overviewOpen) return onOverviewKey(e);
+        var k = e.key;
+        if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); next(); clearBuffer(); return; }
+        if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); clearBuffer(); return; }
+        if (k === 'Home') { e.preventDefault(); goTo(1); clearBuffer(); return; }
+        if (k === 'End')  { e.preventDefault(); goTo(TOTAL); clearBuffer(); return; }
+        if (k === 'Escape') { e.preventDefault(); toggleOverview(); clearBuffer(); return; }
+        if (k === 'p' || k === 'P') { e.preventDefault(); toggleNotes(); clearBuffer(); return; }
+        if (/^[0-9]$/.test(k)) {
+          e.preventDefault();
+          digitBuffer += k;
+          if (digitTimer) clearTimeout(digitTimer);
+          if (digitBuffer.length === 2) {
+            var two = parseInt(digitBuffer, 10);
+            if (two >= 1 && two <= TOTAL) goTo(two);
+            clearBuffer();
+            return;
+          }
+          digitTimer = setTimeout(function () {
+            var n = parseInt(digitBuffer, 10);
+            if (n >= 1 && n <= 9) goTo(n);
+            clearBuffer();
+          }, 600);
+        }
+      }
+
+      btnPrev.addEventListener('click', prev);
+      btnNext.addEventListener('click', next);
+      dots.forEach(function (d) {
+        d.addEventListener('click', function () { goTo(parseInt(d.getAttribute('data-goto'), 10)); });
+      });
+      window.addEventListener('keydown', onKey);
+
+      Array.from(overview.querySelectorAll('.overview-thumb')).forEach(function (t) {
+        t.addEventListener('click', function () {
+          goTo(parseInt(t.getAttribute('data-goto'), 10));
+          closeOverview();
+        });
+      });
+
+      function applyStaggerIndices(slide) {
+        Array.from(slide.querySelectorAll('[data-stagger] > *')).forEach(function (el, i) {
+          el.style.setProperty('--index', String(i));
+        });
+      }
+
+      function fireSlideAnimations() {
+        var cur = deck.querySelector('.slide.current');
+        if (!cur) return;
+        applyStaggerIndices(cur);
+      }
+
+      function toggleOverview() { state.overviewOpen ? closeOverview() : openOverview(); }
+      function openOverview() {
+        state.overviewOpen = true;
+        overview.hidden = false;
+        var active = overview.querySelector('.overview-thumb[data-goto="' + state.current + '"]');
+        if (active) active.focus();
+      }
+      function closeOverview() {
+        state.overviewOpen = false;
+        overview.hidden = true;
+        deck.focus();
+      }
+      function onOverviewKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); closeOverview(); return; }
+        if (e.key === 'Enter') {
+          var t = document.activeElement;
+          if (t && t.classList.contains('overview-thumb')) {
+            goTo(parseInt(t.getAttribute('data-goto'), 10));
+            closeOverview();
+          }
+        }
+      }
+
+      function toggleNotes() {
+        if (!notes) return;
+        state.notesOpen = !state.notesOpen;
+        notes.hidden = !state.notesOpen;
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        state.current = readHash();
+        render();
+        window.addEventListener('hashchange', function () {
+          state.current = readHash();
+          render();
+        });
+        if (deck.tabIndex < 0) deck.tabIndex = -1;
+      });
+
+      window.__deck = { goTo: goTo, next: next, prev: prev, state: state };
+    }());
+  </script>
+  <script>
+    (function () {
+      function drawConnector() {
+        var dia = document.getElementById('dia-ecosystem');
+        var diy = document.getElementById('source-diy');
+        var direct = document.getElementById('direct-path-label');
+        if (!dia || !diy || !direct) return;
+
+        var existing = dia.querySelector('.connector-svg');
+        if (existing) existing.remove();
+
+        var diaRect = dia.getBoundingClientRect();
+        var diyRect = diy.getBoundingClientRect();
+        var directRect = direct.getBoundingClientRect();
+
+        var scale = diaRect.width / dia.offsetWidth || 1;
+        var x1 = (diyRect.right - diaRect.left) / scale;
+        var y1 = (diyRect.top + diyRect.height / 2 - diaRect.top) / scale;
+        var x2 = (directRect.left + directRect.width / 2 - diaRect.left) / scale;
+        var y2 = (directRect.top - diaRect.top - 4) / scale;
+
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.classList.add('connector-svg');
+        svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5;overflow:visible;';
+        svg.innerHTML = '<polyline points="' + x1 + ',' + y1 + ' ' + x2 + ',' + y1 + ' ' + x2 + ',' + y2 + '"' +
+          ' fill="none" stroke="rgba(138,138,138,0.45)" stroke-width="1.5"' +
+          ' stroke-dasharray="6,4" />' +
+          '<polygon points="' + (x2-3) + ',' + y2 + ' ' + (x2+3) + ',' + y2 + ' ' + x2 + ',' + (y2+5) + '"' +
+          ' fill="rgba(138,138,138,0.45)" />';
+        dia.appendChild(svg);
+      }
+
+      window.addEventListener('resize', drawConnector);
+      window.addEventListener('load', function () { setTimeout(drawConnector, 50); });
+    }());
+  </script>
+</body>
+</html>

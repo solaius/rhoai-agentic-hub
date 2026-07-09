@@ -10,4 +10,5 @@ Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement 
 - [work/](/features/mcp-gateway/work/)
 
 ## Connections
+- artifact · [MCP 2026-07-28 RC — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
 - story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.

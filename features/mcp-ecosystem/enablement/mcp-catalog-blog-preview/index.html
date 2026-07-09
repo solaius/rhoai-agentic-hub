@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The MCP catalog is here: Discover, deploy, and connect on Red Hat OpenShift AI</title>
+  <meta name="description" content="Red Hat OpenShift AI 3.4 introduces the MCP catalog with MCP servers from Red Hat, partners, and community that you can discover, deploy, and manage on OpenShift.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700&family=Red+Hat+Text:wght@400;500;700&family=Red+Hat+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Red Hat Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #151515;
+      background: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- Top banner --- */
+    .rh-banner {
+      background: #151515;
+      padding: 12px 0;
+      border-bottom: 3px solid #EE0000;
+    }
+    .rh-banner-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .rh-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .rh-logo svg {
+      height: 28px;
+      width: auto;
+    }
+    .rh-nav {
+      display: flex;
+      gap: 20px;
+    }
+    .rh-nav a {
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* --- Blog breadcrumb bar --- */
+    .blog-bar {
+      background: #F0F0F0;
+      border-bottom: 1px solid #D2D2D2;
+      padding: 14px 0;
+    }
+    .blog-bar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #6A6E73;
+    }
+    .blog-bar-inner a {
+      color: #0066CC;
+      text-decoration: none;
+    }
+    .blog-bar-inner a:hover {
+      text-decoration: underline;
+    }
+    .blog-bar-inner .sep {
+      color: #B8BBBE;
+    }
+
+    /* --- Hero section --- */
+    .hero {
+      background: linear-gradient(135deg, #151515 0%, #292929 60%, #3F0000 100%);
+      padding: 80px 0 72px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(238, 0, 0, 0.08) 0%, rgba(238, 0, 0, 0.02) 100%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-label {
+      display: inline-block;
+      background: #EE0000;
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #FFFFFF;
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+    .hero .subtitle {
+      font-family: 'Red Hat Text', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #B8BBBE;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #A3A3A3;
+      font-size: 14px;
+    }
+    .hero-meta .author {
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+    .hero-meta .dot {
+      color: #6A6E73;
+    }
+
+    /* --- Article body --- */
+    .article-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+    }
+
+    .article-wrap p {
+      margin-bottom: 24px;
+    }
+
+    .article-wrap a {
+      color: #0066CC;
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .article-wrap a:hover {
+      border-bottom-color: #0066CC;
+    }
+
+    .article-wrap strong a {
+      font-weight: 700;
+    }
+
+    /* CTA links */
+    .cta-link {
+      color: #0066CC;
+      font-weight: 700;
+    }
+
+    .article-wrap h2 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #151515;
+      margin-top: 48px;
+      margin-bottom: 20px;
+      padding-top: 8px;
+      border-top: 2px solid #F0F0F0;
+    }
+
+    .article-wrap h2:first-of-type {
+      margin-top: 40px;
+    }
+
+    .article-wrap h3 {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #151515;
+      margin-top: 32px;
+      margin-bottom: 12px;
+    }
+
+    .article-wrap ul, .article-wrap ol {
+      margin-bottom: 24px;
+      padding-left: 24px;
+    }
+
+    .article-wrap li {
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+
+    .article-wrap li strong {
+      color: #151515;
+    }
+
+    /* Company logos in MCP server list */
+    .article-wrap li .company-logo {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
+      position: relative;
+      top: -1px;
+    }
+    .article-wrap li .company-logo img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+
+    /* Tier section headers */
+    .tier-header {
+      font-family: 'Red Hat Text', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 28px;
+      margin-bottom: 12px;
+      color: #151515;
+    }
+
+    /* Signature tagline */
+    .tagline {
+      font-size: 20px;
+      font-weight: 500;
+      color: #383838;
+      margin-top: 32px;
+      margin-bottom: 32px;
+      padding: 20px 24px;
+      border-left: 4px solid #EE0000;
+      background: #FEF0F0;
+      line-height: 1.5;
+    }
+
+    /* --- Image placeholders --- */
+    .image-placeholder {
+      margin: 40px 0;
+      background: #F0F0F0;
+      border: 2px dashed #D2D2D2;
+      border-radius: 8px;
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .image-placeholder .ph-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: #E0E0E0;
+      border-radius: 50%;
+      margin-bottom: 16px;
+    }
+    .image-placeholder .ph-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: #6A6E73;
+    }
+    .image-placeholder .ph-title {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #383838;
+      margin-bottom: 8px;
+    }
+    .image-placeholder .ph-alt {
+      font-size: 14px;
+      color: #6A6E73;
+      line-height: 1.5;
+      max-width: 560px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    /* --- Actual images --- */
+    .article-wrap figure {
+      margin: 40px 0;
+    }
+    .article-wrap figure a {
+      display: inline-block;
+      border: 1px solid #D2D2D2;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .article-wrap figure a:hover {
+      border-color: #0066CC;
+    }
+    .article-wrap figure img {
+      display: block;
+      max-width: 720px;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      border-radius: 0;
+    }
+    .article-wrap figcaption {
+      font-size: 14px;
+      color: #6A6E73;
+      margin-top: 10px;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* --- Flow diagram --- */
+    .flow-diagram {
+      margin: 40px 0;
+      background: #FFFFFF;
+      border: 1px solid #D2D2D2;
+      border-radius: 8px;
+      padding: 36px 28px 28px;
+    }
+    .flow-row {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0;
+      width: 100%;
+    }
+    .flow-stage {
+      flex: 1;
+      max-width: 180px;
+      min-width: 140px;
+      min-height: 170px;
+      background: #F0F0F0;
+      border: 1px solid #D2D2D2;
+      border-radius: 8px;
+      overflow: hidden;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+    }
+    .flow-stage-accent {
+      height: 4px;
+      width: 100%;
+    }
+    .flow-stage-accent.red { background: #EE0000; }
+    .flow-stage-accent.blue { background: #0066CC; }
+    .flow-stage-accent.green { background: #3D7317; }
+    .flow-stage-accent.purple { background: #6753AC; }
+    .flow-stage-body {
+      padding: 16px 14px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .flow-stage-phase {
+      font-family: 'Red Hat Display', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 6px;
+    }
+    .flow-stage-phase.red { color: #EE0000; }
+    .flow-stage-phase.blue { color: #0066CC; }
+    .flow-stage-phase.green { color: #3D7317; }
+    .flow-stage-phase.purple { color: #6753AC; }
+    .flow-stage-icon {
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .flow-stage-title {
+      font-family: 'Red Hat Display', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: #151515;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .flow-stage-subtitle {
+      font-size: 11px;
+      color: #6A6E73;
+      line-height: 1.4;
+    }
+    .flow-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      min-width: 48px;
+      gap: 3px;
+    }
+    .flow-arrow-label {
+      font-size: 9px;
+      font-weight: 500;
+      color: #6A6E73;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .flow-arrow-line svg {
+      width: 36px;
+      height: 12px;
+    }
+
+    /* --- Series callout --- */
+    .series-callout {
+      margin-top: 48px;
+      padding: 20px 24px;
+      background: #E0F0FF;
+      border-left: 4px solid #0066CC;
+      border-radius: 0 4px 4px 0;
+      font-size: 16px;
+      color: #003366;
+      line-height: 1.6;
+    }
+
+    /* --- Footer --- */
+    .rh-footer {
+      background: #151515;
+      padding: 40px 0;
+      margin-top: 0;
+    }
+    .rh-footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rh-footer-text {
+      color: #6A6E73;
+      font-size: 13px;
+    }
+    .rh-footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .rh-footer-links a {
+      color: #A3A3A3;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 30px;
+      }
+      .hero .subtitle {
+        font-size: 17px;
+      }
+      .article-wrap {
+        padding: 40px 20px 60px;
+      }
+      .article-wrap h2 {
+        font-size: 24px;
+      }
+      .tier-columns {
+        grid-template-columns: 1fr;
+      }
+      .tier-col {
+        border-right: none;
+        border-bottom: 1px solid #D2D2D2;
+      }
+      .tier-col:last-child {
+        border-bottom: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top banner -->
+  <header class="rh-banner">
+    <div class="rh-banner-inner">
+      <div class="rh-logo">
+        <svg viewBox="0 0 613 145" xmlns="http://www.w3.org/2000/svg">
+          <path d="M127.47 83.49c12.51 0 30.61-2.58 30.61-17.46a14 14 0 0 0-.31-3.42l-7.45-32.36c-1.72-7.12-3.23-10.35-15.73-16.6C124.89 8.69 103.76.5 97.51.5 91.69.5 90 8 83.06 8c-6.68 0-11.64-5.6-17.89-5.6-6 0-9.91 4.09-12.93 12.5 0 0-8.41 23.72-9.49 27.16a6.43 6.43 0 0 0-.22 1.94c0 9.22 36.3 39.45 84.94 39.45M127.47 83.49c-12.51 0-30.61 2.58-30.61 17.46a14 14 0 0 0 .31 3.42l7.45 32.36c1.72 7.12 3.23 10.35 15.73 16.6 9.7 4.96 30.83 13.15 37.08 13.15 5.82 0 7.51-7.5 14.45-7.5 6.68 0 11.64 5.6 17.89 5.6 6 0 9.91-4.09 12.93-12.5 0 0 8.41-23.72 9.49-27.16a6.43 6.43 0 0 0 .22-1.94c0-9.22-36.3-39.45-84.94-39.45" fill="#EE0000"/>
+          <text x="220" y="95" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="72" fill="#FFFFFF">Red Hat</text>
+        </svg>
+      </div>
+      <nav class="rh-nav">
+        <a href="#">Products</a>
+        <a href="#">Solutions</a>
+        <a href="#">Training</a>
+        <a href="#">Blog</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Breadcrumb bar -->
+  <div class="blog-bar">
+    <div class="blog-bar-inner">
+      <a href="#">Red Hat Blog</a>
+      <span class="sep">/</span>
+      <a href="#">Red Hat AI</a>
+      <span class="sep">/</span>
+      <span>MCP Catalog</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="hero-label">Red Hat OpenShift AI</span>
+      <h1>The MCP catalog is here: Discover, deploy, and connect on Red Hat OpenShift AI</h1>
+      <p class="subtitle">Your agents need tools and the MCP catalog in Red Hat OpenShift AI delivers them</p>
+      <div class="hero-meta">
+        <span class="author">Peter Double</span>
+        <span class="dot">&middot;</span>
+        <span>April 2026</span>
+        <span class="dot">&middot;</span>
+        <span>6 min read</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Article -->
+  <article class="article-wrap">
+
+    <p>You've tried it. You've pulled a <a href="https://modelcontextprotocol.io/">Model Context Protocol (MCP)</a> server from a GitHub repo, wrestled it into a container, sorted out authentication yourself, and hoped it would hold up in production. That is the state of MCP adoption in the enterprise today—promising protocol, but painful deployment.</p>
+
+    <p><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai">Red Hat OpenShift AI</a> 3.4, part of the <a href="https://www.redhat.com/en/products/ai">Red Hat AI portfolio</a>, takes a different approach. We're introducing the MCP catalog (now in developer preview): a curated catalog of MCP servers that you can discover, deploy, and manage directly on <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift">Red Hat OpenShift</a>. It ships pre-loaded with MCP servers from Red Hat, our technology partners, and the open source community, and we are actively adding more. You can also "bring your own" MCP servers—the same lifecycle management and runtime connectivity that powers the catalog applies to any MCP server you deploy on your cluster.</p>
+
+    <p><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai/trial">Try Red Hat OpenShift AI</a> to explore the MCP catalog yourself.</p>
+
+    <p>This is not a static listing. Every MCP server in the catalog goes from discovery to running on your cluster, with lifecycle management and runtime connectivity built in. From there, it becomes consumable in gen AI studio, the interface in OpenShift AI where you experiment with and test AI agents and applications. This is the beginning of the enterprise MCP ecosystem we are building.</p>
+
+    <h2>The MCP catalog: From discovery to deployment</h2>
+
+    <p>Until now, <a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/working_with_the_model_catalog/overview-of-model-registries_working-model-catalog">AI hub</a> in OpenShift AI focused primarily on models. With OpenShift AI 3.4, MCP servers join the catalog as first-class citizens. It's also a significant step toward a broader AI asset surface that will expand in upcoming releases.</p>
+
+    <p>Most MCP catalogs available today, including Smithery, Docker MCP Catalog, and the official MCP registry, focus solely on discovery. They help you find servers, but deployment, security, and lifecycle management are your responsibility. Often, this means downloading a container image of unknown provenance and hoping the next update does not break your workload.</p>
+
+    <p>The MCP catalog in OpenShift AI closes that gap. When you browse the catalog in AI hub, you are looking at MCP servers validated for enterprise use, featuring:</p>
+
+    <ul>
+      <li><strong>Production-grade connectivity</strong>: streamable HTTP transport</li>
+      <li><strong>Secure hosting</strong>: images built on <a href="https://www.redhat.com/en/blog/introducing-red-hat-universal-base-image">Red Hat Universal Base Image</a> and scanned for vulnerabilities</li>
+      <li><strong>Automated deployment</strong>: when you select a server, the <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator">MCP lifecycle operator</a> deploys it on your cluster, creating the Kubernetes resources and exposing the service</li>
+    </ul>
+
+    <p>Once deployed, the <a href="https://github.com/Kuadrant/mcp-gateway">MCP gateway</a> handles runtime connectivity, providing identity-aware routing and per-tool metrics so your platform team knows exactly which agents are calling which tools.</p>
+
+    <p>The result is a governed path from discovery, to deployment, to consumption. Select, deploy, connect, consume.</p>
+
+    <p>Note that as of OpenShift AI 3.4, MCP lifecycle operator is available as developer preview, and MCP gateway is available as technical preview.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-stage">
+          <div class="flow-stage-accent red"></div>
+          <div class="flow-stage-body">
+            <div class="flow-stage-phase red">Select</div>
+            <div class="flow-stage-icon">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="10" height="10" rx="2" fill="#EE0000" opacity="0.8"/><rect x="16" y="2" width="10" height="10" rx="2" fill="#EE0000" opacity="0.5"/><rect x="2" y="16" width="10" height="10" rx="2" fill="#EE0000" opacity="0.5"/><rect x="16" y="16" width="10" height="10" rx="2" fill="#EE0000" opacity="0.3"/></svg>
+            </div>
+            <div class="flow-stage-title">MCP Catalog</div>
+            <div class="flow-stage-subtitle">Browse and select MCP servers in the AI Hub</div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-label">Deploy</div>
+          <div class="flow-arrow-line"><svg viewBox="0 0 40 12"><line x1="0" y1="6" x2="32" y2="6" stroke="#6A6E73" stroke-width="1.5"/><polygon points="32,2 40,6 32,10" fill="#6A6E73"/></svg></div>
+        </div>
+        <div class="flow-stage">
+          <div class="flow-stage-accent blue"></div>
+          <div class="flow-stage-body">
+            <div class="flow-stage-phase blue">Deploy</div>
+            <div class="flow-stage-icon">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" stroke="#0066CC" stroke-width="1.5" fill="none"/><circle cx="14" cy="7" r="2" fill="#0066CC"/><circle cx="7.5" cy="18" r="2" fill="#0066CC"/><circle cx="20.5" cy="18" r="2" fill="#0066CC"/><line x1="14" y1="9" x2="8.5" y2="16.5" stroke="#0066CC" stroke-width="1.2"/><line x1="14" y1="9" x2="19.5" y2="16.5" stroke="#0066CC" stroke-width="1.2"/><line x1="9.5" y1="18" x2="18.5" y2="18" stroke="#0066CC" stroke-width="1.2"/></svg>
+            </div>
+            <div class="flow-stage-title">MCP Lifecycle Operator</div>
+            <div class="flow-stage-subtitle">MCPServer CRD creates Deployment + Service</div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-label">Expose</div>
+          <div class="flow-arrow-line"><svg viewBox="0 0 40 12"><line x1="0" y1="6" x2="32" y2="6" stroke="#6A6E73" stroke-width="1.5"/><polygon points="32,2 40,6 32,10" fill="#6A6E73"/></svg></div>
+        </div>
+        <div class="flow-stage">
+          <div class="flow-stage-accent green"></div>
+          <div class="flow-stage-body">
+            <div class="flow-stage-phase green">Connect</div>
+            <div class="flow-stage-icon">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 14h6" stroke="#3D7317" stroke-width="1.5" stroke-linecap="round"/><path d="M18 14h6" stroke="#3D7317" stroke-width="1.5" stroke-linecap="round"/><path d="M14 4v6" stroke="#3D7317" stroke-width="1.5" stroke-linecap="round"/><path d="M14 18v6" stroke="#3D7317" stroke-width="1.5" stroke-linecap="round"/><circle cx="14" cy="14" r="4.5" stroke="#3D7317" stroke-width="1.5" fill="#3D7317" fill-opacity="0.15"/><circle cx="4" cy="14" r="2" fill="#3D7317" opacity="0.6"/><circle cx="24" cy="14" r="2" fill="#3D7317" opacity="0.6"/><circle cx="14" cy="4" r="2" fill="#3D7317" opacity="0.6"/><circle cx="14" cy="24" r="2" fill="#3D7317" opacity="0.6"/></svg>
+            </div>
+            <div class="flow-stage-title">MCP Gateway</div>
+            <div class="flow-stage-subtitle">Identity-aware routing and per-tool metrics</div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          <div class="flow-arrow-label">Route</div>
+          <div class="flow-arrow-line"><svg viewBox="0 0 40 12"><line x1="0" y1="6" x2="32" y2="6" stroke="#6A6E73" stroke-width="1.5"/><polygon points="32,2 40,6 32,10" fill="#6A6E73"/></svg></div>
+        </div>
+        <div class="flow-stage">
+          <div class="flow-stage-accent purple"></div>
+          <div class="flow-stage-body">
+            <div class="flow-stage-phase purple">Consume</div>
+            <div class="flow-stage-icon">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="3" y="6" width="22" height="14" rx="3" stroke="#6753AC" stroke-width="1.5" fill="none"/><circle cx="10" cy="16" r="1.5" fill="#6753AC" opacity="0.5"/><circle cx="14" cy="16" r="1.5" fill="#6753AC" opacity="0.5"/><circle cx="18" cy="16" r="1.5" fill="#6753AC" opacity="0.5"/><line x1="8" y1="11" x2="16" y2="11" stroke="#6753AC" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="flow-stage-title">gen AI studio</div>
+            <div class="flow-stage-subtitle">Build and test AI applications</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <figcaption style="font-size: 14px; color: #6A6E73; margin-top: -30px; margin-bottom: 24px; font-style: italic; line-height: 1.5;">Figure 1: Flow diagram showing the 4 stages of the MCP server lifecycle in Red Hat OpenShift AI: Discover in the MCP catalog, deploy via the MCP lifecycle operator, connect through the MCP gateway, and consume in gen AI studio, illustrating the governed path from catalog to agent.</figcaption>
+
+    <h2>MCP servers ready to use</h2>
+
+    <p>The catalog ships with 3 tiers of MCP servers, each addressing real enterprise workflows. Here's what's available today.</p>
+
+    <h3>3 Red Hat MCP servers</h3>
+
+    <p>Connect your AI agents directly to the platforms you already run.</p>
+
+    <ul>
+      <li><span class="company-logo"><img src="images/redhat.svg" alt="Red Hat"></span><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift"><strong>Red Hat OpenShift</strong></a>: Agents can query cluster state, manage workloads, and troubleshoot deployments through natural language. If a pod fails at 2 a.m., an engineer can simply ask the agent for the last 50 log lines and the resource status of the affected deployment. No context-switching between dashboards, no kubectl gymnastics.</li>
+      <li><span class="company-logo"><img src="images/redhat.svg" alt="Red Hat"></span><a href="https://www.redhat.com/en/technologies/management/ansible"><strong>Red Hat Ansible Automation Platform</strong></a>: Connect agents to your automation workflows. An agent can trigger Ansible Playbooks, check job status, and orchestrate configuration changes across infrastructure. For agent-driven operations (AgentOps) teams, this means incident response workflows that span detection, diagnosis, and remediation without leaving the agent context.</li>
+      <li><span class="company-logo"><img src="images/redhat.svg" alt="Red Hat"></span><a href="https://www.redhat.com/en/technologies/management/insights"><strong>Red Hat Lightspeed</strong></a> (formerly Red Hat Insights): Surface platform intelligence and recommendations through your AI agents. Instead of teams manually reviewing Red Hat Lightspeed advisories, an agent can pull the latest recommendations, correlate them with the cluster state, and suggest remediation steps, bringing operational insights directly into agentic workflows.</li>
+    </ul>
+
+    <h3>5 technology partner MCP servers</h3>
+
+    <p>Extend your agents into the broader enterprise stack.</p>
+
+    <ul>
+      <li><span class="company-logo"><img src="images/CFLT.svg" alt="Confluent"></span><strong>Confluent Cloud</strong>: Allow AI to manage and debug data streaming operations on Kafka and Flink.</li>
+      <li><span class="company-logo"><img src="images/EDB.svg" alt="EDB"></span><strong>EDB Postgres&reg; AI</strong>: Connect agents to the EDB Postgres&reg; AI platform for queries, schema management, and database operations, powered by the EDB pg-airman MCP server.</li>
+      <li><span class="company-logo"><img src="images/hashicorp.svg" alt="HashiCorp"></span><strong>IBM Terraform</strong>: Let agents provision and manage infrastructure as code, bridging the gap between AI-driven decisions and infrastructure execution.</li>
+      <li><span class="company-logo"><img src="images/azure.svg" alt="Microsoft Azure"></span><strong>Microsoft Azure</strong>: Enable agents to manage Azure resources, provision services, and automate cloud operations alongside your OpenShift workloads.</li>
+      <li><span class="company-logo"><img src="images/DT.svg" alt="Dynatrace"></span><strong>Dynatrace</strong>: Bring real-time insights into your agentic workflows. Agents can query performance data, get code-level insights for troubleshooting, optimization, and remediation across your environment.</li>
+    </ul>
+
+    <h3>2 community MCP servers</h3>
+
+    <p>Round out the data tier (listed in the catalog under "Other MCP servers").</p>
+
+    <ul>
+      <li><span class="company-logo"><img src="images/mongodb.svg" alt="MongoDB"></span><strong>MongoDB</strong>: Query and manage document collections through your agents. Useful for retrieval-augmented generation (RAG) workflows and applications backed by unstructured or semi-structured data.</li>
+      <li><span class="company-logo"><img src="images/mariadb.svg" alt="MariaDB"></span><strong>MariaDB</strong>: Relational database connectivity for agents that need to query and manage structured data stores.</li>
+    </ul>
+
+    <figure>
+      <a href="images/catalog-partners.png" target="_blank">
+        <img src="images/catalog-partners.png" alt="The MCP catalog in the Red Hat OpenShift AI hub displaying MCP server cards organized by tier (Red Hat, partner, and other), each with a deploy action, showing the governed path from discovery to deployment.">
+      </a>
+      <figcaption>Figure 2: The MCP catalog in the Red Hat OpenShift AI hub displaying MCP server cards organized by tier (Red Hat, partner, and other), each with a deploy action, showing the governed path from discovery to deployment.</figcaption>
+    </figure>
+
+    <p>To put this in concrete terms, before the MCP catalog, connecting any of these servers to your agents meant finding it on GitHub, building a container from source, debugging transport issues, and configuring authentication, all before you could make a single tool call. Now, you select it in the catalog and the MCP lifecycle operator handles the rest.</p>
+
+    <p><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator">Explore the MCP Lifecycle Operator on GitHub</a> to see how MCP servers are deployed and managed on Kubernetes.</p>
+
+    <h2>Building the enterprise MCP ecosystem</h2>
+
+    <p>The MCP servers you get in OpenShift AI 3.4 are just the beginning. We're building a comprehensive ecosystem designed for the demands of production.</p>
+
+    <ul>
+      <li><a href="https://docs.redhat.com/en/learn/ai-quickstarts"><strong>AI quickstarts</strong></a>: We are working with partners to deliver ready-to-run, industry-specific use cases. These playgrounds help teams move AI ideas from experimentation to production on open-source infrastructure.</li>
+      <li><strong>Scaling curation</strong>: Our validation process—from partner consent to technical scanning—is built to scale. As MCP servers mature, we will continue to add new assets to the pipeline.</li>
+      <li><strong>Enterprise governance</strong>: We are adding an enforcement layer to the foundation already laid by the MCP gateway. This includes supply chain controls to verify provenance, trust tiers for certified assets, and full auditability of the tool calls an agent makes.</li>
+    </ul>
+
+    <h2>Get started</h2>
+
+    <p>The MCP catalog gives platform teams a governed, production-ready path from discovery to deployment, with curated servers, validated images, and lifecycle management on your cluster.</p>
+
+    <p>It's available now in Red Hat OpenShift AI 3.4 in developer preview. <a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai/trial">Try Red Hat OpenShift AI</a> to explore the MCP catalog and deploy your first MCP server on OpenShift. Are you attending Red Hat Summit 2026 in Atlanta (May 11-14)? Come see the MCP catalog and MCP lifecycle operator in action.</p>
+
+    <div class="series-callout">
+      This is the first post in a series on the MCP ecosystem in Red Hat OpenShift AI. Stay tuned for hands-on quickstarts with our partner MCP servers.
+    </div>
+
+  </article>
+
+  <!-- Footer -->
+  <footer class="rh-footer">
+    <div class="rh-footer-inner">
+      <div class="rh-footer-text">&copy; 2026 Red Hat, Inc.</div>
+      <div class="rh-footer-links">
+        <a href="#">Privacy statement</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Cookie preferences</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Skills Registry Strategy — Red Hat OpenShift AI</title>
+  <meta name="description" content="Engineering deep dive into RHOAI's skills registry strategy: upstream MLflow contributions, enterprise governance, and phased roadmap." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === NAVIGATION === */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-family: var(--font-text);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* === SECTIONS === */
+    section {
+      padding: 5rem 1.5rem;
+      scroll-margin-top: calc(var(--nav-height) + 16px);
+    }
+    .section-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; }
+    .accent     { color: var(--rh-red); }
+
+    /* === HERO === */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding-top: calc(var(--nav-height) + 3rem);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -100px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238, 0, 0, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+    }
+
+    /* === SCENARIO CARDS === */
+    .scenario-card {
+      flex: 1;
+      min-width: 280px;
+      background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02));
+      border: 1px solid rgba(238,0,0,0.2);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .scenario-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--rh-red), #ff4444);
+    }
+
+    /* === CAPABILITY CARDS === */
+    .cap-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      transition: border-color 300ms, transform 200ms;
+    }
+    .cap-card:hover {
+      border-color: var(--border-muted);
+      transform: translateY(-1px);
+    }
+    .cap-tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 600;
+    }
+    .cap-dot {
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    /* === TAXONOMY DIAGRAM === */
+    .taxonomy-level {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      border-radius: 10px;
+      position: relative;
+    }
+    .taxonomy-connector {
+      width: 2px;
+      height: 32px;
+      margin-left: 2.75rem;
+    }
+
+    /* === TWO-TRACK DIAGRAM === */
+    .track-card {
+      background: var(--bg-elevated);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid var(--border-subtle);
+    }
+    .track-item {
+      padding: 0.3rem 0 0.3rem 1rem;
+      position: relative;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+    }
+    .track-dot {
+      position: absolute;
+      left: 0;
+      top: 0.65rem;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    /* === TRUST PIPELINE === */
+    .trust-tier {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 10px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .trust-arrow {
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      opacity: 0.5;
+    }
+
+    /* === RFE LINKS === */
+    .rfe-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: 0.85rem;
+      transition: border-color 200ms, transform 150ms;
+    }
+    .rfe-link:hover {
+      border-color: var(--rh-blue-light);
+      transform: translateX(4px);
+    }
+    .rfe-id {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--rh-blue-light);
+      white-space: nowrap;
+    }
+
+    /* === SCROLL ANIMATIONS === */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+      .cap-grid, .track-grid, .roadmap-grid { grid-template-columns: 1fr !important; }
+      .trust-pipeline { flex-direction: column; }
+      .trust-arrow { transform: rotate(90deg); }
+      .stats-strip { flex-direction: column; gap: 1rem !important; }
+    }
+    @media (max-width: 1024px) {
+      .nav-links { gap: 1rem; }
+    }
+
+    /* === PRINT === */
+    @media print {
+      nav { display: none; }
+      section { break-inside: avoid; padding: 2rem 0; }
+      .hero { min-height: auto; padding-top: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 613 145" height="20">
+          <path fill="#e00" d="M127.47,83.49c12.51,0,30.61-2.58,30.61-17.46a14,14,0,0,0-.31-3.42l-7.45-32.36c-1.72-7.12-3.23-10.35-15.73-16.6C124.89,8.69,103.76.5,97.51.5,91.69.5,90,8,83.06,8c-6.68,0-11.64-5.6-17.89-5.6-6,0-9.91,4.09-12.93,12.5,0,0-8.41,23.72-9.49,27.16A6.43,6.43,0,0,0,42.53,44c0,9.22,36.3,39.45,84.94,39.45M160,72.07c1.73,8.19,1.73,9.05,1.73,10.13,0,14-15.74,21.77-36.43,21.77C78.54,104,37.58,76.6,37.58,58.49a18.45,18.45,0,0,1,1.51-7.33C22.27,52,.5,55,.5,74.22c0,31.48,74.59,70.28,133.65,70.28,45.28,0,56.7-20.48,56.7-36.65,0-12.72-11-27.16-30.83-35.78"/>
+          <path fill="#e00" d="M160,72.07c1.73,8.19,1.73,9.05,1.73,10.13,0,14-15.74,21.77-36.43,21.77C78.54,104,37.58,76.6,37.58,58.49a18.45,18.45,0,0,1,1.51-7.33l3.66-9.06A6.43,6.43,0,0,0,42.53,44c0,9.22,36.3,39.45,84.94,39.45,12.51,0,30.61-2.58,30.61-17.46a14,14,0,0,0-.31-3.42Z"/>
+          <path fill="#fff" d="M579.74,92.8c0,11.89,7.15,17.67,20.19,17.67a52.11,52.11,0,0,0,11.89-1.68V95a24.84,24.84,0,0,1-7.68,1.16c-5.37,0-7.36-1.68-7.36-6.73V68.3h15.56V54.1H596.78v-18l-17,3.68V54.1H568.49V68.3h11.25Zm-53,.32c0-3.68,3.69-5.47,9.26-5.47a43.12,43.12,0,0,1,10.1,1.26v7.15a21.51,21.51,0,0,1-10.63,2.63c-5.46,0-8.73-2.1-8.73-5.57m5.2,17.56c6,0,10.84-1.26,15.36-4.31v3.37h16.82V74.08c0-13.56-9.14-21-24.39-21-8.52,0-16.94,2-26,6.1l6.1,12.52c6.52-2.74,12-4.42,16.83-4.42,7,0,10.62,2.73,10.62,8.31v2.73a49.53,49.53,0,0,0-12.62-1.58c-14.31,0-22.93,6-22.93,16.73,0,9.78,7.78,17.24,20.19,17.24m-92.44-.94h18.09V80.92h30.29v28.82H506V36.12H487.93V64.41H457.64V36.12H439.55ZM370.62,81.87c0-8,6.31-14.1,14.62-14.1A17.22,17.22,0,0,1,397,72.09V91.54A16.36,16.36,0,0,1,385.24,96c-8.2,0-14.62-6.1-14.62-14.09m26.61,27.87h16.83V32.44l-17,3.68V57.05a28.3,28.3,0,0,0-14.2-3.68c-16.19,0-28.92,12.51-28.92,28.5a28.25,28.25,0,0,0,28.4,28.6,25.12,25.12,0,0,0,14.93-4.83ZM320,67c5.36,0,9.88,3.47,11.67,8.83H308.47C310.15,70.3,314.36,67,320,67M291.33,82c0,16.2,13.25,28.82,30.28,28.82,9.36,0,16.2-2.53,23.25-8.42l-11.26-10c-2.63,2.74-6.52,4.21-11.14,4.21a14.39,14.39,0,0,1-13.68-8.83h39.65V83.55c0-17.67-11.88-30.39-28.08-30.39a28.57,28.57,0,0,0-29,28.81M262,51.58c6,0,9.36,3.78,9.36,8.31S268,68.2,262,68.2H244.11V51.58Zm-36,58.16h18.09V82.92h13.77l13.89,26.82H292l-16.2-29.45a22.27,22.27,0,0,0,13.88-20.72c0-13.25-10.41-23.45-26-23.45H226Z"/>
+        </svg>
+        <span class="nav-title">Skills Registry Strategy</span>
+      </div>
+      <div class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#taxonomy">Taxonomy</a>
+        <a href="#landscape">Landscape</a>
+        <a href="#strategy">Strategy</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#roadmap">Roadmap</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RHOAI SKILLS STRATEGY</div>
+      <h1 class="display-xl animate-on-scroll"><span class="accent">Skills</span> Are the Next AI Asset Class</h1>
+      <p class="lead animate-on-scroll">And they need governance. Here's how Red Hat is building the skills registry &mdash; upstream in MLflow and downstream in OpenShift AI.</p>
+
+      <div class="animate-on-scroll stats-strip" style="display: flex; gap: 2.5rem; margin-top: 2rem;">
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">12-20%</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Malicious Rate (ClawHub)</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">7+</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Packaging Formats</div>
+        </div>
+        <div>
+          <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">0</div>
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Production Registries</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE PROBLEM ===== -->
+  <section id="problem">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE PROBLEM</div>
+      <h2 class="display-lg animate-on-scroll">Skills Are Proliferating Without Governance</h2>
+      <p class="lead animate-on-scroll">AI skills are spreading across frameworks, formats, and distribution channels. Enterprises have no visibility into what's running, who approved it, or what version is in use.</p>
+
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem;">
+
+        <div class="scenario-card animate-on-scroll">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.5rem;">Supply Chain Attack</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            The <strong style="color: var(--text-primary);">ClawHub crisis</strong> revealed 12-20% of skills in open registries were malicious &mdash; including CVE-2026-25253 enabling remote code execution. Skills face the same supply chain risks as npm/PyPI, <em>plus</em> prompt injection vectors.
+          </p>
+        </div>
+
+        <div class="scenario-card animate-on-scroll">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.5rem;">Format Fragmentation</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            Skills exist as <strong style="color: var(--text-primary);">SKILL.md files, Python packages, npm modules, OCI containers, zip bundles, OpenAPI specs</strong>, and more. No consistent metadata, no interoperable manifest format, no standard lifecycle.
+          </p>
+        </div>
+
+        <div class="scenario-card animate-on-scroll">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.5rem;">No Governance Layer</div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            When an engineer grabs a skill from GitHub, there is <strong style="color: var(--text-primary);">no versioning, no approval workflow, no deprecation process, no dependency tracking</strong>. Once consumed, execution is invisible to the platform.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Quote callout -->
+      <div class="animate-on-scroll" style="border-left: 3px solid var(--rh-red); padding: 1rem 1.5rem; background: rgba(238,0,0,0.04); border-radius: 0 8px 8px 0; margin-top: 2rem;">
+        <p style="font-family: var(--font-text); font-size: 1rem; color: var(--text-primary); font-style: italic; line-height: 1.6; margin: 0;">
+          "There is no standardized skills registry anywhere. The market has tool definitions, agent protocols, and community catalogs &mdash; but no one has built the governance layer."
+        </p>
+        <p style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin: 0.5rem 0 0; text-transform: uppercase; letter-spacing: 0.1em;">
+          &mdash; RHOAI Skills Research, April 2026
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== WHAT IS A SKILL? ===== -->
+  <section id="taxonomy">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">TAXONOMY</div>
+      <h2 class="display-lg animate-on-scroll">What Is a Skill?</h2>
+      <p class="lead animate-on-scroll">A <strong style="color: var(--text-primary);">named, versioned, reusable AI capability</strong> that may be backed by MCP servers, CLI tools, prompt templates, instruction sets, or code libraries. Skills sit above individual tools but below full agents.</p>
+
+      <!-- Taxonomy hierarchy diagram -->
+      <div class="animate-on-scroll" style="max-width: 600px; margin: 2.5rem auto 0;">
+
+        <!-- Agent level -->
+        <div class="taxonomy-level" style="background: rgba(103,83,172,0.1); border: 1px solid rgba(103,83,172,0.3);">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(103,83,172,0.2); display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#876FD4" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Agent</div>
+            <div style="font-family: var(--font-text); font-size: 0.8rem; color: var(--text-muted);">Composed runtime capability &mdash; orchestrates skills to achieve goals</div>
+          </div>
+          <div style="margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.1em;">ORCHESTRATION</div>
+        </div>
+
+        <div class="taxonomy-connector" style="background: linear-gradient(to bottom, rgba(103,83,172,0.3), rgba(238,0,0,0.3));"></div>
+
+        <!-- Skill level -->
+        <div class="taxonomy-level" style="background: rgba(238,0,0,0.08); border: 2px solid rgba(238,0,0,0.4);">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(238,0,0,0.15); display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EE0000" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Skill</div>
+            <div style="font-family: var(--font-text); font-size: 0.8rem; color: var(--text-muted);">Reusable capability &mdash; governed in the registry</div>
+          </div>
+          <div style="margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em;">GOVERNANCE</div>
+        </div>
+
+        <div class="taxonomy-connector" style="background: linear-gradient(to bottom, rgba(238,0,0,0.3), rgba(0,149,150,0.3));"></div>
+
+        <!-- Tool level -->
+        <div class="taxonomy-level" style="background: rgba(0,149,150,0.08); border: 1px solid rgba(0,149,150,0.3);">
+          <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(0,149,150,0.15); display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#37A3A3" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary);">Tool / MCP Tool</div>
+            <div style="font-family: var(--font-text); font-size: 0.8rem; color: var(--text-muted);">Atomic function &mdash; single-purpose operations</div>
+          </div>
+          <div style="margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em;">EXECUTION</div>
+        </div>
+
+      </div>
+
+      <!-- SKILL.md callout -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">SKILL.md &mdash; The Emerging Standard</h3>
+        <p class="body">Launched by Anthropic (Dec 2025) and adopted by OpenAI Codex, Google Gemini CLI, GitHub Copilot, and VS Code. A directory with YAML frontmatter + markdown instructions + optional scripts/resources. Progressive disclosure: metadata at startup, instructions on demand, resources during execution.</p>
+
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 100px; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.2);">Anthropic</span>
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 100px; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.2);">OpenAI</span>
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 100px; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.2);">Google</span>
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 100px; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.2);">GitHub</span>
+          <span style="font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.2rem 0.6rem; border-radius: 100px; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); border: 1px solid rgba(0,102,204,0.2);">VS Code</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE LANDSCAPE ===== -->
+  <section id="landscape">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE LANDSCAPE</div>
+      <h2 class="display-lg animate-on-scroll">Nobody Has Built This Yet</h2>
+      <p class="lead animate-on-scroll">The market has tool definitions, agent protocols, packaging formats, and community catalogs. But no one has built the governed registry layer for skills.</p>
+
+      <!-- Competitive landscape cards -->
+      <div class="animate-on-scroll cap-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem;">
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-orange);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(244,180,0,0.12); color: var(--rh-orange);">Gap</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.4rem;">MLflow Issue #20435</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-text);">Skills version management requested. Maintainer invited a design proposal in February. <strong style="color: var(--text-primary);">Nobody has submitted one.</strong> This is Red Hat's window.</div>
+        </div>
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-green);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(62,134,53,0.12); color: var(--rh-green);">Validation</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.4rem;">Databricks MVP Prototype</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-text);">B-Step62/mlflow branch <code style="font-family: var(--font-mono); font-size: 0.75rem; background: rgba(255,255,255,0.06); padding: 0.1rem 0.3rem; border-radius: 3px;">skill-registry-mvp</code> validates the dedicated entity type approach. Stores markdown as MLflow artifacts.</div>
+        </div>
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-blue);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(0,102,204,0.12); color: var(--rh-blue-light);">Competitor</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.4rem;">AWS Agent Registry</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-text);">Cedar-based policy, semantic search. Preview April 2026. <em>But:</em> Not open source, not on-prem, not federated.</div>
+        </div>
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-blue);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(0,102,204,0.12); color: var(--rh-blue-light);">Competitor</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.4rem;">JFrog Skills Registry</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-text);">Strong supply chain security: scan-verify-sign. <em>But:</em> Security-only &mdash; no lifecycle, approval, or certification governance.</div>
+        </div>
+
+      </div>
+
+      <!-- Consumption models -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Two Consumption Models</h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="track-grid">
+
+          <div style="background: linear-gradient(135deg, rgba(0,149,150,0.06), rgba(0,149,150,0.02)); border: 1px solid rgba(0,149,150,0.2); border-radius: 12px; padding: 1.5rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Client-Side (Dominant Today)</div>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5;">Agent downloads the skill artifact and runs it locally. Skill code executes in the agent's context. Registry enforces policy at <em>resolution time</em>, but post-download execution is outside registry control.</p>
+          </div>
+
+          <div style="background: linear-gradient(135deg, rgba(103,83,172,0.06), rgba(103,83,172,0.02)); border: 1px solid rgba(103,83,172,0.2); border-radius: 12px; padding: 1.5rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-purple); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">Server-Side (Emerging)</div>
+            <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5;">Server executes skills on behalf of agents via API (e.g., Responses API). Enables runtime controls, observability, and policy enforcement. Requires additional infrastructure.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== TWO-TRACK STRATEGY ===== -->
+  <section id="strategy">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE STRATEGY</div>
+      <h2 class="display-lg animate-on-scroll">Two-Track Model: Upstream + Downstream</h2>
+      <p class="lead animate-on-scroll">Same pattern as MCP Registry. Upstream gets adoption and community. Downstream gets enterprise governance. Both share the same entity model.</p>
+
+      <!-- Two-track diagram -->
+      <div class="animate-on-scroll track-grid" style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.5rem; margin-top: 2.5rem; align-items: start;">
+
+        <!-- Track 1: Upstream -->
+        <div class="track-card" style="border-top: 3px solid var(--rh-teal);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">Track 1 &mdash; Upstream (MLflow)</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.75rem;">Registry Primitives</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-teal);"></span>Skill + SkillVersion entities</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-teal);"></span>Versioning (auto-increment, immutable)</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-teal);"></span>Publish state: Draft / Published / Deprecated</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-teal);"></span>Tags and aliases</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-teal);"></span>Opaque artifact storage</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-teal);"></span>Workspace-scoped visibility</div>
+          <div style="margin-top: 1rem; font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">7 User Stories (U1&ndash;U7)</div>
+        </div>
+
+        <!-- Bridge -->
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 3rem; gap: 0.5rem;">
+          <div style="width: 2px; height: 60px; background: linear-gradient(to bottom, var(--rh-teal), var(--rh-red));"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; writing-mode: vertical-rl; text-orientation: mixed; padding: 0.5rem 0;">Shared Data Model</div>
+          <div style="width: 2px; height: 60px; background: linear-gradient(to bottom, var(--rh-red), var(--rh-teal));"></div>
+        </div>
+
+        <!-- Track 2: RHOAI -->
+        <div class="track-card" style="border-top: 3px solid var(--rh-red);">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem;">Track 2 &mdash; RHOAI (Downstream)</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); margin-bottom: 0.75rem;">Enterprise Governance</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-red);"></span>Approval workflows &amp; certification</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-red);"></span>Trust tiers (Red Hat / Partner / Community / Unverified)</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-red);"></span>Security scanning (code + prompt injection)</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-red);"></span>Catalog integration (Kubeflow Hub)</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-red);"></span>AAA/Studio consumption integration</div>
+          <div class="track-item"><span class="track-dot" style="background: var(--rh-red);"></span>Ingestion pipeline &amp; relationship tracking</div>
+          <div style="margin-top: 1rem; font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">8 User Stories (R1&ndash;R8)</div>
+        </div>
+
+      </div>
+
+      <!-- Registry vs Catalog -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Registry vs. Catalog</h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="track-grid">
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-top: 3px solid var(--rh-red); border-radius: 0 0 12px 12px; padding: 1.5rem;">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Registry (MLflow)</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-red); text-transform: uppercase; margin-bottom: 0.75rem;">= Governance</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">System of record for identity, versioning, lifecycle, trust. <em>"Who is this skill, what state is it in, is it approved?"</em></p>
+          </div>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-top: 3px solid var(--rh-blue); border-radius: 0 0 12px 12px; padding: 1.5rem;">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Catalog (Kubeflow Hub)</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; margin-bottom: 0.75rem;">= Discovery</div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">Browsing, searching, filtering, trust-tier presentation. <em>"What skills are available to me?"</em></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== ARCHITECTURE ===== -->
+  <section id="architecture">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ARCHITECTURE</div>
+      <h2 class="display-lg animate-on-scroll">Data Model &amp; Governance</h2>
+      <p class="lead animate-on-scroll">The skills registry extends the MCP registry pattern: same backend, same governance tracks, same workspace scoping. The key difference &mdash; skills are consumed as artifacts, not deployed as services.</p>
+
+      <!-- Entity model comparison table -->
+      <div class="animate-on-scroll" style="margin-top: 2rem; overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; font-family: var(--font-text);">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-muted);">
+              <th style="text-align: left; padding: 0.75rem; font-family: var(--font-sans); font-weight: 600; color: var(--text-primary);">Pattern</th>
+              <th style="text-align: left; padding: 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-teal); text-transform: uppercase;">MCP Registry</th>
+              <th style="text-align: left; padding: 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-red); text-transform: uppercase;">Skills Registry</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Backend</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">MLflow</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">MLflow</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Entity model</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">MCPServer + MCPServerVersion</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Skill + SkillVersion</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Governance tracks</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Lifecycle, Approval, Verification, Certification</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Same</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Payload</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Immutable <code style="font-family: var(--font-mono); font-size: 0.8rem; background: rgba(255,255,255,0.06); padding: 0.1rem 0.3rem; border-radius: 3px;">server_json</code></td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Immutable skill artifact reference</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Catalog</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Kubeflow Hub</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Kubeflow Hub</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Deployment</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--text-secondary);">Lifecycle Operator + Gateway</td>
+              <td style="padding: 0.6rem 0.75rem; color: var(--rh-red);"><strong>Not applicable</strong> &mdash; artifact consumption</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Trust tiers pipeline -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Trust Tiers</h3>
+
+        <div class="trust-pipeline" style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; justify-content: center;">
+
+          <div class="trust-tier" style="background: rgba(140,140,140,0.08); border: 1px solid rgba(140,140,140,0.25);">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--text-muted);">Unverified</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Warning, admin opt-in only</div>
+          </div>
+
+          <div class="trust-arrow">&#x2192;</div>
+
+          <div class="trust-tier" style="background: rgba(0,102,204,0.08); border: 1px solid rgba(0,102,204,0.25);">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--rh-blue-light);">Community</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Basic scanning, no SLA</div>
+          </div>
+
+          <div class="trust-arrow">&#x2192;</div>
+
+          <div class="trust-tier" style="background: rgba(103,83,172,0.08); border: 1px solid rgba(103,83,172,0.25);">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: #876FD4;">Partner</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Attestation + scanning + review</div>
+          </div>
+
+          <div class="trust-arrow">&#x2192;</div>
+
+          <div class="trust-tier" style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.25);">
+            <div style="font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--rh-red);">Red Hat</div>
+            <div style="font-family: var(--font-text); font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Full review + testing + security</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Governance tracks -->
+      <div class="animate-on-scroll cap-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem;">
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-red);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(238,0,0,0.12); color: var(--rh-red);">Lifecycle</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem;">Draft &rarr; Published &rarr; Deprecated</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">Version progression and retirement. Immutable once published.</div>
+        </div>
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-purple);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(103,83,172,0.12); color: #876FD4;">Approval</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem;">Pending &rarr; Approved &rarr; Rejected</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">Organizational sign-off before consumption is allowed.</div>
+        </div>
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-teal);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(0,149,150,0.12); color: var(--rh-teal);">Verification</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem;">Security Scanning &amp; Validation</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">Code scanning (SAST), prompt injection detection, dependency analysis.</div>
+        </div>
+
+        <div class="cap-card" style="border-left: 4px solid var(--rh-green);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+            <span class="cap-tag" style="background: rgba(62,134,53,0.12); color: var(--rh-green);">Certification</span>
+          </div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; color: var(--text-primary); margin-bottom: 0.3rem;">Red Hat &amp; Partner Certification</div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">Formal certification for Red Hat and partner trust tiers.</div>
+        </div>
+
+      </div>
+
+      <!-- Ingestion pipeline -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem;">
+        <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">Ingestion Pipeline</h3>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem;">Step 1</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">Discover</div>
+          </div>
+
+          <div style="color: var(--rh-red); font-size: 1rem; opacity: 0.6;">&#x2192;</div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem;">Step 2</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">Validate</div>
+          </div>
+
+          <div style="color: var(--rh-red); font-size: 1rem; opacity: 0.6;">&#x2192;</div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem;">Step 3</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">Scan</div>
+            <div style="font-family: var(--font-text); font-size: 0.65rem; color: var(--text-muted); margin-top: 0.15rem;">Code + prompts</div>
+          </div>
+
+          <div style="color: var(--rh-red); font-size: 1rem; opacity: 0.6;">&#x2192;</div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem;">Step 4</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">Evaluate</div>
+          </div>
+
+          <div style="color: var(--rh-red); font-size: 1rem; opacity: 0.6;">&#x2192;</div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem;">Step 5</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">Register</div>
+            <div style="font-family: var(--font-text); font-size: 0.65rem; color: var(--text-muted); margin-top: 0.15rem;">Draft state</div>
+          </div>
+
+          <div style="color: var(--rh-red); font-size: 1rem; opacity: 0.6;">&#x2192;</div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.75rem 1rem; text-align: center; min-width: 100px;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem;">Step 6</div>
+            <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.8rem; color: var(--text-primary);">Publish</div>
+          </div>
+
+        </div>
+
+        <p class="body" style="margin-top: 1rem; text-align: center; max-width: 100%;">Unlike MCP servers, skills skip the <em>containerize</em> step &mdash; they are consumed as artifacts, not deployed as services.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== ROADMAP ===== -->
+  <section id="roadmap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ROADMAP</div>
+      <h2 class="display-lg animate-on-scroll">Phased Delivery</h2>
+
+      <div class="animate-on-scroll roadmap-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem;">
+
+        <!-- Phase 1 -->
+        <div style="border-top: 3px solid var(--rh-green); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.15em;">Phase 1 &mdash; MVP</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0.5rem 0;">3.5 Dev Preview</div>
+          <div style="font-family: var(--font-text); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Upstream + basic governance</div>
+          <ul style="list-style: none; padding: 0;">
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>MLflow Skill + SkillVersion entities</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Versioning and publish states</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Governance metadata layer</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Trust tier assignment</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-green);"></span>Basic catalog + consumption integration</li>
+          </ul>
+          <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.4rem;">
+            <a href="https://issues.redhat.com/browse/RHAIRFE-1712" target="_blank" class="rfe-link" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">
+              <span class="rfe-id">RHAIRFE-1712</span>
+              <span style="color: var(--text-secondary);">Skills Public Registry</span>
+            </a>
+            <a href="https://issues.redhat.com/browse/RHAIRFE-1713" target="_blank" class="rfe-link" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">
+              <span class="rfe-id">RHAIRFE-1713</span>
+              <span style="color: var(--text-secondary);">Skills In-Cluster Registry</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div style="border-top: 3px solid var(--rh-blue); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em;">Phase 2 &mdash; Hardening</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0.5rem 0;">3.5 GA / 3.6</div>
+          <div style="font-family: var(--font-text); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Full pipeline + relationships</div>
+          <ul style="list-style: none; padding: 0;">
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-blue-light);"></span>Security scanning integration</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-blue-light);"></span>Full ingestion pipeline</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-blue-light);"></span>First-class entity relationships</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-blue-light);"></span>Skill evaluation framework</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-blue-light);"></span>Skill packs (composite asset type)</li>
+          </ul>
+          <div style="margin-top: 0.75rem;">
+            <a href="https://issues.redhat.com/browse/RHAIRFE-2207" target="_blank" class="rfe-link" style="font-size: 0.75rem; padding: 0.5rem 0.75rem;">
+              <span class="rfe-id">RHAIRFE-2207</span>
+              <span style="color: var(--text-secondary);">Skills Catalog: Discovery &amp; Acquisition</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div style="border-top: 3px solid var(--rh-purple); padding-top: 1rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #876FD4; text-transform: uppercase; letter-spacing: 0.15em;">Phase 3 &mdash; Platform</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0.5rem 0;">Future</div>
+          <div style="font-family: var(--font-text); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Enterprise + ecosystem</div>
+          <ul style="list-style: none; padding: 0;">
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: #876FD4;"></span>Server-side skill consumption</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: #876FD4;"></span>Cross-cluster distribution &amp; sync</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: #876FD4;"></span>Partner skill onboarding pipeline</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: #876FD4;"></span>Policy-as-code (Cedar or equivalent)</li>
+            <li style="font-size: 0.8rem; color: var(--text-secondary); padding: 0.2rem 0 0.2rem 1rem; position: relative;"><span style="position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px; border-radius: 50%; background: #876FD4;"></span>Advanced composition &amp; dependency resolution</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== CTA ===== -->
+  <section id="cta" style="text-align: center;">
+    <div class="section-inner" style="display: flex; flex-direction: column; align-items: center;">
+      <div class="section-label animate-on-scroll">GET INVOLVED</div>
+      <h2 class="display-lg animate-on-scroll">Where Engineers Can Engage</h2>
+      <p class="lead animate-on-scroll" style="text-align: center; max-width: 60ch;">The skills registry is being built now. Here's where you can contribute, review, and shape the direction.</p>
+
+      <!-- Engagement cards -->
+      <div class="animate-on-scroll" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; text-align: left; width: 100%;" class="roadmap-grid">
+
+        <div class="card" style="cursor: default;">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Upstream</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.4rem;">MLflow Contribution</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">Design proposal for MLflow issue #20435. Review Skill + SkillVersion entity PR when submitted.</p>
+        </div>
+
+        <div class="card" style="cursor: default;">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Design Reviews</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.4rem;">RHOAI Integration</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">Skills governance in RHOAI. Catalog, AAA/Studio, and ingestion pipeline design reviews.</p>
+        </div>
+
+        <div class="card" style="cursor: default;">
+          <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Packaging</div>
+          <div style="font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); margin-bottom: 0.4rem;">Skill Format RFC</div>
+          <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">Input on SKILL.md as baseline format. OCI artifact packaging for Phase 2. Framework interop.</p>
+        </div>
+
+      </div>
+
+      <!-- Jira links section -->
+      <div class="animate-on-scroll" style="margin-top: 2.5rem; width: 100%; max-width: 700px;">
+        <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.75rem; text-align: center;">Jira RFEs</div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <a href="https://issues.redhat.com/browse/RHAIRFE-2207" target="_blank" class="rfe-link">
+            <span class="rfe-id">RHAIRFE-2207</span>
+            <span>Skills Catalog: Discovery and Acquisition of AI Skills in RHOAI</span>
+            <span style="margin-left: auto; font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase;">Critical</span>
+          </a>
+          <a href="https://issues.redhat.com/browse/RHAIRFE-1712" target="_blank" class="rfe-link">
+            <span class="rfe-id">RHAIRFE-1712</span>
+            <span>Skills Public Registry</span>
+          </a>
+          <a href="https://issues.redhat.com/browse/RHAIRFE-1713" target="_blank" class="rfe-link">
+            <span class="rfe-id">RHAIRFE-1713</span>
+            <span>Skills In-Cluster Registry</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <div style="margin-bottom: 0.75rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 613 145" height="18" style="opacity: 0.6;">
+        <path fill="#e00" d="M127.47,83.49c12.51,0,30.61-2.58,30.61-17.46a14,14,0,0,0-.31-3.42l-7.45-32.36c-1.72-7.12-3.23-10.35-15.73-16.6C124.89,8.69,103.76.5,97.51.5,91.69.5,90,8,83.06,8c-6.68,0-11.64-5.6-17.89-5.6-6,0-9.91,4.09-12.93,12.5,0,0-8.41,23.72-9.49,27.16A6.43,6.43,0,0,0,42.53,44c0,9.22,36.3,39.45,84.94,39.45M160,72.07c1.73,8.19,1.73,9.05,1.73,10.13,0,14-15.74,21.77-36.43,21.77C78.54,104,37.58,76.6,37.58,58.49a18.45,18.45,0,0,1,1.51-7.33C22.27,52,.5,55,.5,74.22c0,31.48,74.59,70.28,133.65,70.28,45.28,0,56.7-20.48,56.7-36.65,0-12.72-11-27.16-30.83-35.78"/>
+        <path fill="#e00" d="M160,72.07c1.73,8.19,1.73,9.05,1.73,10.13,0,14-15.74,21.77-36.43,21.77C78.54,104,37.58,76.6,37.58,58.49a18.45,18.45,0,0,1,1.51-7.33l3.66-9.06A6.43,6.43,0,0,0,42.53,44c0,9.22,36.3,39.45,84.94,39.45,12.51,0,30.61-2.58,30.61-17.46a14,14,0,0,0-.31-3.42Z"/>
+        <path fill="#fff" d="M579.74,92.8c0,11.89,7.15,17.67,20.19,17.67a52.11,52.11,0,0,0,11.89-1.68V95a24.84,24.84,0,0,1-7.68,1.16c-5.37,0-7.36-1.68-7.36-6.73V68.3h15.56V54.1H596.78v-18l-17,3.68V54.1H568.49V68.3h11.25Zm-53,.32c0-3.68,3.69-5.47,9.26-5.47a43.12,43.12,0,0,1,10.1,1.26v7.15a21.51,21.51,0,0,1-10.63,2.63c-5.46,0-8.73-2.1-8.73-5.57m5.2,17.56c6,0,10.84-1.26,15.36-4.31v3.37h16.82V74.08c0-13.56-9.14-21-24.39-21-8.52,0-16.94,2-26,6.1l6.1,12.52c6.52-2.74,12-4.42,16.83-4.42,7,0,10.62,2.73,10.62,8.31v2.73a49.53,49.53,0,0,0-12.62-1.58c-14.31,0-22.93,6-22.93,16.73,0,9.78,7.78,17.24,20.19,17.24m-92.44-.94h18.09V80.92h30.29v28.82H506V36.12H487.93V64.41H457.64V36.12H439.55ZM370.62,81.87c0-8,6.31-14.1,14.62-14.1A17.22,17.22,0,0,1,397,72.09V91.54A16.36,16.36,0,0,1,385.24,96c-8.2,0-14.62-6.1-14.62-14.09m26.61,27.87h16.83V32.44l-17,3.68V57.05a28.3,28.3,0,0,0-14.2-3.68c-16.19,0-28.92,12.51-28.92,28.5a28.25,28.25,0,0,0,28.4,28.6,25.12,25.12,0,0,0,14.93-4.83ZM320,67c5.36,0,9.88,3.47,11.67,8.83H308.47C310.15,70.3,314.36,67,320,67M291.33,82c0,16.2,13.25,28.82,30.28,28.82,9.36,0,16.2-2.53,23.25-8.42l-11.26-10c-2.63,2.74-6.52,4.21-11.14,4.21a14.39,14.39,0,0,1-13.68-8.83h39.65V83.55c0-17.67-11.88-30.39-28.08-30.39a28.57,28.57,0,0,0-29,28.81M262,51.58c6,0,9.36,3.78,9.36,8.31S268,68.2,262,68.2H244.11V51.58Zm-36,58.16h18.09V82.92h13.77l13.89,26.82H292l-16.2-29.45a22.27,22.27,0,0,0,13.88-20.72c0-13.25-10.41-23.45-26-23.45H226Z"/>
+      </svg>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Peter Double &mdash; Principal PM, MCP &amp; AI Asset Registries</p>
+    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">Red Hat OpenShift AI &mdash; May 2026</p>
+  </footer>
+
+  <!-- ===== SCROLL ANIMATION OBSERVER ===== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Active nav link tracking
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)'
+              : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

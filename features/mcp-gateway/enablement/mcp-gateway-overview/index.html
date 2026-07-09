@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Gateway — Red Hat OpenShift AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&family=Red+Hat+Text:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rh-red: #EE0000;
+    --rh-red-dark: #A30000;
+    --rh-black: #151515;
+    --rh-gray-900: #1a1a1a;
+    --rh-gray-800: #252525;
+    --rh-gray-700: #2d2d2d;
+    --rh-gray-600: #3c3c3c;
+    --rh-gray-500: #6a6a6a;
+    --rh-gray-400: #8a8a8a;
+    --rh-gray-300: #b8bbbe;
+    --rh-gray-200: #d2d2d2;
+    --rh-white: #ffffff;
+    --rh-blue: #0066CC;
+    --rh-blue-light: #4394e5;
+    --rh-teal: #009596;
+    --rh-green: #3E8635;
+    --rh-orange: #F4B400;
+    --rh-purple: #6753AC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Red Hat Text', -apple-system, sans-serif;
+    background: var(--rh-black);
+    color: var(--rh-gray-200);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Red Hat Display', sans-serif;
+    color: var(--rh-white);
+    line-height: 1.2;
+  }
+
+  code, .mono {
+    font-family: 'Red Hat Mono', monospace;
+  }
+
+  /* Animations */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(238, 0, 0, 0.15); }
+    50% { box-shadow: 0 0 40px rgba(238, 0, 0, 0.3); }
+  }
+  @keyframes flowRight {
+    from { transform: translateX(-8px); opacity: 0.3; }
+    to { transform: translateX(8px); opacity: 1; }
+  }
+
+  .animate-on-scroll {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+  /* Navigation */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(21, 21, 21, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--rh-gray-700);
+    padding: 0 2rem;
+  }
+  nav .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; height: 56px;
+  }
+  nav .logo {
+    font-family: 'Red Hat Display', sans-serif; font-weight: 700; font-size: 0.95rem;
+    color: var(--rh-white); display: flex; align-items: center; gap: 0.6rem;
+  }
+  nav .logo .hat {
+    width: 28px; height: 28px; background: var(--rh-red); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 900; color: white;
+  }
+  nav .nav-links { display: flex; gap: 0.25rem; }
+  nav .nav-links a {
+    color: var(--rh-gray-300); text-decoration: none; font-size: 0.82rem; font-weight: 500;
+    padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.2s;
+  }
+  nav .nav-links a:hover { color: var(--rh-white); background: var(--rh-gray-700); }
+
+  /* Sections */
+  section {
+    max-width: 1200px; margin: 0 auto; padding: 5rem 2rem;
+    scroll-margin-top: 72px;
+  }
+  .section-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.75rem;
+  }
+  .section-title { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
+  .section-subtitle {
+    font-size: 1.1rem; color: var(--rh-gray-300); max-width: 720px; margin-bottom: 2.5rem; line-height: 1.7;
+  }
+
+  .section-divider {
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(238, 0, 0, 0.18), rgba(238, 0, 0, 0.35), rgba(238, 0, 0, 0.18), transparent);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 85vh; display: flex; align-items: center;
+    padding-top: 56px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -300px; right: -300px; width: 900px; height: 900px;
+    background: radial-gradient(circle, rgba(238, 0, 0, 0.18) 0%, transparent 70%); pointer-events: none;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -200px; left: -200px; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0, 102, 204, 0.08) 0%, transparent 70%); pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+  }
+  .hero-content > * { opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
+  .hero-content > *:nth-child(1) { animation-delay: 0s; }
+  .hero-content > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-content > *:nth-child(4) { animation-delay: 0.45s; }
+  .hero-content > *:nth-child(5) { animation-delay: 0.6s; }
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.5rem); font-weight: 900; margin-bottom: 1.5rem; }
+  .hero h1 .accent {
+    background: linear-gradient(135deg, var(--rh-red), #ff4444);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero .tagline {
+    font-size: 1.2rem; color: var(--rh-gray-300); max-width: 700px; margin-bottom: 2.5rem; line-height: 1.8;
+  }
+  .hero-badges { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 3rem; }
+  .hero-badge {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; font-weight: 600;
+    padding: 0.4rem 1rem; border-radius: 100px; border: 1px solid;
+  }
+  .hero-badge.envoy { border-color: rgba(0, 149, 150, 0.4); color: var(--rh-teal); background: rgba(0, 149, 150, 0.08); }
+  .hero-badge.k8s { border-color: rgba(0, 102, 204, 0.4); color: var(--rh-blue-light); background: rgba(0, 102, 204, 0.08); }
+  .hero-badge.oss { border-color: rgba(238, 0, 0, 0.4); color: #ff6666; background: rgba(238, 0, 0, 0.08); }
+
+  .hero-stats { display: flex; gap: 3.5rem; flex-wrap: wrap; }
+  .hero-stat { display: flex; flex-direction: column; }
+  .hero-stat .number {
+    font-family: 'Red Hat Display', sans-serif; font-size: 2.8rem; font-weight: 900;
+    color: var(--rh-white); line-height: 1.1;
+  }
+  .hero-stat .label { font-size: 0.82rem; color: var(--rh-gray-500); font-weight: 500; max-width: 160px; }
+
+  /* Value Proposition Cards */
+  .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+  .value-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 16px;
+    padding: 2rem; transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .value-card:hover { border-color: var(--rh-gray-500); transform: translateY(-2px); }
+  .value-card .icon {
+    width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center;
+    justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;
+  }
+  .value-card .icon.security { background: rgba(238, 0, 0, 0.12); }
+  .value-card .icon.observe { background: rgba(0, 149, 150, 0.12); }
+  .value-card .icon.scale { background: rgba(0, 102, 204, 0.12); }
+  .value-card h3 { font-size: 1.1rem; margin-bottom: 0.6rem; }
+  .value-card p { font-size: 0.92rem; color: var(--rh-gray-400); line-height: 1.6; }
+
+  /* Ecosystem Diagram */
+  .ecosystem-wrapper {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 20px;
+    padding: 3rem; position: relative; overflow: hidden;
+  }
+  .ecosystem-wrapper::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--rh-red), var(--rh-teal), var(--rh-blue));
+    border-radius: 20px 20px 0 0;
+  }
+  .ecosystem-header { text-align: center; margin-bottom: 2.5rem; }
+  .ecosystem-header h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .ecosystem-header p { font-size: 0.95rem; color: var(--rh-gray-400); max-width: 550px; margin: 0 auto; }
+
+  .ecosystem-flow {
+    display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 0;
+    align-items: center; margin-bottom: 2rem;
+  }
+  .eco-node {
+    background: var(--rh-gray-800); border: 1px solid var(--rh-gray-600); border-radius: 14px;
+    padding: 1.5rem; text-align: center; transition: all 0.3s; min-height: 140px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .eco-node:hover { border-color: var(--rh-gray-400); }
+  .eco-node.gateway {
+    border-color: var(--rh-red); background: linear-gradient(135deg, rgba(238, 0, 0, 0.08), rgba(238, 0, 0, 0.03));
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+  .eco-node .node-icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .eco-node .node-name { font-family: 'Red Hat Display', sans-serif; font-weight: 700; font-size: 0.92rem; color: var(--rh-white); }
+  .eco-node .node-role {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; color: var(--rh-gray-500);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.3rem;
+  }
+  .eco-arrow {
+    display: flex; align-items: center; justify-content: center; padding: 0 0.5rem;
+    color: var(--rh-gray-600); font-size: 1.2rem;
+  }
+  .eco-arrow .arrow-flow {
+    animation: flowRight 1.5s ease-in-out infinite;
+  }
+
+  .ecosystem-legend {
+    display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+    padding-top: 1.5rem; border-top: 1px solid var(--rh-gray-700);
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: var(--rh-gray-400); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-dot.gw { background: var(--rh-red); }
+  .legend-dot.platform { background: var(--rh-gray-500); }
+
+  /* Capabilities */
+  .cap-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+  .cap-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 14px;
+    padding: 1.75rem; transition: border-color 0.3s; position: relative;
+  }
+  .cap-card:hover { border-color: var(--rh-gray-500); }
+  .cap-card .cap-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;
+    display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px;
+  }
+  .cap-card .cap-tag.runtime { color: var(--rh-red); background: rgba(238, 0, 0, 0.1); }
+  .cap-card .cap-tag.security { color: var(--rh-teal); background: rgba(0, 149, 150, 0.1); }
+  .cap-card .cap-tag.observability { color: var(--rh-blue-light); background: rgba(0, 102, 204, 0.1); }
+  .cap-card .cap-tag.governance { color: var(--rh-purple); background: rgba(103, 83, 172, 0.1); }
+  .cap-card h4 { font-size: 1.05rem; margin-bottom: 0.5rem; }
+  .cap-card p { font-size: 0.88rem; color: var(--rh-gray-400); line-height: 1.6; }
+  .cap-card ul { list-style: none; padding: 0; margin-top: 0.75rem; }
+  .cap-card ul li {
+    font-size: 0.85rem; color: var(--rh-gray-300); padding: 0.25rem 0 0.25rem 1.1rem;
+    position: relative; line-height: 1.5;
+  }
+  .cap-card ul li::before {
+    content: ''; position: absolute; left: 0; top: 0.55rem; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--rh-gray-600);
+  }
+  .cap-card ul li .tier {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.68rem; font-weight: 600;
+    padding: 0.1rem 0.4rem; border-radius: 3px; margin-left: 0.35rem; white-space: nowrap;
+  }
+  .cap-card ul li .tier.rhoai { color: var(--rh-teal); background: rgba(0, 149, 150, 0.12); }
+  .cap-card ul li .tier.rhcl { color: var(--rh-purple); background: rgba(103, 83, 172, 0.12); }
+
+  /* How It Works */
+  .how-flow {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; align-items: start;
+    position: relative;
+  }
+  .how-flow::before {
+    content: ''; position: absolute; top: 42px; left: 10%; right: 10%; height: 2px;
+    background: linear-gradient(90deg, var(--rh-gray-700), var(--rh-red), var(--rh-red), var(--rh-red), var(--rh-gray-700));
+    z-index: 0;
+  }
+  .how-step { text-align: center; position: relative; z-index: 1; padding: 0 0.5rem; }
+  .how-step .step-circle {
+    width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; border: 2px solid var(--rh-gray-600);
+    background: var(--rh-gray-900); transition: all 0.3s;
+  }
+  .how-step:hover .step-circle { border-color: var(--rh-gray-400); transform: scale(1.05); }
+  .how-step.active .step-circle {
+    border-color: var(--rh-red); background: linear-gradient(135deg, rgba(238, 0, 0, 0.15), rgba(238, 0, 0, 0.05));
+  }
+  .how-step .step-num {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; font-weight: 700;
+    color: var(--rh-gray-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;
+  }
+  .how-step.active .step-num { color: var(--rh-red); }
+  .how-step .step-name { font-family: 'Red Hat Display', sans-serif; font-size: 0.92rem; font-weight: 700; color: var(--rh-white); margin-bottom: 0.3rem; }
+  .how-step .step-desc { font-size: 0.78rem; color: var(--rh-gray-500); line-height: 1.4; }
+
+  /* Architecture */
+  .arch-wrapper {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 20px;
+    padding: 2.5rem; position: relative;
+  }
+  .arch-layers { display: flex; flex-direction: column; gap: 0.75rem; }
+  .arch-layer {
+    display: grid; grid-template-columns: 140px 1fr; gap: 1.5rem; align-items: center;
+    padding: 1.25rem 1.5rem; border-radius: 12px;
+    border: 1px solid var(--rh-gray-700); background: var(--rh-gray-800);
+  }
+  .arch-layer.highlight {
+    border-color: var(--rh-red); background: linear-gradient(135deg, rgba(238, 0, 0, 0.06), transparent);
+  }
+  .arch-layer-label {
+    font-family: 'Red Hat Display', sans-serif; font-weight: 700; font-size: 0.88rem; color: var(--rh-white);
+  }
+  .arch-layer.highlight .arch-layer-label { color: #ff6666; }
+  .arch-layer-items { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .arch-item {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; font-weight: 500;
+    padding: 0.35rem 0.85rem; border-radius: 6px;
+    background: var(--rh-gray-700); color: var(--rh-gray-300);
+  }
+  .arch-layer.highlight .arch-item {
+    background: rgba(238, 0, 0, 0.12); color: #ff8888; border: 1px solid rgba(238, 0, 0, 0.25);
+  }
+
+  /* Entitlement */
+  .ent-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; max-width: 800px; margin: 0 auto; }
+  .ent-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 16px;
+    padding: 2rem; text-align: center; transition: all 0.3s; position: relative;
+  }
+  .ent-card:hover { border-color: var(--rh-gray-500); transform: translateY(-2px); }
+  .ent-card.featured {
+    border-color: var(--rh-red); background: linear-gradient(135deg, rgba(238, 0, 0, 0.06), transparent);
+  }
+  .ent-card .ent-tier {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-gray-500); margin-bottom: 0.75rem;
+  }
+  .ent-card.featured .ent-tier { color: var(--rh-red); }
+  .ent-card h4 { font-size: 1.15rem; margin-bottom: 1rem; }
+  .ent-card .ent-entitlement {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.72rem;
+    color: var(--rh-gray-500); margin-bottom: 1.25rem;
+    padding: 0.4rem 0; border-top: 1px solid var(--rh-gray-700); border-bottom: 1px solid var(--rh-gray-700);
+  }
+  .ent-card ul { list-style: none; padding: 0; text-align: left; }
+  .ent-card ul li {
+    font-size: 0.85rem; color: var(--rh-gray-300); padding: 0.3rem 0 0.3rem 1.4rem;
+    position: relative; line-height: 1.4;
+  }
+  .ent-card ul li::before {
+    content: ''; position: absolute; left: 0; top: 0.6rem;
+    width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--rh-green);
+  }
+  .ent-card ul li.disabled { color: var(--rh-gray-600); }
+  .ent-card ul li.disabled::before { border-color: var(--rh-gray-700); }
+
+  /* CTA */
+  .cta-section {
+    background: linear-gradient(135deg, rgba(238, 0, 0, 0.08), rgba(238, 0, 0, 0.02));
+    border: 1px solid rgba(238, 0, 0, 0.2); border-radius: 20px;
+    padding: 3.5rem; text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--rh-red), #ff4444, var(--rh-red)); border-radius: 20px 20px 0 0;
+  }
+  .cta-section h2 { font-size: 2rem; margin-bottom: 1rem; }
+  .cta-section p { font-size: 1.05rem; color: var(--rh-gray-300); max-width: 600px; margin: 0 auto 2rem; line-height: 1.7; }
+  .cta-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .cta-link {
+    font-family: 'Red Hat Display', sans-serif; font-size: 0.92rem; font-weight: 700;
+    padding: 0.75rem 1.75rem; border-radius: 8px; text-decoration: none; transition: all 0.3s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .cta-link.primary {
+    background: var(--rh-red); color: white; border: 2px solid var(--rh-red);
+  }
+  .cta-link.primary:hover { background: var(--rh-red-dark); border-color: var(--rh-red-dark); }
+  .cta-link.secondary {
+    background: transparent; color: var(--rh-white); border: 2px solid var(--rh-gray-600);
+  }
+  .cta-link.secondary:hover { border-color: var(--rh-gray-400); }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--rh-gray-700); padding: 3rem 2rem; text-align: center; }
+  footer p { font-size: 0.82rem; color: var(--rh-gray-500); }
+  footer a { color: var(--rh-red); text-decoration: none; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .ecosystem-flow { grid-template-columns: 1fr; gap: 0.5rem; }
+    .eco-arrow { transform: rotate(90deg); padding: 0.25rem 0; }
+    .how-flow { grid-template-columns: 1fr; gap: 1.5rem; }
+    .how-flow::before { display: none; }
+  }
+  @media (max-width: 900px) {
+    .value-grid { grid-template-columns: 1fr; }
+    .cap-grid { grid-template-columns: 1fr; }
+    .ent-grid { grid-template-columns: 1fr; }
+    .arch-layer { grid-template-columns: 1fr; gap: 0.5rem; }
+    nav .nav-links { display: none; }
+  }
+  @media (max-width: 600px) {
+    section { padding: 3.5rem 1.25rem; }
+    .hero { min-height: auto; padding-top: 80px; padding-bottom: 3rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .hero-stats { gap: 2rem; }
+    .hero-stat .number { font-size: 2rem; }
+    .section-title { font-size: 1.6rem; }
+    .ecosystem-wrapper { padding: 1.5rem; }
+    .arch-wrapper { padding: 1.5rem; }
+    .cta-section { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="hat">RH</div>
+      MCP Gateway
+    </div>
+    <div class="nav-links">
+      <a href="#value">Why Gateway</a>
+      <a href="#ecosystem">Ecosystem</a>
+      <a href="#capabilities">Capabilities</a>
+      <a href="#how">How It Works</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#entitlements">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="section-label">Red Hat OpenShift AI</div>
+      <h1>The Enterprise <span class="accent">MCP Gateway</span></h1>
+      <p class="tagline">
+        Secure, govern, and observe every AI tool call in your organization. The MCP Gateway provides
+        the runtime control plane that sits between your AI agents and the MCP servers they consume &mdash;
+        giving you enterprise-grade security, per-tool policy enforcement, and full audit visibility
+        without changing a single line of agent code.
+      </p>
+      <div class="hero-badges">
+        <span class="hero-badge envoy">Envoy-Powered</span>
+        <span class="hero-badge k8s">Kubernetes-Native</span>
+        <span class="hero-badge oss">Open Source</span>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="number">Virtual</span>
+          <span class="label">Create as many aggregated MCP endpoints as you need</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">Per-Tool</span>
+          <span class="label">Auth, policy, and audit at tool granularity</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">0</span>
+          <span class="label">Agent code changes required</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Value Proposition -->
+<section id="value">
+  <div class="section-label">Why MCP Gateway</div>
+  <h2 class="section-title">Enterprise AI Needs a Control Point</h2>
+  <p class="section-subtitle">
+    As AI agents proliferate across your organization, every tool call is an API call that touches real systems.
+    Without a gateway, you have no visibility, no policy enforcement, and no way to audit what your agents are doing.
+  </p>
+
+  <div class="value-grid">
+    <div class="value-card animate-on-scroll">
+      <div class="icon security">&#x1F512;</div>
+      <h3>Zero-Trust Security</h3>
+      <p>
+        Every tool invocation is authenticated and authorized. Identity-aware filtering ensures agents
+        only access the tools they're entitled to, with per-tool OAuth 2.0 and fine-grained RBAC
+        powered by Authorino.
+      </p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="icon observe">&#x1F4CA;</div>
+      <h3>Complete Observability</h3>
+      <p>
+        Per-tool metrics, structured audit logs, and traceability across every agent interaction.
+        Know exactly which agent called which tool, when, and what happened &mdash; across your entire
+        MCP landscape.
+      </p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="icon scale">&#x2699;&#xFE0F;</div>
+      <h3>Operational Control</h3>
+      <p>
+        Traffic management, guardrails, and policy enforcement at the tool level.
+        Prevent runaway agents, protect downstream services, and maintain SLAs
+        without burdening individual MCP server developers.
+        Add rate limiting and token metrics with Red Hat Connectivity Link.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Ecosystem -->
+<section id="ecosystem">
+  <div class="section-label">MCP Ecosystem</div>
+  <h2 class="section-title">Where the Gateway Fits</h2>
+  <p class="section-subtitle">
+    The MCP Gateway is one component in Red Hat's comprehensive MCP platform.
+    Each component has a distinct role &mdash; together they deliver a governed,
+    end-to-end experience from discovery through to secure consumption.
+  </p>
+
+  <div class="ecosystem-wrapper animate-on-scroll">
+    <div class="ecosystem-header">
+      <h3>End-to-End MCP Lifecycle</h3>
+      <p>From discovery to governed consumption, every step is covered.</p>
+    </div>
+
+    <div class="ecosystem-flow">
+      <div class="eco-node">
+        <div class="node-icon">&#x1F50D;</div>
+        <div class="node-name">MCP Catalog</div>
+        <div class="node-role">Discover &amp; Browse</div>
+      </div>
+      <div class="eco-arrow"><span class="arrow-flow">&rarr;</span></div>
+      <div class="eco-node">
+        <div class="node-icon">&#x1F4E6;</div>
+        <div class="node-name">Lifecycle Operator</div>
+        <div class="node-role">Deploy &amp; Manage</div>
+      </div>
+      <div class="eco-arrow"><span class="arrow-flow">&rarr;</span></div>
+      <div class="eco-node gateway">
+        <div class="node-icon">&#x1F6E1;&#xFE0F;</div>
+        <div class="node-name">MCP Gateway</div>
+        <div class="node-role">Secure &amp; Enforce</div>
+      </div>
+      <div class="eco-arrow"><span class="arrow-flow">&rarr;</span></div>
+      <div class="eco-node">
+        <div class="node-icon">&#x1F916;</div>
+        <div class="node-name">Gen AI Studio</div>
+        <div class="node-role">Consume &amp; Build</div>
+      </div>
+    </div>
+
+    <div class="ecosystem-legend">
+      <div class="legend-item"><div class="legend-dot gw"></div> MCP Gateway (runtime enforcement)</div>
+      <div class="legend-item"><div class="legend-dot platform"></div> Platform components</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Capabilities -->
+<section id="capabilities">
+  <div class="section-label">Capabilities</div>
+  <h2 class="section-title">What the MCP Gateway Delivers</h2>
+  <p class="section-subtitle">
+    Built on proven Envoy proxy technology and Kubernetes-native patterns,
+    the MCP Gateway provides enterprise capabilities at the individual tool level.
+  </p>
+
+  <div class="cap-grid">
+    <div class="cap-card animate-on-scroll">
+      <div class="cap-tag runtime">Runtime</div>
+      <h4>Virtual MCP Servers</h4>
+      <p>
+        Create multiple virtual MCP servers, each aggregating a curated set of backend tools
+        behind its own endpoint. Scope tool access by team, project, or use case &mdash;
+        each with full isolation and consistent naming via tool prefixes.
+      </p>
+      <ul>
+        <li>Multiple isolated <code>/mcp</code> endpoints per gateway <span class="tier rhoai">RHOAI</span></li>
+        <li>Each virtual server aggregates its own set of backends <span class="tier rhoai">RHOAI</span></li>
+        <li>Tool prefix namespacing prevents collisions <span class="tier rhoai">RHOAI</span></li>
+        <li>Streaming HTTP transport (SSE/JSON-RPC) <span class="tier rhoai">RHOAI</span></li>
+      </ul>
+    </div>
+
+    <div class="cap-card animate-on-scroll">
+      <div class="cap-tag security">Security</div>
+      <h4>Identity-Aware Tool Filtering</h4>
+      <p>
+        Control which tools each agent or user can see and invoke. Allow/deny lists
+        per tool ensure that sensitive operations are only accessible to authorized identities.
+      </p>
+      <ul>
+        <li>Per-tool authentication via OAuth 2.0 <span class="tier rhoai">RHOAI</span></li>
+        <li>Fine-grained authorization with Authorino <span class="tier rhoai">RHOAI</span></li>
+        <li>Tool-level allow/deny lists <span class="tier rhoai">RHOAI</span></li>
+        <li>OAuth 2.0 Protected Resource metadata <span class="tier rhoai">RHOAI</span></li>
+      </ul>
+    </div>
+
+    <div class="cap-card animate-on-scroll">
+      <div class="cap-tag observability">Observability</div>
+      <h4>Per-Tool Metrics &amp; Audit</h4>
+      <p>
+        Every tool invocation generates structured metrics and audit records.
+        Track usage patterns, detect anomalies, and maintain compliance
+        with full traceability across your MCP landscape.
+      </p>
+      <ul>
+        <li>Per-tool invocation metrics <span class="tier rhoai">RHOAI</span></li>
+        <li>Structured audit logging <span class="tier rhoai">RHOAI</span></li>
+        <li>Agent-to-tool correlation <span class="tier rhoai">RHOAI</span></li>
+        <li>Token metrics <span class="tier rhcl">RHCL</span></li>
+        <li>Integration with existing monitoring stacks <span class="tier rhoai">RHOAI</span></li>
+      </ul>
+    </div>
+
+    <div class="cap-card animate-on-scroll">
+      <div class="cap-tag governance">Governance</div>
+      <h4>Policy Enforcement at Scale</h4>
+      <p>
+        Apply traffic policies, access controls, and guardrails centrally.
+        Protect downstream services from runaway agents and enforce organizational
+        policies without modifying individual MCP servers.
+        Upgrade to RHCL for rate limiting and token metrics.
+      </p>
+      <ul>
+        <li>Per-tool rate limiting <span class="tier rhcl">RHCL</span></li>
+        <li>TLS termination and re-encryption <span class="tier rhoai">RHOAI</span></li>
+        <li>DNS management via cluster ingress <span class="tier rhcl">RHCL</span></li>
+        <li>Cross-namespace routing via Gateway API <span class="tier rhoai">RHOAI</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- How It Works -->
+<section id="how">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">From Agent Request to Governed Response</h2>
+  <p class="section-subtitle">
+    The gateway transparently mediates every tool call. Your agents connect to one endpoint &mdash;
+    the gateway handles routing, security, and observability behind the scenes.
+  </p>
+
+  <div class="how-flow animate-on-scroll">
+    <div class="how-step">
+      <div class="step-circle">&#x1F916;</div>
+      <div class="step-num">Step 1</div>
+      <div class="step-name">Agent Calls</div>
+      <div class="step-desc">Agent sends a tool call to the gateway's single MCP endpoint</div>
+    </div>
+    <div class="how-step active">
+      <div class="step-circle">&#x1F512;</div>
+      <div class="step-num">Step 2</div>
+      <div class="step-name">Authenticate</div>
+      <div class="step-desc">Gateway verifies identity and checks tool-level authorization</div>
+    </div>
+    <div class="how-step active">
+      <div class="step-circle">&#x1F6E1;&#xFE0F;</div>
+      <div class="step-num">Step 3</div>
+      <div class="step-name">Enforce</div>
+      <div class="step-desc">Guardrails, policies, and tool filtering applied in real time</div>
+    </div>
+    <div class="how-step active">
+      <div class="step-circle">&#x1F4E1;</div>
+      <div class="step-num">Step 4</div>
+      <div class="step-name">Route</div>
+      <div class="step-desc">Request routed to the correct backend MCP server via Envoy</div>
+    </div>
+    <div class="how-step">
+      <div class="step-circle">&#x1F4CA;</div>
+      <div class="step-num">Step 5</div>
+      <div class="step-name">Observe</div>
+      <div class="step-desc">Metrics recorded, audit log written, response returned to agent</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Architecture -->
+<section id="architecture">
+  <div class="section-label">Under the Hood</div>
+  <h2 class="section-title">Built on Proven Technology</h2>
+  <p class="section-subtitle">
+    The MCP Gateway is built on Envoy, the industry-standard proxy trusted by the world's largest platforms.
+    It integrates natively with Kubernetes Gateway API and the Red Hat Connectivity Link (Kuadrant) ecosystem.
+  </p>
+
+  <div class="arch-wrapper animate-on-scroll">
+    <div class="arch-layers">
+      <div class="arch-layer">
+        <div class="arch-layer-label">Clients</div>
+        <div class="arch-layer-items">
+          <div class="arch-item">AI Agents</div>
+          <div class="arch-item">Gen AI Studio</div>
+          <div class="arch-item">Claude Code</div>
+          <div class="arch-item">Custom Apps</div>
+        </div>
+      </div>
+      <div class="arch-layer highlight">
+        <div class="arch-layer-label">MCP Gateway</div>
+        <div class="arch-layer-items">
+          <div class="arch-item">Broker</div>
+          <div class="arch-item">Router (ext_proc)</div>
+          <div class="arch-item">K8s Controller</div>
+          <div class="arch-item">Virtual MCP Server</div>
+          <div class="arch-item">Tool Registry</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">Platform</div>
+        <div class="arch-layer-items">
+          <div class="arch-item">Envoy Proxy</div>
+          <div class="arch-item">Gateway API</div>
+          <div class="arch-item">Authorino</div>
+          <div class="arch-item">Kuadrant</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">MCP Servers</div>
+        <div class="arch-layer-items">
+          <div class="arch-item">OpenShift MCP</div>
+          <div class="arch-item">Ansible AAP</div>
+          <div class="arch-item">Insights MCP</div>
+          <div class="arch-item">Partner MCPs</div>
+          <div class="arch-item">Custom MCPs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Entitlements -->
+<section id="entitlements">
+  <div class="section-label">Get Started</div>
+  <h2 class="section-title">Flexible Entitlement Options</h2>
+  <p class="section-subtitle">
+    The MCP Gateway ships as a Technology Preview in RHOAI 3.4 (May 2026). Choose the entitlement tier
+    that matches your needs as the gateway moves toward general availability.
+  </p>
+
+  <div class="ent-grid">
+    <div class="ent-card featured animate-on-scroll">
+      <div class="ent-tier">Included</div>
+      <h4>OpenShift AI</h4>
+      <div class="ent-entitlement">RHOAI Subscription</div>
+      <ul>
+        <li>Customer MCP server support</li>
+        <li>Virtual MCP server aggregation</li>
+        <li>Guardrails enforcement</li>
+        <li>Authentication &amp; Authorization</li>
+        <li class="disabled">Rate limiting</li>
+        <li class="disabled">Token metrics</li>
+        <li class="disabled">DNS management &amp; HA/DR/GLB</li>
+      </ul>
+    </div>
+
+    <div class="ent-card animate-on-scroll">
+      <div class="ent-tier">Full Platform</div>
+      <h4>Connectivity Link</h4>
+      <div class="ent-entitlement">RHCL Subscription</div>
+      <ul>
+        <li>Everything in OpenShift AI tier</li>
+        <li>Rate limiting</li>
+        <li>Token metrics</li>
+        <li>DNS management</li>
+        <li>High Availability &amp; DR</li>
+        <li>Global Load Balancing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CTA -->
+<section>
+  <div class="cta-section animate-on-scroll">
+    <h2>Ready to Secure Your AI Tool Landscape?</h2>
+    <p>
+      The MCP Gateway ships as a Technology Preview with Red Hat OpenShift AI 3.4 (May 2026).
+      Explore the open-source project today and prepare your MCP infrastructure for
+      enterprise-grade security, governance, and observability.
+    </p>
+    <div class="cta-links">
+      <a href="https://github.com/Kuadrant/mcp-gateway" class="cta-link primary">
+        View on GitHub &rarr;
+      </a>
+      <a href="https://github.com/Kuadrant" class="cta-link secondary">
+        Kuadrant Project &rarr;
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div>
+    <p>
+      MCP Gateway &mdash; Red Hat OpenShift AI &mdash;
+      Built by <a href="https://github.com/Kuadrant">Kuadrant</a> &mdash;
+      Powered by <a href="https://www.envoyproxy.io/">Envoy</a> &mdash;
+      April 2026
+    </p>
+  </div>
+</footer>
+
+<script>
+// Scroll-triggered animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

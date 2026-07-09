@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCP Ingestion Pipeline - Red Hat OpenShift AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;900&family=Red+Hat+Text:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+<style>
+  :root {
+    --rh-red: #EE0000;
+    --rh-red-dark: #A30000;
+    --rh-red-darker: #7D0000;
+    --rh-black: #151515;
+    --rh-gray-900: #1a1a1a;
+    --rh-gray-800: #252525;
+    --rh-gray-700: #2d2d2d;
+    --rh-gray-600: #3c3c3c;
+    --rh-gray-500: #6a6a6a;
+    --rh-gray-400: #8a8a8a;
+    --rh-gray-300: #b8bbbe;
+    --rh-gray-200: #d2d2d2;
+    --rh-gray-100: #e0e0e0;
+    --rh-gray-50: #f0f0f0;
+    --rh-white: #ffffff;
+    --rh-blue: #0066CC;
+    --rh-blue-light: #4394e5;
+    --rh-teal: #009596;
+    --rh-green: #3E8635;
+    --rh-orange: #F4B400;
+    --rh-purple: #6753AC;
+    --rh-amber: #e8a020;
+    --glow-red: rgba(238, 0, 0, 0.25);
+    --glow-red-soft: rgba(238, 0, 0, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Red Hat Text', -apple-system, sans-serif;
+    background: var(--rh-black);
+    color: var(--rh-gray-200);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Red Hat Display', sans-serif;
+    color: var(--rh-white);
+    line-height: 1.2;
+  }
+
+  code, .mono {
+    font-family: 'Red Hat Mono', monospace;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes dashFlow {
+    from { stroke-dashoffset: 24; }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  @keyframes scrollHint {
+    0%, 100% { opacity: 0.4; transform: translateY(0); }
+    50% { opacity: 0.9; transform: translateY(6px); }
+  }
+
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+  .animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Navigation ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(21, 21, 21, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--rh-gray-700);
+    padding: 0 2rem;
+  }
+  nav .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; height: 56px;
+  }
+  nav .logo {
+    font-family: 'Red Hat Display', sans-serif; font-weight: 700; font-size: 0.95rem;
+    color: var(--rh-white); display: flex; align-items: center; gap: 0.6rem;
+  }
+  nav .logo .hat {
+    width: 28px; height: 28px; background: var(--rh-red); border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 900; color: white;
+  }
+  nav .nav-links { display: flex; gap: 0.25rem; }
+  nav .nav-links a {
+    color: var(--rh-gray-300); text-decoration: none; font-size: 0.82rem; font-weight: 500;
+    padding: 0.4rem 0.75rem; border-radius: 6px; transition: all 0.2s;
+  }
+  nav .nav-links a:hover { color: var(--rh-white); background: var(--rh-gray-700); }
+
+  /* ── Sections ── */
+  section {
+    max-width: 1200px; margin: 0 auto; padding: 6rem 2rem;
+    scroll-margin-top: 72px;
+  }
+  .section-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em; color: var(--rh-red); margin-bottom: 0.75rem;
+  }
+  .section-title { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
+  .section-subtitle { font-size: 1.15rem; color: var(--rh-gray-300); max-width: 700px; margin-bottom: 3rem; }
+
+  .section-divider {
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(238, 0, 0, 0.18), rgba(238, 0, 0, 0.35), rgba(238, 0, 0, 0.18), transparent);
+    margin: 0;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 85vh; display: flex; align-items: center;
+    padding-top: 56px; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; top: -200px; right: -200px; width: 800px; height: 800px;
+    background: radial-gradient(circle, var(--glow-red) 0%, transparent 70%); pointer-events: none;
+  }
+  .hero::after {
+    content: ''; position: absolute; bottom: -100px; left: -100px; width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--glow-red-soft) 0%, transparent 70%); pointer-events: none;
+  }
+  .hero-inner {
+    position: relative; z-index: 1; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+    display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: center;
+  }
+  .hero-content > * {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  .hero-content > *:nth-child(1) { animation-delay: 0s; }
+  .hero-content > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-content > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-content > *:nth-child(4) { animation-delay: 0.45s; }
+  .hero h1 { font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 900; margin-bottom: 1.5rem; }
+  .hero h1 .accent {
+    background: linear-gradient(135deg, var(--rh-red), #ff4444);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero .tagline { font-size: 1.1rem; color: var(--rh-gray-400); max-width: 580px; margin-bottom: 2.5rem; line-height: 1.7; }
+  .hero-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+  .hero-stat { display: flex; flex-direction: column; }
+  .hero-stat .number {
+    font-family: 'Red Hat Display', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--rh-white);
+    line-height: 1.1;
+  }
+  .hero-stat .number .highlight { color: var(--rh-red); }
+  .hero-stat .label { font-size: 0.82rem; color: var(--rh-gray-500); font-weight: 500; max-width: 140px; }
+  .hero-visual {
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; animation: fadeIn 1.2s ease-out 0.5s forwards;
+  }
+  .hero-visual svg { width: 100%; max-width: 380px; height: auto; }
+  .scroll-indicator {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    opacity: 0; animation: fadeIn 1s ease-out 1.2s forwards;
+  }
+  .scroll-indicator span {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; color: var(--rh-gray-500);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .scroll-indicator svg { animation: scrollHint 2s ease-in-out infinite; }
+
+  /* ── Current vs Target ── */
+  .comparison { border-top: 1px solid var(--rh-gray-700); }
+  .comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .comp-panel {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 16px;
+    padding: 2rem; position: relative; overflow: hidden;
+  }
+  .comp-panel.current {
+    border-color: rgba(238, 0, 0, 0.3);
+    background: linear-gradient(135deg, var(--rh-gray-900), rgba(238, 0, 0, 0.04));
+  }
+  .comp-panel.current::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--rh-red), #ff4444);
+  }
+  .comp-panel.target {
+    border-color: rgba(62, 134, 53, 0.4);
+    background: linear-gradient(135deg, var(--rh-gray-900), rgba(62, 134, 53, 0.05));
+  }
+  .comp-panel.target::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--rh-green);
+  }
+  .comp-panel h3 { font-size: 1.15rem; margin-bottom: 0.25rem; }
+  .comp-panel .comp-version {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.75rem; color: var(--rh-gray-500);
+    margin-bottom: 1.25rem;
+  }
+  .comp-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+  .comp-list li {
+    display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.9rem;
+    color: var(--rh-gray-300); line-height: 1.5;
+  }
+  .comp-list .icon-bad {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(238, 0, 0, 0.15); display: flex; align-items: center; justify-content: center;
+    color: #ff6666; font-size: 0.75rem; font-weight: 700; margin-top: 1px;
+  }
+  .comp-list .icon-good {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(62, 134, 53, 0.15); display: flex; align-items: center; justify-content: center;
+    color: #90e088; font-size: 0.75rem; font-weight: 700; margin-top: 1px;
+  }
+  .comp-list strong { color: var(--rh-white); }
+  .tag-manual {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; color: var(--rh-orange);
+    background: rgba(244, 180, 0, 0.1); padding: 0.1rem 0.4rem; border-radius: 3px;
+  }
+  .tag-auto {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; color: var(--rh-green);
+    background: rgba(62, 134, 53, 0.1); padding: 0.1rem 0.4rem; border-radius: 3px;
+  }
+
+  /* ── Value ── */
+  .value-section { border-top: 1px solid var(--rh-gray-700); }
+  .value-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .value-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 12px;
+    padding: 2rem; transition: all 0.3s; display: flex; flex-direction: column; gap: 1rem;
+  }
+  .value-card:hover { border-color: var(--rh-gray-500); transform: translateY(-2px); }
+  .value-icon {
+    width: 44px; height: 44px; border-radius: 10px; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .value-icon svg { width: 24px; height: 24px; }
+  .value-card h4 { font-size: 1.05rem; }
+  .value-card p { font-size: 0.88rem; color: var(--rh-gray-400); line-height: 1.6; }
+
+  /* ── Lanes ── */
+  .lanes-section { border-top: 1px solid var(--rh-gray-700); }
+  .lanes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+  .lane-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 16px;
+    padding: 2rem; position: relative; overflow: hidden;
+  }
+  .lane-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .lane-card.partner::before { background: var(--rh-teal); }
+  .lane-card.customer::before { background: var(--rh-blue-light); }
+  .lane-badge {
+    display: inline-block; font-family: 'Red Hat Mono', monospace; font-size: 0.65rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em; padding: 0.25rem 0.6rem; border-radius: 4px;
+    margin-bottom: 1rem;
+  }
+  .lane-badge.partner { background: rgba(0, 149, 150, 0.15); color: var(--rh-teal); }
+  .lane-badge.customer { background: rgba(67, 148, 229, 0.15); color: var(--rh-blue-light); }
+  .lane-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .lane-card .lane-desc { font-size: 0.92rem; color: var(--rh-gray-400); margin-bottom: 1.25rem; line-height: 1.6; }
+  .lane-card ul { list-style: none; padding: 0; }
+  .lane-card li {
+    font-size: 0.85rem; color: var(--rh-gray-300); padding: 0.35rem 0; padding-left: 1.2rem;
+    position: relative; line-height: 1.5;
+  }
+  .lane-card li::before {
+    content: ''; position: absolute; left: 0; top: 0.65rem; width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .lane-card.partner li::before { background: var(--rh-teal); }
+  .lane-card.customer li::before { background: var(--rh-blue-light); }
+
+  /* Shared pipeline */
+  .shared-pipeline {
+    background: var(--rh-gray-800); border: 1px solid var(--rh-gray-600); border-radius: 16px;
+    padding: 2rem 2.5rem; position: relative;
+  }
+  .shared-pipeline::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--rh-teal), var(--rh-red), var(--rh-blue-light));
+    border-radius: 16px 16px 0 0;
+  }
+  .shared-label {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.7rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-red); margin-bottom: 1rem;
+  }
+  .shared-pipeline h3 { font-size: 1.15rem; margin-bottom: 1.5rem; }
+  .pipeline-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+  .pipeline-step {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 10px;
+    padding: 1.25rem; text-align: center;
+  }
+  .pipeline-step .step-num {
+    font-family: 'Red Hat Display', sans-serif; font-size: 1.8rem; font-weight: 900;
+    color: var(--rh-gray-700); line-height: 1; margin-bottom: 0.5rem;
+  }
+  .pipeline-step h4 { font-size: 0.95rem; margin-bottom: 0.4rem; }
+  .pipeline-step p { font-size: 0.78rem; color: var(--rh-gray-500); line-height: 1.4; }
+  .pipeline-step .tool-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.68rem; color: var(--rh-teal);
+    background: rgba(0, 149, 150, 0.1); padding: 0.15rem 0.4rem; border-radius: 3px;
+    display: inline-block; margin-top: 0.5rem;
+  }
+
+  /* ── Diagram ── */
+  .diagram-section { border-top: 1px solid var(--rh-gray-700); }
+  #cy-container {
+    width: 100%; max-width: 1200px; margin: 0 auto;
+    background: var(--rh-gray-900);
+    border: 1px solid var(--rh-gray-700);
+    border-radius: 16px;
+    overflow: hidden; position: relative;
+  }
+  #cy-container::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #EE0000, #A30000, #EE0000);
+    z-index: 10;
+  }
+  #cy { width: 100%; height: 820px; }
+
+  /* Layer labels */
+  #layer-labels {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 100%; pointer-events: none; z-index: 5;
+  }
+  .layer-label {
+    position: absolute; left: 20px;
+    font-family: 'Red Hat Mono', monospace; font-size: 13px; font-weight: 600;
+    color: #999; letter-spacing: 0.1em; text-transform: uppercase;
+    writing-mode: horizontal-tb;
+  }
+  .layer-label.governance { color: var(--rh-red); }
+  .swim-band { position: absolute; left: 0; right: 0; pointer-events: none; }
+  .swim-band.even { background: rgba(255, 255, 255, 0.04); }
+
+  /* Legend */
+  .legend {
+    display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+    padding: 0.75rem 1.5rem;
+    background: var(--rh-gray-800);
+    border-top: 1px solid var(--rh-gray-700);
+    font-family: 'Red Hat Mono', monospace; font-size: 0.72rem; color: var(--rh-gray-400);
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-line { width: 28px; height: 3px; border-radius: 2px; }
+  .legend-line.data-flow { background: #cc0000; }
+  .legend-line.partner-flow { background: var(--rh-teal); }
+  .legend-line.customer-flow { background: var(--rh-blue-light); }
+  .legend-line.feedback { background: #D4954A; height: 2px; border-top: 2px dashed #D4954A; background: transparent; }
+  .legend-box {
+    width: 20px; height: 14px; border: 1.5px dashed rgba(103, 83, 172, 0.7);
+    background: rgba(103, 83, 172, 0.15); border-radius: 3px;
+  }
+
+  /* ── Gaps Section ── */
+  .gaps-section { border-top: 1px solid var(--rh-gray-700); }
+  .gaps-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .gap-card {
+    background: var(--rh-gray-900); border: 1px solid var(--rh-gray-700); border-radius: 12px;
+    padding: 1.75rem; display: flex; gap: 1rem; align-items: flex-start; transition: border-color 0.3s;
+  }
+  .gap-card:hover { border-color: var(--rh-gray-500); }
+  .gap-icon {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .gap-icon svg { width: 20px; height: 20px; }
+  .gap-card h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .gap-card p { font-size: 0.82rem; color: var(--rh-gray-400); line-height: 1.5; }
+
+  /* ── Tooling ── */
+  .tooling-section { border-top: 1px solid var(--rh-gray-700); }
+  .tooling-table-wrapper { overflow-x: auto; }
+  .tooling-table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: var(--rh-gray-900); border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rh-gray-700); min-width: 600px;
+  }
+  .tooling-table th {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.72rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-gray-400);
+    padding: 1rem 1.25rem; text-align: left; background: var(--rh-gray-800);
+    border-bottom: 1px solid var(--rh-gray-700);
+  }
+  .tooling-table td {
+    padding: 0.85rem 1.25rem; font-size: 0.88rem;
+    border-bottom: 1px solid var(--rh-gray-800); color: var(--rh-gray-300);
+  }
+  .tooling-table tr:last-child td { border-bottom: none; }
+  .tooling-table tr:hover td { background: var(--rh-gray-800); }
+  .tool-name { font-weight: 600; color: var(--rh-white); }
+  .status-tag {
+    font-family: 'Red Hat Mono', monospace; font-size: 0.68rem; font-weight: 600;
+    padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .status-active { background: rgba(62, 134, 53, 0.2); color: #90e088; }
+  .status-investigate { background: rgba(244, 180, 0, 0.15); color: var(--rh-orange); }
+  .status-future { background: var(--rh-gray-700); color: var(--rh-gray-400); }
+
+  /* ── Next Steps / CTA ── */
+  .next-steps { border-top: 1px solid var(--rh-gray-700); }
+  .ask-card {
+    background: linear-gradient(135deg, rgba(238, 0, 0, 0.06), rgba(238, 0, 0, 0.02));
+    border: 2px solid var(--rh-red);
+    border-radius: 16px; padding: 3rem; position: relative; overflow: hidden;
+  }
+  .ask-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--rh-red), #ff4444, var(--rh-red));
+  }
+  .ask-card::after {
+    content: ''; position: absolute; top: -100px; right: -100px; width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(238, 0, 0, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ask-card h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 0.5rem; }
+  .ask-card .ask-subtitle {
+    font-size: 1.05rem; color: var(--rh-gray-300); margin-bottom: 2rem; max-width: 700px;
+  }
+  .ask-items { display: flex; flex-direction: column; gap: 1.25rem; }
+  .ask-item { display: flex; gap: 1rem; align-items: flex-start; }
+  .ask-item-number {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+    background: var(--rh-red); color: white; display: flex; align-items: center; justify-content: center;
+    font-family: 'Red Hat Display', sans-serif; font-weight: 900; font-size: 1rem;
+  }
+  .ask-item-text { padding-top: 0.35rem; }
+  .ask-item-text strong { color: var(--rh-white); font-size: 1rem; }
+  .ask-item-text p { font-size: 0.9rem; color: var(--rh-gray-400); margin-top: 0.2rem; }
+
+  /* ── Footer ── */
+  footer { border-top: 1px solid var(--rh-gray-700); padding: 3rem 2rem; text-align: center; }
+  footer .footer-inner { max-width: 1200px; margin: 0 auto; }
+  footer p { font-size: 0.82rem; color: var(--rh-gray-500); }
+  footer a { color: var(--rh-red); text-decoration: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-visual svg { max-width: 260px; }
+    .comparison-grid, .lanes-grid, .gaps-grid { grid-template-columns: 1fr; }
+    .value-grid { grid-template-columns: 1fr; }
+    .pipeline-steps { grid-template-columns: 1fr 1fr; }
+    nav .nav-links { display: none; }
+    .scroll-indicator { display: none; }
+  }
+  @media (max-width: 600px) {
+    section { padding: 4rem 1.25rem; }
+    .hero { min-height: auto; padding-top: 80px; padding-bottom: 3rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .hero-stats { gap: 1.5rem; }
+    .hero-stat .number { font-size: 2rem; }
+    .section-title { font-size: 1.6rem; }
+    .pipeline-steps { grid-template-columns: 1fr; }
+    .ask-card { padding: 2rem 1.5rem; }
+    .ask-card h2 { font-size: 1.5rem; }
+    #cy { height: 600px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="hat">RH</div>
+      MCP Ingestion Pipeline
+    </div>
+    <div class="nav-links">
+      <a href="#current-state">Today</a>
+      <a href="#value">Value</a>
+      <a href="#lanes">Lanes</a>
+      <a href="#diagram">Architecture</a>
+      <a href="#gaps">Gaps</a>
+      <a href="#tooling">Tooling</a>
+      <a href="#next-steps">Next Steps</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="section-label">Red Hat OpenShift AI &middot; MCP Ecosystem</div>
+      <h1>End-to-End<br><span class="accent">MCP Ingestion Pipeline.</span></h1>
+      <p class="tagline">
+        A structured pipeline for ingesting, validating, securing, and governing MCP servers
+        from partners and customers &mdash; giving Red Hat end-to-end control of the MCP ecosystem
+        from source to consumption.
+      </p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="number">2</span>
+          <span class="label">Distinct ingestion lanes (partner + customer)</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number"><span class="highlight">10</span></span>
+          <span class="label">MCPs shipping in the 3.4 catalog (Dev Preview)</span>
+        </div>
+        <div class="hero-stat">
+          <span class="number">0</span>
+          <span class="label">Automated pipeline steps today</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- Pipeline funnel SVG -->
+      <svg viewBox="0 0 380 420" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="pipeGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#EE0000" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#EE0000" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glowBlue">
+            <feGaussianBlur stdDeviation="4" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <circle cx="190" cy="200" r="180" fill="url(#pipeGlow)"/>
+        <!-- Sources at top -->
+        <g font-family="Red Hat Display, sans-serif" font-size="9" font-weight="600" text-anchor="middle">
+          <rect x="15" y="22" width="82" height="36" rx="7" fill="#401515" stroke="rgba(238,0,0,0.5)" stroke-width="1.5"/>
+          <text x="56" y="44" fill="#ff6666">Red Hat</text>
+          <rect x="149" y="22" width="82" height="36" rx="7" fill="#183a3a" stroke="rgba(0,149,150,0.7)" stroke-width="1.5"/>
+          <text x="190" y="44" fill="#70f0f0">Partners</text>
+          <rect x="283" y="22" width="82" height="36" rx="7" fill="#152f4c" stroke="rgba(0,102,204,0.7)" stroke-width="1.5"/>
+          <text x="324" y="44" fill="#8ac4ff">Customers</text>
+        </g>
+        <!-- Flow lines -->
+        <g stroke="#555" stroke-width="1.5" stroke-dasharray="4 4">
+          <line x1="56" y1="58" x2="190" y2="100"/>
+          <line x1="190" y1="58" x2="190" y2="100"/>
+          <line x1="324" y1="58" x2="190" y2="100"/>
+        </g>
+        <!-- Pipeline stages -->
+        <g font-family="Red Hat Text, sans-serif" font-size="11" font-weight="500" text-anchor="middle">
+          <rect x="130" y="95" width="120" height="34" rx="6" fill="#2d2d2d" stroke="#4a4a4a" stroke-width="1.5"/>
+          <text x="190" y="116" fill="#e8e8e8">Validate</text>
+          <rect x="130" y="147" width="120" height="34" rx="6" fill="#2d2d2d" stroke="#4a4a4a" stroke-width="1.5"/>
+          <text x="190" y="168" fill="#e8e8e8">Scan</text>
+          <rect x="130" y="199" width="120" height="34" rx="6" fill="#2d2d2d" stroke="#4a4a4a" stroke-width="1.5"/>
+          <text x="190" y="220" fill="#e8e8e8">Evaluate</text>
+          <rect x="130" y="251" width="120" height="34" rx="6" fill="#2d2d2d" stroke="#4a4a4a" stroke-width="1.5"/>
+          <text x="190" y="272" fill="#e8e8e8">Containerize</text>
+        </g>
+        <!-- Connecting lines between stages -->
+        <g stroke="#cc0000" stroke-width="2" stroke-dasharray="6 3">
+          <line x1="190" y1="129" x2="190" y2="147"/>
+          <line x1="190" y1="181" x2="190" y2="199"/>
+          <line x1="190" y1="233" x2="190" y2="251"/>
+          <line x1="190" y1="285" x2="190" y2="305"/>
+        </g>
+        <!-- Registry -->
+        <rect x="130" y="300" width="120" height="38" rx="8" fill="#401515" stroke="#cc0000" stroke-width="1.5"/>
+        <text x="190" y="316" font-family="Red Hat Mono, monospace" font-size="7" font-weight="600" fill="#EE0000" text-anchor="middle" letter-spacing="0.08em">MCP</text>
+        <text x="190" y="330" font-family="Red Hat Display, sans-serif" font-size="11" font-weight="700" fill="white" text-anchor="middle">Registry</text>
+        <!-- Connecting line Registry to Catalog -->
+        <g stroke="#cc0000" stroke-width="2.5" stroke-dasharray="6 3">
+          <line x1="190" y1="338" x2="190" y2="362"/>
+        </g>
+        <!-- MCP Catalog (highlighted hero element) -->
+        <rect x="110" y="358" width="160" height="48" rx="10" fill="#152f4c" stroke="#0066CC" stroke-width="2.5" filter="url(#glowBlue)"/>
+        <rect x="110" y="358" width="160" height="48" rx="10" fill="rgba(0,102,204,0.12)" stroke="#4394e5" stroke-width="2"/>
+        <text x="190" y="377" font-family="Red Hat Mono, monospace" font-size="7" font-weight="600" fill="#4394e5" text-anchor="middle" letter-spacing="0.1em">MCP</text>
+        <text x="190" y="395" font-family="Red Hat Display, sans-serif" font-size="14" font-weight="700" fill="white" text-anchor="middle">Catalog</text>
+      </svg>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M4 6l4 4 4-4" stroke="#6a6a6a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Current State vs Target -->
+<section class="comparison" id="current-state">
+  <div class="section-label">Where We Are vs Where We Need to Be</div>
+  <h2 class="section-title">The MCP Onboarding Gap</h2>
+  <p class="section-subtitle">
+    RHOAI 3.4 ships 10 MCP servers in the catalog (Dev Preview) &mdash; 3 Red Hat, 5 partner, and 2 community.
+    Each required manual adaptation. Nothing was automated. This does not scale.
+  </p>
+  <div class="comparison-grid">
+    <div class="comp-panel current animate-on-scroll">
+      <h3>Today: RHOAI 3.4</h3>
+      <div class="comp-version">Manual, per-MCP, per-engineer &middot; 10 MCPs (3 RH + 5 Partner + 2 Community)</div>
+      <ul class="comp-list">
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span><strong>MCPs across all sources had different metadata formats</strong> &mdash; no two containers were structured the same</span>
+        </li>
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span>Manual container adaptation: <strong>rebasing to UBI</strong>, adding labels, copying licenses <span class="tag-manual">manual</span></span>
+        </li>
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span>Some sources had containers, some had nothing &mdash; <strong>built from scratch</strong> when no Dockerfile existed</span>
+        </li>
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span>CVE scanning via Quay only; <strong>dependencies untouched</strong> to avoid breaking applications</span>
+        </li>
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span><strong>No end-to-end testing</strong> of MCP applications; only container-level checks performed</span>
+        </li>
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span>Onboarding tied to the <strong>product release cycle</strong> &mdash; no way to add MCPs off-cycle</span>
+        </li>
+        <li>
+          <span class="icon-bad">&times;</span>
+          <span><strong>One engineer (Jose)</strong> handled all MCP containerization manually</span>
+        </li>
+      </ul>
+    </div>
+    <div class="comp-panel target animate-on-scroll">
+      <h3>Target: Automated Pipeline</h3>
+      <div class="comp-version">Standardized, repeatable, off-cycle capable</div>
+      <ul class="comp-list">
+        <li>
+          <span class="icon-good">&check;</span>
+          <span><strong>Standardized metadata schema</strong> &mdash; every MCP container meets a defined checklist <span class="tag-auto">automated</span></span>
+        </li>
+        <li>
+          <span class="icon-good">&check;</span>
+          <span>Automated containerization with <strong>Gen MCP runtime wrapping</strong> for auth, TLS, observability</span>
+        </li>
+        <li>
+          <span class="icon-good">&check;</span>
+          <span>Two ingestion lanes: <strong>partner repos</strong> (containerized) and <strong>customer APIs</strong> (Gen MCP generated)</span>
+        </li>
+        <li>
+          <span class="icon-good">&check;</span>
+          <span><strong>Multi-layer scanning</strong>: CVE (Quay), dependency (Dependabot), AI-specific (Snyk) <span class="tag-auto">pipeline</span></span>
+        </li>
+        <li>
+          <span class="icon-good">&check;</span>
+          <span><strong>MCP Checker evaluations</strong> against configurable agents before catalog listing</span>
+        </li>
+        <li>
+          <span class="icon-good">&check;</span>
+          <span>Partner MCPs managed <strong>independently of the release cycle</strong> &mdash; continuous onboarding and updates</span>
+        </li>
+        <li>
+          <span class="icon-good">&check;</span>
+          <span>Registry-governed ingestion &mdash; <strong>provenance, versioning, lifecycle tracking</strong> from day one</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Value Proposition -->
+<section class="value-section" id="value">
+  <div class="section-label">Business Value</div>
+  <h2 class="section-title">Why This Pipeline Matters</h2>
+  <p class="section-subtitle">
+    A structured ingestion pipeline unlocks end-to-end ecosystem control and directly addresses
+    what sales, services, and customers are asking for.
+  </p>
+  <div class="value-grid">
+    <div class="value-card animate-on-scroll">
+      <div class="value-icon" style="background: rgba(238, 0, 0, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff6666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+      </div>
+      <h4>End-to-End Ecosystem Control</h4>
+      <p>From ingestion through registry, gateway, and consumption &mdash; Red Hat controls the full MCP lifecycle. No gaps, no manual hand-offs, full provenance.</p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="value-icon" style="background: rgba(0, 149, 150, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#70f0f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.5 11.5L17 8l-5 3-4-3-5 4"/>
+          <path d="M2 17l3.5-1 3 3 4-2 3 2 3-1 3.5 1"/>
+        </svg>
+      </div>
+      <h4>Off-Cycle Partner Onboarding</h4>
+      <p>Partners no longer wait for the next RHOAI release to ship new MCPs. Continuous onboarding means faster ecosystem growth and quicker CVE response.</p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="value-icon" style="background: rgba(67, 148, 229, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8ac4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        </svg>
+      </div>
+      <h4>Customer Self-Service</h4>
+      <p>Platform engineers create MCPs from existing APIs using Gen MCP. Sales teams pitch this capability directly &mdash; lower-code path to agentic AI adoption.</p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="value-icon" style="background: rgba(244, 180, 0, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F4B400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+        </svg>
+      </div>
+      <h4>Metadata Standardization</h4>
+      <p>Define the Kubernetes MCP container metadata standard before anyone else does. Red Hat leads upstream, partners conform, customers benefit from consistency.</p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="value-icon" style="background: rgba(103, 83, 172, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#9a86d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+      </div>
+      <h4>Supply Chain Security</h4>
+      <p>Every MCP entering the platform is validated, scanned, and evaluated before reaching the catalog. Provenance tracked, vulnerabilities caught, trust verified.</p>
+    </div>
+    <div class="value-card animate-on-scroll">
+      <div class="value-icon" style="background: rgba(62, 134, 53, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#90e088" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+      </div>
+      <h4>Reusable Across Asset Types</h4>
+      <p>Validation, scanning, and evaluation components are designed to extend beyond MCPs &mdash; guardrails, agents, and future AI asset types can use the same pipeline.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Two Ingestion Lanes -->
+<section class="lanes-section" id="lanes">
+  <div class="section-label">Ingestion Model</div>
+  <h2 class="section-title">Two Lanes, Shared Pipeline</h2>
+  <p class="section-subtitle">
+    Partner MCPs and customer-generated MCPs enter through different lanes but share the same
+    validation, scanning, and evaluation infrastructure.
+  </p>
+  <div class="lanes-grid">
+    <div class="lane-card partner animate-on-scroll">
+      <span class="lane-badge partner">Lane 1</span>
+      <h3>Partner MCP Ingestion</h3>
+      <p class="lane-desc">
+        ISV partners provide MCP server repositories that meet a defined checklist.
+        Most arrive with containers; some need production-readiness wrapping.
+      </p>
+      <ul>
+        <li>Partner provides repo meeting defined checklist</li>
+        <li>Already-containerized MCPs use podman/docker path</li>
+        <li>Basic MCPs (stdio/HTTP) get Gen MCP runtime wrapping for auth, TLS, observability</li>
+        <li>Pipeline validates, scans, evaluates, and registers</li>
+        <li>Goal: off-cycle onboarding, independent of RHOAI releases</li>
+        <li>Partnership Ecosystem team (Matt Dorn, Jose Gonzalez) manages intake</li>
+      </ul>
+    </div>
+    <div class="lane-card customer animate-on-scroll">
+      <span class="lane-badge customer">Lane 2</span>
+      <h3>Customer MCP Generation</h3>
+      <p class="lane-desc">
+        Platform engineers create MCPs from existing APIs and repos using Gen MCP.
+        Lower-code approach for rapid MCP creation.
+      </p>
+      <ul>
+        <li>API definition (OpenAPI) or HTTP backend as input</li>
+        <li>Gen MCP generates the MCP server code</li>
+        <li>Containerization via KO build tool</li>
+        <li>Auth, TLS, and observability included by default</li>
+        <li>Standardized metadata baked in automatically</li>
+        <li>Sales and services teams actively pitching this capability</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shared-pipeline animate-on-scroll">
+    <div class="shared-label">Shared Infrastructure</div>
+    <h3>Reusable Pipeline Components</h3>
+    <div class="pipeline-steps">
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <h4>Validate</h4>
+        <p>Repo integrity, provenance, supply chain checks, checklist conformance</p>
+        <span class="tool-tag">Dependabot + custom</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <h4>Scan</h4>
+        <p>CVE scanning, dependency audit, AI-specific agent scanning</p>
+        <span class="tool-tag">Quay + Snyk</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <h4>Evaluate</h4>
+        <p>Functional eval with configurable agents; eval scores per tool</p>
+        <span class="tool-tag">MCP Checker</span>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <h4>Register</h4>
+        <p>Standardized metadata, versioning, lifecycle state, governance</p>
+        <span class="tool-tag">MCP Registry (MLflow)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Architecture Diagram -->
+<section class="diagram-section" id="diagram">
+  <div class="section-label">Pipeline Architecture</div>
+  <h2 class="section-title">MCP Ingestion Flow</h2>
+  <p class="section-subtitle">
+    From partner repos and customer APIs through validation, scanning, evaluation, and containerization
+    into the governed MCP Registry and out to consumption.
+  </p>
+  <div id="cy-container">
+    <div id="layer-labels"></div>
+    <div id="cy"></div>
+    <div class="legend">
+      <span style="letter-spacing: 0.1em; font-weight: 600; color: #999;">LEGEND:</span>
+      <div class="legend-item"><div class="legend-line data-flow"></div><span>Primary flow</span></div>
+      <div class="legend-item"><div class="legend-line partner-flow"></div><span>Partner lane</span></div>
+      <div class="legend-item"><div class="legend-line customer-flow"></div><span>Customer lane</span></div>
+      <div class="legend-item"><div class="legend-line feedback"></div><span>Feedback / re-eval</span></div>
+      <div class="legend-item"><div class="legend-box"></div><span>Future / investigate</span></div>
+      <span style="margin-left: auto; font-size: 13px; color: #999;">Peter Double &mdash; April 2026</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Critical Gaps -->
+<section class="gaps-section" id="gaps">
+  <div class="section-label">Critical Gaps</div>
+  <h2 class="section-title">What Needs to Be Solved</h2>
+  <p class="section-subtitle">
+    The April 10 meeting identified several gaps that must be addressed before the pipeline can be built.
+  </p>
+  <div class="gaps-grid">
+    <div class="gap-card animate-on-scroll">
+      <div class="gap-icon" style="background: rgba(238, 0, 0, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#ff6666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6M12 18v-6M9 15h6"/>
+        </svg>
+      </div>
+      <div>
+        <h4>No Metadata Standard</h4>
+        <p>All 10 MCPs shipping in 3.4 (3 Red Hat, 5 partner, 2 community) had inconsistent metadata. No upstream Kubernetes standard exists for MCP container metadata. Red Hat must define and lead this.</p>
+      </div>
+    </div>
+    <div class="gap-card animate-on-scroll">
+      <div class="gap-icon" style="background: rgba(244, 180, 0, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F4B400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
+      <div>
+        <h4>Snyk Capabilities Unknown</h4>
+        <p>Ann Murray recommended Snyk for AI/agent scanning but the exact capabilities and whether it adds value beyond standard CVE scanning needs research.</p>
+      </div>
+    </div>
+    <div class="gap-card animate-on-scroll">
+      <div class="gap-icon" style="background: rgba(103, 83, 172, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#9a86d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+          <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+        </svg>
+      </div>
+      <div>
+        <h4>MLflow + MCP Checker Integration</h4>
+        <p>MLflow is becoming the main evaluation tool for AI assets. How MCP Checker evaluation results feed into MLflow's evaluation framework is undefined.</p>
+      </div>
+    </div>
+    <div class="gap-card animate-on-scroll">
+      <div class="gap-icon" style="background: rgba(0, 149, 150, 0.14);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#70f0f0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 21h18M3 21V7l6 4V7l6 4V3h6v18"/>
+        </svg>
+      </div>
+      <div>
+        <h4>Pipeline Orchestration Tooling</h4>
+        <p>Konflux was suggested for pipeline orchestration/productization but hasn't been investigated. The build/release pipeline infrastructure is undefined.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Tooling Landscape -->
+<section class="tooling-section" id="tooling">
+  <div class="section-label">Tooling</div>
+  <h2 class="section-title">Pipeline Components & Tools</h2>
+  <p class="section-subtitle">
+    Current and proposed tools for each pipeline stage, with their status and role.
+  </p>
+  <div class="tooling-table-wrapper">
+    <table class="tooling-table">
+      <thead>
+        <tr>
+          <th>Tool</th>
+          <th>Pipeline Stage</th>
+          <th>Purpose</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tool-name">Gen MCP</span></td>
+          <td>Generation + Containerization</td>
+          <td>Generate MCP servers from APIs/CLIs; containerize via KO; add auth/TLS/observability wrapping</td>
+          <td><span class="status-tag status-active">Active</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">MCP Checker</span></td>
+          <td>Evaluation</td>
+          <td>Generic MCP evaluation framework; configurable agents; eval scores per tool; works with any MCP</td>
+          <td><span class="status-tag status-active">Active</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">Quay</span></td>
+          <td>Scanning</td>
+          <td>Container image CVE scanning; used for all 10 MCP images in 3.4</td>
+          <td><span class="status-tag status-active">Active</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">Dependabot</span></td>
+          <td>Validation</td>
+          <td>Repo-level dependency security scanning; auto-merge capability for security bumps</td>
+          <td><span class="status-tag status-active">Available</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">Snyk</span></td>
+          <td>Scanning</td>
+          <td>AI/agent-specific scanning; recommended by Ann Murray; exact capabilities TBD</td>
+          <td><span class="status-tag status-investigate">Investigate</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">Konflux</span></td>
+          <td>Orchestration</td>
+          <td>Pipeline orchestration for productization; suggested by Matthias</td>
+          <td><span class="status-tag status-investigate">Investigate</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">MCP Registry (MLflow)</span></td>
+          <td>Registration</td>
+          <td>System of record; metadata, versioning, lifecycle governance</td>
+          <td><span class="status-tag status-future">3.5 Target</span></td>
+        </tr>
+        <tr>
+          <td><span class="tool-name">Podman / Docker</span></td>
+          <td>Containerization</td>
+          <td>Standard containerization for production-ready partner MCPs; more flexible than Gen MCP for pre-built servers</td>
+          <td><span class="status-tag status-active">Standard</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Next Steps -->
+<section class="next-steps" id="next-steps">
+  <div class="ask-card animate-on-scroll">
+    <h2>Next Steps</h2>
+    <p class="ask-subtitle">
+      Immediate actions from the April 10 meeting to move the ingestion pipeline from concept to execution.
+    </p>
+    <div class="ask-items">
+      <div class="ask-item">
+        <div class="ask-item-number">1</div>
+        <div class="ask-item-text">
+          <strong>Define MCP Container Metadata Schema</strong>
+          <p>Standardize what every MCP container must include. Engage Chris Hambridge and Matthias on existing work. Target upstream Kubernetes contribution.</p>
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-item-number">2</div>
+        <div class="ask-item-text">
+          <strong>Research Snyk AI Scanning</strong>
+          <p>Investigate what Snyk's agent scanner checks, whether it adds value beyond CVE scanning, and how it fits the pipeline. Follow up with Ann Murray.</p>
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-item-number">3</div>
+        <div class="ask-item-text">
+          <strong>Create Jira Ticket for Pipeline Work</strong>
+          <p>Formalize the ingestion pipeline as a tracked initiative. Build the management story for dedicated engineering time allocation.</p>
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-item-number">4</div>
+        <div class="ask-item-text">
+          <strong>Align with Partnership Ecosystem Team</strong>
+          <p>Follow up with Matt Dorn and Jose on what was needed for 3.4 MCPs (partner and community). Connect with Serob on existing pipeline work.</p>
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-item-number">5</div>
+        <div class="ask-item-text">
+          <strong>Determine MLflow + MCP Checker Integration</strong>
+          <p>Define how MCP Checker evaluation results feed into MLflow. Clarify the evaluation tool strategy as MLflow becomes the central evaluation platform.</p>
+        </div>
+      </div>
+      <div class="ask-item">
+        <div class="ask-item-number">6</div>
+        <div class="ask-item-text">
+          <strong>Secure Engineering Time for Gen MCP</strong>
+          <p>Build the case for management: clients are asking, sales is pitching, services needs it. Calum's team needs dedicated time allocated to this work.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <p>MCP Ingestion Pipeline &mdash; Red Hat OpenShift AI &middot; Based on April 10, 2026 meeting with Gen MCP team</p>
+    <p style="margin-top: 0.5rem;">Peter Double &middot; Principal Product Manager &mdash; MCP & AI Asset Registries</p>
+  </div>
+</footer>
+
+<!-- Cytoscape.js Diagram -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+  // ── Grid constants ──
+  const CX = 500;
+  const COL_SPACING = 190;
+  const COL1 = CX - 1.5 * COL_SPACING;   // ~215
+  const COL2 = CX - 0.5 * COL_SPACING;   // ~405
+  const COL3 = CX + 0.5 * COL_SPACING;   // ~595
+  const COL4 = CX + 1.5 * COL_SPACING;   // ~785
+
+  // ── Y layers ──
+  const Y_SOURCES     = 55;
+  const Y_MERGE       = 125;
+  const Y_VALIDATE    = 200;
+  const Y_SCAN        = 280;
+  const Y_EVALUATE    = 360;
+  const Y_CONTAINER   = 440;
+  const Y_REGISTRY    = 540;
+  const Y_PLATFORM    = 640;
+  const Y_CONSUME     = 730;
+
+  const cy = cytoscape({
+    container: document.getElementById('cy'),
+    userZoomingEnabled: false,
+    userPanningEnabled: false,
+    boxSelectionEnabled: false,
+    autounselectify: true,
+    layout: {
+      name: 'preset',
+      padding: 40,
+      animate: true,
+      animationDuration: 600,
+      animationEasing: 'ease-out',
+      fit: true,
+    },
+
+    elements: {
+      nodes: [
+        // ── SOURCES ──
+        { data: { id: 'src-redhat', label: 'Red Hat MCPs\nOCP, AAP, Insights', nodeType: 'source-red' },
+          position: { x: COL1, y: Y_SOURCES } },
+        { data: { id: 'src-partner', label: 'Partner MCPs\nKafka, Terraform, ...', nodeType: 'source-teal' },
+          position: { x: COL2, y: Y_SOURCES } },
+        { data: { id: 'src-community', label: 'Community MCPs\nMongoDB, MariaDB', nodeType: 'source' },
+          position: { x: COL3, y: Y_SOURCES } },
+        { data: { id: 'src-customer', label: 'Customer APIs\n& Repos', nodeType: 'source-blue' },
+          position: { x: COL4, y: Y_SOURCES } },
+
+        // ── GEN MCP (customer lane) ──
+        { data: { id: 'gen-mcp', label: 'Gen MCP\nGenerate + Wrap', nodeType: 'blue' },
+          position: { x: COL4, y: Y_MERGE + 20 } },
+
+        // ── MERGE ──
+        { data: { id: 'merge', label: '', nodeType: 'merge' },
+          position: { x: CX - 50, y: Y_MERGE } },
+
+        // ── VALIDATION ──
+        { data: { id: 'validate', label: 'Validate\nRepo integrity, provenance,\nsupply chain', nodeType: 'default' },
+          position: { x: CX - 50, y: Y_VALIDATE } },
+
+        // ── SCANNING ──
+        { data: { id: 'scan', label: 'Scan\nCVE, dependencies,\nAI-specific checks', nodeType: 'default' },
+          position: { x: CX - 50, y: Y_SCAN } },
+
+        // Scanning tools
+        { data: { id: 'quay', label: 'Quay\nCVE Scan', nodeType: 'tool' },
+          position: { x: COL1, y: Y_SCAN - 10 } },
+        { data: { id: 'snyk', label: 'Snyk\nAI Agent Scan', nodeType: 'phase2' },
+          position: { x: COL1, y: Y_SCAN + 50 } },
+
+        // ── EVALUATION ──
+        { data: { id: 'evaluate', label: 'Evaluate\nMCP Checker\nMulti-agent eval scores', nodeType: 'default' },
+          position: { x: CX - 50, y: Y_EVALUATE } },
+
+        // ── CONTAINERIZE ──
+        { data: { id: 'containerize', label: 'Containerize\nStandardized metadata,\nUBI base, labels', nodeType: 'default' },
+          position: { x: CX - 50, y: Y_CONTAINER } },
+
+        // Container tools
+        { data: { id: 'podman', label: 'Podman / Docker\nPre-built MCPs', nodeType: 'tool' },
+          position: { x: COL1, y: Y_CONTAINER } },
+        { data: { id: 'gen-mcp-wrap', label: 'Gen MCP Runtime\nAuth + TLS + Obs', nodeType: 'tool-blue' },
+          position: { x: COL4, y: Y_CONTAINER } },
+
+        // ── REGISTRY (hero) ──
+        { data: { id: 'registry', label: 'MCP Registry (MLflow)\nSystem of Record \u2014 Versioning, Lifecycle, Governance', nodeType: 'registry' },
+          position: { x: CX, y: Y_REGISTRY } },
+
+        // ── PLATFORM ──
+        { data: { id: 'catalog', label: 'MCP Catalog\n(Kubeflow Hub)', nodeType: 'blue' },
+          position: { x: COL2 - 30, y: Y_PLATFORM } },
+        { data: { id: 'lifecycle-op', label: 'Lifecycle\nOperator', nodeType: 'purple' },
+          position: { x: CX, y: Y_PLATFORM } },
+        { data: { id: 'gateway', label: 'MCP\nGateway', nodeType: 'teal' },
+          position: { x: COL3 + 30, y: Y_PLATFORM } },
+
+        // ── CONSUMPTION ──
+        { data: { id: 'studio', label: 'Gen AI Studio', nodeType: 'green' },
+          position: { x: COL2, y: Y_CONSUME } },
+        { data: { id: 'agents', label: 'AI Agents', nodeType: 'green' },
+          position: { x: COL3, y: Y_CONSUME } },
+      ],
+
+      edges: [
+        // Source flows to merge
+        { data: { id: 'e-redhat-merge', source: 'src-redhat', target: 'merge', edgeType: 'source-red' } },
+        { data: { id: 'e-partner-merge', source: 'src-partner', target: 'merge', edgeType: 'source-teal' } },
+        { data: { id: 'e-community-merge', source: 'src-community', target: 'merge', edgeType: 'source' } },
+
+        // Customer lane
+        { data: { id: 'e-customer-gen', source: 'src-customer', target: 'gen-mcp', edgeType: 'source-blue' } },
+        { data: { id: 'e-gen-container', source: 'gen-mcp', target: 'containerize', edgeType: 'customer-flow' } },
+
+        // Merge to pipeline
+        { data: { id: 'e-merge-validate', source: 'merge', target: 'validate', edgeType: 'data-flow' } },
+        { data: { id: 'e-validate-scan', source: 'validate', target: 'scan', edgeType: 'data-flow' } },
+        { data: { id: 'e-scan-evaluate', source: 'scan', target: 'evaluate', edgeType: 'data-flow' } },
+        { data: { id: 'e-evaluate-container', source: 'evaluate', target: 'containerize', edgeType: 'data-flow' } },
+        { data: { id: 'e-container-registry', source: 'containerize', target: 'registry', edgeType: 'data-flow', label: 'Ingest' } },
+
+        // Tool associations
+        { data: { id: 'e-quay-scan', source: 'quay', target: 'scan', edgeType: 'tool-link' } },
+        { data: { id: 'e-snyk-scan', source: 'snyk', target: 'scan', edgeType: 'tool-link-phase2' } },
+        { data: { id: 'e-podman-container', source: 'podman', target: 'containerize', edgeType: 'tool-link' } },
+        { data: { id: 'e-genwrap-container', source: 'gen-mcp-wrap', target: 'containerize', edgeType: 'tool-link' } },
+
+        // Registry to platform
+        { data: { id: 'e-reg-catalog', source: 'registry', target: 'catalog', edgeType: 'governed', label: 'Surface' } },
+        { data: { id: 'e-reg-lifecycle', source: 'registry', target: 'lifecycle-op', edgeType: 'governed', label: 'Deploy' } },
+        { data: { id: 'e-reg-gateway', source: 'registry', target: 'gateway', edgeType: 'governed', label: 'Register' } },
+
+        // Platform to consumption
+        { data: { id: 'e-catalog-studio', source: 'catalog', target: 'studio', edgeType: 'governed' } },
+        { data: { id: 'e-gateway-agents', source: 'gateway', target: 'agents', edgeType: 'governed' } },
+
+        // Feedback loops
+        { data: { id: 'fb-eval', source: 'agents', target: 'evaluate', edgeType: 'feedback', label: 'Re-evaluate' } },
+        { data: { id: 'fb-telemetry', source: 'gateway', target: 'registry', edgeType: 'feedback', label: 'Telemetry' } },
+      ]
+    },
+
+    style: [
+      // ── Base node ──
+      { selector: 'node', style: {
+        'shape': 'round-rectangle', 'corner-radius': 10,
+        'width': 200, 'height': 75,
+        'background-color': '#2d2d2d', 'border-width': 1.5, 'border-color': '#4a4a4a',
+        'label': 'data(label)', 'text-valign': 'center', 'text-halign': 'center',
+        'font-family': '"Red Hat Text", sans-serif', 'font-size': 14, 'font-weight': 500,
+        'color': '#e8e8e8', 'text-wrap': 'wrap', 'text-max-width': 185, 'line-height': 1.35,
+      }},
+
+      // Merge point
+      { selector: 'node[nodeType="merge"]', style: {
+        'width': 12, 'height': 12, 'background-color': '#999',
+        'border-width': 0, 'shape': 'ellipse'
+      }},
+
+      // Sources
+      { selector: 'node[nodeType="source"]', style: {
+        'width': 175, 'height': 55, 'font-size': 14, 'text-max-width': 160,
+        'color': '#f5f5f5', 'border-color': '#555', 'border-width': 1
+      }},
+      { selector: 'node[nodeType="source-red"]', style: {
+        'width': 175, 'height': 55, 'font-size': 14, 'text-max-width': 160,
+        'background-color': '#401515', 'border-color': 'rgba(238,0,0,0.5)', 'border-width': 1.5,
+        'color': '#ff6666',
+      }},
+      { selector: 'node[nodeType="source-teal"]', style: {
+        'width': 175, 'height': 55, 'font-size': 14, 'text-max-width': 160,
+        'background-color': '#183a3a', 'border-color': 'rgba(0,149,150,0.7)', 'border-width': 1.5,
+        'color': '#70f0f0',
+      }},
+      { selector: 'node[nodeType="source-blue"]', style: {
+        'width': 175, 'height': 55, 'font-size': 14, 'text-max-width': 160,
+        'background-color': '#152f4c', 'border-color': 'rgba(0,102,204,0.7)', 'border-width': 1.5,
+        'color': '#8ac4ff',
+      }},
+
+      // Tools
+      { selector: 'node[nodeType="tool"]', style: {
+        'width': 155, 'height': 48, 'font-size': 13, 'text-max-width': 140,
+        'background-color': '#252525', 'border-color': '#555', 'border-width': 1,
+        'color': '#ccc',
+      }},
+      { selector: 'node[nodeType="tool-blue"]', style: {
+        'width': 170, 'height': 48, 'font-size': 13, 'text-max-width': 155,
+        'background-color': '#152f4c', 'border-color': 'rgba(0,102,204,0.5)', 'border-width': 1,
+        'color': '#8ac4ff',
+      }},
+
+      // Phase 2
+      { selector: 'node[nodeType="phase2"]', style: {
+        'width': 155, 'height': 48, 'border-style': 'dashed',
+        'border-color': 'rgba(103, 83, 172, 0.70)',
+        'background-color': 'rgba(103, 83, 172, 0.15)',
+        'color': '#d0c8f8', 'opacity': 0.85, 'font-size': 13, 'text-max-width': 140,
+      }},
+
+      // Registry (hero)
+      { selector: 'node[nodeType="registry"]', style: {
+        'width': 440, 'height': 80, 'background-color': '#401515',
+        'border-color': '#cc0000', 'border-width': 2.5,
+        'font-family': '"Red Hat Display", sans-serif', 'font-size': 16, 'font-weight': 700,
+        'color': '#fff', 'text-max-width': 420, 'line-height': 1.4,
+      }},
+
+      // Blue (catalog)
+      { selector: 'node[nodeType="blue"]', style: {
+        'width': 175, 'height': 60,
+        'background-color': '#152f4c', 'border-color': 'rgba(0,102,204,0.7)', 'border-width': 1.5,
+        'color': '#8ac4ff', 'font-size': 14,
+      }},
+
+      // Purple (lifecycle)
+      { selector: 'node[nodeType="purple"]', style: {
+        'width': 155, 'height': 60,
+        'background-color': '#2c2750', 'border-color': 'rgba(103,83,172,0.7)', 'border-width': 1.5,
+        'color': '#ccb8ff', 'font-size': 14,
+      }},
+
+      // Teal (gateway)
+      { selector: 'node[nodeType="teal"]', style: {
+        'width': 155, 'height': 60,
+        'background-color': '#183a3a', 'border-color': 'rgba(0,149,150,0.7)', 'border-width': 1.5,
+        'color': '#70f0f0', 'font-size': 14,
+      }},
+
+      // Green (consumption)
+      { selector: 'node[nodeType="green"]', style: {
+        'width': 155, 'height': 55,
+        'background-color': '#1a3218', 'border-color': 'rgba(62,134,53,0.7)', 'border-width': 1.5,
+        'color': '#90e088', 'font-size': 14,
+      }},
+
+      // ── Base edge ──
+      { selector: 'edge', style: {
+        'width': 1.5, 'line-color': '#555', 'target-arrow-color': '#555',
+        'target-arrow-shape': 'triangle', 'arrow-scale': 1.0,
+        'curve-style': 'taxi', 'taxi-direction': 'downward',
+        'taxi-turn': 20, 'taxi-turn-min-distance': 10,
+      }},
+
+      // Source flows
+      { selector: 'edge[edgeType="source"]', style: {
+        'width': 1.5, 'line-color': '#707070', 'target-arrow-color': '#707070',
+        'arrow-scale': 0.8,
+      }},
+      { selector: 'edge[edgeType="source-red"]', style: {
+        'width': 2, 'line-color': 'rgba(238,0,0,0.5)', 'target-arrow-color': 'rgba(238,0,0,0.5)',
+        'arrow-scale': 0.9,
+      }},
+      { selector: 'edge[edgeType="source-teal"]', style: {
+        'width': 2, 'line-color': 'rgba(0,149,150,0.6)', 'target-arrow-color': 'rgba(0,149,150,0.6)',
+        'arrow-scale': 0.9,
+      }},
+      { selector: 'edge[edgeType="source-blue"]', style: {
+        'width': 2, 'line-color': 'rgba(0,102,204,0.6)', 'target-arrow-color': 'rgba(0,102,204,0.6)',
+        'arrow-scale': 0.9,
+      }},
+
+      // Customer flow
+      { selector: 'edge[edgeType="customer-flow"]', style: {
+        'width': 2, 'line-color': 'rgba(0,102,204,0.6)', 'target-arrow-color': 'rgba(0,102,204,0.6)',
+        'arrow-scale': 0.9,
+        'taxi-turn': 40,
+      }},
+
+      // Data flow (RED, dominant)
+      { selector: 'edge[edgeType="data-flow"]', style: {
+        'width': 3.5, 'line-color': '#cc0000', 'target-arrow-color': '#cc0000',
+        'arrow-scale': 1.3,
+        'taxi-turn': 30, 'taxi-turn-min-distance': 15,
+        'target-label': 'data(label)',
+        'target-text-margin-y': -28, 'target-text-offset': 1,
+        'font-size': 15, 'font-weight': 700, 'color': '#fff',
+      }},
+
+      // Tool links
+      { selector: 'edge[edgeType="tool-link"]', style: {
+        'width': 1, 'line-color': '#555', 'target-arrow-color': '#555',
+        'line-style': 'dotted', 'arrow-scale': 0.6,
+        'taxi-turn': 15,
+      }},
+      { selector: 'edge[edgeType="tool-link-phase2"]', style: {
+        'width': 1, 'line-color': 'rgba(103,83,172,0.5)', 'target-arrow-color': 'rgba(103,83,172,0.5)',
+        'line-style': 'dashed', 'arrow-scale': 0.6, 'opacity': 0.7,
+        'taxi-turn': 15,
+      }},
+
+      // Governed
+      { selector: 'edge[edgeType="governed"]', style: {
+        'width': 2, 'line-color': '#aaa', 'target-arrow-color': '#aaa',
+        'arrow-scale': 1.0,
+        'taxi-turn': 30,
+        'target-label': 'data(label)',
+        'target-text-margin-y': -22, 'target-text-offset': 1,
+        'font-size': 14, 'font-weight': 600, 'color': '#ddd',
+      }},
+
+      // Feedback
+      { selector: 'edge[edgeType="feedback"]', style: {
+        'width': 1.5, 'line-color': '#D4954A',
+        'line-style': 'dashed', 'line-dash-pattern': [8, 5],
+        'target-arrow-color': '#D4954A', 'arrow-scale': 0.8,
+        'opacity': 0.6,
+        'curve-style': 'taxi', 'taxi-direction': 'upward',
+        'taxi-turn': 80,
+        'taxi-turn-min-distance': 15,
+        'label': 'data(label)',
+        'font-size': 14, 'font-weight': 600,
+        'color': '#D4954A',
+      }},
+
+      // Per-edge feedback overrides
+      { selector: 'edge[id="fb-eval"]', style: { 'taxi-turn': -140 } },
+      { selector: 'edge[id="fb-telemetry"]', style: { 'taxi-turn': -60 } },
+    ]
+  });
+
+  // ── Layer labels ──
+  cy.on('layoutstop', function() {
+    const labelsEl = document.getElementById('layer-labels');
+    labelsEl.innerHTML = '';
+
+    const layers = [
+      { nodeId: 'src-partner',  text: 'SOURCES' },
+      { nodeId: 'validate',     text: 'VALIDATION' },
+      { nodeId: 'scan',         text: 'SCANNING' },
+      { nodeId: 'evaluate',     text: 'EVALUATION' },
+      { nodeId: 'containerize', text: 'CONTAINERIZE' },
+      { nodeId: 'registry',     text: 'GOVERNANCE', cls: 'governance' },
+      { nodeId: 'catalog',      text: 'PLATFORM' },
+      { nodeId: 'studio',       text: 'CONSUMPTION' },
+    ];
+
+    const positions = [];
+    layers.forEach(({ nodeId, text, cls }) => {
+      const node = cy.getElementById(nodeId);
+      if (!node || node.length === 0) return;
+      const pos = node.renderedPosition();
+      positions.push(pos.y);
+      const label = document.createElement('div');
+      label.className = 'layer-label' + (cls ? ' ' + cls : '');
+      label.textContent = text;
+      label.style.top = (pos.y - 6) + 'px';
+      labelsEl.appendChild(label);
+    });
+
+    // Swim bands
+    const containerH = document.getElementById('cy').offsetHeight;
+    const bandTops = [0];
+    for (let i = 0; i < positions.length - 1; i++) {
+      bandTops.push((positions[i] + positions[i + 1]) / 2);
+    }
+    bandTops.push(containerH);
+
+    for (let i = 0; i < bandTops.length - 1; i++) {
+      const band = document.createElement('div');
+      band.className = 'swim-band' + (i % 2 === 0 ? ' even' : '');
+      band.style.top = bandTops[i] + 'px';
+      band.style.height = (bandTops[i + 1] - bandTops[i]) + 'px';
+      labelsEl.appendChild(band);
+    }
+  });
+
+  // ── Scroll animation ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+});
+</script>
+
+</body>
+</html>

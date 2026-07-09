@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MLflow — MCP Servers</title>
+<style>
+/* ===== DuBois Design Tokens ===== */
+:root {
+  /* Primary */
+  --color-primary: #2272B4;
+  --color-primary-hover: #0E538B;
+  --color-primary-press: #04355D;
+
+  /* Text */
+  --color-text-primary: #11171C;
+  --color-text-secondary: #5F7281;
+  --color-text-placeholder: #8396A5;
+  --color-text-white: #FFFFFF;
+
+  /* Backgrounds */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F6F7F9;
+  --color-bg-table-header: #FAFBFC;
+  --color-bg-code: #1F272D;
+
+  /* Borders */
+  --color-border: #D1D9E1;
+  --color-border-input: #C0CDD8;
+  --color-border-light: #E8ECF0;
+  --color-border-row: #F0F2F4;
+
+  /* State: hover / selected */
+  --color-hover-bg: rgba(68,83,95,0.04);
+  --color-selected-bg: rgba(68,83,95,0.08);
+  --color-action-hover-bg: rgba(34,114,180,0.08);
+  --color-action-press-bg: rgba(34,114,180,0.16);
+
+  /* Danger */
+  --color-danger: #C82D4C;
+
+  /* AI Gradient */
+  --gradient-ai: linear-gradient(135deg, #4299E0 20.5%, #CA42E0 46.91%, #FF5F46 79.5%);
+  --color-3next: #CA42E0;
+
+  /* Badge: Draft (default) */
+  --badge-default-bg: rgba(0,0,59,0.05);
+  --badge-default-text: #11171C;
+  /* Badge: Published (lime) */
+  --badge-lime-bg: rgba(2,179,2,0.08);
+  --badge-lime-text: #203C25;
+  --badge-lime-icon: #227534;
+  /* Badge: Deprecated (lemon) */
+  --badge-lemon-bg: rgba(255,191,1,0.18);
+  --badge-lemon-text: #4F3422;
+  /* Badge: Retired (charcoal) */
+  --badge-charcoal-bg: #37444F;
+  --badge-charcoal-text: #E8ECF0;
+  /* Badge: Rejected (coral) */
+  --badge-coral-bg: rgba(240,0,64,0.06);
+  --badge-coral-text: #64172B;
+  /* Badge: Policy (indigo) */
+  --badge-indigo-bg: rgba(1,68,255,0.06);
+  --badge-indigo-text: #101D46;
+
+  /* Green dot / checkmark */
+  --color-green: #3CAA60;
+
+  /* Typography */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 13px;
+  --font-size-lg: 14px;
+  --font-size-xl: 18px;
+  --font-size-xxl: 22px;
+  --line-height-base: 20px;
+  --line-height-xl: 28px;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+
+  /* Sizing */
+  --height-button: 32px;
+  --height-input: 32px;
+  --sidebar-width: 190px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* Shadows */
+  --shadow-card: 0px 3px 6px 0px rgba(0,0,0,0.05);
+  --shadow-dropdown: 0px 2px 16px rgba(0,0,0,0.08);
+  --shadow-modal: 0px 8px 40px rgba(0,0,0,0.13);
+}
+
+/* ===== Reset ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { color: var(--color-primary-hover); }
+button { font-family: var(--font-family); cursor: pointer; }
+input, textarea, select { font-family: var(--font-family); }
+
+/* ===== App Shell ===== */
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-bg-primary);
+  border-right: 1px solid var(--color-border-light);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 16px 16px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-logo-text { display: flex; align-items: center; gap: 4px; }
+.sidebar-logo-text .version { font-size: var(--font-size-xs); color: var(--color-text-placeholder); }
+
+/* Workflow switcher */
+.workflow-switch {
+  margin: 8px 12px 12px;
+  position: relative;
+  display: flex;
+  height: 32px;
+  border-radius: var(--radius-md);
+  overflow: visible;
+}
+.workflow-switch-border {
+  position: absolute; inset: -1px;
+  border-radius: 7px;
+  background: var(--gradient-ai);
+  z-index: 0;
+}
+.workflow-switch-inner {
+  position: absolute; inset: 1px;
+  border-radius: 5px;
+  background: var(--color-bg-secondary);
+  z-index: 1;
+}
+.workflow-switch-pill {
+  position: relative; z-index: 2;
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  margin: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.workflow-switch-pill.active {
+  background: white;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  box-shadow: 0px 1px 2px rgba(0,0,0,0.08);
+}
+.workflow-switch-pill.inactive {
+  color: var(--color-text-placeholder);
+  margin-left: 0;
+}
+
+/* Nav items */
+.nav-section { display: flex; flex-direction: column; gap: 1px; padding: 0 8px; flex: 1; }
+.nav-item {
+  padding: 8px 8px;
+  display: flex; align-items: center; gap: 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nav-item:hover { background: var(--color-action-hover-bg); }
+.nav-item.active {
+  background: var(--color-action-press-bg);
+  color: var(--color-primary-hover);
+  font-weight: 600;
+}
+.nav-item .nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-bottom {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 8px;
+  border-top: 1px solid var(--color-border-light);
+}
+.nav-bottom .nav-item { color: var(--color-text-secondary); }
+
+/* Content area */
+.content-area {
+  flex: 1;
+  margin: var(--space-sm);
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* ===== Page Header ===== */
+.page-header { padding: 20px var(--space-lg) 0; }
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-sm);
+}
+.breadcrumb a { color: var(--color-primary); }
+.title-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: var(--space-md);
+}
+.title-row h1 {
+  font-size: var(--font-size-xxl);
+  font-weight: 600;
+  line-height: var(--line-height-xl);
+  display: flex; align-items: center; gap: 10px;
+}
+.title-row .subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+.title-actions { display: flex; align-items: center; gap: 12px; }
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: var(--height-button);
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  border: none;
+  transition: background 0.15s;
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
+.btn-primary:hover { background: var(--color-primary-hover); }
+.btn-secondary {
+  background: white;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-input);
+}
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  background: var(--color-action-hover-bg);
+}
+.btn-danger {
+  background: var(--color-danger);
+  color: white;
+}
+
+/* ===== Feature Toggle ===== */
+.feature-toggle {
+  display: flex; align-items: center; gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+.feature-toggle .label-active { font-weight: 600; color: var(--color-text-primary); }
+.toggle-track {
+  width: 36px; height: 20px;
+  background: var(--color-border);
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle-track.on { background: var(--color-primary); }
+.toggle-thumb {
+  width: 16px; height: 16px;
+  background: white;
+  border-radius: 50%;
+  position: absolute; top: 2px; left: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: left 0.2s ease-out;
+}
+.toggle-track.on .toggle-thumb { left: 18px; }
+
+/* ===== 3.next Banner ===== */
+.next-banner {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(66,153,224,0.06) 20%, rgba(202,66,224,0.06) 35%, rgba(255,95,70,0.06) 50%, transparent 80%);
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-placeholder);
+}
+.next-banner .feature-toggle { margin-right: 8px; }
+.next-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-3next);
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+/* ===== Filters ===== */
+.filter-bar {
+  padding: 0 var(--space-lg) var(--space-md);
+  display: flex; gap: var(--space-sm);
+  align-items: center;
+}
+.filter-bar .search-wrapper { flex: 1; position: relative; }
+.filter-bar .search-icon {
+  position: absolute; left: 10px; top: 9px;
+  width: 14px; height: 14px;
+  color: var(--color-text-placeholder);
+}
+.filter-bar input[type="text"] {
+  width: 100%;
+  padding: 6px 12px 6px 30px;
+  height: var(--height-input);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  outline: none;
+}
+.filter-bar input:focus { border-color: var(--color-primary); }
+.filter-bar select {
+  padding: 6px 12px;
+  height: var(--height-input);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  background: white;
+  cursor: pointer;
+}
+
+/* ===== Table ===== */
+.data-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-base); }
+.data-table thead tr {
+  border-bottom: 1px solid var(--color-border-light);
+  background: var(--color-bg-table-header);
+}
+.data-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+.data-table th:first-child { padding-left: 16px; }
+.data-table td { padding: 12px 12px; }
+.data-table td:first-child { padding-left: 16px; }
+.data-table tbody tr {
+  border-bottom: 1px solid var(--color-border-row);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.data-table tbody tr:hover { background: var(--color-hover-bg); }
+.data-table .col-3next { border-left: 2px solid rgba(202,66,224,0.2); }
+.data-table th.col-3next { color: var(--color-3next); }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+.badge-default { background: var(--badge-default-bg); color: var(--badge-default-text); }
+.badge-lime { background: var(--badge-lime-bg); color: var(--badge-lime-text); }
+.badge-lemon { background: var(--badge-lemon-bg); color: var(--badge-lemon-text); }
+.badge-charcoal { background: var(--badge-charcoal-bg); color: var(--badge-charcoal-text); }
+.badge-coral { background: var(--badge-coral-bg); color: var(--badge-coral-text); }
+.badge-indigo { background: var(--badge-indigo-bg); color: var(--badge-indigo-text); }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  background: var(--badge-default-bg);
+  color: var(--badge-default-text);
+  border: 1px solid transparent;
+}
+.tag .tag-key { color: var(--color-text-secondary); }
+.tag .tag-remove {
+  background: none; border: none;
+  color: var(--color-text-placeholder);
+  font-size: 14px; line-height: 1;
+  padding: 0 2px; cursor: pointer;
+}
+
+/* ===== Server Icon ===== */
+.server-icon {
+  width: 24px; height: 24px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 11px; font-weight: 700;
+  flex-shrink: 0;
+}
+.server-icon.large { width: 32px; height: 32px; border-radius: var(--radius-md); font-size: 14px; }
+
+/* ===== Pagination ===== */
+.pagination {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border-light);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ===== Collapsible Sections ===== */
+.section-block { padding: 0 var(--space-lg); }
+.section-block .section-inner { padding: 16px 0; border-bottom: 1px solid var(--color-border-row); }
+.section-block:last-child .section-inner { border-bottom: none; }
+.section-header {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.section-header .chevron {
+  width: 10px; height: 10px;
+  transition: transform 0.15s;
+}
+.section-header.collapsed .chevron { transform: rotate(-90deg); }
+.section-header h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.section-header .section-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-placeholder);
+  font-weight: 400;
+}
+.section-header .section-action {
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  background: none; border: none; cursor: pointer;
+}
+.section-content { overflow: hidden; }
+.section-content.hidden { display: none; }
+
+/* Metadata grid */
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-md);
+}
+.meta-item .meta-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-placeholder);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-xs);
+}
+
+/* ===== Tools Grid ===== */
+.tools-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+}
+.tool-card {
+  padding: 8px 12px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 8px;
+}
+.tool-name {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary-hover);
+  background: var(--color-action-hover-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+}
+.tool-desc { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+
+/* ===== Code Block ===== */
+.code-block {
+  background: var(--color-bg-code);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: #E8ECF0;
+  line-height: 1.7;
+  max-height: 160px;
+  overflow-y: auto;
+}
+.code-block .key { color: #4299E0; }
+.code-block .str { color: #3CAA60; }
+.code-block .punct { color: var(--color-text-placeholder); }
+.code-block .dim { color: #F8D4A5; }
+
+/* ===== Deployment Card ===== */
+.deploy-card {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+}
+
+/* ===== Governance Grid (3.next) ===== */
+.governance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.governance-card {
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+.governance-card .gc-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+.governance-card .gc-label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.governance-card .gc-body {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* ===== Audit Trail ===== */
+.audit-trail {
+  border-left: 2px solid var(--color-border-light);
+  padding-left: var(--space-md);
+  margin-left: var(--space-sm);
+}
+.audit-entry { position: relative; padding-bottom: var(--space-md); }
+.audit-entry:last-child { padding-bottom: 0; }
+.audit-dot {
+  position: absolute;
+  left: -22px; top: 2px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+.audit-title { font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-primary); }
+.audit-meta { font-size: var(--font-size-xs); color: var(--color-text-placeholder); }
+
+/* ===== Modals ===== */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 100;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+}
+.modal-overlay.visible { display: flex; }
+.modal {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+.modal-header {
+  padding: 20px var(--space-lg) 16px;
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.modal-header h2 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+.modal-close {
+  background: none; border: none;
+  color: var(--color-text-placeholder);
+  font-size: 20px; line-height: 1;
+  cursor: pointer;
+}
+.modal-body { padding: 20px var(--space-lg); }
+.modal-footer {
+  padding: 16px var(--space-lg);
+  border-top: 1px solid var(--color-border-light);
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+
+/* Form fields */
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.form-label .required { color: var(--color-danger); }
+.form-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-placeholder);
+  margin-top: var(--space-xs);
+}
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  height: 36px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  outline: none;
+}
+.form-input:focus { border-color: var(--color-primary); }
+.form-input:disabled, .form-input[readonly] {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}
+.form-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  outline: none;
+  resize: vertical;
+}
+.form-select {
+  width: 100%;
+  padding: 8px 12px;
+  height: 36px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  background: white;
+  cursor: pointer;
+  outline: none;
+}
+.form-select:focus { border-color: var(--color-primary); }
+
+/* Segmented control */
+.seg-control {
+  display: flex;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.seg-control button {
+  flex: 1;
+  padding: 8px;
+  font-size: var(--font-size-sm);
+  border: none;
+  background: white;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+.seg-control button + button { border-left: 1px solid var(--color-border-input); }
+.seg-control button.active {
+  background: var(--color-text-primary);
+  color: white;
+}
+
+/* Tab bar */
+.tab-bar { display: flex; gap: 0; margin-bottom: var(--space-sm); }
+.tab-bar button {
+  padding: 6px 16px;
+  font-size: var(--font-size-sm);
+  background: white;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+.tab-bar button + button { margin-left: -1px; }
+.tab-bar button.active {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  border-bottom: 2px solid var(--color-primary);
+}
+
+/* Info alert */
+.info-alert {
+  padding: 12px;
+  border-left: 3px solid var(--color-primary);
+  background: var(--color-action-hover-bg);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: var(--font-size-sm);
+  color: #445461;
+  line-height: 1.5;
+}
+.info-banner {
+  padding: 12px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; gap: 10px;
+  font-size: var(--font-size-sm);
+  color: #445461;
+}
+
+/* Lifecycle dropdown */
+.lifecycle-dropdown-wrapper { position: relative; }
+.lifecycle-btn {
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  cursor: pointer;
+  background: white;
+  height: var(--height-button);
+}
+.lifecycle-btn:hover { border-color: var(--color-primary); }
+.lifecycle-menu {
+  display: none;
+  position: absolute; top: 100%; left: 0;
+  margin-top: 4px;
+  width: 260px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-dropdown);
+  z-index: 50;
+}
+.lifecycle-menu.visible { display: block; }
+.lifecycle-menu-header {
+  padding: 8px 12px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-placeholder);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border-row);
+}
+.lifecycle-menu-item {
+  padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--color-border-row);
+  transition: background 0.1s;
+}
+.lifecycle-menu-item:last-child { border-bottom: none; }
+.lifecycle-menu-item:hover { background: var(--color-hover-bg); }
+.lifecycle-menu-item .lmi-desc { font-size: var(--font-size-xs); color: var(--color-text-placeholder); margin-top: 2px; }
+
+/* Transition modal specifics */
+.transition-visual {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: var(--space-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+.transition-arrow { color: var(--color-primary); }
+
+/* Overflow menu */
+.overflow-btn {
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background: white;
+  padding: 6px 10px;
+  height: var(--height-button);
+  display: flex; align-items: center;
+}
+.overflow-btn:hover { border-color: var(--color-primary); }
+
+/* Edit button (pencil) */
+.edit-btn {
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  background: white;
+  padding: 6px 10px;
+  height: var(--height-button);
+  display: flex; align-items: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+.edit-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-action-hover-bg); }
+
+/* Status dot */
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status-dot.green { background: var(--color-green); }
+.status-dot.grey { background: var(--color-text-placeholder); }
+
+/* Deploy dot (larger, in table) */
+.deploy-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Verified icon */
+.verified-icon { color: var(--color-green); }
+.unverified-icon { color: var(--color-border); }
+
+/* Show more link */
+.show-more {
+  padding: 8px 0;
+  text-align: center;
+  font-size: var(--font-size-sm);
+}
+
+/* Schema table */
+.schema-table { width: 100%; border-collapse: collapse; }
+.schema-table th {
+  text-align: left; padding: 8px 12px;
+  font-weight: 600; color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  background: var(--color-bg-table-header);
+  border-bottom: 1px solid var(--color-border-light);
+}
+.schema-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border-row);
+}
+.schema-table .schema-type {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+/* Tags inline editor */
+.tags-inline {
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+}
+.tag-add-btn {
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px dashed var(--color-border-input);
+  cursor: pointer;
+}
+
+/* Cards grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-md);
+  padding: 0 var(--space-lg) var(--space-lg);
+}
+.server-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+  background: var(--color-bg-primary);
+}
+.server-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(34,114,180,0.1);
+}
+.server-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.server-card-name {
+  font-weight: 600;
+  color: var(--color-primary);
+  flex: 1;
+}
+.server-card-name:hover { color: var(--color-primary-hover); }
+.server-card-body {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.server-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.server-card-edit {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  cursor: pointer;
+  color: var(--color-text-placeholder);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.server-card:hover .server-card-edit { opacity: 1; }
+.server-card-edit:hover {
+  color: var(--color-primary);
+  border-color: var(--color-border-input);
+  background: var(--color-action-hover-bg);
+}
+
+/* View mode toggle */
+.view-mode-toggle {
+  display: flex;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.view-mode-btn {
+  padding: 4px 8px;
+  background: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-placeholder);
+  width: 32px;
+  height: 28px;
+}
+.view-mode-btn + .view-mode-btn { border-left: 1px solid var(--color-border-input); }
+.view-mode-btn.active {
+  background: var(--color-selected-bg);
+  color: var(--color-text-primary);
+}
+.view-mode-btn:hover:not(.active) {
+  background: var(--color-hover-bg);
+}
+
+/* Tag chip clickable */
+.tag.clickable { cursor: pointer; }
+.tag.clickable:hover { background: var(--color-action-hover-bg); border-color: var(--color-primary); }
+
+/* Tag modal rows */
+.tag-modal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border-row);
+}
+.tag-modal-row:last-child { border-bottom: none; }
+.tag-input-sm {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid var(--color-border-input);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  outline: none;
+}
+.tag-input-sm:focus { border-color: var(--color-primary); }
+
+/* Runtime metadata list */
+.runtime-meta-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 16px;
+  font-size: var(--font-size-sm);
+}
+.runtime-meta-key {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+.runtime-meta-value {
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+/* Source badge in card */
+.source-text {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-placeholder);
+}
+
+/* Utility: hide */
+.hidden { display: none !important; }
+
+/* View containers */
+.view { display: none; flex-direction: column; height: 100%; }
+.view.active { display: flex; }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- Content -->
+  <main class="content-area" id="content">
+    <!-- Views rendered here by JS -->
+    <div id="view-list" class="view"></div>
+    <div id="view-detail" class="view"></div>
+    <div id="view-version" class="view"></div>
+  </main>
+</div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="modal-register">
+  <div class="modal" id="modal-register-inner" style="width:560px;"></div>
+</div>
+<div class="modal-overlay" id="modal-transition">
+  <div class="modal" id="modal-transition-inner" style="width:420px;"></div>
+</div>
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal" id="modal-edit-inner" style="width:560px;"></div>
+</div>
+<div class="modal-overlay" id="modal-tags">
+  <div class="modal" id="modal-tags-inner" style="width:480px;"></div>
+</div>
+
+<script>
+// ===== SAMPLE DATA =====
+
+const MCP_SERVERS = [
+  {
+    id: 'openshift',
+    name: 'Red Hat OpenShift',
+    icon: { bg: '#EE0000', text: 'RH' },
+    source: 'Red Hat',
+    status: 'Active',
+    updateMode: 'system_managed',
+    aliases: [{ alias: 'published', version: '2.1.0' }],
+    description: 'Connect your AI agents to OpenShift clusters for querying cluster state, managing workloads, and troubleshooting deployments through natural language. When a pod fails at 2 a.m., your on-call engineer asks the agent for the last 50 log lines and the resource status of the affected deployment. No context-switching between dashboards, no kubectl gymnastics.',
+    tags: { category: 'infrastructure', platform: 'kubernetes', source: 'red-hat', tier: 'supported' },
+    versions: [
+      {
+        num: 3, semver: '2.1.0', state: 'Published', createdBy: 'platform-admin',
+        registeredAt: 'Apr 14, 2026 10:22 AM', lastModified: 'Apr 16, 2026 02:30 PM',
+        description: 'Added scale_deployment and get_events tools. Improved error handling for namespace-scoped queries. Updated to support OpenShift 4.16+ API changes.',
+        tags: { release: '2.1.0', 'ocp-version': '4.16+' },
+        sourceRun: 'run-4a8f3c2d',
+        source: 'registry.redhat.io/rhoai/openshift-mcp:v2.1.0',
+        packageTypes: ['container'],
+        transportTypes: ['streamable-http'],
+        deployed: true, endpoint: 'https://openshift-mcp.rhoai.svc:8443',
+        runtimeMetadata: { 'deployment-id': 'dep-ocp-3a8f', 'endpoint-url': 'https://openshift-mcp.rhoai.svc:8443' },
+        approval: 'Approved', approvedBy: 'ai-governance-team', approvedAt: 'Apr 13, 2026 3:15 PM', approvalReason: 'Meets security and compliance requirements',
+        verified: true, verifiedSource: 'registry.redhat.io', verifiedAt: 'Apr 12, 2026',
+        certified: 'Certified', certifiedAt: 'Apr 11, 2026', certExpiry: 'Oct 11, 2026',
+        policies: ['rate-limit-default', 'rbac-namespace-scope'],
+        audit: [
+          { action: 'Published', at: 'Apr 14, 2026 10:30 AM', by: 'platform-admin', comment: 'Ready for production use', color: '#3CAA60' },
+          { action: 'Approved', at: 'Apr 13, 2026 3:15 PM', by: 'ai-governance-team', comment: 'Meets security requirements', color: '#2272B4' },
+          { action: 'Submitted for approval', at: 'Apr 12, 2026 9:00 AM', by: 'platform-admin', comment: '', color: '#DE7921' },
+          { action: 'Registered as Draft', at: 'Apr 12, 2026 8:45 AM', by: 'platform-admin', comment: '', color: '#8396A5' }
+        ]
+      },
+      {
+        num: 2, semver: '1.2.0', state: 'Deprecated', createdBy: 'platform-admin',
+        registeredAt: 'Apr 11, 2026 08:00 AM', lastModified: 'Apr 14, 2026 10:30 AM',
+        description: 'Initial tool set with get_pods, get_logs, get_deployments, describe_resource.',
+        tags: { release: '1.2.0' }, sourceRun: 'run-2b5e1a9f',
+        source: 'registry.redhat.io/rhoai/openshift-mcp:v1.2.0',
+        packageTypes: ['container'],
+        transportTypes: ['streamable-http'],
+        deployed: false, approval: 'Approved', verified: true, certified: 'Certified',
+        audit: []
+      },
+      {
+        num: 1, semver: '0.1.0', state: 'Retired', createdBy: 'platform-admin',
+        registeredAt: 'Apr 10, 2026 09:15 AM', lastModified: 'Apr 11, 2026 08:00 AM',
+        description: 'Proof of concept, limited tools.',
+        tags: { release: '0.1.0' }, sourceRun: 'run-0c3d4e5f',
+        source: 'registry.redhat.io/rhoai/openshift-mcp:v0.1.0',
+        packageTypes: ['container'],
+        transportTypes: ['streamable-http'],
+        deployed: false, approval: 'Approved', verified: false, certified: 'None',
+        audit: []
+      }
+    ],
+    tools: [
+      { name: 'get_pods', desc: 'List pods in a namespace', schema: '{namespace: string, label_selector?: string}' },
+      { name: 'get_logs', desc: 'Get container logs', schema: '{pod: string, namespace: string, lines?: number}' },
+      { name: 'get_deployments', desc: 'List deployments', schema: '{namespace: string}' },
+      { name: 'describe_resource', desc: 'Describe any K8s resource', schema: '{kind: string, name: string, namespace: string}' },
+      { name: 'get_events', desc: 'Get cluster events', schema: '{namespace?: string, limit?: number}' },
+      { name: 'scale_deployment', desc: 'Scale replicas up/down', schema: '{name: string, namespace: string, replicas: number}' },
+      { name: 'get_nodes', desc: 'List cluster nodes', schema: '{label_selector?: string}' },
+      { name: 'get_services', desc: 'List services', schema: '{namespace: string}' },
+      { name: 'get_configmaps', desc: 'List ConfigMaps', schema: '{namespace: string}' },
+      { name: 'get_secrets', desc: 'List secret names', schema: '{namespace: string}' },
+      { name: 'get_routes', desc: 'List OpenShift routes', schema: '{namespace: string}' },
+      { name: 'apply_resource', desc: 'Apply a K8s resource', schema: '{yaml: string, namespace: string}' }
+    ]
+  },
+  {
+    id: 'ansible', name: 'Red Hat Ansible Automation Platform',
+    icon: { bg: '#EE0000', text: 'RH' }, source: 'Red Hat',
+    status: 'Active',
+    updateMode: 'system_managed',
+    aliases: [{ alias: 'published', version: '1.1.0' }],
+    description: 'Connect agents to your automation workflows. An agent can trigger Ansible playbooks, check job status and orchestrate configuration changes across your infrastructure.',
+    tags: { category: 'automation', platform: 'ansible' },
+    versions: [
+      { num: 2, semver: '1.1.0', state: 'Published', createdBy: 'platform-admin', registeredAt: 'Apr 12, 2026', lastModified: '1 day ago', description: 'Added job template execution and inventory queries.', tags: {}, sourceRun: 'run-a1b2c3d4', source: 'registry.redhat.io/rhoai/ansible-mcp:v1.1.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://ansible-mcp.rhoai.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-ans-1b2c', 'endpoint-url': 'https://ansible-mcp.rhoai.svc:8443' }, approval: 'Approved', verified: true, certified: 'Certified', audit: [] },
+      { num: 1, semver: '1.0.0', state: 'Deprecated', createdBy: 'platform-admin', registeredAt: 'Apr 10, 2026', lastModified: 'Apr 12, 2026', description: 'Initial release.', tags: {}, sourceRun: 'run-e5f6a7b8', source: 'registry.redhat.io/rhoai/ansible-mcp:v1.0.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: false, approval: 'Approved', verified: true, certified: 'None', audit: [] }
+    ],
+    tools: [
+      { name: 'run_playbook', desc: 'Execute an Ansible playbook', schema: '{playbook: string, inventory?: string}' },
+      { name: 'get_job_status', desc: 'Check job execution status', schema: '{job_id: string}' },
+      { name: 'list_templates', desc: 'List job templates', schema: '{}' },
+      { name: 'get_inventory', desc: 'Get inventory details', schema: '{inventory_id: string}' },
+      { name: 'list_hosts', desc: 'List managed hosts', schema: '{group?: string}' },
+      { name: 'get_facts', desc: 'Get host facts', schema: '{host: string}' },
+      { name: 'run_ad_hoc', desc: 'Run ad-hoc command', schema: '{module: string, args: string, hosts: string}' },
+      { name: 'get_credentials', desc: 'List credentials', schema: '{}' }
+    ]
+  },
+  {
+    id: 'insights', name: 'Red Hat Insights',
+    icon: { bg: '#EE0000', text: 'RH' }, source: 'Red Hat',
+    status: 'Active',
+    updateMode: 'system_managed',
+    aliases: [{ alias: 'published', version: '1.0.0' }],
+    description: 'Surface platform intelligence and recommendations through your AI agents. Pull the latest recommendations, correlate them with your cluster state and suggest remediation steps.',
+    tags: { category: 'observability', platform: 'insights' },
+    versions: [
+      { num: 1, semver: '1.0.0', state: 'Published', createdBy: 'platform-admin', registeredAt: 'Apr 10, 2026', lastModified: '3 days ago', description: 'Initial release with advisory and recommendation tools.', tags: {}, sourceRun: 'run-i1j2k3l4', source: 'registry.redhat.io/rhoai/insights-mcp:v1.0.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://insights-mcp.rhoai.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-ins-3k4l', 'endpoint-url': 'https://insights-mcp.rhoai.svc:8443' }, approval: 'Approved', verified: true, certified: 'Certified', audit: [] }
+    ],
+    tools: [
+      { name: 'get_advisories', desc: 'List security advisories', schema: '{severity?: string}' },
+      { name: 'get_recommendations', desc: 'Get recommendations for cluster', schema: '{cluster_id: string}' },
+      { name: 'get_cves', desc: 'List applicable CVEs', schema: '{severity?: string}' },
+      { name: 'get_compliance', desc: 'Get compliance status', schema: '{policy?: string}' },
+      { name: 'get_inventory', desc: 'Get system inventory', schema: '{}' },
+      { name: 'get_remediations', desc: 'List available remediations', schema: '{advisory_id: string}' }
+    ]
+  },
+  {
+    id: 'kafka', name: 'Confluent Kafka',
+    icon: { bg: '#1F1C4F', text: 'CK' }, source: 'Partner',
+    status: 'Active',
+    updateMode: 'manual',
+    aliases: [{ alias: 'published', version: '2.0.0' }],
+    description: 'Connect agents to your event streams for topic management, pipeline monitoring and real-time data access. If your agentic workflows need to react to live data, this is the integration point.',
+    tags: { category: 'streaming', platform: 'kafka' },
+    versions: [
+      { num: 2, semver: '2.0.0', state: 'Published', createdBy: 'partner-confluent', registeredAt: 'Apr 11, 2026', lastModified: '5 days ago', description: 'Added consumer group management and schema registry integration.', tags: {}, sourceRun: 'run-k1l2m3n4', source: 'registry.confluent.io/mcp/kafka:v2.0.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://kafka-mcp.confluent.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-kfk-5m6n', 'endpoint-url': 'https://kafka-mcp.confluent.svc:8443' }, approval: 'Approved', verified: true, certified: 'Candidate', audit: [] },
+      { num: 1, semver: '1.0.0', state: 'Deprecated', createdBy: 'partner-confluent', registeredAt: 'Apr 8, 2026', lastModified: 'Apr 11, 2026', description: 'Initial release.', tags: {}, sourceRun: 'run-o5p6q7r8', source: 'registry.confluent.io/mcp/kafka:v1.0.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: false, approval: 'Approved', verified: true, certified: 'None', audit: [] }
+    ],
+    tools: [
+      { name: 'list_topics', desc: 'List Kafka topics', schema: '{cluster_id?: string}' },
+      { name: 'produce_message', desc: 'Produce message to topic', schema: '{topic: string, key?: string, value: string}' },
+      { name: 'consume_messages', desc: 'Consume from topic', schema: '{topic: string, group: string, limit?: number}' },
+      { name: 'describe_topic', desc: 'Get topic details', schema: '{topic: string}' },
+      { name: 'list_consumer_groups', desc: 'List consumer groups', schema: '{}' },
+      { name: 'get_offsets', desc: 'Get consumer group offsets', schema: '{group: string}' },
+      { name: 'create_topic', desc: 'Create a new topic', schema: '{name: string, partitions: number, replication: number}' },
+      { name: 'get_schema', desc: 'Get Avro/JSON schema', schema: '{subject: string}' },
+      { name: 'get_cluster_info', desc: 'Get cluster metadata', schema: '{}' }
+    ]
+  },
+  {
+    id: 'edb', name: 'EnterpriseDB (PostgreSQL)',
+    icon: { bg: '#FF6A00', text: 'ED' }, source: 'Partner',
+    status: 'Active',
+    updateMode: 'manual',
+    aliases: [{ alias: 'published', version: '1.0.0' }],
+    description: 'Connect agents to PostgreSQL databases for queries, schema management and database operations, powered by EDB\'s pg-airman-mcp server.',
+    tags: { category: 'database', platform: 'postgresql' },
+    versions: [
+      { num: 1, semver: '1.0.0', state: 'Published', createdBy: 'partner-edb', registeredAt: 'Apr 9, 2026', lastModified: '1 week ago', description: 'Initial release with query and schema tools.', tags: {}, sourceRun: 'run-e1d2b3a4', source: 'registry.edb.io/mcp/postgresql:v1.0.0', packageTypes: ['container', 'pypi'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://edb-mcp.partner.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-edb-7b8a', 'endpoint-url': 'https://edb-mcp.partner.svc:8443' }, approval: 'Approved', verified: true, certified: 'Certified', audit: [] }
+    ],
+    tools: [
+      { name: 'run_query', desc: 'Execute SQL query', schema: '{sql: string, params?: any[]}' },
+      { name: 'list_tables', desc: 'List database tables', schema: '{schema?: string}' },
+      { name: 'describe_table', desc: 'Get table schema', schema: '{table: string}' },
+      { name: 'list_indexes', desc: 'List table indexes', schema: '{table: string}' },
+      { name: 'explain_query', desc: 'Get query execution plan', schema: '{sql: string}' },
+      { name: 'get_stats', desc: 'Get database statistics', schema: '{}' },
+      { name: 'list_schemas', desc: 'List database schemas', schema: '{}' }
+    ]
+  },
+  {
+    id: 'terraform', name: 'HashiCorp Terraform',
+    icon: { bg: '#7B42BC', text: 'HC' }, source: 'Partner',
+    status: 'Active',
+    updateMode: 'manual',
+    aliases: [],
+    description: 'Let agents provision and manage infrastructure as code, bridging the gap between AI-driven decisions and infrastructure execution.',
+    tags: { category: 'iac', platform: 'terraform' },
+    versions: [
+      { num: 1, semver: '0.9.0', state: 'Draft', createdBy: 'partner-hashicorp', registeredAt: 'Apr 5, 2026', lastModified: '2 weeks ago', description: 'Pre-release with plan and apply tools. Awaiting security review.', tags: {}, sourceRun: 'run-h1c2t3f4', source: 'registry.hashicorp.io/mcp/terraform:v0.9.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: false, approval: 'Pending', verified: false, certified: 'None', audit: [] }
+    ],
+    tools: [
+      { name: 'plan', desc: 'Generate execution plan', schema: '{workspace: string, vars?: object}' },
+      { name: 'apply', desc: 'Apply infrastructure changes', schema: '{workspace: string, auto_approve?: boolean}' },
+      { name: 'destroy', desc: 'Destroy infrastructure', schema: '{workspace: string}' },
+      { name: 'state_list', desc: 'List resources in state', schema: '{workspace: string}' },
+      { name: 'state_show', desc: 'Show resource details', schema: '{address: string}' },
+      { name: 'workspace_list', desc: 'List workspaces', schema: '{}' },
+      { name: 'workspace_select', desc: 'Select workspace', schema: '{name: string}' },
+      { name: 'output', desc: 'Get output values', schema: '{workspace: string}' },
+      { name: 'validate', desc: 'Validate configuration', schema: '{workspace: string}' },
+      { name: 'fmt', desc: 'Format HCL files', schema: '{path: string}' },
+      { name: 'import', desc: 'Import existing resource', schema: '{address: string, id: string}' },
+      { name: 'providers', desc: 'List required providers', schema: '{workspace: string}' },
+      { name: 'graph', desc: 'Generate dependency graph', schema: '{workspace: string}' },
+      { name: 'refresh', desc: 'Refresh state', schema: '{workspace: string}' }
+    ]
+  },
+  {
+    id: 'azure', name: 'Microsoft Azure',
+    icon: { bg: '#0078D4', text: 'Az' }, source: 'Partner',
+    status: 'Active',
+    updateMode: 'manual',
+    aliases: [{ alias: 'published', version: '1.2.0' }],
+    description: 'Enable agents to manage Azure resources, provision services and automate cloud operations alongside your OpenShift workloads.',
+    tags: { category: 'cloud', platform: 'azure' },
+    versions: [
+      { num: 2, semver: '1.2.0', state: 'Published', createdBy: 'partner-microsoft', registeredAt: 'Apr 12, 2026', lastModified: '4 days ago', description: 'Added AKS management and resource group operations.', tags: {}, sourceRun: 'run-a1z2u3r4', source: 'mcr.microsoft.com/mcp/azure:v1.2.0', packageTypes: ['container', 'npm'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://azure-mcp.partner.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-azr-9u0r', 'endpoint-url': 'https://azure-mcp.partner.svc:8443' }, approval: 'Approved', verified: true, certified: 'Certified', audit: [] },
+      { num: 1, semver: '1.0.0', state: 'Deprecated', createdBy: 'partner-microsoft', registeredAt: 'Apr 6, 2026', lastModified: 'Apr 12, 2026', description: 'Initial release.', tags: {}, sourceRun: 'run-m1s2a3z4', source: 'mcr.microsoft.com/mcp/azure:v1.0.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: false, approval: 'Approved', verified: true, certified: 'None', audit: [] }
+    ],
+    tools: [
+      { name: 'list_resources', desc: 'List Azure resources', schema: '{resource_group: string, type?: string}' },
+      { name: 'create_resource', desc: 'Create Azure resource', schema: '{type: string, name: string, config: object}' },
+      { name: 'delete_resource', desc: 'Delete Azure resource', schema: '{resource_id: string}' },
+      { name: 'get_resource', desc: 'Get resource details', schema: '{resource_id: string}' },
+      { name: 'list_resource_groups', desc: 'List resource groups', schema: '{}' },
+      { name: 'get_aks_cluster', desc: 'Get AKS cluster info', schema: '{name: string, rg: string}' },
+      { name: 'scale_aks', desc: 'Scale AKS node pool', schema: '{cluster: string, pool: string, count: number}' },
+      { name: 'get_costs', desc: 'Get cost analysis', schema: '{scope: string, timeframe?: string}' },
+      { name: 'list_vms', desc: 'List virtual machines', schema: '{resource_group?: string}' },
+      { name: 'manage_vm', desc: 'Start/stop/restart VM', schema: '{vm_id: string, action: string}' },
+      { name: 'get_metrics', desc: 'Get resource metrics', schema: '{resource_id: string, metric: string}' }
+    ]
+  },
+  {
+    id: 'dynatrace', name: 'Dynatrace',
+    icon: { bg: '#1496FF', text: 'DT' }, source: 'Partner',
+    status: 'Active',
+    updateMode: 'manual',
+    aliases: [{ alias: 'published', version: '1.0.0' }],
+    description: 'Bring full-stack observability into your agentic workflows. Agents can query performance data, investigate incidents and correlate metrics across your environment.',
+    tags: { category: 'observability', platform: 'dynatrace' },
+    versions: [
+      { num: 1, semver: '1.0.0', state: 'Published', createdBy: 'partner-dynatrace', registeredAt: 'Apr 10, 2026', lastModified: '6 days ago', description: 'Initial release with monitoring and incident tools.', tags: {}, sourceRun: 'run-d1y2n3a4', source: 'registry.dynatrace.io/mcp/dynatrace:v1.0.0', packageTypes: ['container'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://dynatrace-mcp.partner.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-dyn-2n3a', 'endpoint-url': 'https://dynatrace-mcp.partner.svc:8443' }, approval: 'Approved', verified: true, certified: 'Candidate', audit: [] }
+    ],
+    tools: [
+      { name: 'get_problems', desc: 'List active problems', schema: '{severity?: string, timeframe?: string}' },
+      { name: 'get_metrics', desc: 'Query metrics', schema: '{selector: string, from?: string, to?: string}' },
+      { name: 'get_entities', desc: 'List monitored entities', schema: '{type: string}' },
+      { name: 'get_logs', desc: 'Query log entries', schema: '{query: string, from?: string, to?: string}' },
+      { name: 'get_traces', desc: 'Get distributed traces', schema: '{service?: string, timeframe?: string}' },
+      { name: 'get_synthetic', desc: 'Get synthetic monitor results', schema: '{monitor_id: string}' },
+      { name: 'get_slo', desc: 'Get SLO status', schema: '{slo_id: string}' },
+      { name: 'get_topology', desc: 'Get service topology', schema: '{service: string}' },
+      { name: 'create_problem_comment', desc: 'Comment on problem', schema: '{problem_id: string, comment: string}' },
+      { name: 'get_dashboards', desc: 'List dashboards', schema: '{}' }
+    ]
+  },
+  {
+    id: 'mongodb', name: 'MongoDB',
+    icon: { bg: '#00684A', text: 'MG' }, source: 'Community',
+    status: 'Active',
+    updateMode: 'manual',
+    aliases: [{ alias: 'published', version: '1.0.0' }],
+    description: 'Query and manage document collections through your agents. Useful for RAG workflows and applications backed by unstructured or semi-structured data.',
+    tags: { category: 'database', platform: 'mongodb' },
+    versions: [
+      { num: 1, semver: '1.0.0', state: 'Published', createdBy: 'community', registeredAt: 'Apr 9, 2026', lastModified: '1 week ago', description: 'Community-contributed MongoDB MCP server.', tags: {}, sourceRun: 'run-m1o2n3g4', source: 'ghcr.io/community/mongodb-mcp:v1.0.0', packageTypes: ['npm'], transportTypes: ['streamable-http'], deployed: true, endpoint: 'https://mongodb-mcp.community.svc:8443', runtimeMetadata: { 'deployment-id': 'dep-mdb-4n5g', 'endpoint-url': 'https://mongodb-mcp.community.svc:8443' }, approval: 'Approved', verified: false, certified: 'None', audit: [] }
+    ],
+    tools: [
+      { name: 'find', desc: 'Query documents', schema: '{collection: string, filter: object, limit?: number}' },
+      { name: 'insert', desc: 'Insert documents', schema: '{collection: string, documents: object[]}' },
+      { name: 'update', desc: 'Update documents', schema: '{collection: string, filter: object, update: object}' },
+      { name: 'aggregate', desc: 'Run aggregation pipeline', schema: '{collection: string, pipeline: object[]}' },
+      { name: 'list_collections', desc: 'List collections', schema: '{database?: string}' }
+    ]
+  },
+  {
+    id: 'mariadb', name: 'MariaDB',
+    icon: { bg: '#003545', text: 'MD' }, source: 'Community',
+    status: 'Deprecated',
+    updateMode: 'manual',
+    aliases: [],
+    description: 'Relational database connectivity for agents that need to query and manage structured data stores.',
+    tags: { category: 'database', platform: 'mariadb' },
+    versions: [
+      { num: 1, semver: '0.8.0', state: 'Deprecated', createdBy: 'community', registeredAt: 'Apr 3, 2026', lastModified: '3 weeks ago', description: 'Community-contributed. Deprecated in favor of EnterpriseDB PostgreSQL.', tags: {}, sourceRun: 'run-m1a2r3i4', source: 'ghcr.io/community/mariadb-mcp:v0.8.0', packageTypes: ['pypi'], transportTypes: ['streamable-http'], deployed: false, approval: 'Approved', verified: false, certified: 'None', audit: [] }
+    ],
+    tools: [
+      { name: 'query', desc: 'Execute SQL query', schema: '{sql: string, params?: any[]}' },
+      { name: 'list_tables', desc: 'List tables', schema: '{database?: string}' },
+      { name: 'describe_table', desc: 'Get table structure', schema: '{table: string}' },
+      { name: 'list_databases', desc: 'List databases', schema: '{}' }
+    ]
+  }
+];
+
+// ===== APP STATE =====
+const state = {
+  currentView: 'list',        // 'list' | 'detail' | 'version'
+  listViewMode: 'cards',      // 'cards' | 'table'
+  selectedServerId: null,      // MCP_SERVERS[].id
+  selectedVersionNum: null,    // version number
+  featureToggle: false,        // false = MVP, true = Future
+  searchQuery: '',
+  filterState: 'all',
+  filterSource: 'all',
+  showAllTools: false,
+  expandedSections: {}         // track collapsed sections by key
+};
+
+// ===== HELPERS =====
+function getServer(id) {
+  return MCP_SERVERS.find(s => s.id === id);
+}
+
+function getLatestVersion(server) {
+  return server.versions[0];
+}
+
+function getVersion(server, num) {
+  return server.versions.find(v => v.num === num);
+}
+
+function getLifecycleBadgeClass(state) {
+  switch (state) {
+    case 'Published': return 'badge-lime';
+    case 'Draft': return 'badge-default';
+    case 'Deprecated': return 'badge-lemon';
+    case 'Retired': return 'badge-charcoal';
+    case 'Candidate': return 'badge-lemon';
+    default: return 'badge-default';
+  }
+}
+
+function getStatusBadgeClass(status) {
+  switch (status) {
+    case 'Active': return 'badge-lime';
+    case 'Deprecated': return 'badge-lemon';
+    case 'Retired': return 'badge-charcoal';
+    default: return 'badge-default';
+  }
+}
+
+function getApprovalBadgeClass(status) {
+  switch (status) {
+    case 'Approved': return 'badge-lime';
+    case 'Pending': return 'badge-lemon';
+    case 'Rejected': return 'badge-coral';
+    default: return 'badge-default';
+  }
+}
+
+function getCertBadgeClass(status) {
+  switch (status) {
+    case 'Certified': return 'badge-lime';
+    case 'Candidate': return 'badge-lemon';
+    case 'Expired': return 'badge-coral';
+    default: return 'badge-default';
+  }
+}
+
+function getValidTransitions(currentState) {
+  switch (currentState) {
+    case 'Draft': return [
+      { state: 'Published', desc: 'Make available for consumption', icon: '\u2713' }
+    ];
+    case 'Published': return [
+      { state: 'Deprecated', desc: 'Mark as superseded, still accessible', icon: '\u26A0' }
+    ];
+    case 'Deprecated': return [
+      { state: 'Retired', desc: 'Remove from active use', icon: '\u2715' }
+    ];
+    default: return [];
+  }
+}
+
+function getTransitionVerb(targetState) {
+  switch (targetState) {
+    case 'Published': return 'Publish';
+    case 'Deprecated': return 'Deprecate';
+    case 'Retired': return 'Retire';
+    default: return 'Transition';
+  }
+}
+
+function getTransitionMessage(targetState) {
+  switch (targetState) {
+    case 'Published': return 'Publishing this version will make it available for consumption through the catalog and Gen AI Studio. Other published versions of this MCP server will remain published.';
+    case 'Deprecated': return 'Deprecating this version marks it as superseded. It remains accessible but consumers will be encouraged to migrate to a newer version.';
+    case 'Retired': return 'Retiring this version removes it from active use. It will no longer be available for consumption.';
+    default: return '';
+  }
+}
+
+function escapeAttr(str) {
+  return str.replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function filteredServers() {
+  return MCP_SERVERS.filter(s => {
+    const latest = getLatestVersion(s);
+    if (state.filterState !== 'all' && latest.state !== state.filterState) return false;
+    if (state.filterSource !== 'all' && s.source !== state.filterSource) return false;
+    if (state.searchQuery) {
+      const q = state.searchQuery.toLowerCase();
+      const nameMatch = s.name.toLowerCase().includes(q);
+      const descMatch = s.description.toLowerCase().includes(q);
+      // Search tag keys and values
+      const tagMatch = Object.entries(s.tags).some(([k, v]) =>
+        k.toLowerCase().includes(q) || String(v).toLowerCase().includes(q)
+      );
+      return nameMatch || descMatch || tagMatch;
+    }
+    return true;
+  });
+}
+
+function setListViewMode(mode) {
+  state.listViewMode = mode;
+  renderListView();
+}
+
+function setSearchFromTag(value) {
+  state.searchQuery = value;
+  renderListView();
+}
+
+// Chevron SVG used in collapsible sections
+const CHEVRON_SVG = '<svg class="chevron" width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3l3 3.5L8 3" stroke="#5F7281" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// Pencil icon SVG
+const PENCIL_SVG = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M10.5 1.5l2 2L4.5 11.5H2.5v-2l8-8z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// ===== RENDERING =====
+
+function renderSidebar() {
+  document.getElementById('sidebar').innerHTML = `
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">
+        <svg width="80" height="24" viewBox="0 0 80 24">
+          <text x="0" y="19" font-size="18" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+            <tspan fill="#0194E2">ML</tspan><tspan fill="#11171C">flow</tspan>
+          </text>
+        </svg>
+        <span class="version">3.10</span>
+      </div>
+      <span style="cursor:pointer;color:#8396A5;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 3L5 7l4 4" stroke="#8396A5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </div>
+
+    <div class="workflow-switch">
+      <div class="workflow-switch-border"></div>
+      <div class="workflow-switch-inner"></div>
+      <div class="workflow-switch-pill active">GenAI</div>
+      <div class="workflow-switch-pill inactive">Model training</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-item" onclick="navigateTo('home')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M3 6.5L8 2.5l5 4V13a1 1 0 01-1 1H4a1 1 0 01-1-1V6.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        Home
+      </div>
+      <div class="nav-item" onclick="navigateTo('experiments')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M6 2v4.5L4 10v1h8v-1L10 6.5V2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 2h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Experiments
+      </div>
+      <div class="nav-item" onclick="navigateTo('prompts')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 5h6M5 8h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Prompts
+      </div>
+      <div class="nav-item active" onclick="navigateTo('mcp-servers')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="12" height="5" rx="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="5" cy="4.5" r="1" fill="currentColor"/><circle cx="5" cy="11.5" r="1" fill="currentColor"/></svg>
+        MCP Servers
+      </div>
+      <div class="nav-item" onclick="navigateTo('gateway')">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h12M8 2c2 2 3 4 3 6s-1 4-3 6M8 2c-2 2-3 4-3 6s1 4 3 6" stroke="currentColor" stroke-width="1.5"/></svg>
+        AI Gateway
+      </div>
+    </div>
+
+    <div class="nav-bottom">
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 6v1.5M8 10h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Docs
+      </div>
+      <div class="nav-item">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M8 2v2M8 12v2M14 8h-2M4 8H2M12.2 3.8l-1.4 1.4M5.2 10.8l-1.4 1.4M12.2 12.2l-1.4-1.4M5.2 5.2L3.8 3.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Settings
+      </div>
+    </div>
+  `;
+}
+
+// Stub for non-MCP nav clicks
+function navigateTo(target) {
+  if (target === 'mcp-servers') {
+    state.currentView = 'list';
+    state.selectedServerId = null;
+    state.selectedVersionNum = null;
+    render();
+  }
+  // Other nav items are non-functional stubs in this prototype
+}
+
+function renderListView() {
+  const servers = filteredServers();
+  const is3next = state.featureToggle;
+  const isCards = state.listViewMode === 'cards';
+
+  // Cards grid icon SVG
+  const cardsIconSvg = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>';
+  // Table icon SVG
+  const tableIconSvg = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 3h12M1 7h12M1 11h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>';
+
+  let contentHtml = '';
+  if (isCards) {
+    contentHtml = `
+    <div class="cards-grid">
+      ${servers.map(s => {
+        const v = getLatestVersion(s);
+        const tagKeys = Object.keys(s.tags).slice(0, 2);
+        return `
+        <div class="server-card" onclick="openDetail('${s.id}')">
+          <button class="server-card-edit" onclick="event.stopPropagation();openEditModal('${s.id}')" title="Edit">${PENCIL_SVG}</button>
+          <div class="server-card-header">
+            <div class="server-icon" style="background:${s.icon.bg};">${s.icon.text}</div>
+            <div class="server-card-name">${s.name}</div>
+            <span class="badge badge-default" style="font-size:11px;">v${v.semver}</span>
+          </div>
+          <div class="server-card-body">${s.description}</div>
+          <div class="server-card-footer">
+            <span class="source-text">${s.source}</span>
+            <span class="badge ${getLifecycleBadgeClass(v.state)}" style="font-size:11px;">${v.state}</span>
+            ${tagKeys.map(k => `<span class="tag clickable" onclick="event.stopPropagation();setSearchFromTag('${escapeAttr(s.tags[k])}')">${s.tags[k]}</span>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } else {
+    contentHtml = `
+    <div style="flex:1;overflow-x:auto;padding:0 24px 0 0;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Latest Version</th>
+            <th>Lifecycle State</th>
+            ${is3next ? '<th class="col-3next">Approval</th><th class="col-3next">Verified</th><th class="col-3next">Certified</th><th class="col-3next">Deployed</th>' : ''}
+            <th>Source</th>
+            <th>Last Modified</th>
+            <th>Tags</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${servers.map(s => {
+            const v = getLatestVersion(s);
+            const tagKeys = Object.keys(s.tags).slice(0, 2);
+            return `
+            <tr onclick="openDetail('${s.id}')">
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div class="server-icon" style="background:${s.icon.bg};">${s.icon.text}</div>
+                  <a href="#" onclick="openDetail('${s.id}');return false;">${s.name}</a>
+                </div>
+              </td>
+              <td>v${v.semver}</td>
+              <td><span class="badge ${getLifecycleBadgeClass(v.state)}">${v.state}</span></td>
+              ${is3next ? `
+              <td class="col-3next"><span class="badge ${getApprovalBadgeClass(v.approval || 'None')}">${v.approval || 'None'}</span></td>
+              <td class="col-3next">${v.verified ? '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="verified-icon"><circle cx="8" cy="8" r="6" stroke="#3CAA60" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#3CAA60" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="unverified-icon"><circle cx="8" cy="8" r="6" stroke="#C0CDD8" stroke-width="1.5"/></svg>'}</td>
+              <td class="col-3next"><span class="badge ${getCertBadgeClass(v.certified || 'None')}">${v.certified || 'None'}</span></td>
+              <td class="col-3next">${v.deployed ? '<span class="deploy-dot" style="background:#3CAA60;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>' : '<span class="deploy-dot" style="background:#C0CDD8;width:12px;height:12px;border-radius:50%;display:inline-block;"></span>'}</td>
+              ` : ''}
+              <td style="color:var(--color-text-secondary);">${s.source}</td>
+              <td style="color:var(--color-text-secondary);">${v.lastModified}</td>
+              <td>${tagKeys.map(k => `<span class="tag clickable" onclick="event.stopPropagation();setSearchFromTag('${escapeAttr(s.tags[k])}')">${s.tags[k]}</span>`).join(' ')}</td>
+              <td><button class="edit-btn" onclick="event.stopPropagation();openEditModal('${s.id}')" title="Edit">${PENCIL_SVG}</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  document.getElementById('view-list').innerHTML = `
+    ${is3next ? `
+    <div class="next-banner">
+      <div class="feature-toggle">
+        <span>MVP</span>
+        <div class="toggle-track on" onclick="toggleFeature()">
+          <div class="toggle-thumb"></div>
+        </div>
+        <span class="label-active">Future</span>
+      </div>
+      <span>Showing future governance features</span>
+    </div>` : ''}
+
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('mcp-servers');return false;">MCP Servers</a>
+      </div>
+      <div class="title-row">
+        <h1>
+          <svg width="22" height="22" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="5" rx="1.5" stroke="#11171C" stroke-width="1.5"/><rect x="2" y="9" width="12" height="5" rx="1.5" stroke="#11171C" stroke-width="1.5"/><circle cx="5" cy="4.5" r="1" fill="#11171C"/><circle cx="5" cy="11.5" r="1" fill="#11171C"/></svg>
+          MCP Servers
+        </h1>
+        <div class="title-actions">
+          ${!is3next ? `
+          <div class="feature-toggle">
+            <span class="label-active">MVP</span>
+            <div class="toggle-track" onclick="toggleFeature()">
+              <div class="toggle-thumb"></div>
+            </div>
+            <span>Future</span>
+          </div>` : ''}
+          <button class="btn btn-primary" onclick="openCreateModal()">
+            <span style="font-size:15px;line-height:1;">+</span> Create MCP Server
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#8396A5" stroke-width="1.5"/><path d="M9.5 9.5L13 13" stroke="#8396A5" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input type="text" placeholder="Search MCP servers..." value="${escapeAttr(state.searchQuery)}" oninput="state.searchQuery=this.value;renderListView();">
+      </div>
+      <select onchange="state.filterState=this.value;renderListView();">
+        <option value="all"${state.filterState==='all'?' selected':''}>All States</option>
+        <option value="Published"${state.filterState==='Published'?' selected':''}>Published</option>
+        <option value="Draft"${state.filterState==='Draft'?' selected':''}>Draft</option>
+        <option value="Deprecated"${state.filterState==='Deprecated'?' selected':''}>Deprecated</option>
+      </select>
+      <select onchange="state.filterSource=this.value;renderListView();">
+        <option value="all"${state.filterSource==='all'?' selected':''}>All Sources</option>
+        <option value="Red Hat"${state.filterSource==='Red Hat'?' selected':''}>Red Hat</option>
+        <option value="Partner"${state.filterSource==='Partner'?' selected':''}>Partner</option>
+        <option value="Community"${state.filterSource==='Community'?' selected':''}>Community</option>
+      </select>
+      <div class="view-mode-toggle">
+        <button class="view-mode-btn ${isCards ? 'active' : ''}" onclick="setListViewMode('cards')" title="Cards view">${cardsIconSvg}</button>
+        <button class="view-mode-btn ${!isCards ? 'active' : ''}" onclick="setListViewMode('table')" title="Table view">${tableIconSvg}</button>
+      </div>
+    </div>
+
+    ${contentHtml}
+
+    <div class="pagination">
+      <span>Showing 1-${servers.length} of ${servers.length} MCP servers</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span>Rows per page:</span>
+        <select style="padding:2px 8px;height:28px;border:1px solid var(--color-border-input);border-radius:var(--radius-sm);font-size:12px;">
+          <option>10</option><option>25</option><option>50</option><option>100</option>
+        </select>
+      </div>
+    </div>
+  `;
+}
+
+function toggleFeature() {
+  state.featureToggle = !state.featureToggle;
+  render();
+}
+
+function openDetail(id) {
+  state.currentView = 'detail';
+  state.selectedServerId = id;
+  state.showAllTools = false;
+  render();
+}
+
+function renderDetailView() {
+  const server = getServer(state.selectedServerId);
+  if (!server) return;
+  const latest = getLatestVersion(server);
+  const is3next = state.featureToggle;
+  const tagEntries = Object.entries(server.tags);
+  const toolsToShow = state.showAllTools ? server.tools : server.tools.slice(0, 6);
+
+  // Build server.json from latest version
+  const serverJson = JSON.stringify({
+    name: server.id + '-mcp',
+    version: latest.semver,
+    transport: 'streamable-http',
+    tools: server.tools.slice(0, 5).map(t => ({ name: t.name, description: t.desc }))
+  }, null, 2);
+
+  const highlightedJson = serverJson
+    .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+    .replace(/: "([^"]+)"/g, ': <span class="str">"$1"</span>')
+    .replace(/[{}\[\]]/g, '<span class="punct">$&</span>');
+
+  const aliasesStr = server.aliases && server.aliases.length > 0
+    ? server.aliases.map(a => `${a.alias} \u2192 v${a.version}`).join(', ')
+    : 'None';
+
+  document.getElementById('view-detail').innerHTML = `
+    ${is3next ? `
+    <div class="next-banner">
+      <div class="feature-toggle">
+        <span>MVP</span>
+        <div class="toggle-track on" onclick="toggleFeature()"><div class="toggle-thumb"></div></div>
+        <span class="label-active">Future</span>
+      </div>
+      <span>Showing future governance features</span>
+    </div>` : ''}
+
+    <div class="page-header" style="border-bottom:1px solid var(--color-border-light);">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('mcp-servers');return false;">MCP Servers</a>
+        <span style="color:var(--color-border);">/</span>
+        <span>${server.name}</span>
+      </div>
+      <div class="title-row">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="server-icon large" style="background:${server.icon.bg};">${server.icon.text}</div>
+          <div>
+            <h1 style="font-size:22px;">${server.name}</h1>
+            <div class="subtitle">Registered by ${latest.createdBy} \u00b7 Source: ${server.source}</div>
+          </div>
+        </div>
+        <div class="title-actions">
+          ${!is3next ? `
+          <div class="feature-toggle">
+            <span class="label-active">MVP</span>
+            <div class="toggle-track" onclick="toggleFeature()"><div class="toggle-thumb"></div></div>
+            <span>Future</span>
+          </div>` : ''}
+          <div class="lifecycle-dropdown-wrapper">
+            <button class="lifecycle-btn" onclick="toggleLifecycleMenu('detail')">
+              <span class="badge ${getLifecycleBadgeClass(latest.state)}">${latest.state}</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 4l3 3 3-3" stroke="#5F7281" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="lifecycle-menu" id="lifecycle-menu-detail">
+              <div class="lifecycle-menu-header">Transition to</div>
+              ${getValidTransitions(latest.state).map(t => `
+              <div class="lifecycle-menu-item" onclick="openTransitionModal('${server.id}', ${latest.num}, '${latest.state}', '${t.state}')">
+                <span>${t.icon}</span>
+                <div>
+                  <span class="badge ${getLifecycleBadgeClass(t.state)}">${t.state}</span>
+                  <div class="lmi-desc">${t.desc}</div>
+                </div>
+              </div>`).join('')}
+            </div>
+          </div>
+          <button class="edit-btn" onclick="openEditModal('${server.id}')" title="Edit">${PENCIL_SVG}</button>
+          <button class="overflow-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="3" r="1" fill="#445461"/><circle cx="7" cy="7" r="1" fill="#445461"/><circle cx="7" cy="11" r="1" fill="#445461"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;">
+      <!-- Metadata -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-meta')">
+            ${CHEVRON_SVG}
+            <h3>Metadata</h3>
+          </div>
+          <div class="section-content" id="section-detail-meta">
+            <div class="meta-grid">
+              <div class="meta-item"><div class="meta-label">Created</div><div>${latest.registeredAt}</div></div>
+              <div class="meta-item"><div class="meta-label">Last Modified</div><div>${latest.lastModified}</div></div>
+              <div class="meta-item"><div class="meta-label">Creator</div><div>${latest.createdBy}</div></div>
+              <div class="meta-item"><div class="meta-label">Status</div><div><span class="badge ${getStatusBadgeClass(server.status)}">${server.status}</span></div></div>
+              <div class="meta-item"><div class="meta-label">Update Mode</div><div>${server.updateMode === 'system_managed' ? 'System Managed' : 'Manual'}</div></div>
+              <div class="meta-item"><div class="meta-label">Source</div><div style="color:var(--color-primary);font-family:var(--font-mono);font-size:12px;">${latest.source || 'N/A'}</div></div>
+              <div class="meta-item"><div class="meta-label">Latest Version</div><div style="font-family:var(--font-mono);">${latest.semver}</div></div>
+              <div class="meta-item"><div class="meta-label">Transport</div><div>Streamable HTTP</div></div>
+              <div class="meta-item"><div class="meta-label">Aliases</div><div>${aliasesStr}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-tags')">
+            ${CHEVRON_SVG}
+            <h3>Tags</h3>
+          </div>
+          <div class="section-content" id="section-detail-tags">
+            <div class="tags-inline">
+              ${tagEntries.map(([k, v]) => `<span class="tag"><span class="tag-key">${k}:</span> ${v}</span>`).join('')}
+              <button class="tag-add-btn" onclick="openTagModal('server', '${server.id}')">+ Add tag</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-desc')">
+            ${CHEVRON_SVG}
+            <h3>Description</h3>
+            <button class="section-action">Edit</button>
+          </div>
+          <div class="section-content" id="section-detail-desc">
+            <p style="color:#445461;line-height:1.6;">${server.description}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-tools')">
+            ${CHEVRON_SVG}
+            <h3>Tools</h3>
+            <span class="section-meta">(${server.tools.length})</span>
+          </div>
+          <div class="section-content" id="section-detail-tools">
+            <div class="tools-grid">
+              ${toolsToShow.map(t => `
+              <div class="tool-card">
+                <code class="tool-name">${t.name}</code>
+                <span class="tool-desc">${t.desc}</span>
+              </div>`).join('')}
+            </div>
+            ${server.tools.length > 6 && !state.showAllTools ? `
+            <div class="show-more">
+              <a href="#" onclick="state.showAllTools=true;renderDetailView();return false;">Show all ${server.tools.length} tools</a>
+            </div>` : ''}
+            <p style="font-size:var(--font-size-xs);color:var(--color-text-placeholder);margin-top:8px;">Tools are observed from the live endpoint and may change between snapshots.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Definition -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-json')">
+            ${CHEVRON_SVG}
+            <h3>Server Definition</h3>
+            <span class="section-meta">server.json \u00b7 immutable</span>
+          </div>
+          <div class="section-content" id="section-detail-json">
+            <div class="code-block"><pre style="margin:0;white-space:pre-wrap;">${highlightedJson}
+    <span class="dim">... (${server.tools.length} tools total)</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Versions -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-versions')">
+            ${CHEVRON_SVG}
+            <h3>Versions</h3>
+          </div>
+          <div class="section-content" id="section-detail-versions">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div class="seg-control" style="width:auto;display:inline-flex;">
+                <button class="active" style="padding:4px 12px;font-size:12px;">All <span style="opacity:0.7;">(${server.versions.length})</span></button>
+                <button style="padding:4px 12px;font-size:12px;">Active <span>(${server.versions.filter(v => v.state !== 'Retired').length})</span></button>
+              </div>
+            </div>
+            <table class="data-table" style="font-size:13px;">
+              <thead>
+                <tr>
+                  <th style="width:30px;"></th>
+                  <th>Version</th>
+                  <th>Registered at</th>
+                  <th>Lifecycle State</th>
+                  <th>Created by</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${server.versions.map(v => `
+                <tr onclick="openVersion('${server.id}', ${v.num})">
+                  <td><span class="status-dot ${v.state === 'Retired' ? 'grey' : 'green'}"></span></td>
+                  <td><a href="#" onclick="openVersion('${server.id}', ${v.num});return false;">Version ${v.num}</a></td>
+                  <td style="color:var(--color-text-secondary);">${v.registeredAt}</td>
+                  <td><span class="badge ${getLifecycleBadgeClass(v.state)}">${v.state}</span></td>
+                  <td style="color:var(--color-text-secondary);">${v.createdBy}</td>
+                  <td style="color:var(--color-text-secondary);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.description}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      ${is3next ? `
+      <!-- Governance Status (3.next) -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('detail-gov')">
+            ${CHEVRON_SVG}
+            <h3>Governance Status</h3>
+            <span class="next-label">Future</span>
+          </div>
+          <div class="section-content" id="section-detail-gov">
+            <div class="governance-grid">
+              <div class="governance-card">
+                <div class="gc-header">
+                  <span class="gc-label">Approval</span>
+                  <span class="badge ${getApprovalBadgeClass(latest.approval || 'None')}">${latest.approval || 'None'}</span>
+                </div>
+                <div class="gc-body">
+                  ${latest.approvedBy ? `Approved by <strong>${latest.approvedBy}</strong><br>${latest.approvedAt} \u00b7 "${latest.approvalReason}"` : 'No approval record'}
+                </div>
+              </div>
+              <div class="governance-card">
+                <div class="gc-header">
+                  <span class="gc-label">Verification</span>
+                  <span class="badge ${latest.verified ? 'badge-lime' : 'badge-default'}">
+                    ${latest.verified ? '\u2713 Verified' : 'Unverified'}
+                  </span>
+                </div>
+                <div class="gc-body">
+                  ${latest.verified ? `Source verified from <strong>${latest.verifiedSource || 'unknown'}</strong><br>Verified ${latest.verifiedAt || ''}` : 'Source not verified'}
+                </div>
+              </div>
+              <div class="governance-card">
+                <div class="gc-header">
+                  <span class="gc-label">Certification</span>
+                  <span class="badge ${getCertBadgeClass(latest.certified || 'None')}">${latest.certified || 'None'}</span>
+                </div>
+                <div class="gc-body">
+                  ${latest.certified === 'Certified' ? `Red Hat Certified Partner MCP<br>Certified ${latest.certifiedAt || ''} \u00b7 Expires ${latest.certExpiry || ''}` : latest.certified === 'Candidate' ? 'Certification in progress' : 'Not certified'}
+                </div>
+              </div>
+              <div class="governance-card">
+                <div class="gc-header">
+                  <span class="gc-label">Linked Policies</span>
+                  <span class="badge badge-indigo">${(latest.policies || []).length} active</span>
+                </div>
+                <div class="gc-body">
+                  ${(latest.policies || []).map(p => `<a href="#">${p}</a>`).join(' \u00b7 ') || 'No policies linked'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>` : ''}
+
+      ${is3next && latest.audit && latest.audit.length > 0 ? `
+      <!-- Audit Trail (3.next) -->
+      <div class="section-block" style="padding-bottom:24px;">
+        <div class="section-inner" style="border-bottom:none;">
+          <div class="section-header" onclick="toggleSection('detail-audit')">
+            ${CHEVRON_SVG}
+            <h3>Audit Trail</h3>
+            <span class="next-label">Future</span>
+          </div>
+          <div class="section-content" id="section-detail-audit">
+            <div class="audit-trail">
+              ${latest.audit.map(a => `
+              <div class="audit-entry">
+                <div class="audit-dot" style="background:${a.color};"></div>
+                <div class="audit-title">${a.action}</div>
+                <div class="audit-meta">${a.at} \u00b7 ${a.by}${a.comment ? ` \u00b7 "${a.comment}"` : ''}</div>
+              </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function openVersion(serverId, versionNum) {
+  state.currentView = 'version';
+  state.selectedServerId = serverId;
+  state.selectedVersionNum = versionNum;
+  state.showAllTools = false;
+  render();
+}
+
+function toggleLifecycleMenu(context) {
+  const menu = document.getElementById('lifecycle-menu-' + context);
+  if (menu) menu.classList.toggle('visible');
+}
+
+function toggleSection(key) {
+  const content = document.getElementById('section-' + key);
+  const header = content?.previousElementSibling;
+  if (content) {
+    content.classList.toggle('hidden');
+    if (header) header.classList.toggle('collapsed');
+  }
+}
+
+function renderVersionView() {
+  const server = getServer(state.selectedServerId);
+  if (!server) return;
+  const version = getVersion(server, state.selectedVersionNum);
+  if (!version) return;
+  const is3next = state.featureToggle;
+  const versionTags = Object.entries(version.tags || {});
+  const toolsToShow = state.showAllTools ? server.tools : server.tools.slice(0, 6);
+
+  const serverJson = JSON.stringify({
+    name: server.id + '-mcp',
+    version: version.semver,
+    transport: 'streamable-http',
+    tools: server.tools.slice(0, 5).map(t => ({ name: t.name, description: t.desc }))
+  }, null, 2);
+
+  const highlightedJson = serverJson
+    .replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:')
+    .replace(/: "([^"]+)"/g, ': <span class="str">"$1"</span>')
+    .replace(/[{}\[\]]/g, '<span class="punct">$&</span>');
+
+  const pkgBadges = (version.packageTypes || []).map(p => `<span class="badge badge-default">${p}</span>`).join(' ');
+  const transportBadges = (version.transportTypes || []).map(t => `<span class="badge badge-default">${t}</span>`).join(' ');
+
+  document.getElementById('view-version').innerHTML = `
+    ${is3next ? `
+    <div class="next-banner">
+      <div class="feature-toggle">
+        <span>MVP</span>
+        <div class="toggle-track on" onclick="toggleFeature()"><div class="toggle-thumb"></div></div>
+        <span class="label-active">Future</span>
+      </div>
+      <span>Showing future governance features</span>
+    </div>` : ''}
+
+    <div class="page-header" style="border-bottom:1px solid var(--color-border-light);">
+      <div class="breadcrumb">
+        <a href="#" onclick="navigateTo('mcp-servers');return false;">MCP Servers</a>
+        <span style="color:var(--color-border);">/</span>
+        <a href="#" onclick="openDetail('${server.id}');return false;">${server.name}</a>
+        <span style="color:var(--color-border);">/</span>
+        <span>Version ${version.num}</span>
+      </div>
+      <div class="title-row">
+        <div>
+          <h1 style="font-size:22px;">Version ${version.num}</h1>
+          <div class="subtitle">${server.name}</div>
+        </div>
+        <div class="title-actions">
+          ${!is3next ? `
+          <div class="feature-toggle">
+            <span class="label-active">MVP</span>
+            <div class="toggle-track" onclick="toggleFeature()"><div class="toggle-thumb"></div></div>
+            <span>Future</span>
+          </div>` : ''}
+          <div class="lifecycle-dropdown-wrapper">
+            <button class="lifecycle-btn" onclick="toggleLifecycleMenu('version')">
+              <span class="badge ${getLifecycleBadgeClass(version.state)}">${version.state}</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 4l3 3 3-3" stroke="#5F7281" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="lifecycle-menu" id="lifecycle-menu-version">
+              <div class="lifecycle-menu-header">Transition to</div>
+              ${getValidTransitions(version.state).map(t => `
+              <div class="lifecycle-menu-item" onclick="openTransitionModal('${server.id}', ${version.num}, '${version.state}', '${t.state}')">
+                <span>${t.icon}</span>
+                <div>
+                  <span class="badge ${getLifecycleBadgeClass(t.state)}">${t.state}</span>
+                  <div class="lmi-desc">${t.desc}</div>
+                </div>
+              </div>`).join('')}
+            </div>
+          </div>
+          <button class="edit-btn" onclick="openEditVersionModal('${server.id}', ${version.num})" title="Edit">${PENCIL_SVG}</button>
+          <button class="overflow-btn">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="3" r="1" fill="#445461"/><circle cx="7" cy="7" r="1" fill="#445461"/><circle cx="7" cy="11" r="1" fill="#445461"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;">
+      <!-- Metadata -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('ver-meta')">
+            ${CHEVRON_SVG}
+            <h3>Metadata</h3>
+          </div>
+          <div class="section-content" id="section-ver-meta">
+            <div class="meta-grid">
+              <div class="meta-item"><div class="meta-label">Registered At</div><div>${version.registeredAt}</div></div>
+              <div class="meta-item"><div class="meta-label">Last Modified</div><div>${version.lastModified}</div></div>
+              <div class="meta-item"><div class="meta-label">Creator</div><div>${version.createdBy}</div></div>
+              <div class="meta-item"><div class="meta-label">Version</div><div style="font-family:var(--font-mono);">${version.semver}</div></div>
+              <div class="meta-item"><div class="meta-label">Publish State</div><div><span class="badge ${getLifecycleBadgeClass(version.state)}">${version.state}</span></div></div>
+              <div class="meta-item"><div class="meta-label">Source</div><div style="color:var(--color-primary);font-family:var(--font-mono);font-size:12px;">${version.source || 'N/A'}</div></div>
+              <div class="meta-item"><div class="meta-label">Source Run</div><div><a href="#" style="font-family:var(--font-mono);font-size:12px;">${version.sourceRun || 'N/A'}</a></div></div>
+              <div class="meta-item"><div class="meta-label">Package Types</div><div>${pkgBadges || 'N/A'}</div></div>
+              <div class="meta-item"><div class="meta-label">Transport Types</div><div>${transportBadges || 'N/A'}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Runtime Status -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('ver-runtime')">
+            ${CHEVRON_SVG}
+            <h3>Runtime Status</h3>
+            ${version.deployed ? '<span class="badge badge-lime" style="margin-left:4px;"><span class="status-dot green" style="width:6px;height:6px;"></span> Active</span>' : '<span class="badge badge-default" style="margin-left:4px;">Not Deployed</span>'}
+          </div>
+          <div class="section-content" id="section-ver-runtime">
+            ${version.deployed && version.runtimeMetadata ? `
+            <div class="deploy-card">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <span class="status-dot green"></span>
+                <span style="font-size:var(--font-size-sm);font-weight:500;">Deployed</span>
+              </div>
+              <div class="runtime-meta-list">
+                ${Object.entries(version.runtimeMetadata).map(([k, v]) => `
+                <span class="runtime-meta-key">${k}</span>
+                <span class="runtime-meta-value">${v}</span>`).join('')}
+              </div>
+            </div>` : `
+            <div class="deploy-card">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="status-dot grey"></span>
+                <span style="font-size:var(--font-size-sm);color:var(--color-text-secondary);">Not Deployed</span>
+              </div>
+            </div>`}
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('ver-desc')">
+            ${CHEVRON_SVG}
+            <h3>Description</h3>
+            <button class="section-action">Edit</button>
+          </div>
+          <div class="section-content" id="section-ver-desc">
+            <p style="color:#445461;line-height:1.6;">${version.description}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('ver-tags')">
+            ${CHEVRON_SVG}
+            <h3>Tags</h3>
+          </div>
+          <div class="section-content" id="section-ver-tags">
+            <div class="tags-inline">
+              ${versionTags.map(([k, v]) => `<span class="tag"><span class="tag-key">${k}:</span> ${v}</span>`).join('')}
+              <button class="tag-add-btn" onclick="openTagModal('version', '${server.id}', ${version.num})">+ Add tag</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Server Definition -->
+      <div class="section-block">
+        <div class="section-inner">
+          <div class="section-header" onclick="toggleSection('ver-json')">
+            ${CHEVRON_SVG}
+            <h3>Server Definition</h3>
+            <span class="section-meta">server.json \u00b7 immutable</span>
+          </div>
+          <div class="section-content" id="section-ver-json">
+            <div class="code-block"><pre style="margin:0;white-space:pre-wrap;">${highlightedJson}
+    <span class="dim">... (${server.tools.length} tools total)</span></pre></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tools Schema -->
+      <div class="section-block" style="padding-bottom:24px;">
+        <div class="section-inner" style="border-bottom:none;">
+          <div class="section-header" onclick="toggleSection('ver-schema')">
+            ${CHEVRON_SVG}
+            <h3>Tools Schema</h3>
+            <span class="section-meta">(${server.tools.length} tools)</span>
+          </div>
+          <div class="section-content" id="section-ver-schema">
+            <table class="schema-table">
+              <thead>
+                <tr><th>Tool Name</th><th>Description</th><th>Input Schema</th></tr>
+              </thead>
+              <tbody>
+                ${toolsToShow.map(t => `
+                <tr>
+                  <td><code class="tool-name">${t.name}</code></td>
+                  <td style="color:#445461;">${t.desc}</td>
+                  <td class="schema-type">${t.schema}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+            ${server.tools.length > 6 && !state.showAllTools ? `
+            <div class="show-more">
+              <a href="#" onclick="state.showAllTools=true;renderVersionView();return false;">Show all ${server.tools.length} tools</a>
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function openCreateModal() {
+  const modal = document.getElementById('modal-register');
+  document.getElementById('modal-register-inner').innerHTML = `
+    <div class="modal-header">
+      <h2>Create MCP Server</h2>
+      <button class="modal-close" onclick="closeModal('register')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Name <span class="required">*</span></label>
+        <input class="form-input" type="text" placeholder="e.g., My MCP Server" id="reg-name">
+        <div class="form-hint">A unique name for this MCP server in the registry</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" rows="3" placeholder="Describe what this MCP server does..." id="reg-desc"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">MCP Server Definition (server.json) <span class="required">*</span></label>
+        <div class="tab-bar">
+          <button class="active">Paste JSON</button>
+          <button>Upload File</button>
+        </div>
+        <div class="code-block" style="border-radius:0 0 var(--radius-sm) var(--radius-sm);max-height:140px;" contenteditable="true">
+{
+  <span class="key">"name"</span>: <span class="str">"my-mcp-server"</span>,
+  <span class="key">"version"</span>: <span class="str">"1.0.0"</span>,
+  <span class="key">"tools"</span>: <span class="punct">[</span><span class="punct">]</span>
+<span class="punct">}</span></div>
+        <div class="form-hint">The canonical MCP server payload. This becomes immutable once created.</div>
+      </div>
+      <div class="info-banner">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#2272B4" stroke-width="1.5"/><path d="M8 6v1.5M8 10h.01" stroke="#2272B4" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>This will create <strong>Version 1</strong> in <strong>Draft</strong> state. You can add tags and publish after review.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('register')">Cancel</button>
+      <button class="btn btn-primary" onclick="simulateCreate()">Create</button>
+    </div>
+  `;
+  modal.classList.add('visible');
+}
+
+function simulateCreate() {
+  closeModal('register');
+  state.currentView = 'list';
+  render();
+}
+
+function openEditModal(serverId) {
+  const server = getServer(serverId);
+  if (!server) return;
+  const modal = document.getElementById('modal-edit');
+  document.getElementById('modal-edit-inner').innerHTML = `
+    <div class="modal-header">
+      <h2>Edit MCP Server</h2>
+      <button class="modal-close" onclick="closeModal('edit')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" type="text" value="${escapeAttr(server.name)}" readonly disabled>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" rows="3" id="edit-desc">${server.description}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="edit-status">
+          <option value="Active"${server.status === 'Active' ? ' selected' : ''}>Active</option>
+          <option value="Deprecated"${server.status === 'Deprecated' ? ' selected' : ''}>Deprecated</option>
+          <option value="Retired"${server.status === 'Retired' ? ' selected' : ''}>Retired</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Update Mode</label>
+        <div class="seg-control" id="edit-update-mode">
+          <button class="${server.updateMode === 'manual' ? 'active' : ''}" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));this.classList.add('active');this.dataset.value='manual'" data-value="manual">Manual</button>
+          <button class="${server.updateMode === 'system_managed' ? 'active' : ''}" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));this.classList.add('active');this.dataset.value='system_managed'" data-value="system_managed">System Managed</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('edit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditModal('${serverId}')">Save</button>
+    </div>
+  `;
+  modal.classList.add('visible');
+}
+
+function saveEditModal(serverId) {
+  const server = getServer(serverId);
+  if (!server) return;
+  const desc = document.getElementById('edit-desc');
+  const status = document.getElementById('edit-status');
+  const modeBtn = document.querySelector('#edit-update-mode button.active');
+  if (desc) server.description = desc.value;
+  if (status) server.status = status.value;
+  if (modeBtn) server.updateMode = modeBtn.dataset.value;
+  closeModal('edit');
+  render();
+}
+
+function openEditVersionModal(serverId, versionNum) {
+  const server = getServer(serverId);
+  if (!server) return;
+  const version = getVersion(server, versionNum);
+  if (!version) return;
+  const versionTags = Object.entries(version.tags || {});
+
+  const modal = document.getElementById('modal-edit');
+  document.getElementById('modal-edit-inner').innerHTML = `
+    <div class="modal-header">
+      <h2>Edit Version ${version.num}</h2>
+      <button class="modal-close" onclick="closeModal('edit')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" rows="3" id="edit-ver-desc">${version.description}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <div id="edit-ver-tags">
+          ${versionTags.map(([k, v], i) => `
+          <div class="tag-modal-row">
+            <input class="tag-input-sm" type="text" value="${escapeAttr(k)}" placeholder="Key">
+            <input class="tag-input-sm" type="text" value="${escapeAttr(v)}" placeholder="Value">
+            <button class="modal-close" style="font-size:16px;" onclick="this.parentElement.remove()">&times;</button>
+          </div>`).join('')}
+        </div>
+        <button class="tag-add-btn" style="margin-top:8px;" onclick="addTagRowToEditVersion()">+ Add Tag</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('edit')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditVersionModal('${serverId}', ${versionNum})">Save</button>
+    </div>
+  `;
+  modal.classList.add('visible');
+}
+
+function addTagRowToEditVersion() {
+  const container = document.getElementById('edit-ver-tags');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'tag-modal-row';
+  row.innerHTML = `
+    <input class="tag-input-sm" type="text" placeholder="Key">
+    <input class="tag-input-sm" type="text" placeholder="Value">
+    <button class="modal-close" style="font-size:16px;" onclick="this.parentElement.remove()">&times;</button>
+  `;
+  container.appendChild(row);
+}
+
+function saveEditVersionModal(serverId, versionNum) {
+  const server = getServer(serverId);
+  if (!server) return;
+  const version = getVersion(server, versionNum);
+  if (!version) return;
+  const desc = document.getElementById('edit-ver-desc');
+  if (desc) version.description = desc.value;
+  // Collect tags
+  const rows = document.querySelectorAll('#edit-ver-tags .tag-modal-row');
+  const newTags = {};
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const k = inputs[0]?.value?.trim();
+    const v = inputs[1]?.value?.trim();
+    if (k) newTags[k] = v || '';
+  });
+  version.tags = newTags;
+  closeModal('edit');
+  render();
+}
+
+function openTagModal(type, id, versionNum) {
+  let tags = {};
+  let title = 'Manage Tags';
+  if (type === 'server') {
+    const server = getServer(id);
+    if (!server) return;
+    tags = { ...server.tags };
+  } else if (type === 'version') {
+    const server = getServer(id);
+    if (!server) return;
+    const version = getVersion(server, versionNum);
+    if (!version) return;
+    tags = { ...(version.tags || {}) };
+  }
+  const tagEntries = Object.entries(tags);
+
+  const modal = document.getElementById('modal-tags');
+  document.getElementById('modal-tags-inner').innerHTML = `
+    <div class="modal-header">
+      <h2>${title}</h2>
+      <button class="modal-close" onclick="closeModal('tags')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="tag-modal-rows">
+        ${tagEntries.map(([k, v]) => `
+        <div class="tag-modal-row">
+          <input class="tag-input-sm" type="text" value="${escapeAttr(k)}" placeholder="Key">
+          <input class="tag-input-sm" type="text" value="${escapeAttr(v)}" placeholder="Value">
+          <button class="modal-close" style="font-size:16px;" onclick="this.parentElement.remove()">&times;</button>
+        </div>`).join('')}
+      </div>
+      <button class="tag-add-btn" style="margin-top:8px;" onclick="addTagRow()">+ Add Tag</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('tags')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTagModal('${type}', '${id}', ${versionNum || 'null'})">Save</button>
+    </div>
+  `;
+  modal.classList.add('visible');
+}
+
+function addTagRow() {
+  const container = document.getElementById('tag-modal-rows');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'tag-modal-row';
+  row.innerHTML = `
+    <input class="tag-input-sm" type="text" placeholder="Key">
+    <input class="tag-input-sm" type="text" placeholder="Value">
+    <button class="modal-close" style="font-size:16px;" onclick="this.parentElement.remove()">&times;</button>
+  `;
+  container.appendChild(row);
+}
+
+function saveTagModal(type, id, versionNum) {
+  const rows = document.querySelectorAll('#tag-modal-rows .tag-modal-row');
+  const newTags = {};
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const k = inputs[0]?.value?.trim();
+    const v = inputs[1]?.value?.trim();
+    if (k) newTags[k] = v || '';
+  });
+  if (type === 'server') {
+    const server = getServer(id);
+    if (server) server.tags = newTags;
+  } else if (type === 'version') {
+    const server = getServer(id);
+    if (server) {
+      const version = getVersion(server, versionNum);
+      if (version) version.tags = newTags;
+    }
+  }
+  closeModal('tags');
+  render();
+}
+
+function openTransitionModal(serverId, versionNum, fromState, toState) {
+  document.querySelectorAll('.lifecycle-menu').forEach(m => m.classList.remove('visible'));
+
+  const modal = document.getElementById('modal-transition');
+  document.getElementById('modal-transition-inner').innerHTML = `
+    <div class="modal-header">
+      <h2 style="font-size:16px;">Transition Lifecycle State</h2>
+      <button class="modal-close" onclick="closeModal('transition')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="transition-visual">
+        <span class="badge ${getLifecycleBadgeClass(fromState)}" style="padding:3px 10px;font-size:12px;font-weight:500;">${fromState}</span>
+        <svg width="20" height="14" viewBox="0 0 20 14" fill="none" class="transition-arrow"><path d="M2 7h16M14 3l4 4-4 4" stroke="#2272B4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="badge ${getLifecycleBadgeClass(toState)}" style="padding:3px 10px;font-size:12px;font-weight:500;">${toState}</span>
+      </div>
+      <div class="info-alert" style="margin-bottom:16px;">
+        ${getTransitionMessage(toState)}
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label class="form-label" style="font-size:12px;">Comment (optional)</label>
+        <textarea class="form-textarea" rows="2" placeholder="Reason for this transition..."></textarea>
+      </div>
+      ${toState === 'Published' ? `
+      <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#445461;cursor:pointer;">
+        <input type="checkbox" style="margin-top:2px;accent-color:var(--color-primary);">
+        <span>Deprecate all other published versions of this MCP server</span>
+      </label>` : ''}
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('transition')">Cancel</button>
+      <button class="btn btn-primary" onclick="executeTransition('${serverId}', ${versionNum}, '${toState}')">${getTransitionVerb(toState)}</button>
+    </div>
+  `;
+  modal.classList.add('visible');
+}
+
+function executeTransition(serverId, versionNum, toState) {
+  const server = getServer(serverId);
+  if (server) {
+    const version = getVersion(server, versionNum);
+    if (version) {
+      version.state = toState;
+    }
+  }
+  closeModal('transition');
+  render();
+}
+
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('visible');
+}
+
+// Close modals on overlay click, close lifecycle menus on outside click
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('visible');
+  }
+  if (!e.target.closest('.lifecycle-dropdown-wrapper')) {
+    document.querySelectorAll('.lifecycle-menu').forEach(m => m.classList.remove('visible'));
+  }
+});
+
+function render() {
+  renderSidebar();
+  document.getElementById('view-list').classList.toggle('active', state.currentView === 'list');
+  document.getElementById('view-detail').classList.toggle('active', state.currentView === 'detail');
+  document.getElementById('view-version').classList.toggle('active', state.currentView === 'version');
+  if (state.currentView === 'list') renderListView();
+  if (state.currentView === 'detail') renderDetailView();
+  if (state.currentView === 'version') renderVersionView();
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  render();
+});
+</script>
+</body>
+</html>

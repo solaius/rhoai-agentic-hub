@@ -10,4 +10,5 @@ Prompt/agent iteration studio — playground UX, usability research, studio inte
 - [work/](/features/gen-ai-studio/work/)
 
 ## Connections
+- artifact · [MCP 2026-07-28 RC — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
 - story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.
