@@ -62,7 +62,9 @@ families (design decisions D8/D11):
 (profile update / new fact / knowledge entry), shows a one-line confirm,
 files it in the right home per the boundary rule, reindexes, commits.
 Roadmap/strategy/status changes are **profile updates** (in place +
-`## History`), not new files.
+`## History`), not new files. Field questions become qa- entries (dedupe
+first — recurrence appends to asks:); user jobs become jtbd- entries;
+story-shaped items route to narrative/knowledge/.
 
 **`hub.consolidate`** — the batch gate. Sweeps `memory/.scratch/` and the
 session, dedupes against the store, classifies each candidate (profile

@@ -10,7 +10,9 @@ description: Sweep memory/.scratch/ (Claude auto-memory) plus the current sessio
 2. Dedupe against the tracked store (memory/index.md, profiles/, facts/):
    drop items the store already knows; mark items that CONTRADICT the store.
 3. Classify each survivor: profile update | new memory fact | knowledge entry
-   (which feature) | preference/feedback | RESTRICTED | discard.
+   (which feature — or narrative/ for story-shaped; typed qa-/jtbd- where the
+   item is a field question or a user job) | preference/feedback | RESTRICTED
+   | discard.
 4. Present a numbered batch:
    `N. [class] <target-path> — <proposed description> [public|restricted]`
    Conflicts render as: `N. CONFLICT — scratch: "X" vs store: "Y" — which wins?`

@@ -10,7 +10,12 @@ Input: the item, from the user's words or session context.
 1. Classify with the boundary rule (/conventions/memory.md): working context
    (state, preference, feedback, process fact) → memory store; domain
    knowledge (a colleague would look it up) → features/<f>/knowledge/;
-   NDA-adjacent → the restricted/ mirror of the same location.
+   story-shaped (pillar, cross-feature narrative — wrong under any single
+   feature) → narrative/knowledge/; a field question someone asked us →
+   qa- entry (dedupe rule in step 2); a user job for UX/Docs → jtbd- entry
+   (persona from the locked list, evidence: links); NDA-adjacent → the
+   restricted/ mirror of the same location. Entries touching multiple
+   features declare `features: [ids]`.
 2. Determine the write:
    - Profile-shaped (roadmap/strategy/status/preference change): EDIT the
      profile in place — new current value, prepend the old value to
@@ -21,6 +26,12 @@ Input: the item, from the user's words or session context.
    - Knowledge entries: first check the feature partition exists in
      features/features.yaml; if it doesn't → hand off to hub.file (it
      creates partitions).
+   - qa entries: BEFORE creating, grep existing `qa-*` for the same
+     question; on a match, append a dated item to its `asks:` list
+     (`by:` role bucket) and refresh the answer if knowledge moved —
+     never a duplicate entry. A pasted Slack permalink goes in `source:`.
+     Asker identity (customer/partner name, deal context) → the restricted
+     sibling; the public entry keeps only the role bucket.
 3. Show ONE line: `capture → <path>: <description> [public|restricted]`
    (full content on request). Wait for the user's OK.
 4. On OK:

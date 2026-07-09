@@ -7,10 +7,13 @@ description: Intake an external source (Google Doc, PDF, URL, GitHub repo, meeti
 
 Input: the source (URL or file) + whatever context the user gave.
 
-1. Pick the feature: read features/features.yaml. If nothing fits, propose a
+1. Pick the home: story-shaped sources (pillars, cross-feature narrative,
+   strategy-spine material) → narrative/knowledge/. Otherwise pick the
+   feature: read features/features.yaml. If nothing fits, propose a
    new partition (id, title, one-line description); on approval append it to
    features.yaml and create ONLY the subdirectories this filing needs — never
-   all five empty (see /conventions/layout.md).
+   all five empty (see /conventions/layout.md). Multi-feature sources keep a
+   primary home and declare `features:` cross-refs.
 2. Normalize the resource URI per /conventions/uris.md (strip /edit suffixes,
    query params, fragments).
 3. Write features/<f>/knowledge/ref-<slug>.md:
