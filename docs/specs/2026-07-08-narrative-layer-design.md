@@ -169,7 +169,7 @@ Rules:
 type: jtbd
 description: the job in one line
 timestamp: 2026-07-08
-persona: ai-engineer            # REQUIRED; free string v1 (see open Q4)
+persona: ai-engineer            # REQUIRED; locked vocabulary (§11 Q4)
 status: candidate               # candidate|validated|delivered|retired (own enum)
 features: [agent-registry, agent-memory]   # optional
 evidence:                       # optional; repo-root links or URLs
@@ -240,6 +240,11 @@ Also:
    default → `current|superseded`.
 5. `asks:` shape validation — non-empty list; each item a mapping with `date`
    (ISO) and `by` (enum above); `context` optional.
+5b. `persona:` enum — locked vocabulary hardcoded beside the other enums with
+   a comment pointing at `fact-personas.md` (the source of truth); extending
+   the list means updating both together through the gate. Proposed values:
+   `ai-engineer | platform-engineer | agentops-admin | business-consumer`
+   (owner confirmation pending, §11 Q4).
 6. `features:` validation — list of ids present in `features/features.yaml`
    (schema gains a features.yaml loader); unknown id = **error**. Applies to
    knowledge entries and `artifact.md`.
@@ -293,10 +298,26 @@ behavior change):
 
 All through the normal capture/migrate gates, batch-style with owner rulings:
 
-1. **Pillars:** create `pillar-` entries from (a) the agentic-strategy four
-   pillars (superseding `features/platform/knowledge/fact-agentic-ai-four-pillars.md`
-   with a `superseded_by` pointer — never deleted) and (b) the RHAI strategic
-   pillars — **source needed from owner** (open Q1).
+1. **Pillars (sources resolved — §11 Q1):** create `pillar-` entries for the
+   four RHAI strategic pillars named in the Red Hat AI CY2027 Product
+   Strategy — **Inference, Agents, Data, Safety & Governance** — plus two
+   `ref-` entries for the sources: the CY2027 strategy doc
+   (GDoc `178H9aSpKZxn1_7qMd_QUeHvnM6dgzu2nsZXf4O8HgaI`) and the
+   pillar-to-component mapping sheet
+   (GSheet `13TfWjWeh0TMVicfrkD1O7FI5EwP9rVsurSOvq82x7q4`). Mapping notes to
+   carry in the pillar bodies: the sheet's "Platform" grouping holds the
+   Safety & Governance pillar's components (AI Gateway, MaaS, GPUaaS, AI Hub,
+   AI Safety, Observability) plus platform services; the sheet's "AIPCC"
+   grouping is org infrastructure, **not** a strategy pillar — no pillar
+   entry. Peter's components (Model Context Protocol, GenAI Studio) map to
+   the **Agents** pillar. The agentic-strategy four-pillars fact
+   (`features/platform/knowledge/fact-agentic-ai-four-pillars.md`) is the
+   *agentic sub-strategy's* pillar set — it re-homes to
+   `narrative/knowledge/` unchanged (it is not superseded by the RHAI set;
+   the two sets coexist, agentic pillars linked under the Agents pillar).
+   Disclosure: pillar entry bodies carry pillar names + paraphrased public-safe
+   objectives only — no bookings/ARR/customer material from the source doc
+   (restricted bar applies at the gate as usual).
 2. **Re-home from `platform` → `narrative/knowledge/`:**
    `ref-agentic-ai-strategy-2026.md`, `fact-agentic-ai-messaging-position.md`
    (batch-2 precedent: move, swap tags, repoint inbound links).
@@ -322,7 +343,6 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
   `customer-feedback-refresh`).
 - `features:` honored on research/strategy documents.
 - qa "Gaps" → RFE/RICE evidence hook (`rice-strats` port can cite `asks` counts).
-- Persona vocabulary tightening (closed list) if free-string drifts.
 
 ## 10. Acceptance criteria
 
@@ -337,20 +357,31 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
   `publish`) green; no new skills; publishing manifest untouched.
 - Seed batch applied with owner rulings recorded (migration-report style).
 
-## 11. Open questions for review
+## 11. Open questions — owner rulings (2026-07-08)
 
-1. **RHAI strategic pillars** — what is the canonical source (doc/link/list)?
-   Needed before the pillar seed; the agentic-strategy pillars are already in
-   the hub.
-2. **`decision-registry-vs-catalog.md`** — cross-cutting doctrine; re-home to
-   `narrative/` now, or leave in `platform` and move on-touch? (Default:
-   leave; minimize Phase 1 moves.)
-3. **`asks[].by` buckets** — proposed `customer|partner|sales|ssa|pm|eng|exec|other`;
-   confirm these match how you'd want recurrence sliced.
-4. **Persona values** — free string in v1 (default), or locked to the
-   personas set from day one?
-5. **Third seed story** — want one for the studio/skills side (e.g.,
-   "from prompt to governed asset"), or start with two?
+1. **RHAI strategic pillars** — **RESOLVED.** Sources: Joe Fernandes'
+   *Red Hat AI CY2027 Product Strategy* (GDoc
+   `178H9aSpKZxn1_7qMd_QUeHvnM6dgzu2nsZXf4O8HgaI`) and the
+   *Pillar to component mapping* sheet
+   (`13TfWjWeh0TMVicfrkD1O7FI5EwP9rVsurSOvq82x7q4`). Canonical pillar set =
+   the doc's four: **Inference, Agents, Data, Safety & Governance** (the
+   sheet's "Platform" grouping carries S&G's components + platform services;
+   "AIPCC" is org infrastructure, excluded). See §8.1 for the seed treatment.
+2. **`decision-registry-vs-catalog.md`** — **RESOLVED: leave it** in
+   `platform`; move on-touch if ever.
+3. **`asks[].by` buckets** — **RESOLVED: confirmed** as proposed
+   (`customer|partner|sales|ssa|pm|eng|exec|other`).
+4. **Persona values** — **RESOLVED: locked list.** Proposed vocabulary = the
+   hub's four product/UX personas (`fact-personas.md`): `ai-engineer`,
+   `platform-engineer`, `agentops-admin`, `business-consumer`. (The
+   Builders/Operators pair stays a marketing simplification, not a JTBD
+   persona.) **Pending:** owner confirmation of these four slugs as the
+   initial enum.
+5. **Third seed story** — **PENDING** owner call after clarification: seed
+   stories are the 2–3 starter `story-` entries written at launch so the
+   narrative layer isn't empty; two are proposed in §8.4; the question is
+   whether to add a third at launch for the builder/studio side or let it
+   emerge from real work. Default if no preference: start with two.
 
 ---
 
