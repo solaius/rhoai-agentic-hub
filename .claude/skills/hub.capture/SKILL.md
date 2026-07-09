@@ -20,8 +20,9 @@ Input: the item, from the user's words or session context.
    - Profile-shaped (roadmap/strategy/status/preference change): EDIT the
      profile in place — new current value, prepend the old value to
      `## History` with date + source, bump `timestamp` and `valid_from`.
-   - Atomic: NEW file — `memory/facts/fact-<slug>.md` or
-     `features/<f>/knowledge/<prefix><slug>.md`, frontmatter per
+   - Atomic: NEW file — `memory/facts/fact-<slug>.md`,
+     `features/<f>/knowledge/<prefix><slug>.md`, or — story-shaped —
+     `narrative/knowledge/<prefix><slug>.md`, frontmatter per
      /conventions/type-vocabulary.md.
    - Knowledge entries: first check the feature partition exists in
      features/features.yaml; if it doesn't → hand off to hub.file (it
