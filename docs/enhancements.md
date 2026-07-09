@@ -42,6 +42,13 @@ including review. "When" is a best guess, not a schedule.
 | 24 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
 | 25 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
 | 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
+| 27 | Competitive research with Jira gap analysis (pm-toolkit port) | **High** — strategic early-warning: maps competitors vs. active Jira work, surfaces "NOT building" gaps; configurable domain YAML; distinct from `/deep-research` (general) | Medium | Next |
+| 28 | PM standup brief — Jira + Slack + Gemini + AI news (pm-toolkit port) | **Medium–High** — the personal daily loop across all systems; complements #15 (hub-only brief) | Medium | Next |
+| 29 | RFE triage batch workflow (pm-toolkit port) | **Medium–High** — periodic triage ceremony (scan → classify → interactive HTML report → batch apply); distinct from assess-rfe (single-issue quality) and RICE (#11, scoring) | Medium | Next |
+| 30 | Jira hygiene auditor (pm-toolkit port) | **Medium** — audit individual issues against type-specific checklists (links, labels, naming, Fix Version, refinement); companion to #2 (data filing) | Small–Medium | Next |
+| 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
+| 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
+| 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
 
 ---
 
@@ -217,6 +224,72 @@ propose jtbd candidates from recurring qa entries + tracker interests
 recurrence counts and qa Gaps sections as Reach/Impact evidence — the
 capture loop starts paying for itself in prioritization.
 
+**27 · Competitive research with Jira gap analysis.** Port pm-toolkit's
+`research` skill, which adds two things `/deep-research` doesn't have:
+(a) configurable YAML domain configs (`skills/research/domains/*.yaml` —
+ships with `redhat-ai.yaml` covering 6 search areas, competitors, analyst
+coverage, partner ecosystem); (b) strategic alignment analysis that maps
+active Jira work against competitive developments and surfaces "NOT
+building" gaps as early warnings. Three depth levels (quick/standard/deep),
+parallel agents per domain. Design question: whether domain configs live in
+the hub (hub-native skill) or the skill delegates to pm-toolkit's research
+engine — lean hub-native since the gap analysis should reference hub
+knowledge (feature partitions, narrative) not just raw Jira.
+
+**28 · PM standup brief.** Port pm-toolkit's `pm-standup` — a personal
+daily brief pulling from: Jira (assigned/reported/blocked/approaching
+deadlines/comments needing response), Slack (messages to you + mentions,
+classified as Needs Response vs. FYI), Gemini Meeting Notes (Google Drive
+search for "Notes by Gemini" → action item extraction), and AI news (top
+enterprise AI items + Red Hat mentions). Output is structured priorities
+(Urgent/Important/Monitor). Complements #15 (`hub_status.py` morning
+brief), which is hub-centric (stale items, open questions, CI state) —
+the standup is system-centric (what needs my attention today across all
+tools). pm-toolkit also has `weekly-plan` (calendar analysis, carry-over
+tracking, focus blocks) — consider porting both as a pair.
+
+**29 · RFE triage batch workflow.** Port pm-toolkit's `rfe-triage` — a
+5-step playbook: (1) prepare — set component scope and JQL; (2) scan —
+`scan_rfes()` with AI-powered comment summarization (Claude via Vertex/
+Anthropic/Bedrock); (3) generate interactive HTML triage report with three
+sections (Untriaged, Waiting on Input, Backlogged) plus a suggestion engine
+(8 pattern rules: stale detection, UI/UX keywords, etc.); (4) apply —
+JSON export/import for batch decisions back to Jira (roadmap/backlog/
+needs-uxd/clarify/close-stale labels); (5) summarize results. Also has
+`discover_cross_component_rfes()` for adjacent-component scanning.
+Distinct from `assess-rfe` (single-issue quality rubric) and RICE (#11,
+prioritization scoring) — this is the periodic triage ceremony.
+
+**30 · Jira hygiene auditor.** Port pm-toolkit's `jira-hygiene` — three
+modes: Audit (fetch an issue, check against type-specific checklists for
+RHAIRFE Feature Requests, RHAISTRAT Features, maturity-chain features,
+RHAIENG Epics — naming conventions, parent links, clone/dependency links,
+Fix Version, Components, Labels, refinement docs, platform refinement
+reviews); Create (guide new Jira creation at any lifecycle stage with
+proper links and structure); Help (explain hierarchy and conventions).
+Companion to #2 (Jira hub skills) — #2 files Jira data into the hub,
+hygiene ensures the Jira issues themselves are well-formed.
+
+**31 · Red Hat Support case search/analysis.** Port pm-toolkit's
+`redhat-support-cases` — Solr-based bulk search across 1M+ Red Hat support
+cases + REST API for individual case detail and comments. Complete product
+search registry for the full AI portfolio: RHOAI, RHAIIS (vLLM), RHEL AI/
+InstructLab, Model Serving (KServe, Caikit, ModelMesh), Data Science
+Pipelines, Model Registry, Distributed Workloads (Kueue, Ray, CodeFlare),
+TrustyAI, Lightspeed, Llama Stack, NeMo Guardrails, Training Operator,
+Feast, MLflow, Spark Operator, Kagenti, NVIDIA NIM. 5-phase workflow:
+Broad Search → Stats → Filter → Deep Dive (details + comments) → Analyze.
+Self-contained Python CLI with its own venv; requires Red Hat offline API
+token + VPN. Complements the pre-sales customer tracker with post-sales
+support signal.
+
+**32 · Prototyping skills.** Port pm-toolkit's `prototype-set-up` (find or
+clone the RHOAI prototype repo from `gitlab.cee.redhat.com/uxd/prototypes/
+rhoai`) and `prototyping` (delegate to the prototype repo's own AGENTS.md
+for PatternFly-based UI work). Thin skills — the hub wouldn't contain
+prototyping logic, just the delegation wrapper. VPN-dependent (internal
+GitLab). Lower priority: convenience, not a core PM workflow.
+
 ## Repo functionality & structure
 
 **4 · `hub.refresh-site`.** Successor to the old repo's
@@ -273,6 +346,14 @@ travel. Large.
 **26 · Analytics.** Know which published artifacts get read (privacy-light
 counter like GoatCounter). Informative for enablement ROI; adds an external
 dependency to an otherwise self-contained pipeline — deliberately last.
+
+**33 · PostToolUse usage logging.** Port pm-toolkit's `log_usage.py`
+PostToolUse hook + `usage-report` skill — logs every tool invocation to
+`<output_dir>/usage.jsonl` (timestamp, event type, skill/file name, session
+ID). Companion `usage_report` summarizes: top skills, top knowledge files
+read, session counts, with optional cross-team aggregation for PM leads.
+Meta-tooling for understanding how the hub is actually used. Fits the
+"files + scripts" envelope (JSONL + summarizer). Doctor-installable hook.
 
 ## Recorded small fixes (batch these in one sitting — item 10)
 
