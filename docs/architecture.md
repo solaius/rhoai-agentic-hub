@@ -160,7 +160,7 @@ extensions per OKF §4.1): `status: current|superseded`, `valid_from`,
 `superseded_by`, `review_after`, `source`. Superseded entries are never
 deleted — history stays traversable.
 
-## The eleven design decisions
+## The design decisions
 
 The design specs settled these (D1–D11; D12–D16 from [/docs/specs/2026-07-08-narrative-layer-design.md](/docs/specs/2026-07-08-narrative-layer-design.md)); they govern everything above.
 Full text: the [design spec](https://github.com/solaius/ai-asset-registry/blob/main/docs/superpowers/specs/2026-07-05-rhoai-agentic-hub-design.md).
