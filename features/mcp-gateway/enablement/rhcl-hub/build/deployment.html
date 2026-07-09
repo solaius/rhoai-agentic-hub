@@ -168,7 +168,7 @@ helm repo update</code></pre>
       <div class="callout callout--insight">
         <div class="callout__title">Memory Allocation is Critical</div>
         <p>"Memory allocation is critical for MCP Gateway — size replicas higher than typical API management."</p>
-        <p><strong>— Red Hat engineering, network discussion with a major telecommunications provider (2026-05-08)</strong></p>
+        <p><strong>— Red Hat engineering, network discussion with a major telecommunications provider (May 2026)</strong></p>
         <p>MCP Gateway components (especially the Broker) maintain in-memory caches for tool lists and routing tables. Production deployments should allocate at least <strong>1 GB memory per replica</strong> for the Broker and Router components.</p>
         <p>For high-traffic environments (100+ MCP servers, 1000+ tools), consider 2-4 GB per replica and horizontal scaling (3+ replicas with load balancing).</p>
       </div>
