@@ -4,6 +4,8 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-10
+- **Update** - disclosure net caught a customer account name (restricted pattern) plus engagement pricing in the power-90 session ref, in the frontmatter description and the generated knowledge index (the two surfaces #34 closes); owner-approved anonymization applied and pushed (b00c70f).
+- **Update** - published-site trust batch picked up: #34 disclosure net gaps, #8 branded landing page, #4 hub.refresh-site; design approved and committed (b86d871); acceptance includes gated refresh runs of both hub sites.
 - **Update** - preferences profile: no em dashes in any new agent output (conversation, repo entries, docs, commit messages); existing content not retroactively rewritten.
 - **Update** — product naming corrected across published hubs + knowledge: "RHOAI Limited" → "RHOAI restricted use entitlement for OpenShift" (owner ruling; surfaced by the disclosure net's first activation; 12 files, republished). restricted/lint-patterns.txt authored and active (10 account patterns + asker-identity, owner-approved).
 - **Update** — owner ruling captured: kubeflow/hub confirmed as the RHOAI MCP Catalog upstream — question-kubeflow-hub-catalog-alignment answered; ref + overview lineage documented.
