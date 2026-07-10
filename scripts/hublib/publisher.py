@@ -20,8 +20,25 @@ def load_manifest(root):
     return [e for e in data if isinstance(e, dict)]
 
 
+def _feature_titles(root):
+    """id -> display title from features/features.yaml, preserving the
+    routing-table order (drives landing-page section order)."""
+    p = Path(root) / "features" / "features.yaml"
+    if not p.is_file():
+        return {}
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return {}
+    return {f["id"]: (f.get("title") or f["id"])
+            for f in (data.get("features") or [])
+            if isinstance(f, dict) and f.get("id")}
+
+
 def build_plan(root):
     root = Path(root)
+    titles = _feature_titles(root)
+    order = list(titles)
     plan = []
     for e in load_manifest(root):
         if e.get("audience") != "public":
@@ -29,6 +46,16 @@ def build_plan(root):
         src = root / e["source"]
         dest = e["dest"].strip("/")
         is_dir = src.is_dir()
+        parts = [p for p in str(e["source"]).replace("\\", "/").split("/") if p]
+        if parts and parts[0] == "features" and len(parts) > 1:
+            fid = parts[1]
+            group = titles.get(fid, fid)
+            group_key = (0, order.index(fid)) if fid in order else (1, fid)
+        elif parts and parts[0] == "narrative":
+            group, group_key = "Narrative", (2, "")
+        else:
+            group, group_key = (parts[0] if parts else "Other",
+                                (1, parts[0] if parts else ""))
         plan.append({
             "src": src,
             "dest": dest,
@@ -36,6 +63,8 @@ def build_plan(root):
             "title": e["title"],
             "description": e["description"],
             "href": dest + "/" if is_dir else dest,
+            "group": group,
+            "group_key": group_key,
         })
     return plan
 

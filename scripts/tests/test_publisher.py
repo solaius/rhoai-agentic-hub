@@ -29,6 +29,14 @@ MANIFEST = """\
   description: must not publish in v1
 """
 
+FEATURES_YAML = """\
+features:
+- id: x
+  title: X Feature
+- id: y
+  title: Y Feature
+"""
+
 
 def make_repo(tmp_path: Path) -> Path:
     root = tmp_path / "hub"
@@ -37,6 +45,7 @@ def make_repo(tmp_path: Path) -> Path:
     write(root, "features/x/enablement/one-pager.html", "<html>one</html>")
     write(root, "features/x/enablement/internal/index.html", "<html>secret</html>")
     write(root, "publish/manifest.yaml", MANIFEST)
+    write(root, "features/features.yaml", FEATURES_YAML)
     return root
 
 
@@ -209,3 +218,28 @@ def test_check_links_data_and_namespaced_attrs_not_scanned(tmp_path):
     pages = make_pages(tmp_path)
     write(pages, "attrs.html", '<a data-href="gone.html">d</a><use xlink:href="gone.svg"/>')
     assert check_links(pages) == []
+
+
+def test_build_plan_groups_by_source_area(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "narrative/enablement/story/index.html", "<html></html>")
+    write(root, "publish/manifest.yaml", MANIFEST +
+          "- source: narrative/enablement/story/\n  dest: narrative/story/\n"
+          "  audience: public\n  title: Story\n  description: narr\n")
+    plan = build_plan(root)
+    by_dest = {p["dest"]: p for p in plan}
+    assert by_dest["x/site"]["group"] == "X Feature"
+    assert by_dest["x/site"]["group_key"] == (0, 0)
+    assert by_dest["narrative/story"]["group"] == "Narrative"
+    assert by_dest["narrative/story"]["group_key"] == (2, "")
+
+
+def test_build_plan_unknown_feature_id_falls_back(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/zed/enablement/deck/index.html", "<html></html>")
+    write(root, "publish/manifest.yaml",
+          "- source: features/zed/enablement/deck/\n  dest: zed/deck/\n"
+          "  audience: public\n  title: Z\n  description: D\n")
+    plan = build_plan(root)
+    assert plan[0]["group"] == "zed"
+    assert plan[0]["group_key"] == (1, "zed")
