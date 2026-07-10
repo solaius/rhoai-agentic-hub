@@ -266,14 +266,20 @@ def build_all(root, today=None):
     for fid, snap in jiramap.load_all(root):
         lines.append(f"## {fid}")
         lines.append(f"_swept {snap.get('swept', '?')} · `{snap.get('jql', '')}`_")
+        rows = snap.get("issues", [])
+        # None = probe-redacted (jiramap.issue_row); one footnote beats
+        # repeating it on every row of an all-SSO Jira instance.
+        if any(row.get("summary") is None for row in rows):
+            lines.append("_summaries withheld — the source Jira is not "
+                         "anonymously readable_")
         lines.append("")
-        for row in snap.get("issues", []):
+        for row in rows:
             key = str(row.get("key", "?"))
             covered.add(key)
             fixes = ", ".join(row.get("fix_versions") or []) or "—"
-            summary = row.get("summary") or "_(summary withheld — not anonymously readable)_"
-            line = (f"- {key} · {row.get('type', '')} · {row.get('status', '')} · "
-                    f"{fixes} — {summary}")
+            line = f"- {key} · {row.get('type', '')} · {row.get('status', '')} · {fixes}"
+            if row.get("summary"):
+                line += f" — {row['summary']}"
             if key in ref_by_key:
                 rp, m = ref_by_key[key]
                 line += f" → [{_title(m, rp)}]({rp})"

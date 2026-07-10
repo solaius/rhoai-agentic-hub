@@ -318,7 +318,11 @@ def test_jira_map_merges_snapshot_and_refs(tmp_path):
     assert "RHAIRFE-1370 · Feature · In Progress · RHOAI 3.5 — Epic summary" in view
     assert "→ [Main epic](" in view
     assert "(/features/mcp-registry/knowledge/ref-epic.md)" in view
-    assert "withheld" in view                      # redacted-summary row
+    # redacted row (RHAIRFE-2000): no summary text, no per-row boilerplate
+    assert "- RHAIRFE-2000 · Feature · New · —" in view
+    assert "(summary withheld" not in view
+    # one footnote per section instead — mixed sections still get it
+    assert "_summaries withheld — the source Jira is not anonymously readable_" in view
     assert "## Referenced elsewhere" not in view   # the only ref is covered
 
 
