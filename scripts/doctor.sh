@@ -388,19 +388,19 @@ elif [ -f "$HOOK" ] && grep -qF "$HOOK_MARKER" "$HOOK"; then
   ok "pre-commit hook installed (current version)"
 elif [ -f "$HOOK" ] && grep -q "hub-doctor pre-commit" "$HOOK"; then
   if [ "$MODE" = "setup" ]; then
-    cp "$HOOK" "$HOOK.bak" && write_hook && ok "pre-commit hook updated (old version -> pre-commit.bak)"
+    cp "$HOOK" "$HOOK.bak" && write_hook && ok "pre-commit hook updated (old version -> pre-commit.bak)" || fail "could not write pre-commit hook"
   else
     warn "pre-commit hook is an outdated hub-doctor version — run: bash scripts/doctor.sh setup"
   fi
 elif [ -f "$HOOK" ]; then
   if [ "$MODE" = "setup" ]; then
-    cp "$HOOK" "$HOOK.bak" && write_hook && ok "pre-commit hook installed (foreign hook -> pre-commit.bak)"
+    cp "$HOOK" "$HOOK.bak" && write_hook && ok "pre-commit hook installed (foreign hook -> pre-commit.bak)" || fail "could not write pre-commit hook"
   else
     warn "a non-hub pre-commit hook exists — setup will back it up to pre-commit.bak and replace it"
   fi
 else
   if [ "$MODE" = "setup" ]; then
-    write_hook && ok "pre-commit hook installed"
+    write_hook && ok "pre-commit hook installed" || fail "could not write pre-commit hook"
   else
     fail "pre-commit hook not installed — run: bash scripts/doctor.sh setup"
   fi

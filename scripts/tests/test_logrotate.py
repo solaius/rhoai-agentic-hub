@@ -67,6 +67,18 @@ def test_unparseable_heading_never_moves(tmp_path):
     assert "## Notes" in log and "- stays." in log and "- moves." not in log
 
 
+def test_unparseable_heading_after_moved_section_stays(tmp_path):
+    write(tmp_path, "memory/log.md",
+          "---\ntype: fact\ndescription: log\ntimestamp: 2026-07-05\n---\n"
+          "## 2025-01-01\n- moves.\n## Notes\n- stays.\n")
+    moved = rotate_log(tmp_path, today=TODAY)
+    assert moved == {2025: 1}
+    log = (tmp_path / "memory/log.md").read_text(encoding="utf-8")
+    assert "## Notes" in log and "- stays." in log and "- moves." not in log
+    a = (tmp_path / "memory/log-archive/2025.md").read_text(encoding="utf-8")
+    assert "- moves." in a and "Notes" not in a
+
+
 def test_missing_log_is_noop(tmp_path):
     assert rotate_log(tmp_path, today=TODAY) == {}
 

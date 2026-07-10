@@ -27,7 +27,9 @@ def load_patterns(root):
         try:
             patterns.append((lineno, re.compile(line, re.IGNORECASE)))
         except re.error as exc:
-            warnings.append(f"{PATTERN_FILE}:{lineno}: invalid regex (skipped): {exc}")
+            pos = getattr(exc, "pos", None)
+            where = f" at position {pos}" if pos is not None else ""
+            warnings.append(f"{PATTERN_FILE}:{lineno}: invalid regex (skipped{where})")
     return patterns, warnings
 
 

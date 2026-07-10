@@ -102,7 +102,8 @@ server details, secrets, and troubleshooting:
 ## Tests
 
 `scripts/tests/` covers each module (`test_frontmatter`, `test_schema`,
-`test_indexer`, `test_publisher`) with fixture repos built in `conftest.py`.
+`test_indexer`, `test_publisher`, `test_disclosure`, `test_status`,
+`test_logrotate`) with fixture repos built in `conftest.py`.
 The publisher tests include the safety regressions (traversal-escaping
 dests, dir⇄file type swaps, `dest: "."`); the indexer tests pin the
 generator's convergence (running it twice changes nothing) and the

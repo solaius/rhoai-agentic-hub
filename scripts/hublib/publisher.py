@@ -115,7 +115,8 @@ def apply(root, pages_dir, hub_sha=""):
     return copied, warnings
 
 
-LINK_ATTR_RE = re.compile(r"""(?:href|src)\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
+LINK_ATTR_RE = re.compile(r"""(?<![-\w:])(?:href|src)\s*=\s*["']([^"']+)["']""",
+                          re.IGNORECASE)
 EXTERNAL_PREFIXES = ("http://", "https://", "//", "mailto:", "data:", "javascript:", "#")
 
 
@@ -125,6 +126,7 @@ def check_links(pages_dir):
     directory link 404s on GitHub Pages without one). External schemes and
     fragment-only links are out of scope."""
     pages = Path(pages_dir)
+    pages_root = pages.resolve()
     errors = []
     for f in sorted(pages.rglob("*.html")):
         if ".git" in f.parts:
@@ -133,13 +135,20 @@ def check_links(pages_dir):
         text = f.read_text(encoding="utf-8", errors="replace")
         for m in LINK_ATTR_RE.finditer(text):
             raw = m.group(1).strip()
-            if raw.startswith(EXTERNAL_PREFIXES):
+            if raw.lower().startswith(EXTERNAL_PREFIXES):
                 continue
             target = unquote(raw.split("#", 1)[0].split("?", 1)[0])
             if not target:
                 continue
             resolved = (pages / target.lstrip("/")) if target.startswith("/") \
                 else (f.parent / target)
+            try:
+                contained = resolved.resolve().is_relative_to(pages_root)
+            except OSError:
+                contained = False
+            if not contained:
+                errors.append(f"{rel}: broken link {raw}")
+                continue
             if resolved.is_file():
                 continue
             if resolved.is_dir() and (resolved / "index.html").is_file():

@@ -14,7 +14,7 @@ def _ci_section():
     try:
         out = subprocess.run(
             ["gh", "run", "list", "--branch", "main", "--limit", "1"],
-            capture_output=True, text=True, timeout=10)
+            capture_output=True, encoding="utf-8", errors="replace", timeout=10)
     except (OSError, subprocess.TimeoutExpired):
         return None
     if out.returncode != 0 or not out.stdout.strip():

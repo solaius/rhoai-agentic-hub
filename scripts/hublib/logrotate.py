@@ -29,7 +29,7 @@ def rotate_log(root, today=None):
             m = HEADING_RE.match(line.rstrip("\n"))
             year = int(m.group(1)) if m else None
             move_year = year if (year is not None and year < today.year) else None
-        if move_year:
+        if move_year is not None:
             moved.setdefault(move_year, []).append(line)
         else:
             kept.append(line)

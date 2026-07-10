@@ -190,3 +190,22 @@ def test_check_links_fragment_and_query_on_real_path(tmp_path):
     write(pages, "frag.html",
           '<a href="x/one-pager.html#sec">f</a><a href="x/one-pager.html?v=1#s">q</a>')
     assert check_links(pages) == []
+
+
+def test_check_links_escaping_link_is_error(tmp_path):
+    pages = make_pages(tmp_path)
+    write(tmp_path, "outside.html", "<html></html>")
+    write(pages, "esc.html", '<a href="../outside.html">e</a>')
+    assert check_links(pages) == ["esc.html: broken link ../outside.html"]
+
+
+def test_check_links_uppercase_scheme_skipped(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "up.html", '<a href="HTTPS://example.com/x">u</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_data_and_namespaced_attrs_not_scanned(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "attrs.html", '<a data-href="gone.html">d</a><use xlink:href="gone.svg"/>')
+    assert check_links(pages) == []

@@ -49,6 +49,7 @@ def test_invalid_regex_warns_and_rest_still_applies(tmp_path):
     errors, warnings = scan_repo(tmp_path)
     assert any(w.startswith("restricted/lint-patterns.txt:1: invalid regex")
                for w in warnings)
+    assert not any("unclosed" in w for w in warnings)
     assert any("(lint-patterns.txt:2)" in e for e in errors)
 
 
