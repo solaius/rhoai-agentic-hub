@@ -10,6 +10,8 @@
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts
+- [fact-concurrent-session-git-hygiene](/memory/facts/fact-concurrent-session-git-hygiene.md) — Concurrent agent sessions in one clone contaminate each other two ways — shared main-checkout index (plain git commit sweeps another session's pre-staged files) and nested-worktree visibility; guards: per-session worktrees, clean-tree check before work, git diff --cached --stat before every commit
+- [fact-disclosure-warning-triage-2026-07-10](/memory/facts/fact-disclosure-warning-triage-2026-07-10.md) — The 18 HTML heuristic warnings introduced by the enhancement batch were owner-triaged 2026-07-10: all benign — don't re-triage unless the flagged lines change
 - [fact-hub-build-operational-gotchas](/memory/facts/fact-hub-build-operational-gotchas.md) — Operational gotchas hit while building this hub — gh secret set silent-empty-secret, GitHub Pages first-build wedge, PAT-in-argv leak
 - [fact-odh-plugin-availability](/memory/facts/fact-odh-plugin-availability.md) — Which ODH skills-registry plugins the hub consumes (verified at setup)
 - [fact-repo-doctor-llm-cred-exclusion-old-repo](/memory/facts/fact-repo-doctor-llm-cred-exclusion-old-repo.md) — OLD ai-asset-registry repo: repo-doctor deliberately excludes LLM-provider credentials from the shell env
@@ -18,8 +20,8 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-10 — **Creation** — fact-concurrent-session-git-hygiene: the two cross-session contamination mechanisms (shared index sweep f9a1e31/ef4cc49; nested-worktree edits) + standing guards — consolidated from both sessions' scratch notes.
+- 2026-07-10 — **Creation** — fact-disclosure-warning-triage-2026-07-10: all 18 new HTML heuristic warnings ruled benign (11 public market figures, 6 JS $1 tokens, 1 illustrative $500); don't re-triage unless the lines change.
 - 2026-07-10 — **Update** — enhancement batch shipped (#5 #7 #10 #15 #16 → Done): disclosure lint (restricted/lint-patterns.txt, errors) + pre-commit gate hook (doctor §10, installed on this machine, 20 ok/0 fail) + hub_status.py morning brief + hub_index --rotate-log + hub_publish --check-links publish gate; the link gate's first CI run caught and led to repair of 80 broken RHCL-hub subpage cross-links. Follow-up filed as #34 (frontmatter heuristic gap).
 - 2026-07-10 — **Update** — RHOAI architecture repo (opendatahub-io/architecture-context) promoted to standing-context status: ref rewritten (what's inside, AGENT_USAGE.md entry, per-release snapshots), new ADR-repo ref filed, and hub.research/hub.intake now reference it routinely (research briefs carry the matching snapshot; new feature overviews link it).
 - 2026-07-09 — **Creation** — hub.intake + hub.research skills shipped (backlog #1, #27a): conventions/research.md series contract, warning-only research lint, domains/redhat-ai.yaml. #27(b) jira-gap re-scoped, gated on #2.
-- 2026-07-09 — **Update** — customer-tracker data landed (migrate-on-touch): tracker HTML + 5 meeting transcripts (3 accounts) + 2 customer deliverable docs copied byte-identical from the old repo into restricted/features/platform/work/customer-tracker/ (gitignored, local-only; transcriptions/ → transcripts/ rename applied; old-repo copy frozen with a MOVED note). Owner rulings: deliverables stay with the suite; keep + breadcrumb. A real tracker now exists on this machine — the wave-3 refresh/sync smokes are unblocked.
-- 2026-07-09 — **Creation** — docs/enhancements.md: the repo's own improvement backlog — R5/R6 runbooks spelled out + 23 prioritized enhancements across human usage, agent usage, and repo functionality, plus the recorded small-fix batch and explicit anti-goals.
