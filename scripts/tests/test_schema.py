@@ -411,3 +411,37 @@ def test_story_pillar_without_leading_slash_is_warning(tmp_path):
     errors, warnings = lint_repo(root)
     assert errors == []
     assert any("leading-slash" in w for w in warnings)
+
+
+def test_jtbd_jira_list_of_keys_ok(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/jtbd-a.md",
+          ENTRY.format(t="jtbd", extra="persona: rhoai-admin\nstatus: candidate\n"
+                                       "jira: [RHOAIENG-1234, RHAISTRAT-9]\n"))
+    errors, _ = lint_repo(root)
+    assert errors == []
+
+
+def test_jtbd_jira_not_a_list_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/jtbd-a.md",
+          ENTRY.format(t="jtbd", extra="persona: rhoai-admin\nstatus: candidate\n"
+                                       "jira: RHOAIENG-1234\n"))
+    errors, _ = lint_repo(root)
+    assert any("jira must be a list of issue keys" in e for e in errors)
+
+
+def test_jtbd_jira_malformed_key_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/jtbd-a.md",
+          ENTRY.format(t="jtbd", extra="persona: rhoai-admin\nstatus: candidate\n"
+                                       "jira: [not-a-key]\n"))
+    errors, _ = lint_repo(root)
+    assert any("jira must be a list of issue keys" in e for e in errors)
+
+
+def test_snapshot_lint_wired_into_lint_repo(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/work/jira-snapshot.yaml", "feature: x\nissues: []\n")
+    errors, _ = lint_repo(root)
+    assert any("missing generated-file marker" in e for e in errors)

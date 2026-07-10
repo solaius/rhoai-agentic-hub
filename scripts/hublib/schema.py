@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from . import frontmatter
+from . import frontmatter, jiramap
 
 KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question", "qa", "jtbd"}
 # pillar/story are narrative-layer-only (spec D12/D14) — invalid under features/.
@@ -193,6 +193,13 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, featur
     if etype == "jtbd" and meta.get("persona") is not None:
         if str(meta["persona"]) not in PERSONAS:
             errors.append(f"{rel}: persona must be one of {'|'.join(PERSONAS)}")
+    if etype == "jtbd" and meta.get("jira") is not None:
+        keys = meta["jira"]
+        if not isinstance(keys, list) or not all(
+                isinstance(k, str) and re.match(r"^[A-Z][A-Z0-9]*-\d+$", k)
+                for k in keys):
+            errors.append(f"{rel}: jira must be a list of issue keys "
+                          f"(e.g. [RHOAIENG-1234]) — watched by hub.jira-sync")
     if meta.get("status") == "superseded" and not meta.get("superseded_by"):
         warnings.append(f"{rel}: superseded without superseded_by pointer")
     if RESTRICTED_HINTS.search(body) and "restricted" not in path.parts:
@@ -331,6 +338,9 @@ def lint_repo(root):
     restricted = root / "restricted"
     if restricted.is_dir():
         _lint_tree(root, restricted, errors, warnings, feature_ids)
+    snap_errors, snap_warnings = jiramap.validate(root)
+    errors.extend(snap_errors)
+    warnings.extend(snap_warnings)
     _lint_budgets(root, errors)
     _lint_links(root, warnings)
     errors.extend(validate_manifest(root))
