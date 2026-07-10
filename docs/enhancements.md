@@ -326,12 +326,12 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   [/docs/specs/2026-07-09-hub-intake-research-design.md](/docs/specs/2026-07-09-hub-intake-research-design.md).
   Acceptance runs tracked in
   [/docs/plans/2026-07-09-hub-intake-research-plan.md](/docs/plans/2026-07-09-hub-intake-research-plan.md):
-  runs 1/3/4 **passed** 2026-07-09 — the mcp-catalog partition
-  (`b543a4f`) and its verified 2-lens research series (`c49269e`) are
-  the skills' first real products; review minors folded back
-  (`e7e2d99`); runs 2 (bulk-add intake) and 5 (agent-memory refresh,
-  quick depth) remain. Both skills also now carry the RHOAI
-  architecture repo as standing context (2026-07-10, `504b476`).
+  **all five acceptance runs passed** (1/3/4 on 2026-07-09 — mcp-catalog
+  partition `b543a4f` + verified 2-lens series `c49269e`; 2/5 on
+  2026-07-10 — agent-memory transcript bulk-add `daaef27` + quick-depth
+  series refresh `82160c3`). Review minors folded back (`e7e2d99`);
+  both skills carry the RHOAI architecture repo as standing context
+  (`504b476`). Fully accepted.
 - **#27(a) competitive sweep** — shipped 2026-07-09 inside `hub.research`
   (competitive lens + domain configs); #27(b) jira-gap re-scoped above,
   gated on #2.

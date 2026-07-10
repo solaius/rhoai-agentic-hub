@@ -693,8 +693,12 @@ early):
   additions), the domain config drove the competitive brief, and the
   adversarial verify pass caught 1 refuted + 2 softened claims before
   the gate.)*
-- [ ] 5. Refresh on `features/agent-memory/research/` — numbering
-  continues at 19, `00` refresh proposed through the gate.
+- [x] 5. Refresh on `features/agent-memory/research/` — numbering
+  continues at 19, `00` refresh proposed through the gate. *(2026-07-10,
+  `82160c3` — quick depth, inline, no fan-out (the last unexercised
+  path): doc 19 born, `00` refreshed (incl. repairing the never-indexed
+  17–18), convention supersede note into doc 16; fed by the same-day
+  transcript intake. ALL FIVE ACCEPTANCE RUNS COMPLETE.)*
 
 Findings from these runs are skill edits (normal commits), not plan
 changes. Check items off here as they complete.
