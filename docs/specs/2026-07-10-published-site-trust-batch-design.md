@@ -52,7 +52,7 @@ Three related gaps in the public surface:
 5. **One generic refresh skill**, not per-site skills (the old repo's shape):
    config-driven, so a third site is a new YAML, not a new skill.
 6. **Badge state lives in the publish snapshot**: `.publish-snapshot.json`
-   upgrades from `{dest: source}` to `{dest: {source, hash, published}}`.
+   upgrades from `{dest: source}` to `{dest: {source, hash, published, badge}}`.
    No git archaeology, no external state.
 7. **CI stays the link-check authority for refresh runs**: local
    `check_links` on a slug dir false-positives on cross-hub links
@@ -102,12 +102,15 @@ refresh YAML with a pattern hit (error), generated index files scanned.
    features.yaml routing-table order, then unknown feature ids (defensive,
    grouped under their raw id, alphabetical), then Narrative last. Cards
    sort by title within a group.
-4. **Badges:** snapshot v2 is `{dest: {source, hash, published}}` where
+4. **Badges:** snapshot v2 is `{dest: {source, hash, published, badge}}` where
    `hash` is sha256 over content (directory artifacts: deterministic walk of
    relative POSIX paths + file bytes). On `apply()`:
    - dest not in old snapshot: `published = today`, badge **NEW**;
    - hash differs from old: `published = today`, badge **UPDATED <date>**;
    - unchanged: `published` carried forward unchanged.
+   The badge KIND ("new"/"updated") is persisted in the snapshot so an
+   unchanged artifact keeps its NEW badge for the whole window instead of
+   flipping to UPDATED.
    Badges render while `published` is within **14 days** of the run date.
    **v1 migration rule:** a v1 snapshot (string values) carries sources
    forward with unknown hash and **no** `published` date, so the first run

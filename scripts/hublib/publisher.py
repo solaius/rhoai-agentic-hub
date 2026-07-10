@@ -1,15 +1,43 @@
 """Manifest-driven publishing: copy allowlisted public artifacts into the
 pages repo clone and regenerate its landing index.html + snapshot."""
+import hashlib
 import html
 import json
 import re
 import shutil
+from datetime import date
 from pathlib import Path
 from urllib.parse import unquote
 
 import yaml
 
 SNAPSHOT = ".publish-snapshot.json"
+BADGE_WINDOW_DAYS = 14
+
+
+def _hash_source(src):
+    """sha256 over artifact content. Directories hash a deterministic walk of
+    relative POSIX paths + bytes so a rename counts as a change."""
+    h = hashlib.sha256()
+    src = Path(src)
+    if src.is_dir():
+        for f in sorted(p for p in src.rglob("*") if p.is_file()):
+            h.update(f.relative_to(src).as_posix().encode("utf-8"))
+            h.update(b"\0")
+            h.update(f.read_bytes())
+    else:
+        h.update(src.read_bytes())
+    return h.hexdigest()
+
+
+def _snapshot_entry(old, dest):
+    """Old snapshot row as a dict. v1 rows (plain source string) migrate to
+    unknown hash + no published date so the first v2 run shows no false
+    badges; hashes populate on that run."""
+    e = old.get(dest)
+    if isinstance(e, str):
+        return {"source": e, "hash": None, "published": None, "badge": None}
+    return e
 
 
 def load_manifest(root):
@@ -107,6 +135,20 @@ def apply(root, pages_dir, hub_sha=""):
     warnings = []
     snap_path = pages / SNAPSHOT
     old = json.loads(snap_path.read_text(encoding="utf-8")) if snap_path.is_file() else {}
+    today = date.today()
+    for p in plan:
+        prev = _snapshot_entry(old, p["dest"])
+        digest = _hash_source(p["src"])
+        if prev is None:
+            published, badge = today.isoformat(), "new"
+        elif prev.get("hash") and prev["hash"] != digest:
+            published, badge = today.isoformat(), "updated"
+        else:
+            published, badge = prev.get("published"), prev.get("badge")
+        p["hash"], p["published"], p["badge"] = digest, published, badge
+        active = (published is not None and
+                  (today - date.fromisoformat(published)).days <= BADGE_WINDOW_DAYS)
+        p["show_badge"] = badge if active else None
     new_dests = {p["dest"] for p in plan}
     pages_root = pages.resolve()
     for dest in sorted(set(old) - new_dests):
@@ -138,7 +180,11 @@ def apply(root, pages_dir, hub_sha=""):
     (pages / "index.html").write_text(generate_landing(plan, hub_sha),
                                       encoding="utf-8", newline="\n")
     snap_path.write_text(
-        json.dumps({p["dest"]: p["src"].relative_to(root).as_posix() for p in plan},
+        json.dumps({p["dest"]: {"source": p["src"].relative_to(root).as_posix(),
+                                "hash": p["hash"],
+                                "published": p["published"],
+                                "badge": p["badge"]}
+                    for p in plan},
                    indent=2, sort_keys=True) + "\n",
         encoding="utf-8", newline="\n")
     return copied, warnings

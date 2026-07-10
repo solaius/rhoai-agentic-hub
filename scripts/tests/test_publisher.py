@@ -79,8 +79,12 @@ def test_apply_copies_and_snapshots(tmp_path):
     assert not (pages / "x/internal").exists()
     assert (pages / "index.html").is_file()
     snap = json.loads((pages / SNAPSHOT).read_text())
-    assert snap == {"x/one-pager.html": "features/x/enablement/one-pager.html",
-                    "x/site": "features/x/enablement/site"}
+    assert set(snap) == {"x/one-pager.html", "x/site"}
+    site = snap["x/site"]
+    assert site["source"] == "features/x/enablement/site"
+    assert site["badge"] == "new"
+    assert site["published"] is not None
+    assert len(site["hash"]) == 64
 
 
 def test_apply_warns_and_removes_on_dropped_dest(tmp_path):
@@ -243,3 +247,44 @@ def test_build_plan_unknown_feature_id_falls_back(tmp_path):
     plan = build_plan(root)
     assert plan[0]["group"] == "zed"
     assert plan[0]["group_key"] == (1, "zed")
+
+
+def test_apply_badge_lifecycle(tmp_path):
+    root = make_repo(tmp_path)
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    apply(root, pages)
+    snap1 = json.loads((pages / SNAPSHOT).read_text())
+    assert snap1["x/site"]["badge"] == "new"
+    apply(root, pages)  # unchanged: carried forward verbatim
+    snap2 = json.loads((pages / SNAPSHOT).read_text())
+    assert snap2["x/site"] == snap1["x/site"]
+    write(root, "features/x/enablement/site/index.html", "<html>site v2</html>")
+    apply(root, pages)  # content change: flips to updated
+    snap3 = json.loads((pages / SNAPSHOT).read_text())
+    assert snap3["x/site"]["badge"] == "updated"
+    assert snap3["x/site"]["hash"] != snap1["x/site"]["hash"]
+
+
+def test_apply_migrates_v1_snapshot_without_false_badges(tmp_path):
+    root = make_repo(tmp_path)
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    (pages / SNAPSHOT).write_text(json.dumps(
+        {"x/one-pager.html": "features/x/enablement/one-pager.html",
+         "x/site": "features/x/enablement/site"}), encoding="utf-8")
+    apply(root, pages)
+    snap = json.loads((pages / SNAPSHOT).read_text())
+    assert snap["x/site"]["badge"] is None
+    assert snap["x/site"]["published"] is None
+    assert len(snap["x/site"]["hash"]) == 64
+
+
+def test_hash_source_dir_is_deterministic_and_content_sensitive(tmp_path):
+    from hublib.publisher import _hash_source
+    root = make_repo(tmp_path)
+    src = root / "features/x/enablement/site"
+    h1 = _hash_source(src)
+    assert h1 == _hash_source(src)
+    write(root, "features/x/enablement/site/style.css", "body{color:red}")
+    assert _hash_source(src) != h1
