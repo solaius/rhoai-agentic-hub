@@ -61,7 +61,8 @@ URI_PATTERNS = {
         r"^https://github\.com/[\w.-]+/[\w.-]+(/blob/[\w.-]+/.+)?$"),
 }
 RESTRICTED_HINTS = re.compile(
-    r"\bSKU[- ]?\d|\bpricing tier\b|\binternal[- ]only\b|\bdo not share\b|\bNDA\b",
+    r"\bSKU[- ]?\d|\bpricing tier\b|\binternal[- ]only\b|\bdo not share\b|\bNDA\b"
+    r"|\$\d|signed[^.\n]{0,40}agreement",
     re.IGNORECASE)
 LINK_RE = re.compile(r"\[[^\]]*\]\((/[^)#\s]+)(?:#[^)]*)?\)")
 
