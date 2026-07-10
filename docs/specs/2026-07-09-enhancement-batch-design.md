@@ -294,7 +294,30 @@ All carried verbatim from [/docs/enhancements.md](/docs/enhancements.md)
   a possible follow-up in the backlog if wanted); external-URL checking in
   `check_links`; pytest in the pre-commit hook.
 
-## 8 · Testing and verification
+## 8 · Concurrent work — hub.intake/hub.research (running in parallel)
+
+The hub.intake + hub.research implementation
+([/docs/superpowers/specs/2026-07-09-hub-intake-research-design.md](/docs/superpowers/specs/2026-07-09-hub-intake-research-design.md))
+is being built concurrently in a separate environment. Assessed compatible;
+three merge-time contact points, none during implementation:
+
+1. **`scripts/hublib/schema.py` + `test_schema.py`** — the only file both
+   workstreams modify (they: warnings-only `research/*.md` frontmatter check;
+   us: `RESTRICTED_HINTS` extension + pillar warning). Different regions;
+   expected to auto-merge. No semantic overlap in scan surfaces.
+2. **`docs/enhancements.md`** — both move backlog items to Done. Mitigation:
+   the bookkeeping edit is this batch's **final, separate commit**, so the
+   second workstream to land can redo it in seconds after rebasing.
+3. **Generated indexes/views + `memory/log.md`** — resolved mechanically:
+   rerun `python scripts/hub_index.py` after merge; log.md is an append-merge.
+
+Synergy note: the intake spec's discipline line ("dollar figures and
+agreement language … trip the lint heuristics by design") is delivered BY
+this batch (§1's `RESTRICTED_HINTS` hardening) — it does not exist before
+this lands. This batch is implemented on its own branch; whichever workstream
+finishes second rebases.
+
+## 9 · Testing and verification
 
 New test files follow the existing per-module pattern (direct imports via
 `conftest.py`, `tmp_path` fixtures):
