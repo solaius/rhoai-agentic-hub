@@ -16,7 +16,6 @@ including review. "When" is a best guess, not a schedule.
 
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
-| 2 | Jira hub skills — sweep, track, and sync Jiras per feature | **High** — Jira is the source of truth for delivery but has no intake pipeline into the hub; pm-toolkit has the client, hub has the filing conventions, nothing connects them | Medium | Now |
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 4 | `hub.refresh-site` — refresh the migrated RHCL/Management hub sites from live sources | **High** — the hubs are now the live copies and have no update path; they start rotting today | Medium | Now |
 | 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
@@ -28,7 +27,7 @@ including review. "When" is a best guess, not a schedule.
 | 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Medium — R5 will feel this pain first-hand | Medium | After R5 |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
-| 19 | Doctor: `~/.bashrc` env wiring + Jira/Slack connectivity probes (parked old-doctor coverage) | Medium — needed the first time Jira skills run on a hub-only machine | Small | With R5 |
+| 19 | Doctor: `~/.bashrc` env wiring + Slack connectivity probe (the Jira probe shipped 2026-07-10 with #2) | Low–Medium — remaining slice is env wiring + Slack | Small | With R5 |
 | 20 | Agent context pack (`hub_index.py --brief`) | Medium — cheaper session bootstrap for agents | Small–Medium | Later |
 | 21 | Human search over the published site (static index) | Medium — humans lack grep | Medium | Later |
 | 22 | Narrative growth: stories for Inference/Data/Safety & Governance pillars | Medium — content, not tooling; map has `_no stories yet_` ×3 | Small each | As stories emerge |
@@ -36,7 +35,7 @@ including review. "When" is a best guess, not a schedule.
 | 24 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
 | 25 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
 | 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
-| 27 | Jira gap analysis — `hub.research` jira-gap lens (remainder of the pm-toolkit research port) | **Medium–High** — "NOT building" early warnings mapping competitor moves vs. active Jira work; the competitive-sweep half shipped 2026-07-09 as the `hub.research` competitive lens | Medium | After #2 |
+| 27 | Jira gap analysis — `hub.research` jira-gap lens (remainder of the pm-toolkit research port) | **Medium–High** — "NOT building" early warnings mapping competitor moves vs. active Jira work; the competitive-sweep half shipped 2026-07-09 as the `hub.research` competitive lens | Medium | Next — #2 shipped 2026-07-10 |
 | 28 | PM standup brief — Jira + Slack + Gemini + AI news (pm-toolkit port) | **Medium–High** — the personal daily loop across all systems; complements #15 (hub-only brief) | Medium | Next |
 | 29 | RFE triage batch workflow (pm-toolkit port) | **Medium–High** — periodic triage ceremony (scan → classify → interactive HTML report → batch apply); distinct from assess-rfe (single-issue quality) and RICE (#11, scoring) | Medium | Next |
 | 30 | Jira hygiene auditor (pm-toolkit port) | **Medium** — audit individual issues against type-specific checklists (links, labels, naming, Fix Version, refinement); companion to #2 (data filing) | Small–Medium | Next |
@@ -141,20 +140,6 @@ the hub; cheap to add then.
 
 ## Agent-usage enhancements
 
-**2 · Jira hub skills — sweep, track, and sync.** Jira is the delivery
-source of truth but has no intake pipeline into the hub. pm-toolkit already
-has the async Jira client (`scripts/_base`, httpx, Pydantic v2) and skills
-(`rfe.*`, `assess-rfe`) — mine those for the client layer, then build hub-
-native skills on top: (a) `hub.jira-sweep` — given a feature id + JQL or
-component, query Jira and create/update `ref-` entries with `jira:` fields,
-feeding `views/jira-map.md`; (b) `hub.jira-sync` — periodic refresh that
-detects status changes (resolved, closed, won't-fix) and proposes entry
-updates through the gate; (c) optionally, backlink from `jtbd-` entries to
-their implementing Jiras. Design decision: whether the Jira client lives
-in hublib (duplicating pm-toolkit) or the hub imports pm-toolkit as a
-sibling — lean toward a thin adapter in hublib that calls the pm-toolkit
-client if available, degrades to "paste a Jira URL" otherwise.
-
 **3 · Feature staleness sweep.** Per-feature "what's outdated?" — compare
 each `fact-`/`ref-`/`question-` entry's `timestamp` and `review_after`
 against current sources (Jira status, GDoc last-modified, upstream repo
@@ -227,6 +212,8 @@ reviews); Create (guide new Jira creation at any lifecycle stage with
 proper links and structure); Help (explain hierarchy and conventions).
 Companion to #2 (Jira hub skills) — #2 files Jira data into the hub,
 hygiene ensures the Jira issues themselves are well-formed.
+The client layer it needs now exists (`scripts/hublib/jira.py`, including
+the write methods hygiene fixes would use behind a gate).
 
 **31 · Red Hat Support case search/analysis.** Port pm-toolkit's
 `redhat-support-cases` — Solr-based bulk search across 1M+ Red Hat support
@@ -284,6 +271,9 @@ keep manual with a doctor-assisted rsync checklist. Decide after R5 data.
 `rice-strats` on a hub-only machine) plus Jira and Slack connectivity
 probes as new doctor sections. Natural companion to R5. (Per the
 2026-07-08 ruling: no LLM-provider credential handling in any form.)
+The Jira connectivity probe shipped 2026-07-10 with #2 (doctor section 4
+runs `hub_jira.py --check`); the remaining scope is the env wiring and a
+Slack probe.
 
 **24 · Multi-writer promotion.** Dormant by design (D1). Trigger: a second
 regular writer. Work: promote the working-here contributor stub to
@@ -320,6 +310,14 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#2 Jira hub skills** — shipped 2026-07-10 (`629cb3d`): `hublib/jira.py`
+  (pm-toolkit client port, httpx), `hublib/jiramap.py` + `hub_jira.py`
+  (check/try-jql/sweep/sync CLI), `hub.jira-sweep` + `hub.jira-sync`
+  skills, tracked public `work/jira-snapshot.yaml` per feature with the
+  unauthenticated-probe summary rule, enriched `views/jira-map.md`, and
+  the doctor Jira probe (#19's Jira slice). Spec:
+  [/docs/specs/2026-07-09-jira-hub-skills-design.md](/docs/specs/2026-07-09-jira-hub-skills-design.md).
+  Plan: [/docs/plans/2026-07-09-jira-hub-skills-plan.md](/docs/plans/2026-07-09-jira-hub-skills-plan.md).
 - **#1 `hub.intake` + `hub.research`** — shipped 2026-07-09 (`58ee066`):
   guided multi-source intake (partition scaffold, batch-gated entries) +
   lens-scoped deep research (numbered series per

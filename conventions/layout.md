@@ -17,7 +17,7 @@ use, never pre-created empty):
 | `research/`  | deep documents (numbered series optional) |
 | `strategy/`  | strategy docs, RFE roadmaps, outcomes |
 | `enablement/`| one subdirectory per artifact (deck, hub site, blog) |
-| `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored) |
+| `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored), `jira-snapshot.yaml` (machine-written by hub.jira-sweep; tracked) |
 
 Anything else directly under a feature is a lint **error**. `platform/` is the
 cross-cutting pseudo-feature (releases, people, personas, SKUs, org process —

@@ -50,6 +50,8 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.file | intake a doc/URL/transcript as a typed entry |
 | hub.intake | onboard a feature area / bulk-add sources (gated batch; offers research) |
 | hub.research | lens-scoped deep research → research/ series + gated entries |
+| hub.jira-sweep | sweep Jira into a feature — scope discovery, public snapshot, gated refs |
+| hub.jira-sync | diff stored Jira scopes + watched keys; propose updates via the gate |
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
 | hub.publish | add/update a publish manifest entry (gated) |

@@ -4,6 +4,10 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-10
+- **Creation** — Jira hub skills shipped (backlog #2): hublib Jira client
+  (httpx port from pm-toolkit), hub.jira-sweep/hub.jira-sync, tracked
+  public snapshots with probe-gated summaries, enriched jira-map view,
+  doctor Jira probe (#19 slice). #27(b) jira-gap unblocked.
 - **Creation** — fact-concurrent-session-git-hygiene: the two cross-session contamination mechanisms (shared index sweep f9a1e31/ef4cc49; nested-worktree edits) + standing guards — consolidated from both sessions' scratch notes.
 - **Creation** — fact-disclosure-warning-triage-2026-07-10: all 18 new HTML heuristic warnings ruled benign (11 public market figures, 6 JS $1 tokens, 1 illustrative $500); don't re-triage unless the lines change.
 - **Update** — enhancement batch shipped (#5 #7 #10 #15 #16 → Done): disclosure lint (restricted/lint-patterns.txt, errors) + pre-commit gate hook (doctor §10, installed on this machine, 20 ok/0 fail) + hub_status.py morning brief + hub_index --rotate-log + hub_publish --check-links publish gate; the link gate's first CI run caught and led to repair of 80 broken RHCL-hub subpage cross-links. Follow-up filed as #34 (frontmatter heuristic gap).

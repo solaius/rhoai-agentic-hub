@@ -17,6 +17,10 @@ takes.
 | `python scripts/hub_publish.py --check` | validate `publish/manifest.yaml` (schema, sources exist, duplicate dests) | after manifest changes |
 | `python scripts/hub_publish.py --pages-dir <clone> [--hub-sha <sha>]` | apply the manifest to a pages-repo clone (what `publish.yml` runs) | to inspect locally what would ship |
 | `python scripts/hub_publish.py --check-links --pages-dir <clone>` | verify internal link integrity of the pages clone; exit 1 on broken links | runs in `publish.yml` between the apply step and the push — reproduce a broken-link CI failure locally |
+| `python scripts/hub_jira.py --check` | Jira connectivity/auth probe (doctor section 4 runs it) | setup; auth debugging |
+| `python scripts/hub_jira.py --try-jql '<jql>'` | scope discovery: result count + sample rows | hub.jira-sweep step 2 |
+| `python scripts/hub_jira.py --sweep <feature> --out <dir>` | proposed snapshot + ref candidates into `<dir>` (repo untouched) | driven by hub.jira-sweep |
+| `python scripts/hub_jira.py --sync --out <dir>` | diff stored scopes + watched keys against live Jira | driven by hub.jira-sync |
 | `bash scripts/doctor.sh [check\|setup]` | machine health check (`check`, read-only, default) or fix mode (`setup`) | new machine; anything environmental feels off |
 | `python -m pytest scripts/tests -v` | the test suite for all of the above | when changing anything in `scripts/` |
 
@@ -34,6 +38,8 @@ that one file is not gated — reindex runs refresh it.)
 | `schema.py` | `lint_repo()` and `validate_manifest()`; owns the type vocabularies, filename-prefix map, skeleton contract, canonical-URI patterns, and the line budgets |
 | `indexer.py` | deterministic generation of every `index.md` and `views/` file from frontmatter; the `<!-- generated … -->` marker; `write_all` / `check` |
 | `publisher.py` | manifest-driven publishing into a pages clone: copy plan, unpublish-on-removal via `.publish-snapshot.json`, landing `index.html` generation; hardened against path traversal, `dest` type swaps, and escapes from the pages root |
+| `jira.py` | async Jira REST client (pm-toolkit port): Cloud basic / DC bearer auth from `JIRA_*` env, JQL search with pagination, 429 retry, ADF→text, unauthenticated `probe_public`; write methods ported but unused by the hub.jira-* skills |
+| `jiramap.py` | the snapshot contract: whitelisted `issue_row`, byte-stable `build_snapshot`, `validate` (lint), `diff` (sync), `watched_keys` (ref-/jtbd backlinks) |
 | `disclosure.py` | local-first disclosure lint (`scan_repo`) — see "The disclosure lint" below |
 | `status.py` | `build_brief` — assembles the morning-brief sections `hub_status.py` prints |
 | `logrotate.py` | `rotate_log` — moves previous-year `memory/log.md` sections into `memory/log-archive/<year>.md` |
@@ -83,10 +89,10 @@ remediation command. Sections:
 
 | # | checks | setup mode fixes |
 |---|---|---|
-| 1 | python + pyyaml + pytest importable | `pip install -r scripts/requirements.txt` |
+| 1 | python + pyyaml + pytest + httpx importable | `pip install -r scripts/requirements.txt` |
 | 2 | `.claude/settings.json` declares the ODH skills marketplace | — (tracked file; confirm installs with `/plugin`) |
 | 3 | auto-memory scratch redirect (`autoMemoryDirectory` → `memory/.scratch/`) | writes `.claude/settings.local.json`, creates `memory/.scratch/` |
-| 4 | `restricted/.env` exists with required keys (`JIRA_*`); sources it so later sections see the `CTRACK_*` overrides and MCP secrets | — (secrets are copied between machines by hand, never generated) |
+| 4 | `restricted/.env` exists with required keys (`JIRA_*`) + live Jira reachability (`hub_jira.py --check`, WARN when offline); sources it so later sections see the `CTRACK_*` overrides and MCP secrets | — (secrets are copied between machines by hand, never generated) |
 | 5 | pages repo cloned alongside (optional convenience) | — |
 | 6 | structure: lint + index `--check` pass | — (points you at `hub_index.py`) |
 | 7 | customer tracker: rhai-tracker MCP registered in `.mcp.json`, deps installed, server env present (tracker checkout defaults to `../rhai-customer-tracker`, override with `CTRACK_DIR`) | writes `.mcp.json`, installs deps, scaffolds the server `.env` |

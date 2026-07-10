@@ -20,8 +20,8 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-10 — **Creation** — Jira hub skills shipped (backlog #2): hublib Jira client
 - 2026-07-10 — **Creation** — fact-concurrent-session-git-hygiene: the two cross-session contamination mechanisms (shared index sweep f9a1e31/ef4cc49; nested-worktree edits) + standing guards — consolidated from both sessions' scratch notes.
 - 2026-07-10 — **Creation** — fact-disclosure-warning-triage-2026-07-10: all 18 new HTML heuristic warnings ruled benign (11 public market figures, 6 JS $1 tokens, 1 illustrative $500); don't re-triage unless the lines change.
 - 2026-07-10 — **Update** — enhancement batch shipped (#5 #7 #10 #15 #16 → Done): disclosure lint (restricted/lint-patterns.txt, errors) + pre-commit gate hook (doctor §10, installed on this machine, 20 ok/0 fail) + hub_status.py morning brief + hub_index --rotate-log + hub_publish --check-links publish gate; the link gate's first CI run caught and led to repair of 80 broken RHCL-hub subpage cross-links. Follow-up filed as #34 (frontmatter heuristic gap).
 - 2026-07-10 — **Update** — RHOAI architecture repo (opendatahub-io/architecture-context) promoted to standing-context status: ref rewritten (what's inside, AGENT_USAGE.md entry, per-release snapshots), new ADR-repo ref filed, and hub.research/hub.intake now reference it routinely (research briefs carry the matching snapshot; new feature overviews link it).
-- 2026-07-09 — **Creation** — hub.intake + hub.research skills shipped (backlog #1, #27a): conventions/research.md series contract, warning-only research lint, domains/redhat-ai.yaml. #27(b) jira-gap re-scoped, gated on #2.

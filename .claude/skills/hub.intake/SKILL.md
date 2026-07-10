@@ -26,7 +26,8 @@ file) — then run the flow without further questions until the gate.
    description, transcripts → <home>/work/transcripts/ (gitignored) with
    a tracked ref- pointing at the source system, NDA-adjacent →
    restricted/ mirror. Jira/RFE links: ref- entry with the URL only
-   (field ingestion arrives with the Jira hub skills, backlog #2).
+   (offer a hub.jira-sweep run afterwards for field ingestion + the
+   feature snapshot).
    Unreachable source (paywall, auth, dead link): still draft the ref-
    (the pointer is real knowledge), mark its gate line `fetch failed`.
    MCP down → say so, offer pasted content, point at hub.doctor check.

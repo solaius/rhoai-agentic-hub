@@ -10,7 +10,7 @@
 | `person`    | `person-`   | stakeholder/contact | `role`, `org` |
 | `question`  | `question-` | open question/risk | `status: open\|answered` |
 | `qa`        | `qa-`       | a **field** question with our canonical answer; `asks:` list of `{date, by, context?}` records recurrence (`by`: customer\|partner\|sales\|ssa\|pm\|eng\|exec\|other) | `status: open\|answered`, `asks` |
-| `jtbd`      | `jtbd-`     | a job to be done ("When …, I want …, so I can …"); execution status stays in Jira (`jira:` field) | `persona` (locked list), `status: candidate\|validated\|delivered\|retired` |
+| `jtbd`      | `jtbd-`     | a job to be done ("When …, I want …, so I can …"); execution status stays in Jira — optional `jira: [KEYS]` list is watched by hub.jira-sync | `persona` (locked list), `status: candidate\|validated\|delivered\|retired` |
 
 `question-` = **our** open product questions, tracked to resolution.
 `qa-` = **the field's** answered questions, tracked for reuse/recurrence.

@@ -31,6 +31,9 @@ families (design decisions D8/D11):
   under `research/` + gated knowledge entries + living
   `00-executive-summary`. Series contract:
   [/conventions/research.md](/conventions/research.md).
+- **Jira:** `hub.jira-sweep <feature>` (scope discovery → tracked snapshot +
+  gated refs) then `hub.jira-sync` on demand — diff-driven refresh; the map
+  lives in [/views/jira-map.md](/views/jira-map.md).
 - **Artifact:** `presentation-create` (or `blog-mockup`) → self-contained
   `features/<f>/enablement/<slug>/` → `hub.publish` → live on the pages
   site. Building never publishes by itself.
@@ -55,6 +58,8 @@ families (design decisions D8/D11):
 | `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `features.yaml` on first use |
 | `hub.intake` | onboard a new feature area or bulk-add sources | ask-once upfront + batch write gate (incl. partition) | partition (first use), ref-/typed entries, reindex + commit |
 | `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
+| `hub.jira-sweep` | sweep Jira for one feature (snapshot + strategic refs) | scope confirm + batch write gate | features.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
+| `hub.jira-sync` | refresh swept scopes + watched keys against live Jira | batch write gate | snapshot refreshes, ref-/jtbd updates, reindex + commit |
 | `hub.reindex` | after adding/editing entries; CI reports stale indexes | no | regenerates all `index.md` + `views/`, runs linter |
 | `hub.doctor` | new machine; something feels broken | setup mode confirms writes | per-machine config only (see [/docs/tooling.md](/docs/tooling.md)) |
 | `hub.publish` | ship an enablement artifact to the public site | disclosure confirm | `publish/manifest.yaml` entry |
@@ -110,6 +115,23 @@ gate before any file lands. Re-runs are refreshes: numbering continues,
 `00-executive-summary` is rewritten, contradicted findings get supersede
 notes — never deletions. Tracker/NDA-sourced findings route to
 `restricted/`.
+
+**`hub.jira-sweep`** — the Jira intake path for one feature. First run does
+conversational scope discovery (`--try-jql` iterations until the JQL looks
+right; the approved scope is stored as a `jira:` block in
+`features/features.yaml`). Every run fetches the scope, builds a
+whitelisted public snapshot (`work/jira-snapshot.yaml` — summaries admitted
+only when an unauthenticated probe proves the issue world-readable), picks
+strategic-tier issues (`ref_types`, default Outcome/Feature) as gated ref-
+candidates, and batches everything through one table. Read-only against
+Jira.
+
+**`hub.jira-sync`** — the refresh half: re-runs every stored scope, diffs
+against committed snapshots (NEW / CHANGED / VANISHED), and watches every
+Jira key referenced by ref- `resource:` URLs or jtbd `jira:` lists even
+outside the scopes. Consequences (snapshot refresh, ref- status notes,
+jtbd `delivered` nudges, new ref- candidates) are proposed through the
+gate; an all-quiet run is a one-line report.
 
 **`hub.reindex`** — wraps `python scripts/hub_index.py` + `hub_lint.py`.
 Run it (or let capture/consolidate run it) after **any** entry edit —
