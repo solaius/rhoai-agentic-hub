@@ -24,7 +24,8 @@ def _ci_section():
 
 def main():
     # Ensure UTF-8 output encoding on Windows
-    sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     root = Path(__file__).resolve().parents[1]
     print(build_brief(root), end="")
     ci = _ci_section()
