@@ -89,6 +89,8 @@ Create the output directory structure:
 mkdir -p features/<feature>/enablement/blog-<topic-short>/drafts/reviews
 ```
 
+If this created a new `enablement/blog-<topic-short>/` directory, scaffold an `artifact.md` descriptor in it — frontmatter `type: artifact`, `title` (the working title), one-line `description`, `timestamp` (today), and `features:` for any cross-feature spread. `views/artifacts.md` flags descriptor-less directories.
+
 Write `features/<feature>/enablement/blog-<topic-short>/abstract.md` containing:
 
 - Thesis statement

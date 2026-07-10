@@ -355,5 +355,56 @@ else
   fi
 fi
 
+echo "[10] git pre-commit hook"
+# Kills the #1 CI failure (edit -> forget reindex -> red) and runs the
+# disclosure lint at the earliest possible moment. In a worktree .git is a
+# FILE, so resolve the hooks dir via git, never hardcode .git/hooks.
+HOOKS_DIR="$(cd "$ROOT" 2>/dev/null && git rev-parse --git-path hooks 2>/dev/null)"
+case "$HOOKS_DIR" in
+  "") : ;;
+  /*|?:*) : ;;
+  *) HOOKS_DIR="$ROOT/$HOOKS_DIR" ;;
+esac
+HOOK="${HOOKS_DIR:+$HOOKS_DIR/pre-commit}"
+HOOK_MARKER="# hub-doctor pre-commit v1"
+write_hook() {
+  mkdir -p "$HOOKS_DIR" && cat > "$HOOK" <<'HOOKEOF' && chmod +x "$HOOK"
+#!/bin/sh
+# hub-doctor pre-commit v1 — installed by scripts/doctor.sh setup
+python scripts/hub_lint.py && python scripts/hub_index.py --check
+status=$?
+if [ $status -ne 0 ]; then
+  echo ""
+  echo "pre-commit: hub gate failed."
+  echo "  stale indexes     -> python scripts/hub_index.py"
+  echo "  deliberate bypass -> git commit --no-verify"
+fi
+exit $status
+HOOKEOF
+}
+if [ -z "$HOOKS_DIR" ]; then
+  warn "not a git repo? could not resolve the hooks dir — skipping hook check"
+elif [ -f "$HOOK" ] && grep -qF "$HOOK_MARKER" "$HOOK"; then
+  ok "pre-commit hook installed (current version)"
+elif [ -f "$HOOK" ] && grep -q "hub-doctor pre-commit" "$HOOK"; then
+  if [ "$MODE" = "setup" ]; then
+    cp "$HOOK" "$HOOK.bak" && write_hook && ok "pre-commit hook updated (old version -> pre-commit.bak)" || fail "could not write pre-commit hook"
+  else
+    warn "pre-commit hook is an outdated hub-doctor version — run: bash scripts/doctor.sh setup"
+  fi
+elif [ -f "$HOOK" ]; then
+  if [ "$MODE" = "setup" ]; then
+    cp "$HOOK" "$HOOK.bak" && write_hook && ok "pre-commit hook installed (foreign hook -> pre-commit.bak)" || fail "could not write pre-commit hook"
+  else
+    warn "a non-hub pre-commit hook exists — setup will back it up to pre-commit.bak and replace it"
+  fi
+else
+  if [ "$MODE" = "setup" ]; then
+    write_hook && ok "pre-commit hook installed" || fail "could not write pre-commit hook"
+  else
+    fail "pre-commit hook not installed — run: bash scripts/doctor.sh setup"
+  fi
+fi
+
 echo "== result: $PASS ok, $WARN warn, $FAIL fail"
 [ "$FAIL" -eq 0 ]

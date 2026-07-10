@@ -17,6 +17,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r scripts/requirements.txt
       - run: python scripts/hub_publish.py --pages-dir pages-repo --hub-sha "$GITHUB_SHA"
+      - run: python scripts/hub_publish.py --check-links --pages-dir pages-repo
       - name: Commit and push pages
         run: |
           cd pages-repo

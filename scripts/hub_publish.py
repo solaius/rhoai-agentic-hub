@@ -1,11 +1,12 @@
-"""CLI: validate the publish manifest (--check) or apply it to a pages clone."""
+"""CLI: validate the publish manifest (--check), verify pages-clone link
+integrity (--check-links), or apply the manifest to a pages clone."""
 import argparse
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from hublib.publisher import apply
+from hublib.publisher import apply, check_links
 from hublib.schema import validate_manifest
 
 
@@ -14,6 +15,7 @@ def main():
     ap.add_argument("--pages-dir")
     ap.add_argument("--hub-sha", default="")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--check-links", action="store_true")
     args = ap.parse_args()
     root = Path(__file__).resolve().parents[1]
     errors = validate_manifest(root)
@@ -24,6 +26,15 @@ def main():
     if args.check:
         print("hub_publish --check: manifest valid")
         return 0
+    if args.check_links:
+        if not args.pages_dir:
+            print("ERROR --pages-dir required with --check-links")
+            return 2
+        broken = check_links(args.pages_dir)
+        for b in broken:
+            print(f"ERROR {b}")
+        print(f"hub_publish --check-links: {len(broken)} broken link(s)")
+        return 1 if broken else 0
     if not args.pages_dir:
         print("ERROR --pages-dir required unless --check")
         return 2

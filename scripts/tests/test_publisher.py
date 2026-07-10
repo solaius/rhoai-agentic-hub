@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from hublib.publisher import SNAPSHOT, apply, build_plan, generate_landing
+from hublib.publisher import SNAPSHOT, apply, build_plan, check_links, generate_landing
 
 
 def write(root: Path, rel: str, text: str):
@@ -122,3 +122,90 @@ def test_manifest_rejects_dot_dest(tmp_path):
           "  audience: public\n  title: T\n  description: D\n")
     errors = validate_manifest(root)
     assert any("must be a relative path" in e for e in errors)
+
+
+def make_pages(tmp_path):
+    pages = tmp_path / "pages"
+    write(pages, "index.html",
+          '<a href="x/site/">site</a> <a href="x/one-pager.html">one</a>')
+    write(pages, "x/site/index.html",
+          '<link href="style.css"><img src="../one-pager.html">'
+          '<a href="https://example.com/x">ext</a> <a href="#top">frag</a>'
+          '<a href="mailto:a@b.c">mail</a>')
+    write(pages, "x/site/style.css", "body{}")
+    write(pages, "x/one-pager.html", "<html></html>")
+    return pages
+
+
+def test_check_links_clean_site(tmp_path):
+    assert check_links(make_pages(tmp_path)) == []
+
+
+def test_check_links_broken_href_and_src(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "x/broken.html", '<a href="gone.html">g</a><img src="img/gone.png">')
+    errors = check_links(pages)
+    assert "x/broken.html: broken link gone.html" in errors
+    assert "x/broken.html: broken link img/gone.png" in errors
+
+
+def test_check_links_root_absolute(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "x/site/abs.html",
+          '<a href="/x/one-pager.html">ok</a><a href="/nope.html">bad</a>')
+    assert check_links(pages) == ["x/site/abs.html: broken link /nope.html"]
+
+
+def test_check_links_dir_without_index_is_error(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "x/noindex/readme.txt", "hi")
+    write(pages, "dirlink.html", '<a href="x/noindex/">d</a>')
+    assert check_links(pages) == ["dirlink.html: broken link x/noindex/"]
+
+
+def test_check_links_percent_encoding_and_query(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "x/my file.html", "<html></html>")
+    write(pages, "enc.html",
+          '<a href="x/my%20file.html">e</a><a href="x/one-pager.html?v=2">q</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_all_external_prefixes_skipped(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "prefixes.html",
+          '<a href="http://example.com/x">h</a><a href="//cdn.example.com/x">p</a>'
+          '<img src="data:image/png;base64,AAAA"><a href="javascript:void(0)">j</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_git_dir_skipped(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, ".git/hooks/doc.html", '<a href="gone.html">broken but ignored</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_fragment_and_query_on_real_path(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "frag.html",
+          '<a href="x/one-pager.html#sec">f</a><a href="x/one-pager.html?v=1#s">q</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_escaping_link_is_error(tmp_path):
+    pages = make_pages(tmp_path)
+    write(tmp_path, "outside.html", "<html></html>")
+    write(pages, "esc.html", '<a href="../outside.html">e</a>')
+    assert check_links(pages) == ["esc.html: broken link ../outside.html"]
+
+
+def test_check_links_uppercase_scheme_skipped(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "up.html", '<a href="HTTPS://example.com/x">u</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_data_and_namespaced_attrs_not_scanned(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "attrs.html", '<a data-href="gone.html">d</a><use xlink:href="gone.svg"/>')
+    assert check_links(pages) == []

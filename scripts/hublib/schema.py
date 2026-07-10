@@ -62,7 +62,8 @@ URI_PATTERNS = {
         r"^https://github\.com/[\w.-]+/[\w.-]+(/blob/[\w.-]+/.+)?$"),
 }
 RESTRICTED_HINTS = re.compile(
-    r"\bSKU[- ]?\d|\bpricing tier\b|\binternal[- ]only\b|\bdo not share\b|\bNDA\b",
+    r"\bSKU[- ]?\d|\bpricing tier\b|\binternal[- ]only\b|\bdo not share\b|\bNDA\b"
+    r"|\$\d|signed[^.\n]{0,40}agreement",
     re.IGNORECASE)
 LINK_RE = re.compile(r"\[[^\]]*\]\((/[^)#\s]+)(?:#[^)]*)?\)")
 
@@ -200,7 +201,11 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, featur
     _check_features(rel, meta, feature_ids, errors)
     if etype == "story" and meta.get("pillar"):
         target = str(meta["pillar"])
-        if not (root / target.lstrip("/")).exists():
+        if not target.startswith("/"):
+            warnings.append(f"{rel}: pillar '{target}' should be a leading-slash root "
+                            f"path — this story will not attach to its pillar in the "
+                            f"narrative map")
+        elif not (root / target.lstrip("/")).exists():
             warnings.append(f"{rel}: pillar target {target} does not exist (dangling)")
 
 

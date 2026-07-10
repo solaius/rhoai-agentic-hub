@@ -1,0 +1,85 @@
+from pathlib import Path
+
+from hublib.disclosure import load_patterns, scan_repo
+
+
+def write(root: Path, rel: str, text: str):
+    p = root / rel
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(text, encoding="utf-8", newline="\n")
+    return p
+
+
+def test_no_pattern_file_no_errors(tmp_path):
+    write(tmp_path, "features/x/enablement/deck/index.html", "<p>Acme Corp content</p>")
+    errors, _ = scan_repo(tmp_path)
+    assert errors == []
+
+
+def test_pattern_match_in_html_is_error_with_both_linenos(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "# customer names\nacme\n")
+    write(tmp_path, "features/x/enablement/deck/index.html",
+          "<html>\n<p>ACME Corp deal</p>\n</html>")
+    errors, _ = scan_repo(tmp_path)
+    assert errors == ["features/x/enablement/deck/index.html:2: "
+                      "matches restricted pattern (lint-patterns.txt:2)"]
+
+
+def test_pattern_match_in_knowledge_md_including_frontmatter(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "globex\n")
+    write(tmp_path, "features/x/knowledge/fact-a.md",
+          "---\ntype: fact\ndescription: Globex asked for it\ntimestamp: 2026-07-09\n"
+          "---\nbody\n")
+    errors, _ = scan_repo(tmp_path)
+    assert errors == ["features/x/knowledge/fact-a.md:3: "
+                      "matches restricted pattern (lint-patterns.txt:1)"]
+
+
+def test_narrative_surfaces_scanned(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "acme\n")
+    write(tmp_path, "narrative/enablement/deck/index.html", "<p>acme</p>")
+    write(tmp_path, "narrative/knowledge/story-a.md", "acme\n")
+    errors, _ = scan_repo(tmp_path)
+    assert len(errors) == 2
+
+
+def test_invalid_regex_warns_and_rest_still_applies(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "[unclosed\nacme\n")
+    write(tmp_path, "features/x/enablement/deck/index.html", "<p>acme</p>")
+    errors, warnings = scan_repo(tmp_path)
+    assert any(w.startswith("restricted/lint-patterns.txt:1: invalid regex")
+               for w in warnings)
+    assert not any("unclosed" in w for w in warnings)
+    assert any("(lint-patterns.txt:2)" in e for e in errors)
+
+
+def test_comments_and_blank_lines_skipped(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "\n# comment\n\nacme\n")
+    patterns, warnings = load_patterns(tmp_path)
+    assert [n for n, _ in patterns] == [4]
+    assert warnings == []
+
+
+def test_restricted_tree_never_scanned(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "acme\n")
+    write(tmp_path, "restricted/features/x/enablement/deck/index.html", "<p>acme</p>")
+    write(tmp_path, "restricted/features/x/knowledge/fact-a.md", "acme\n")
+    errors, _ = scan_repo(tmp_path)
+    assert errors == []
+
+
+def test_generic_hints_warn_on_enablement_html(tmp_path):
+    write(tmp_path, "features/x/enablement/deck/index.html",
+          "<html>\n<p>this deck is internal-only, do not share</p>\n</html>")
+    errors, warnings = scan_repo(tmp_path)
+    assert errors == []
+    assert any(w.startswith("features/x/enablement/deck/index.html:2: "
+                            "restricted-content heuristic") for w in warnings)
+
+
+def test_generic_hints_do_not_double_report_knowledge_md(tmp_path):
+    # lint_entry (schema.py) already warns on md bodies; disclosure must not repeat it
+    write(tmp_path, "features/x/knowledge/fact-a.md",
+          "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-09\n---\ninternal-only\n")
+    _, warnings = scan_repo(tmp_path)
+    assert warnings == []

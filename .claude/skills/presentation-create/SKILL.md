@@ -237,6 +237,8 @@ Before finishing the build, verify:
 
 Write the HTML file to `features/<feature>/enablement/<artifact-slug>/index.html` (the path fixed during Phase 1 intake). Keep the artifact self-contained — if it needs assets beyond CDN-hosted fonts/libraries (Cytoscape.js, Google Fonts), place them alongside it in the same `enablement/<artifact-slug>/` directory rather than reaching into other features.
 
+If this run created a new `enablement/<artifact-slug>/` directory, also scaffold an `artifact.md` descriptor alongside the HTML — frontmatter `type: artifact`, `title`, one-line `description`, `timestamp` (today), and `features:` listing any other feature partitions the artifact spans. `views/artifacts.md` flags descriptor-less directories, and `hub.publish` reads the descriptor when the artifact ships.
+
 After writing, offer to:
 1. **Open in browser** — Suggest the user open it to preview.
 2. **Publish it** — Writing the file does not make it public. When the user is ready to ship it, hand off to `hub.publish`, which drafts the `publish/manifest.yaml` entry (source, dest slug, audience, title, description) and gates on an explicit disclosure confirm before anything goes live.

@@ -80,6 +80,49 @@ def _load_artifacts(root):
                 yield "/" + desc.relative_to(root).as_posix(), meta
 
 
+def stale_rows(root, today=None):
+    """Overdue rows for views/stale-facts.md — shared with hublib.status so
+    the view and the morning brief cannot drift."""
+    root = Path(root)
+    today = today or datetime.date.today()
+    cfg = _staleness_config(root)
+    entries = list(_load_entries(root, "*/knowledge/*.md"))
+    entries += list(_load_entries(root, "knowledge/*.md", base="narrative"))
+    mem = root / "memory"
+    rows = []
+    mem_files = []
+    if (mem / "profiles").is_dir():
+        mem_files += [("profile", p) for p in sorted((mem / "profiles").glob("*.md"))]
+    if (mem / "facts").is_dir():
+        mem_files += [("fact", p) for p in sorted((mem / "facts").glob("*.md"))]
+    for kind, p in mem_files:
+        meta = _meta_of(p)
+        if not meta or meta.get("status") == "superseded":
+            continue
+        rootpath = "/" + p.relative_to(root).as_posix()
+        review = _date(meta.get("review_after"))
+        ts = _date(meta.get("timestamp"))
+        limit = cfg["profile_default_days"] if kind == "profile" else cfg["fact_default_days"]
+        overdue = (review and review < today) or (
+            not review and ts and (today - ts).days > limit)
+        if overdue:
+            age = (today - ts).days if ts else "?"
+            rows.append(f"- {rootpath} — {meta.get('description', '')} (age {age}d)")
+    for rp, m, _ in entries:
+        if m.get("type") == "fact" and m.get("status") != "superseded":
+            ts = _date(m.get("timestamp"))
+            if ts and (today - ts).days > cfg["fact_default_days"]:
+                rows.append(f"- {rp} — {m.get('description', '')} "
+                            f"(age {(today - ts).days}d)")
+    for rp, m, _ in entries:
+        if m.get("type") in ("qa", "jtbd"):
+            review = _date(m.get("review_after"))
+            if review and review < today:
+                rows.append(f"- {rp} — {m.get('description', '')} "
+                            f"(review overdue)")
+    return rows
+
+
 def build_all(root, today=None):
     root = Path(root)
     today = today or datetime.date.today()
@@ -198,8 +241,6 @@ def build_all(root, today=None):
                 "\n".join(lines).rstrip("\n") + "\n"
 
     # views/
-    cfg = _staleness_config(root)
-
     decisions = [(m.get("timestamp"), rp, m) for rp, m, _ in entries
                  if m.get("type") == "decision"]
     lines = [MARKER + "# All decisions", ""]
@@ -230,39 +271,8 @@ def build_all(root, today=None):
                      f"{m.get('org', '')} — {m.get('description', '')}")
     built["views/people.md"] = "\n".join(lines) + "\n"
 
-    stale_rows = []
-    mem_files = []
-    if (mem / "profiles").is_dir():
-        mem_files += [("profile", p) for p in sorted((mem / "profiles").glob("*.md"))]
-    if (mem / "facts").is_dir():
-        mem_files += [("fact", p) for p in sorted((mem / "facts").glob("*.md"))]
-    for kind, p in mem_files:
-        meta = _meta_of(p)
-        if not meta or meta.get("status") == "superseded":
-            continue
-        rootpath = "/" + p.relative_to(root).as_posix()
-        review = _date(meta.get("review_after"))
-        ts = _date(meta.get("timestamp"))
-        limit = cfg["profile_default_days"] if kind == "profile" else cfg["fact_default_days"]
-        overdue = (review and review < today) or (
-            not review and ts and (today - ts).days > limit)
-        if overdue:
-            age = (today - ts).days if ts else "?"
-            stale_rows.append(f"- {rootpath} — {meta.get('description', '')} (age {age}d)")
-    for rp, m, _ in entries:
-        if m.get("type") == "fact" and m.get("status") != "superseded":
-            ts = _date(m.get("timestamp"))
-            if ts and (today - ts).days > cfg["fact_default_days"]:
-                stale_rows.append(f"- {rp} — {m.get('description', '')} "
-                                  f"(age {(today - ts).days}d)")
-    for rp, m, _ in entries:
-        if m.get("type") in ("qa", "jtbd"):
-            review = _date(m.get("review_after"))
-            if review and review < today:
-                stale_rows.append(f"- {rp} — {m.get('description', '')} "
-                                  f"(review overdue)")
     built["views/stale-facts.md"] = \
-        "\n".join([MARKER + "# Stale facts & profiles", ""] + sorted(stale_rows)) + "\n"
+        "\n".join([MARKER + "# Stale facts & profiles", ""] + sorted(stale_rows(root, today))) + "\n"
 
     # views/narrative-map.md — pillars → stories → features (spec §6)
     pillars = sorted([(rp, m) for rp, m, _ in entries if m.get("type") == "pillar"])
@@ -317,7 +327,7 @@ def build_all(root, today=None):
     for rp, m in qas:
         by_home.setdefault(_home(rp), []).append((rp, m))
     if by_home:
-        lines.append("## All, by feature")
+        lines.append("## All, by home")
         for home in sorted(by_home):
             lines.append(f"### {home}")
             for rp, m in sorted(by_home[home]):
