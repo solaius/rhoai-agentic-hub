@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-10
+- **Update** — RHOAI architecture repo (opendatahub-io/architecture-context) promoted to standing-context status: ref rewritten (what's inside, AGENT_USAGE.md entry, per-release snapshots), new ADR-repo ref filed, and hub.research/hub.intake now reference it routinely (research briefs carry the matching snapshot; new feature overviews link it).
+
 ## 2026-07-09
 - **Creation** — hub.intake + hub.research skills shipped (backlog #1, #27a): conventions/research.md series contract, warning-only research lint, domains/redhat-ai.yaml. #27(b) jira-gap re-scoped, gated on #2.
 - **Update** — customer-tracker data landed (migrate-on-touch): tracker HTML + 5 meeting transcripts (3 accounts) + 2 customer deliverable docs copied byte-identical from the old repo into restricted/features/platform/work/customer-tracker/ (gitignored, local-only; transcriptions/ → transcripts/ rename applied; old-repo copy frozen with a MOVED note). Owner rulings: deliverables stay with the suite; keep + breadcrumb. A real tracker now exists on this machine — the wave-3 refresh/sync smokes are unblocked.

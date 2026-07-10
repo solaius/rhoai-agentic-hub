@@ -22,8 +22,11 @@ land, backlog #2).
    to write into); stop there if declined.
 2. CONTEXT LOAD: read <home>/knowledge/index.md (if present), every doc
    in the existing <home>/research/ series, and open question- entries
-   for the home. Open questions become research inputs. A non-empty
-   series ⇒ this is a REFRESH run.
+   for the home. Open questions become research inputs. RHOAI feature
+   topics: the RHOAI architecture repo
+   (/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
+   is STANDING CONTEXT — include its matching release snapshot in every
+   lens agent's brief. A non-empty series ⇒ this is a REFRESH run.
 3. PLAN GATE: propose lenses × depth and expected output BEFORE any
    research starts:
    - quick: 1 agent (run inline, no fan-out), 1-2 docs, ~5 sources/lens

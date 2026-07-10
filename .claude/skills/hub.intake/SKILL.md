@@ -16,7 +16,10 @@ file) — then run the flow without further questions until the gate.
    hub.file step 1: on approval append to features.yaml and create ONLY
    the subdirectories this intake needs. A NEW partition also gets a
    starter knowledge/fact-<id>-overview.md (what it is, current status,
-   key links) built from the user's basic info.
+   key links) built from the user's basic info. RHOAI-feature overviews
+   link the RHOAI architecture repo
+   (/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
+   under key links.
 2. FILE SOURCES: each source per hub.file steps 2-5 — canonical URI
    (/conventions/uris.md), ref- entry with a load-bearing one-line
    description, transcripts → <home>/work/transcripts/ (gitignored) with
