@@ -1743,13 +1743,18 @@ Expected: success. Note: CI installs `scripts/requirements.txt`, so httpx is pre
 Live sessions with Peter at the gates and real Jira access, after the plan
 lands. Findings become skill/CLI edits (normal commits), not plan changes.
 
-- [ ] 1. First sweep with scope discovery on a real feature (mcp-registry:
-  component/labels archaeology → stored JQL → snapshot + refs through the
-  gate; verify the probe redacts non-public summaries; CI green after push).
+- [x] 1. First sweep with scope discovery on a real feature — COMPLETE
+  2026-07-10 (`01ec270`, CI green): mcp-registry; hinted labels turned out
+  dead (component "AI Hub" = 500+ issues, labels mcp/mcp-registry ≈ unused),
+  scope settled on summary-phrasing union JQL (29 RHOAIENG eng + 6 RHAISTRAT
+  strategy Features); probe redacted 35/35 summaries (redhat.atlassian.net
+  serves nothing anonymously — the fail-closed rule held); 6 gated refs filed,
+  Jira-side customer names in issue bodies correctly kept out of all prose.
 - [ ] 2. `views/jira-map.md` reads well on the real data — adjust rendering
   by taste (skill edit, not plan change).
 - [ ] 3. A `hub.jira-sync` run a few days later: diff report, gated snapshot
   refresh, WATCHED line for RHAISTRAT-1345.
-- [ ] 4. `bash scripts/doctor.sh check` on this machine: section 4 shows the
-  live probe OK.
+- [x] 4. `bash scripts/doctor.sh check` on this machine — COMPLETE 2026-07-10
+  (during Task 7): 21 ok / 0 fail, section 4 `OK jira reachable (hub_jira
+  --check)`.
 - [ ] 5. A jtbd entry gains a `jira:` list; the next sync watches it.
