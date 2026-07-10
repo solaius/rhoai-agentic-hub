@@ -23,6 +23,14 @@ families (design decisions D8/D11):
 - **Intake:** new Google Doc / PDF / URL / transcript → `hub.file` → typed
   knowledge entry in the right feature partition (creates the partition on
   first use).
+- **Intake at scale:** topic + a pile of sources → `hub.intake` → home
+  routed (partition created if new), sources filed, entries batch-gated →
+  offers a `hub.research` kickoff.
+- **Research:** `hub.research <feature|narrative> [lenses] [depth]` →
+  plan gate (lenses × quick/standard/deep) → fan-out → numbered series
+  under `research/` + gated knowledge entries + living
+  `00-executive-summary`. Series contract:
+  [/conventions/research.md](/conventions/research.md).
 - **Artifact:** `presentation-create` (or `blog-mockup`) → self-contained
   `features/<f>/enablement/<slug>/` → `hub.publish` → live on the pages
   site. Building never publishes by itself.
@@ -45,6 +53,8 @@ families (design decisions D8/D11):
 | `hub.capture` | one durable item surfaces mid-session | inline confirm | memory or knowledge entry + reindex + commit |
 | `hub.consolidate` | session end / "consolidate memory" | batch approve/edit/reject, per-item public-vs-restricted | tracked store + clears `.scratch/` + one commit |
 | `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `features.yaml` on first use |
+| `hub.intake` | onboard a new feature area or bulk-add sources | plan confirm + batch write gate | partition (first use), ref-/typed entries, reindex + commit |
+| `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
 | `hub.reindex` | after adding/editing entries; CI reports stale indexes | no | regenerates all `index.md` + `views/`, runs linter |
 | `hub.doctor` | new machine; something feels broken | setup mode confirms writes | per-machine config only (see [/docs/tooling.md](/docs/tooling.md)) |
 | `hub.publish` | ship an enablement artifact to the public site | disclosure confirm | `publish/manifest.yaml` entry |
@@ -80,6 +90,26 @@ proposes a new partition (appending to `features/features.yaml` and creating
 only the needed subdirectories) — the **only** sanctioned way partitions are
 born. Transcripts land in `features/<f>/work/transcripts/` (gitignored) with
 a tracked `ref-` entry pointing at them.
+
+**`hub.intake`** — the guided multi-source front door: topic + a pile of
+sources (URLs, GDocs, Slack permalinks, Jira/RFE links, transcripts,
+pasted notes). Routes to a home (creating the partition per `hub.file`'s
+procedure when new — plus a starter `fact-<id>-overview.md`), files each
+source per `hub.file` steps 2–5, extracts typed entries, and gates the
+whole batch in one table before writing anything. Ends by offering a
+`hub.research` kickoff — never auto-runs it. One source? Use `hub.file`.
+
+**`hub.research`** — standalone deep research on any feature or narrative
+topic, organized per [/conventions/research.md](/conventions/research.md).
+Lenses (landscape · upstream · architecture · requirements · competitive
+— the last driven by `domains/*.yaml` configs; a future `jira-gap` lens
+waits on the Jira hub skills) are scoped by your prompt: name lenses and
+only those run. Two gates: a plan gate (lenses × depth
+quick/standard/deep, a hard cap) before any fan-out, and a batch write
+gate before any file lands. Re-runs are refreshes: numbering continues,
+`00-executive-summary` is rewritten, contradicted findings get supersede
+notes — never deletions. Tracker/NDA-sourced findings route to
+`restricted/`.
 
 **`hub.reindex`** — wraps `python scripts/hub_index.py` + `hub_lint.py`.
 Run it (or let capture/consolidate run it) after **any** entry edit —

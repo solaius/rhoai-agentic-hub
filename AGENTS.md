@@ -48,6 +48,8 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.capture | file one durable item now (gated, committed) |
 | hub.consolidate | scratch sweep → gated batch promotion → reindex |
 | hub.file | intake a doc/URL/transcript as a typed entry |
+| hub.intake | onboard a feature area / bulk-add sources (gated batch; offers research) |
+| hub.research | lens-scoped deep research → research/ series + gated entries |
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
 | hub.publish | add/update a publish manifest entry (gated) |

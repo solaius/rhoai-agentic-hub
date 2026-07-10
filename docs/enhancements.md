@@ -16,7 +16,6 @@ including review. "When" is a best guess, not a schedule.
 
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
-| 1 | `hub.intake` — feature intake skill with research | **High** — the #1 daily workflow (new feature or DP landing) has no guided path; today you manually split research into entries | Medium–Large | Now |
 | 2 | Jira hub skills — sweep, track, and sync Jiras per feature | **High** — Jira is the source of truth for delivery but has no intake pipeline into the hub; pm-toolkit has the client, hub has the filing conventions, nothing connects them | Medium | Now |
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 4 | `hub.refresh-site` — refresh the migrated RHCL/Management hub sites from live sources | **High** — the hubs are now the live copies and have no update path; they start rotting today | Medium | Now |
@@ -42,7 +41,7 @@ including review. "When" is a best guess, not a schedule.
 | 24 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
 | 25 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
 | 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
-| 27 | Competitive research with Jira gap analysis (pm-toolkit port) | **High** — strategic early-warning: maps competitors vs. active Jira work, surfaces "NOT building" gaps; configurable domain YAML; distinct from `/deep-research` (general) | Medium | Next |
+| 27 | Jira gap analysis — `hub.research` jira-gap lens (remainder of the pm-toolkit research port) | **Medium–High** — "NOT building" early warnings mapping competitor moves vs. active Jira work; the competitive-sweep half shipped 2026-07-09 as the `hub.research` competitive lens | Medium | After #2 |
 | 28 | PM standup brief — Jira + Slack + Gemini + AI news (pm-toolkit port) | **Medium–High** — the personal daily loop across all systems; complements #15 (hub-only brief) | Medium | Next |
 | 29 | RFE triage batch workflow (pm-toolkit port) | **Medium–High** — periodic triage ceremony (scan → classify → interactive HTML report → batch apply); distinct from assess-rfe (single-issue quality) and RICE (#11, scoring) | Medium | Next |
 | 30 | Jira hygiene auditor (pm-toolkit port) | **Medium** — audit individual issues against type-specific checklists (links, labels, naming, Fix Version, refinement); companion to #2 (data filing) | Small–Medium | Next |
@@ -151,19 +150,6 @@ the hub; cheap to add then.
 
 ## Agent-usage enhancements
 
-**1 · `hub.intake` — feature intake skill with research.** The highest-
-frequency PM workflow has no guided path: you learn about something (a new
-upstream project, a feature landing in DP, a competitive move) and need to
-get it into the hub as structured entries. Today that means `/deep-research`
-→ manually split output into `fact-`/`ref-`/`question-`/`decision-` entries
-→ scaffold a feature partition if new → `hub.reindex`. This skill would
-orchestrate the full flow: accept a topic or URL, run research (web,
-GitHub, GDocs via Google Workspace MCP), propose a feature home (existing
-partition or new one in `features.yaml`), extract typed entries through the
-gate, and reindex. Subsumes the "GDoc → structured entries" gap — reading
-a GDoc and extracting facts/decisions/questions becomes one intake source
-among many, not a separate skill.
-
 **2 · Jira hub skills — sweep, track, and sync.** Jira is the delivery
 source of truth but has no intake pipeline into the hub. pm-toolkit already
 has the async Jira client (`scripts/_base`, httpx, Pydantic v2) and skills
@@ -224,17 +210,15 @@ propose jtbd candidates from recurring qa entries + tracker interests
 recurrence counts and qa Gaps sections as Reach/Impact evidence — the
 capture loop starts paying for itself in prioritization.
 
-**27 · Competitive research with Jira gap analysis.** Port pm-toolkit's
-`research` skill, which adds two things `/deep-research` doesn't have:
-(a) configurable YAML domain configs (`skills/research/domains/*.yaml` —
-ships with `redhat-ai.yaml` covering 6 search areas, competitors, analyst
-coverage, partner ecosystem); (b) strategic alignment analysis that maps
-active Jira work against competitive developments and surfaces "NOT
-building" gaps as early warnings. Three depth levels (quick/standard/deep),
-parallel agents per domain. Design question: whether domain configs live in
-the hub (hub-native skill) or the skill delegates to pm-toolkit's research
-engine — lean hub-native since the gap analysis should reference hub
-knowledge (feature partitions, narrative) not just raw Jira.
+**27 · Jira gap analysis (`hub.research` jira-gap lens).** The remaining
+half of the pm-toolkit research port: strategic alignment analysis that
+maps active Jira work against competitive developments and surfaces "NOT
+building" gaps as early warnings. Ships as a `hub.research` lens (the
+skill already names it as FUTURE) once #2 provides the Jira intake
+pipeline; the domain YAML gains a `jira:` block (project/components/JQL)
+to drive it. The competitive sweep half — domain-config-driven web
+research (`domains/redhat-ai.yaml`) — shipped 2026-07-09 as the
+`hub.research` competitive lens (see Done).
 
 **28 · PM standup brief.** Port pm-toolkit's `pm-standup` — a personal
 daily brief pulling from: Jira (assigned/reported/blocked/approaching
@@ -388,4 +372,14 @@ non-blocking when recorded:
 
 ## Done
 
-- (Move items here with date + commit when they ship.)
+- **#1 `hub.intake` + `hub.research`** — shipped 2026-07-09 (`58ee066`):
+  guided multi-source intake (partition scaffold, batch-gated entries) +
+  lens-scoped deep research (numbered series per
+  `/conventions/research.md`, gated entries, living synthesis,
+  `domains/redhat-ai.yaml`), plus warning-only research-doc lint. Spec:
+  [/docs/specs/2026-07-09-hub-intake-research-design.md](/docs/specs/2026-07-09-hub-intake-research-design.md).
+  Acceptance runs tracked in
+  [/docs/plans/2026-07-09-hub-intake-research-plan.md](/docs/plans/2026-07-09-hub-intake-research-plan.md).
+- **#27(a) competitive sweep** — shipped 2026-07-09 inside `hub.research`
+  (competitive lens + domain configs); #27(b) jira-gap re-scoped above,
+  gated on #2.
