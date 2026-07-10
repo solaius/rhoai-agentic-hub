@@ -169,3 +169,24 @@ def test_check_links_percent_encoding_and_query(tmp_path):
     write(pages, "enc.html",
           '<a href="x/my%20file.html">e</a><a href="x/one-pager.html?v=2">q</a>')
     assert check_links(pages) == []
+
+
+def test_check_links_all_external_prefixes_skipped(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "prefixes.html",
+          '<a href="http://example.com/x">h</a><a href="//cdn.example.com/x">p</a>'
+          '<img src="data:image/png;base64,AAAA"><a href="javascript:void(0)">j</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_git_dir_skipped(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, ".git/hooks/doc.html", '<a href="gone.html">broken but ignored</a>')
+    assert check_links(pages) == []
+
+
+def test_check_links_fragment_and_query_on_real_path(tmp_path):
+    pages = make_pages(tmp_path)
+    write(pages, "frag.html",
+          '<a href="x/one-pager.html#sec">f</a><a href="x/one-pager.html?v=1#s">q</a>')
+    assert check_links(pages) == []
