@@ -94,3 +94,44 @@ def test_pattern_match_in_jira_snapshot_is_error(tmp_path):
     errors, _ = scan_repo(tmp_path)
     assert errors == ["features/x/work/jira-snapshot.yaml:7: "
                       "matches restricted pattern (lint-patterns.txt:1)"]
+
+
+def test_pattern_match_in_views_is_error(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "acme\n")
+    write(tmp_path, "views/artifacts.md", "# artifacts\n- Acme deck (published)\n")
+    errors, _ = scan_repo(tmp_path)
+    assert errors == ["views/artifacts.md:2: matches restricted pattern "
+                      "(lint-patterns.txt:1)"]
+
+
+def test_generic_hints_warn_on_generated_md(tmp_path):
+    write(tmp_path, "views/faq.md", "# faq\nthis answer is internal-only\n")
+    write(tmp_path, "memory/index.md", "# m\ndo not share this\n")
+    write(tmp_path, "features/index.md", "# f\ncovered by NDA\n")
+    write(tmp_path, "features/x/index.md", "# x\npricing tier detail\n")
+    write(tmp_path, "narrative/index.md", "# n\nSKU-123 detail\n")
+    errors, warnings = scan_repo(tmp_path)
+    assert errors == []
+    hits = [w for w in warnings if "restricted-content heuristic" in w]
+    assert len(hits) == 5
+
+
+def test_pattern_match_in_refresh_config_is_error(tmp_path):
+    write(tmp_path, "restricted/lint-patterns.txt", "acme\n")
+    write(tmp_path, "features/x/work/refresh-site.yaml",
+          "site: features/x/enablement/site/\nsources:\n  gdocs:\n"
+          "  - {id: abc, title: Acme deal deck}\n")
+    write(tmp_path, "narrative/work/refresh-nsite.yaml",
+          "site: narrative/enablement/nsite/\nsources:\n  github:\n  - acme/repo\n")
+    errors, _ = scan_repo(tmp_path)
+    assert errors == ["features/x/work/refresh-site.yaml:4: "
+                      "matches restricted pattern (lint-patterns.txt:1)",
+                      "narrative/work/refresh-nsite.yaml:4: "
+                      "matches restricted pattern (lint-patterns.txt:1)"]
+
+
+def test_refresh_config_gets_no_heuristic_warning(tmp_path):
+    write(tmp_path, "features/x/work/refresh-site.yaml",
+          "site: features/x/enablement/site/\nnotes: internal-only sweep list\n")
+    _, warnings = scan_repo(tmp_path)
+    assert warnings == []

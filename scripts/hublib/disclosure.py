@@ -1,9 +1,9 @@
 """Local-first disclosure lint. Two passes over the PUBLIC tree only:
 restricted patterns from a gitignored file (errors — CI never has the file),
-and the generic public heuristic over enablement HTML (warnings, CI-visible).
-Findings are '<relpath>: <message>' strings; (errors, warnings) tuples,
-matching schema.lint_repo. Error text references patterns by line NUMBER,
-never pattern text — lint output can get pasted into public places."""
+and the generic public heuristic over enablement HTML and generated markdown
+(warnings, CI-visible). Findings are '<relpath>: <message>' strings; (errors,
+warnings) tuples, matching schema.lint_repo. Error text references patterns by
+line NUMBER, never pattern text — lint output can get pasted into public places."""
 import re
 from pathlib import Path
 
@@ -34,33 +34,45 @@ def load_patterns(root):
 
 
 def _scan_files(root):
-    """The public scan surface: enablement HTML + knowledge entries + Jira
-    snapshots. Snapshots only get the restricted-patterns pass below (errors)
-    by being yielded here — the generic HTML heuristic stays HTML-only."""
+    """The public scan surface as (path, heuristic) pairs. Every file gets the
+    restricted-patterns pass (errors); heuristic=True adds the generic
+    RESTRICTED_HINTS pass (warnings): enablement HTML plus the generated
+    markdown that entry descriptions propagate into (#34). Markdown ENTRIES
+    stay heuristic=False here: lint_entry (schema.py) already scans their
+    full text. YAML surfaces get the patterns pass only."""
     root = Path(root)
-    for pattern in ("features/*/enablement/**/*.html",
-                    "narrative/enablement/**/*.html",
-                    "features/*/knowledge/*.md",
-                    "narrative/knowledge/*.md",
-                    "features/*/work/jira-snapshot.yaml"):
-        yield from sorted(root.glob(pattern))
+    surfaces = (
+        ("features/*/enablement/**/*.html", True),
+        ("narrative/enablement/**/*.html", True),
+        ("features/*/knowledge/*.md", False),
+        ("narrative/knowledge/*.md", False),
+        ("features/*/work/jira-snapshot.yaml", False),
+        ("features/*/work/refresh-*.yaml", False),
+        ("narrative/work/refresh-*.yaml", False),
+        ("views/*.md", True),
+        ("memory/index.md", True),
+        ("features/index.md", True),
+        ("features/*/index.md", True),
+        ("narrative/index.md", True),
+    )
+    for pattern, heuristic in surfaces:
+        for f in sorted(root.glob(pattern)):
+            yield f, heuristic
 
 
 def scan_repo(root):
     root = Path(root)
     patterns, warnings = load_patterns(root)
     errors = []
-    for f in _scan_files(root):
+    for f, heuristic in _scan_files(root):
         rel = f.relative_to(root).as_posix()
-        is_html = f.suffix == ".html"
         for n, line in enumerate(
                 f.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
             for lineno, pat in patterns:
                 if pat.search(line):
                     errors.append(f"{rel}:{n}: matches restricted pattern "
                                   f"(lint-patterns.txt:{lineno})")
-            # md bodies already get the heuristic in lint_entry — HTML only here
-            if is_html and RESTRICTED_HINTS.search(line):
+            if heuristic and RESTRICTED_HINTS.search(line):
                 warnings.append(f"{rel}:{n}: restricted-content heuristic matched — "
                                 f"confirm this belongs in a public repo")
     return errors, warnings
