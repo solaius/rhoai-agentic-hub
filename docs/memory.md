@@ -115,7 +115,7 @@ Two hard rules inside the gate:
 state, preferences, what changed, what's in flight. Knowledge is what a
 colleague would look up. When a memory candidate is really a domain fact
 ("how the gateway does authz"), the gate files it as a knowledge entry in
-the right feature partition instead.
+the right home (feature partition or `narrative/`) instead.
 
 ## Staleness
 

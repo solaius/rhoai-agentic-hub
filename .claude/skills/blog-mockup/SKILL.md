@@ -36,7 +36,7 @@ Read or fetch the blog content from whatever source the user provides.
 ### Step 2: Determine the output location
 
 - **If the source is already inside a feature's `enablement/` directory** (e.g., a `final.md` from a prior `blog-create` run), write the preview as `index.html` alongside it — no further questions needed.
-- **Otherwise** (pasted text, a URL, a Google Doc, or a markdown file that isn't yet filed anywhere), determine which feature partition in `features/features.yaml` this content belongs to — infer from the topic and confirm, or ask if it's unclear. Output goes to `features/<feature>/enablement/blog-<topic-short>/index.html`, creating the directory if it doesn't exist yet. If no existing feature fits, don't invent one — hand off to `hub.file`, then resume once it exists.
+- **Otherwise** (pasted text, a URL, a Google Doc, or a markdown file that isn't yet filed anywhere), determine which feature partition in `features/features.yaml` this content belongs to — infer from the topic and confirm, or ask if it's unclear. Output goes to `features/<feature>/enablement/blog-<topic-short>/index.html`, creating the directory if it doesn't exist yet. When creating the directory, also scaffold an `artifact.md` descriptor (`type: artifact`, `title`, one-line `description`, `timestamp`, `features:` spread) — `views/artifacts.md` flags descriptor-less directories. If no existing feature fits, don't invent one — hand off to `hub.file`, then resume once it exists.
 - **If the user explicitly wants a throwaway preview with no repo footprint** (a quick one-off look, nothing meant to be filed or kept), honor that and ask where to save it instead of filing it under `features/`.
 
 ### Step 3: Extract metadata

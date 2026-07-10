@@ -13,10 +13,14 @@ OLD = C:/Users/peter/code/rh/ai-asset-registry — read-only, never edit it.
    (decision-/fact-/ref-/person-/question-), or move whole documents into
    features/<f>/{research|strategy|enablement}/ when they have standalone
    value as documents. Story-shaped old-repo content (strategy, pillars,
-   connective write-ups) routes to narrative/{knowledge|strategy}/. Every
-   derived entry gets `source:` (old repo path or origin URL) and
+   connective write-ups) routes to narrative/{knowledge|research|strategy}/.
+   Every derived entry gets `source:` (old repo path or origin URL) and
    `timestamp:` today; likely-stale content additionally gets
    `review_after:` (today + 30d) and a body note saying what to re-verify.
+   When re-homing existing hub entries, repoint inbound links across the
+   repo — except historical records (docs/specs/, docs/plans/,
+   docs/history.md, memory/log.md), which keep the paths that were true
+   when written; dangling-link warnings there are acceptable.
 3. Disclosure pass: SKUs, pricing, internal agreements, customer specifics →
    restricted/ mirror. When unsure, ask — this repo is public.
 4. Present the whole batch through the inline gate (numbered list, same
