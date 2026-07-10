@@ -173,9 +173,9 @@ capture loop starts paying for itself in prioritization.
 half of the pm-toolkit research port: strategic alignment analysis that
 maps active Jira work against competitive developments and surfaces "NOT
 building" gaps as early warnings. Ships as a `hub.research` lens (the
-skill already names it as FUTURE) once #2 provides the Jira intake
-pipeline; the domain YAML gains a `jira:` block (project/components/JQL)
-to drive it. The competitive sweep half — domain-config-driven web
+skill already names it as FUTURE) now that #2 (shipped 2026-07-10)
+provides the Jira intake pipeline; the domain YAML gains a `jira:` block
+(project/components/JQL) to drive it. The competitive sweep half — domain-config-driven web
 research (`domains/redhat-ai.yaml`) — shipped 2026-07-09 as the
 `hub.research` competitive lens (see Done).
 

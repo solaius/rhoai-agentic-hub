@@ -13,8 +13,8 @@ upstream (OSS projects, standards, protocols, repos) · architecture
 (patterns, reference architectures, build-vs-buy) · requirements
 (capability expectations, enterprise needs, persona demands) · competitive
 (competitor moves + analyst coverage, driven by domains/*.yaml) ·
-jira-gap (FUTURE — refuse politely; activates when the Jira hub skills
-land, backlog #2).
+jira-gap (FUTURE — refuse politely; the Jira hub skills landed
+2026-07-10, the lens itself ships with backlog #27b).
 
 1. RESOLVE HOME: feature id → features/<id>/research/; story-shaped →
    narrative/research/. Free topic with no home in

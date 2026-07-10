@@ -108,7 +108,7 @@ whole batch in one table before writing anything. Ends by offering a
 topic, organized per [/conventions/research.md](/conventions/research.md).
 Lenses (landscape · upstream · architecture · requirements · competitive
 — the last driven by `domains/*.yaml` configs; a future `jira-gap` lens
-waits on the Jira hub skills) are scoped by your prompt: name lenses and
+arrives with backlog #27b) are scoped by your prompt: name lenses and
 only those run. Two gates: a plan gate (lenses × depth
 quick/standard/deep, a hard cap) before any fan-out, and a batch write
 gate before any file lands. Re-runs are refreshes: numbering continues,

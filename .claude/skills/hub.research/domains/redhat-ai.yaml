@@ -71,5 +71,6 @@ search_areas:
       - hardware vendor AI validated platforms
     sources: [press-releases, company-blogs]
 
-# jira-gap (future): when the Jira hub skills land (backlog #2), a jira:
-# block here (project/components/jql) will drive the gap-analysis lens.
+# jira-gap (future, backlog #27b): a jira: block here
+# (project/components/jql) will drive the gap-analysis lens — the Jira
+# client it needs landed with #2 (2026-07-10, scripts/hublib/jira.py).
