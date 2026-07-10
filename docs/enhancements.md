@@ -43,6 +43,7 @@ including review. "When" is a best guess, not a schedule.
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
 | 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
+| 34 | Disclosure heuristic frontmatter gap | **Medium** — the generic `RESTRICTED_HINTS` net misses knowledge-entry frontmatter (lint_entry scans body only) and the generated views it propagates into; the local restricted-pattern pass covers frontmatter, CI's generic net does not (found by the 2026-07-09 batch's final review) | Small | Next |
 
 ---
 
