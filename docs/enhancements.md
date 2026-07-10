@@ -7,7 +7,7 @@
   is picked up it follows the standard workflow (brainstorm → spec → plan →
   build with owner gates); its ruling gets a `memory/log.md` line and the
   item moves to *Done* below or gets deleted.
-- **Owner:** Peter Double · **Last groomed:** 2026-07-09
+- **Owner:** Peter Double · **Last groomed:** 2026-07-09 (post-batch)
 
 ## Priority view
 
@@ -20,18 +20,13 @@ including review. "When" is a best guess, not a schedule.
 | 2 | Jira hub skills — sweep, track, and sync Jiras per feature | **High** — Jira is the source of truth for delivery but has no intake pipeline into the hub; pm-toolkit has the client, hub has the filing conventions, nothing connects them | Medium | Now |
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 4 | `hub.refresh-site` — refresh the migrated RHCL/Management hub sites from live sources | **High** — the hubs are now the live copies and have no update path; they start rotting today | Medium | Now |
-| 5 | Disclosure lint for enablement HTML (local-only pattern layer) | **High** — the scrub episode proved grep-gates + review are the only net; make the first net mechanical | Small–Medium | Now |
 | 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
-| 7 | Pre-commit gate hook installed by `hub.doctor` | High — kills the #1 CI failure (edit → forget reindex → red) | Small | Now |
 | 8 | Pages-site landing page upgrade (grouped, descriptor-driven) | High — the public front door; descriptors already carry the data | Small–Medium | Now/Next |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
-| 10 | Small-fix batch: recorded findings from the narrative build (see §Recorded small fixes) | Medium — cheap trust/polish wins in one sitting | Small | Next |
 | 11 | `rice-strats` port (rubric already lives here) | Medium–High in scoring season, idle otherwise | Medium | Next (before the next RICE pass) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
 | 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Medium — R5 will feel this pain first-hand | Medium | After R5 |
-| 15 | `hub_status.py` morning brief (one-command dashboard) | Medium — daily-loop QoL | Small | Whenever |
-| 16 | Published-site link checker in CI | Medium — automates what the migration did by hand | Small | Whenever |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
 | 19 | Doctor: `~/.bashrc` env wiring + Jira/Slack connectivity probes (parked old-doctor coverage) | Medium — needed the first time Jira skills run on a hub-only machine | Small | With R5 |
@@ -126,11 +121,6 @@ when qa volume justifies it, ship a curated FAQ page (per audience) and a
 JTBD catalog via `hub.publish` — pulled by demand, never auto-published raw
 views. Trigger: ~20+ answered qa entries, or UX/Docs asking for a URL.
 
-**15 · `hub_status.py` morning brief.** One command printing: stale items
-due (from stale-facts), open questions count by feature, unanswered qa,
-jtbd candidates lacking evidence, last log entries, un-descriptored
-enablement dirs, CI state of last push. The daily loop's "where was I."
-
 **21 · Search for humans.** Agents grep; humans can't. Cheapest real option:
 a static search page on the pages site (lunr/minisearch index generated
 from published content only — keeps the public/publish boundary intact).
@@ -186,23 +176,6 @@ status through the gate. `customer-feedback-refresh` does this for the
 tracker; this generalizes the pattern to knowledge entries. Could run as
 a standalone skill or as a mode of `hub.intake` ("intake --refresh
 mcp-gateway").
-
-**5 · Disclosure lint for enablement HTML — the scrub-episode lesson.**
-Today the restricted-content heuristic scans only `knowledge/*.md`; the
-leaks that mattered lived in enablement HTML, and literal name lists can't
-be committed to a public repo. Design: `hub_lint.py` reads an OPTIONAL,
-gitignored `restricted/lint-patterns.txt` (customer names, program
-identifiers, agreement phrases, `\$[0-9]` style rules) and scans
-`enablement/**/*.html` + knowledge entries with it locally and via a
-doctor-installed pre-commit hook — CI never sees the patterns (they're
-restricted), so this is a local-first net; CI keeps the generic heuristics.
-Also add the generic patterns learned this week (dollar figures,
-`signed.*agreement`) to the public heuristic.
-
-**7 · Pre-commit gate hook.** `hub.doctor setup` installs a git pre-commit
-hook running `hub_lint.py` + `hub_index.py --check` (+ the disclosure lint
-above when present). Eliminates the most common CI failure and moves the
-disclosure net to the earliest possible moment.
 
 **20 · Agent context pack.** `python scripts/hub_index.py --brief` emits a
 single size-budgeted markdown pack: memory index + features table +
@@ -321,12 +294,6 @@ GitLab/GitHub mirror holding only `restricted/` (same layout, separate
 repo, cloned into place), git-crypt in-repo (key management burden), or
 keep manual with a doctor-assisted rsync checklist. Decide after R5 data.
 
-**16 · Published-site link checker.** Post-publish CI step (or
-`hub_publish.py --check-links`) that walks the pages repo's HTML for
-internal links/assets and fails on 404s — automates the click-through
-verification the migration did manually, and catches cross-artifact
-rewrite regressions when sites get refreshed (#4).
-
 **19 · Remaining old-doctor coverage.** `~/.bashrc` sourcing of
 `restricted/.env` (so `JIRA_*` reaches every shell — required by `rfe.*` /
 `rice-strats` on a hub-only machine) plus Jira and Slack connectivity
@@ -355,26 +322,6 @@ read, session counts, with optional cross-team aggregation for PM leads.
 Meta-tooling for understanding how the hub is actually used. Fits the
 "files + scripts" envelope (JSONL + summarizer). Doctor-installable hook.
 
-## Recorded small fixes (batch these in one sitting — item 10)
-
-Carried from the narrative-layer build reviews and migration, all verified
-non-blocking when recorded:
-
-- `schema.py`: warn when a story's `pillar:` value lacks the leading `/`
-  (silently lands in "Stories without a pillar" today).
-- Tests: multi-item Connections sort; combined entries+artifacts
-  connection; empty-`narrative/` dir edge cases.
-- `hub.migrate`: align its narrative subdir enumeration with
-  working-here's (`knowledge|research|strategy`), and add the
-  historical-docs carve-out to its link-repoint instruction (the Task-10
-  judgment call, codified).
-- `docs/memory.md`: classification line gains "(feature or narrative)".
-- `presentation-create` / `blog-*`: scaffold an `artifact.md` descriptor
-  when creating an enablement dir (today only hub.migrate instructs it).
-- `memory/log.md` yearly rotation helper (convention documented, no tooling).
-- `views/faq.md` "All, by feature" heading → "by home" once the first
-  narrative-homed qa exists.
-
 ## Deliberately not doing
 
 - **No database, no web app, no server** — files + scripts + CI is the
@@ -388,4 +335,20 @@ non-blocking when recorded:
 
 ## Done
 
-- (Move items here with date + commit when they ship.)
+- 2026-07-09 — **#5 disclosure lint** — `restricted/lint-patterns.txt`
+  (gitignored, errors) over enablement HTML + knowledge entries;
+  `RESTRICTED_HINTS` hardened (dollar figures, signed-agreement) and extended
+  to enablement HTML (warnings). Shipped in the enhancement batch
+  (/docs/specs/2026-07-09-enhancement-batch-design.md).
+- 2026-07-09 — **#7 pre-commit gate hook** — doctor section 10 installs
+  hub_lint + hub_index --check as `.git/hooks/pre-commit`.
+- 2026-07-09 — **#10 recorded small-fix batch** — pillar-path warning, faq
+  "by home" heading, indexer test gaps, hub.migrate enumeration + historical
+  link-repoint carve-out, docs/memory.md boundary line, artifact.md
+  scaffolding in presentation/blog skills, log rotation helper
+  (`hub_index.py --rotate-log`).
+- 2026-07-09 — **#15 `hub_status.py` morning brief** — stale / open questions
+  / unanswered qa / JTBD without evidence / descriptor-less enablement dirs /
+  rotation reminder / recent log + gh CI state.
+- 2026-07-09 — **#16 published-site link checker** —
+  `hub_publish.py --check-links` + publish.yml step between apply and push.
