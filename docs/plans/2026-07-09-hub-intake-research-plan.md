@@ -678,10 +678,18 @@ early):
   updates; single write-gate covered partition creation cleanly.)*
 - [ ] 2. `hub.intake` against an existing feature with new sources (the
   bulk-add path).
-- [ ] 3. `hub.research` quick run, single lens, on the new partition —
-  series born with `00` + one lens doc.
-- [ ] 4. `hub.research` "competitive only" on an existing feature with
+- [x] 3. `hub.research` quick run, single lens, on the new partition —
+  series born with `00` + one lens doc. *(2026-07-09, `c49269e` —
+  combined with run 4 into one standard 2-lens run on mcp-catalog;
+  series born (00–02), gated entries incl. a cross-partition supersede.
+  The quick-depth no-fan-out path itself is still unexercised — cover it
+  in run 5 by doing the agent-memory refresh at quick depth.)*
+- [x] 4. `hub.research` "competitive only" on an existing feature with
   `redhat-ai.yaml` — verifies prompt scoping + domain configs.
+  *(2026-07-09, `c49269e` — prompt scoping held (2 named lenses ran, no
+  additions), the domain config drove the competitive brief, and the
+  adversarial verify pass caught 1 refuted + 2 softened claims before
+  the gate.)*
 - [ ] 5. Refresh on `features/agent-memory/research/` — numbering
   continues at 19, `00` refresh proposed through the gate.
 
