@@ -19,7 +19,7 @@
 - [What belongs in the MLflow upstream proposal now vs. later?](/features/mcp-registry/knowledge/question-mlflow-upstream-registry-scope.md) — Scoping call on how much of the MCP Registry design goes into the initial MLflow upstream proposal.
 
 ## reference
-- [MCP Catalog — PM write-up & registry integration requirements](/features/mcp-registry/knowledge/ref-mcp-catalog-writeup.md) — PM write-up covering MCP Catalog requirements, competitor comparison, and registry integration expectations.
+- [MCP Catalog — PM write-up & registry integration requirements](/features/mcp-registry/knowledge/ref-mcp-catalog-writeup.md) — PM write-up covering MCP Catalog requirements, competitor comparison, and registry integration expectations — may be dated (predates the 3.6 TP/GA plan).
 - [kubernetes-sigs/mcp-lifecycle-operator (GitHub)](/features/mcp-registry/knowledge/ref-mcp-lifecycle-operator-repo.md) — The Kubernetes operator repo that deploys MCP servers via the MCPServer CRD.
 - [MCP Lifecycle Operator — summit requirements & deliverables](/features/mcp-registry/knowledge/ref-mcp-lifecycle-operator-summit-pdf.md) — Summit demo requirements and the MCPServer CRD spec that shaped the Lifecycle Operator's initial scope.
 - [MCP Registry MVP — 3.5 Dev Preview requirements](/features/mcp-registry/knowledge/ref-mcp-registry-mvp-requirements.md) — Scope and integration expectations for the MCP Registry's 3.5 Dev Preview MVP.

@@ -13,7 +13,10 @@ features:
   description: The governance/system-of-record layer for MCP servers — lifecycle, data model, and the deployment-time Lifecycle Operator.
 - id: mcp-ecosystem
   title: MCP Ecosystem
-  description: MCP server building, partner/community catalog, evaluation, and ecosystem tooling.
+  description: MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.
+- id: mcp-catalog
+  title: MCP Catalog
+  description: The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
 - id: agent-registry
   title: Agent Registry
   description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.

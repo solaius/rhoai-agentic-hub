@@ -10,5 +10,6 @@ The governance/system-of-record layer for MCP servers — lifecycle, data model,
 - [work/](/features/mcp-registry/work/)
 
 ## Connections
+- fact · [MCP Catalog — overview](/features/mcp-catalog/knowledge/fact-mcp-catalog-overview.md) — The MCP server storefront in RHOAI — what it is, the discover→deploy→connect→consume chain, roadmap (DP 3.4 shipped → TP 3.6 EA1 → GA 3.6 Stable, Nov 2026), tiers, and key links.
 - artifact · [MCP 2026-07-28 RC — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
 - story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.

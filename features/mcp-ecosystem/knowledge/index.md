@@ -27,7 +27,7 @@
 
 ## reference
 - [Fernando Lozano's MCP Research Notes](/features/mcp-ecosystem/knowledge/ref-fernando-lozano-mcp-research-notes.md) — Practical, undocumented gap-filling notes for actually getting MCP working on RHOAI 3.4 — the real user pain points.
-- [The MCP Catalog is here (blog, final draft)](/features/mcp-ecosystem/knowledge/ref-mcp-catalog-launch-blog.md) — Peter Double's Red Hat Blog announcing the MCP Catalog for RHOAI 3.4 DP — three-tier ecosystem, MCPLO, Gateway, governance roadmap.
+- [The MCP Catalog is here (Red Hat blog)](/features/mcp-ecosystem/knowledge/ref-mcp-catalog-launch-blog.md) — Peter Double's published Red Hat Blog (2026-05-12) announcing the MCP Catalog for RHOAI 3.4 — discover/deploy/connect/consume chain, MCPLO, Gateway, governance roadmap.
 - [MCP Ecosystem Best Practices on RHOAI](/features/mcp-ecosystem/knowledge/ref-mcp-ecosystem-best-practices-rhoai.md) — End-to-end MCP deployment guide — Catalog, MCPLO, Gateway, Keycloak, Vault, AuthPolicy, credential injection — validated on ROSA/OCP/RHOAI 3.4.0.
 - [jaideepr97/mcp-ecosystem-experimentation (branch: openshift)](/features/mcp-ecosystem/knowledge/ref-mcp-ecosystem-experimentation-repo.md) — Full end-to-end MCP ecosystem setup scripts (Catalog, MCPLO, Gateway, Keycloak, Vault).
 - [RHEcosystemAppEng/mcp-validation (GitHub)](/features/mcp-ecosystem/knowledge/ref-mcp-validation-repo.md) — MCP server validation tool from Q3/Q4 FY25 work.
