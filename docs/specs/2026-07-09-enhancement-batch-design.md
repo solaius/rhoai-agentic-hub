@@ -297,7 +297,7 @@ All carried verbatim from [/docs/enhancements.md](/docs/enhancements.md)
 ## 8 · Concurrent work — hub.intake/hub.research (running in parallel)
 
 The hub.intake + hub.research implementation
-([/docs/superpowers/specs/2026-07-09-hub-intake-research-design.md](/docs/superpowers/specs/2026-07-09-hub-intake-research-design.md))
+([/docs/specs/2026-07-09-hub-intake-research-design.md](/docs/specs/2026-07-09-hub-intake-research-design.md))
 is being built concurrently in a separate environment. Assessed compatible;
 three merge-time contact points, none during implementation:
 
