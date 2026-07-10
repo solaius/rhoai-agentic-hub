@@ -69,3 +69,18 @@ def test_unparseable_heading_never_moves(tmp_path):
 
 def test_missing_log_is_noop(tmp_path):
     assert rotate_log(tmp_path, today=TODAY) == {}
+
+
+def test_appends_to_existing_archive(tmp_path):
+    write(tmp_path, "memory/log-archive/2025.md",
+          "# memory/log archive — 2025\n\n## 2025-03-01\n- **Update** — already archived.\n")
+    write(tmp_path, "memory/log.md",
+          "---\ntype: fact\ndescription: log\ntimestamp: 2026-07-05\n---\n"
+          "## 2026-07-05\n- **Update** — new.\n"
+          "## 2025-12-01\n- **Creation** — late addition.\n")
+    moved = rotate_log(tmp_path, today=TODAY)
+    assert moved == {2025: 1}
+    a = (tmp_path / "memory/log-archive/2025.md").read_text(encoding="utf-8")
+    assert a.count("# memory/log archive — 2025") == 1
+    assert "already archived" in a and "late addition" in a
+    assert a.index("already archived") < a.index("late addition")
