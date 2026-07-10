@@ -1750,8 +1750,11 @@ lands. Findings become skill/CLI edits (normal commits), not plan changes.
   strategy Features); probe redacted 35/35 summaries (redhat.atlassian.net
   serves nothing anonymously — the fail-closed rule held); 6 gated refs filed,
   Jira-side customer names in issue bodies correctly kept out of all prose.
-- [ ] 2. `views/jira-map.md` reads well on the real data — adjust rendering
-  by taste (skill edit, not plan change).
+- [x] 2. `views/jira-map.md` reads well on the real data — COMPLETE
+  2026-07-10: all-redacted real data made the per-row withheld boilerplate
+  ×35 unreadable; owner chose a per-section footnote instead (indexer edit +
+  test, normal commit). Redacted rows now render `key · type · status ·
+  fixVersion` only.
 - [ ] 3. A `hub.jira-sync` run a few days later: diff report, gated snapshot
   refresh, WATCHED line for RHAISTRAT-1345.
 - [x] 4. `bash scripts/doctor.sh check` on this machine — COMPLETE 2026-07-10
