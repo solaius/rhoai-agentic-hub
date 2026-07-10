@@ -672,8 +672,10 @@ gates and real web/MCP access; run them in normal working sessions after
 the plan lands, roughly in this order (5 is the richest fixture — run it
 early):
 
-- [ ] 1. `hub.intake` on a genuinely new small topic: partition created,
-  2–3 sources filed, entries gated, CI green after push.
+- [x] 1. `hub.intake` on a genuinely new small topic: partition created,
+  2–3 sources filed, entries gated, CI green after push. *(2026-07-09,
+  `b543a4f` — mcp-catalog: partition + 3 new entries + 2 dedupe-driven
+  updates; single write-gate covered partition creation cleanly.)*
 - [ ] 2. `hub.intake` against an existing feature with new sources (the
   bulk-add path).
 - [ ] 3. `hub.research` quick run, single lens, on the new partition —
