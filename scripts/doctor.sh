@@ -15,8 +15,8 @@ note() { echo "        $1"; }   # follow-on detail; no counter
 echo "== hub.doctor ($MODE) — $ROOT"
 
 echo "[1] python + deps"
-if python -c "import yaml, pytest" 2>/dev/null; then
-  ok "python + pyyaml + pytest"
+if python -c "import yaml, pytest, httpx" 2>/dev/null; then
+  ok "python + pyyaml + pytest + httpx"
 elif [ "$MODE" = "setup" ]; then
   pip install -r "$ROOT/scripts/requirements.txt" && ok "deps installed" || fail "pip install failed"
 else
@@ -80,6 +80,15 @@ if [ -f "$ENV_FILE" ]; then
   for k in JIRA_SERVER JIRA_USER JIRA_TOKEN; do
     if [ -n "${!k:-}" ]; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
   done
+  # Live probe (backlog #19's Jira slice): presence is not validity. WARN,
+  # not FAIL — offline machines must still pass the doctor.
+  if [ -n "${JIRA_SERVER:-}" ] && [ -n "${JIRA_TOKEN:-}" ]; then
+    if python "$ROOT/scripts/hub_jira.py" --check >/dev/null 2>&1; then
+      ok "jira reachable (hub_jira --check)"
+    else
+      warn "jira unreachable or auth failed — run: python scripts/hub_jira.py --check (expired JIRA_TOKEN? offline?)"
+    fi
+  fi
 else
   warn "restricted/.env not found (Jira-facing skills and MCP setup won't work; copy it from your other machine)"
 fi
