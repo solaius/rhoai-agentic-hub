@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-10
+- **Update** - preferences profile: no em dashes in any new agent output (conversation, repo entries, docs, commit messages); existing content not retroactively rewritten.
 - **Update** — product naming corrected across published hubs + knowledge: "RHOAI Limited" → "RHOAI restricted use entitlement for OpenShift" (owner ruling; surfaced by the disclosure net's first activation; 12 files, republished). restricted/lint-patterns.txt authored and active (10 account patterns + asker-identity, owner-approved).
 - **Update** — owner ruling captured: kubeflow/hub confirmed as the RHOAI MCP Catalog upstream — question-kubeflow-hub-catalog-alignment answered; ref + overview lineage documented.
 - **Update** — agent-memory research refresh (quick, run 5): doc 19 (market/direction — standalone service phasing supersede, EU AI Act Annex-III deferral provisional, Vertex Memory Revisions, Perplexity Brain validates outcome-weighted episodic, MCP statelessness hits memory-as-MCP), 00 synthesis refreshed (17/18 finally indexed), doc 16 superseded. ALL 5 hub.intake/hub.research acceptance runs complete.

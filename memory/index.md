@@ -5,7 +5,7 @@
 
 ## Profiles (current state)
 - [now](/memory/profiles/now.md) — Now: DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live
-- [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash
+- [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash, no em dashes
 - [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry targets RHOAI 3.5 Dev Preview; full RHOAI/MCP release train through GA
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
@@ -20,8 +20,8 @@
 - [fact-hub-design-decisions](/memory/facts/fact-hub-design-decisions.md) — The 11 design decisions (D1-D11) governing this repo's structure
 
 ## Recent log
+- 2026-07-10 — **Update** - preferences profile: no em dashes in any new agent output (conversation, repo entries, docs, commit messages); existing content not retroactively rewritten.
 - 2026-07-10 — **Update** — product naming corrected across published hubs + knowledge: "RHOAI Limited" → "RHOAI restricted use entitlement for OpenShift" (owner ruling; surfaced by the disclosure net's first activation; 12 files, republished). restricted/lint-patterns.txt authored and active (10 account patterns + asker-identity, owner-approved).
 - 2026-07-10 — **Update** — owner ruling captured: kubeflow/hub confirmed as the RHOAI MCP Catalog upstream — question-kubeflow-hub-catalog-alignment answered; ref + overview lineage documented.
 - 2026-07-10 — **Update** — agent-memory research refresh (quick, run 5): doc 19 (market/direction — standalone service phasing supersede, EU AI Act Annex-III deferral provisional, Vertex Memory Revisions, Perplexity Brain validates outcome-weighted episodic, MCP statelessness hits memory-as-MCP), 00 synthesis refreshed (17/18 finally indexed), doc 16 superseded. ALL 5 hub.intake/hub.research acceptance runs complete.
 - 2026-07-10 — **Creation** — agent-memory transcript intake (1:1 + 2 team syncs, 2026-06-30/07-07): 3 meeting facts incl. standalone-service direction + revised 3.6-DP/3.7-TP/3.8-GA phasing, ODH agent-memory team repo ref, Wes memory-types doc ref, Khaled Sulayman person entry; MemoryHub ref + Feast-overlap question updated (Feast out as interim; OGX memory tool + MemoryHub are the candidate pair).
-- 2026-07-10 — **Creation** — Jira hub skills shipped (backlog #2): hublib Jira client (httpx port from pm-toolkit), hub.jira-sweep/hub.jira-sync, tracked public snapshots with probe-gated summaries, enriched jira-map view, doctor Jira probe (#19 slice). #27(b) jira-gap unblocked.
