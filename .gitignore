@@ -12,6 +12,11 @@ memory/.scratch/
 # per-machine harness settings
 .claude/settings.local.json
 
+# agent worktrees + subagent-driven-development scratch (never tracked;
+# protects skills' `git add -A` from picking up embedded worktree gitlinks)
+.claude/worktrees/
+.superpowers/
+
 # ephemeral skill state
 tmp/
 
