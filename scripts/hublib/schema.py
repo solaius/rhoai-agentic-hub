@@ -24,6 +24,7 @@ PREFIX_TO_TYPE = {
 }
 SKELETON_DIRS = {"knowledge", "research", "strategy", "enablement", "work"}
 RESERVED = {"index.md", "log.md"}
+RESEARCH_EXEMPT = {"index.md", "REVIEW-NOTES.md"}
 REQUIRED_BASE = ("type", "description", "timestamp")
 TYPE_EXTRA_REQUIRED = {
     "reference": ("resource",),
@@ -61,7 +62,8 @@ URI_PATTERNS = {
         r"^https://github\.com/[\w.-]+/[\w.-]+(/blob/[\w.-]+/.+)?$"),
 }
 RESTRICTED_HINTS = re.compile(
-    r"\bSKU[- ]?\d|\bpricing tier\b|\binternal[- ]only\b|\bdo not share\b|\bNDA\b",
+    r"\bSKU[- ]?\d|\bpricing tier\b|\binternal[- ]only\b|\bdo not share\b|\bNDA\b"
+    r"|\$\d|signed[^.\n]{0,40}agreement",
     re.IGNORECASE)
 LINK_RE = re.compile(r"\[[^\]]*\]\((/[^)#\s]+)(?:#[^)]*)?\)")
 
@@ -124,6 +126,27 @@ def _lint_artifacts(root, enablement, errors, warnings, feature_ids):
         if desc.is_file():
             lint_entry(root, desc, {"artifact"}, False, errors, warnings,
                        feature_ids=feature_ids)
+
+
+def _lint_research(root, research, warnings):
+    """Research series docs (conventions/research.md). Warnings only —
+    pre-convention series must never fail the build."""
+    if not research.is_dir():
+        return
+    for doc in sorted(research.glob("*.md")):
+        if doc.name in RESEARCH_EXEMPT:
+            continue
+        rel = _rel(root, doc)
+        try:
+            meta, _ = frontmatter.load_file(doc)
+        except frontmatter.FrontmatterError:
+            warnings.append(f"{rel}: research doc lacks frontmatter "
+                            f"(see conventions/research.md)")
+            continue
+        for field in ("description", "timestamp"):
+            if not meta.get(field):
+                warnings.append(f"{rel}: research doc missing '{field}' "
+                                f"(see conventions/research.md)")
 
 
 def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, feature_ids=None):
@@ -201,6 +224,7 @@ def _lint_tree(root, base, errors, warnings, feature_ids):
                         continue
                     lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings, feature_ids=feature_ids)
             _lint_artifacts(root, feat / "enablement", errors, warnings, feature_ids)
+            _lint_research(root, feat / "research", warnings)
     narrative = base / "narrative"
     if narrative.is_dir():
         for child in sorted(narrative.iterdir()):
@@ -218,6 +242,7 @@ def _lint_tree(root, base, errors, warnings, feature_ids):
                 lint_entry(root, entry, NARRATIVE_TYPES, True, errors, warnings,
                            feature_ids=feature_ids)
         _lint_artifacts(root, narrative / "enablement", errors, warnings, feature_ids)
+        _lint_research(root, narrative / "research", warnings)
     memory = base / "memory"
     if memory.is_dir():
         for entry in sorted(memory.rglob("*.md")):

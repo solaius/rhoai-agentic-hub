@@ -334,3 +334,68 @@ def test_narrative_artifact_descriptor_valid(tmp_path):
           ENTRY.format(t="artifact", extra="features: [mcp-registry]\n"))
     errors, _ = lint_repo(root)
     assert errors == []
+
+
+RESEARCH_DOC = ("---\ntitle: T\ndescription: d\ntimestamp: 2026-07-09\n"
+                "lens: landscape\nreview_after: 2026-10-09\n---\nbody\n")
+
+
+def test_valid_research_doc_no_warnings(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/research/01-landscape.md", RESEARCH_DOC)
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert not any("research doc" in w for w in warnings)
+
+
+def test_research_doc_missing_description_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/research/01-landscape.md",
+          "---\ntitle: T\ntimestamp: 2026-07-09\n---\nbody\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("research doc missing 'description'" in w for w in warnings)
+
+
+def test_research_doc_without_frontmatter_is_warning_not_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/research/02-notes.md", "# just a heading\nbody\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("research doc lacks frontmatter" in w for w in warnings)
+
+
+def test_review_notes_and_index_exempt_from_research_lint(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/research/REVIEW-NOTES.md", "# rulings\n")
+    write(root, "features/x/research/index.md", "# idx\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert not any("research doc" in w for w in warnings)
+
+
+def test_narrative_research_doc_missing_timestamp_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "narrative/research/01-x.md",
+          "---\ntitle: T\ndescription: d\n---\nbody\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("research doc missing 'timestamp'" in w for w in warnings)
+
+
+def test_dollar_figure_hint_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/fact-a.md",
+          ENTRY.format(t="fact", extra="") + "Deal size was $2.4M for year one.\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("restricted-content heuristic" in w for w in warnings)
+
+
+def test_signed_agreement_hint_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/fact-a.md",
+          ENTRY.format(t="fact", extra="")
+          + "They signed a strategic collaboration agreement last week.\n")
+    _, warnings = lint_repo(root)
+    assert any("restricted-content heuristic" in w for w in warnings)
