@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: Taxonomy and Decomposition
+title: "Agent Memory & Knowledge: Taxonomy and Decomposition"
 description: Synthesis of wave-1 research answering how the agent memory/knowledge problem space should be decomposed for RHOAI.
 source: ai-asset-registry/agent-memory/research/07-taxonomy-and-decomposition.md (as of 2026-07-05)
 timestamp: 2026-07-06

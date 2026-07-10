@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: Solution Survey
+title: "Agent Memory & Knowledge: Solution Survey"
 description: Survey of agent memory/knowledge solutions -- startups, enterprise platform features, framework-native implementations, server-side offerings -- against RHOAI enterprise requirements.
 source: ai-asset-registry/agent-memory/research/02-solution-survey.md (as of 2026-07-05)
 timestamp: 2026-07-06

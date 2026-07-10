@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: Landscape and Definitions
+title: "Agent Memory & Knowledge: Landscape and Definitions"
 description: Shared vocabulary and definitions for agent memory, agent knowledge, and context engineering, and why precise scoping matters for RHOAI.
 source: ai-asset-registry/agent-memory/research/01-landscape-and-definitions.md (as of 2026-07-05)
 timestamp: 2026-07-06

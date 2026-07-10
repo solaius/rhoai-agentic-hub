@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: RHOAI & OCP Alignment
+title: "Agent Memory & Knowledge: RHOAI & OCP Alignment"
 description: Maps agent memory and knowledge onto RHOAI/OpenShift architecture, sourcing options with trade-offs, and open questions for the review gate.
 source: ai-asset-registry/agent-memory/research/08-rhoai-ocp-alignment.md (as of 2026-07-05)
 timestamp: 2026-07-06

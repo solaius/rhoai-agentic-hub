@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: MemoryHub Deep-Dive
+title: "Agent Memory & Knowledge: MemoryHub Deep-Dive"
 description: Deep technical analysis of the MemoryHub prototype -- architecture, governance model, and productization assessment as the leading internal Red Hat candidate for an RHOAI memory primitive.
 source: ai-asset-registry/agent-memory/research/03-memoryhub-deep-dive.md (as of 2026-07-05)
 timestamp: 2026-07-06

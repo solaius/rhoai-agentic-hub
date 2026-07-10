@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: Standards and Protocols
+title: "Agent Memory & Knowledge: Standards and Protocols"
 description: Standards and protocols landscape for agent memory and knowledge, and the open-standards/portability argument for Red Hat.
 source: ai-asset-registry/agent-memory/research/05-standards-and-protocols.md (as of 2026-07-05)
 timestamp: 2026-07-06

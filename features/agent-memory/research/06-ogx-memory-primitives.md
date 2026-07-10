@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: OGX Memory Primitives
+title: "Agent Memory & Knowledge: OGX Memory Primitives"
 description: Deep research into OGX (formerly Llama Stack) memory-related primitives and what the OGX trajectory means for RHOAI's agent memory strategy.
 source: ai-asset-registry/agent-memory/research/06-ogx-memory-primitives.md (as of 2026-07-05)
 timestamp: 2026-07-06

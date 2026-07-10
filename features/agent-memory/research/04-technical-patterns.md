@@ -1,5 +1,5 @@
 ---
-title: Agent Memory & Knowledge: Technical Patterns
+title: "Agent Memory & Knowledge: Technical Patterns"
 description: Catalog of recurring technical/architecture patterns across agent memory and knowledge systems, independent of specific products or RHOAI integration.
 source: ai-asset-registry/agent-memory/research/04-technical-patterns.md (as of 2026-07-05)
 timestamp: 2026-07-06
