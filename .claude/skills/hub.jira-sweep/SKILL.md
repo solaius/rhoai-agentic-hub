@@ -34,7 +34,9 @@ Jira — never comment, transition, or edit issues.
    why it matters to this feature). An existing ref- for a candidate →
    propose an update only if the issue materially changed. NEVER copy a
    probe-redacted summary into any tracked file — a withheld summary
-   means Jira itself does not serve that text anonymously.
+   means Jira itself does not serve that text anonymously. Candidates
+   marked public: false in candidates-<feature>.yaml are exactly those —
+   draft their refs from the key and your own words only.
 5. GATE: one batch table — every proposed write, one line:
    `path: description [new|update]` — the snapshot
    (features/<id>/work/jira-snapshot.yaml, redacted count called out),

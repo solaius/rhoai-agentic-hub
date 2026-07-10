@@ -71,6 +71,9 @@ async def _try_jql(jql, sample):
     async with client_from_env() as client:
         issues = await client.search(jql, fields=["summary", "status", "issuetype"],
                                      max_results=MAX_RESULTS)
+    if len(issues) == MAX_RESULTS:
+        print(f"WARN result set hit the {MAX_RESULTS}-issue cap — counts beyond "
+              f"the cap are not shown; narrow the JQL")
     print(f"{len(issues)} issue(s) for: {jql}")
     for issue in issues[:sample]:
         f = issue.get("fields", {})
@@ -103,6 +106,9 @@ async def _sweep(root, feature, jql_override, out, today):
     async with client_from_env() as client:
         base = client.base_url
         issues, rows = await _fetch_rows(client, jql)
+    if len(rows) == MAX_RESULTS:
+        print(f"WARN result set hit the {MAX_RESULTS}-issue cap — the snapshot "
+              f"may be truncated; narrow the JQL")
     old = root / "features" / feature / "work" / "jira-snapshot.yaml"
     if old.is_file():
         old_rows = (yaml.safe_load(old.read_text(encoding="utf-8")) or {}).get("issues") or []
@@ -114,12 +120,14 @@ async def _sweep(root, feature, jql_override, out, today):
     snap_path = out / f"jira-snapshot-{feature}.yaml"
     snap_path.write_text(jiramap.build_snapshot(feature, jql, rows, today),
                          encoding="utf-8", newline="\n")
+    redacted_keys = {r["key"] for r in rows if r.get("summary") is None}
     candidates = []
     for issue in issues:
         f = issue.get("fields", {})
         if (f.get("issuetype") or {}).get("name") in ref_types:
             candidates.append({
                 "key": issue.get("key"),
+                "public": issue.get("key") not in redacted_keys,
                 "type": (f.get("issuetype") or {}).get("name"),
                 "status": (f.get("status") or {}).get("name"),
                 "summary": f.get("summary", ""),

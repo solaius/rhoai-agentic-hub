@@ -34,12 +34,15 @@ def load_patterns(root):
 
 
 def _scan_files(root):
-    """The public scan surface: enablement HTML + knowledge entries."""
+    """The public scan surface: enablement HTML + knowledge entries + Jira
+    snapshots. Snapshots only get the restricted-patterns pass below (errors)
+    by being yielded here — the generic HTML heuristic stays HTML-only."""
     root = Path(root)
     for pattern in ("features/*/enablement/**/*.html",
                     "narrative/enablement/**/*.html",
                     "features/*/knowledge/*.md",
-                    "narrative/knowledge/*.md"):
+                    "narrative/knowledge/*.md",
+                    "features/*/work/jira-snapshot.yaml"):
         yield from sorted(root.glob(pattern))
 
 
