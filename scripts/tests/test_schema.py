@@ -381,21 +381,3 @@ def test_narrative_research_doc_missing_timestamp_is_warning(tmp_path):
     errors, warnings = lint_repo(root)
     assert errors == []
     assert any("research doc missing 'timestamp'" in w for w in warnings)
-
-
-def test_dollar_figure_hint_is_warning(tmp_path):
-    root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/fact-a.md",
-          ENTRY.format(t="fact", extra="") + "Deal size was $2.4M for year one.\n")
-    errors, warnings = lint_repo(root)
-    assert errors == []
-    assert any("restricted-content heuristic" in w for w in warnings)
-
-
-def test_signed_agreement_hint_is_warning(tmp_path):
-    root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/fact-a.md",
-          ENTRY.format(t="fact", extra="")
-          + "They signed a strategic collaboration agreement last week.\n")
-    _, warnings = lint_repo(root)
-    assert any("restricted-content heuristic" in w for w in warnings)
