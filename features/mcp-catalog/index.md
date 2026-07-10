@@ -12,3 +12,4 @@ The MCP server storefront in RHOAI — discover and deploy RH, partner, communit
 ## Connections
 - reference · [The MCP Catalog is here (Red Hat blog)](/features/mcp-ecosystem/knowledge/ref-mcp-catalog-launch-blog.md) — Peter Double's published Red Hat Blog (2026-05-12) announcing the MCP Catalog for RHOAI 3.4 — discover/deploy/connect/consume chain, MCPLO, Gateway, governance roadmap.
 - reference · [MCP Catalog — PM write-up & registry integration requirements](/features/mcp-registry/knowledge/ref-mcp-catalog-writeup.md) — PM write-up covering MCP Catalog requirements, competitor comparison, and registry integration expectations — may be dated (predates the 3.6 TP/GA plan).
+- jtbd · [Discover my skills, MCP servers, and agentic assets](/narrative/knowledge/jtbd-discover-agentic-assets.md) — When I'm building agents, I want to discover governed skills, MCP servers, and agentic assets, so I can compose capable agents from validated, approved components.

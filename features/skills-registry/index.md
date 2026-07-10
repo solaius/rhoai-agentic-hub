@@ -8,3 +8,6 @@ RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketp
 - [strategy/](/features/skills-registry/strategy/)
 - [enablement/](/features/skills-registry/enablement/)
 - [work/](/features/skills-registry/work/)
+
+## Connections
+- jtbd · [Discover my skills, MCP servers, and agentic assets](/narrative/knowledge/jtbd-discover-agentic-assets.md) — When I'm building agents, I want to discover governed skills, MCP servers, and agentic assets, so I can compose capable agents from validated, approved components.

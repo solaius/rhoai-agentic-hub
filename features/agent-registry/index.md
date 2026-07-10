@@ -10,4 +10,7 @@ Post-deployment agent registry, agent catalog/starter kits, agentic base images,
 - [work/](/features/agent-registry/work/)
 
 ## Connections
+- fact · [Harness vs framework: manual vs automatic transmission](/narrative/knowledge/fact-harness-vs-framework.md) — Adel's framing: frameworks (LangChain, CrewAI, Strands) = manual transmission with full developer control; harnesses (OpenClaw, Claude Code) = automatic transmission, off-the-shelf agent runtimes.
+- jtbd · [Build your first agent with Red Hat AI](/narrative/knowledge/jtbd-onboard-first-agent.md) — When I'm exploring agentic AI, I want to build my first agent with Red Hat AI, so I can validate the platform for my use case — GenAI Studio, Starter Kits, agent templates.
+- jtbd · [Operationalize agents](/narrative/knowledge/jtbd-operationalize-agents.md) — When I move from prototype to production, I want to operationalize my agents with identity, access control, and lifecycle management, so I can trust them in enterprise environments.
 - story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.

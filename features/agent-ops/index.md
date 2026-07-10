@@ -10,4 +10,10 @@ Agent operations — observability, SDLC oversight, AgentOps positioning and tal
 - [work/](/features/agent-ops/work/)
 
 ## Connections
+- fact · [Three patterns for agent sandboxing](/narrative/knowledge/fact-agent-sandboxing-three-patterns.md) — Adel's three sandboxing patterns: (1) whole-process micro-VM isolation, (2) per-session/sub-agent isolation, (3) developer SDK-level primitives. OpenShell is the upstream project.
+- jtbd · [Evaluate and observe agents](/narrative/knowledge/jtbd-evaluate-observe-agents.md) — When I run agents in production, I want to evaluate and observe agent behavior, so I can detect failures, track costs, and prove compliance — MLflow, Eval Hub, OpenTelemetry.
+- jtbd · [Govern agent tool and model access](/narrative/knowledge/jtbd-govern-agent-tool-access.md) — When I manage a fleet of agents, I want to govern which tools and models each agent can access, so I can enforce least-privilege and audit agent actions — MCP Gateway, AI Gateway, SPIFFE.
+- jtbd · [Make agents safe](/narrative/knowledge/jtbd-make-agents-safe.md) — When I deploy agents, I want to ensure AI safety with guardrails, red teaming, and sandboxing, so I can prevent harmful or unauthorized agent behavior in production.
+- jtbd · [Operationalize agents](/narrative/knowledge/jtbd-operationalize-agents.md) — When I move from prototype to production, I want to operationalize my agents with identity, access control, and lifecycle management, so I can trust them in enterprise environments.
+- reference · [Every layer counts: defense in depth for AI agents with Red Hat AI](/narrative/knowledge/ref-defense-in-depth-agents-blog.md) — Red Hat developer article on layered security for AI agents — hardened platform, sandbox containers, OpenShell, guardrails, red teaming, SPIFFE identity, gateways.
 - story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.
