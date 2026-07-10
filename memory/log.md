@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-10
+- **Update** — enhancement batch shipped (#5 #7 #10 #15 #16 → Done): disclosure lint (restricted/lint-patterns.txt, errors) + pre-commit gate hook (doctor §10, installed on this machine, 20 ok/0 fail) + hub_status.py morning brief + hub_index --rotate-log + hub_publish --check-links publish gate; the link gate's first CI run caught and led to repair of 80 broken RHCL-hub subpage cross-links. Follow-up filed as #34 (frontmatter heuristic gap).
 - **Update** — RHOAI architecture repo (opendatahub-io/architecture-context) promoted to standing-context status: ref rewritten (what's inside, AGENT_USAGE.md entry, per-release snapshots), new ADR-repo ref filed, and hub.research/hub.intake now reference it routinely (research briefs carry the matching snapshot; new feature overviews link it).
 
 ## 2026-07-09
