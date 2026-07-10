@@ -152,7 +152,7 @@ def _lint_research(root, research, warnings):
 def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, feature_ids=None):
     rel = _rel(root, path)
     try:
-        meta, body = frontmatter.load_file(path)
+        meta, _ = frontmatter.load_file(path)
     except frontmatter.FrontmatterError as exc:
         errors.append(f"{rel}: {exc}")
         return
@@ -202,7 +202,10 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, featur
                           f"(e.g. [RHOAIENG-1234]) — watched by hub.jira-sync")
     if meta.get("status") == "superseded" and not meta.get("superseded_by"):
         warnings.append(f"{rel}: superseded without superseded_by pointer")
-    if RESTRICTED_HINTS.search(body) and "restricted" not in path.parts:
+    # Raw text, not the parsed body: frontmatter (description etc.) leaks
+    # into public views, so it is part of the scanned surface (#34).
+    if "restricted" not in path.parts and \
+            RESTRICTED_HINTS.search(path.read_text(encoding="utf-8")):
         warnings.append(f"{rel}: restricted-content heuristic matched — "
                         f"confirm this belongs in a public repo")
     _check_features(rel, meta, feature_ids, errors)

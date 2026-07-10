@@ -445,3 +445,22 @@ def test_snapshot_lint_wired_into_lint_repo(tmp_path):
     write(root, "features/x/work/jira-snapshot.yaml", "feature: x\nissues: []\n")
     errors, _ = lint_repo(root)
     assert any("missing generated-file marker" in e for e in errors)
+
+
+def test_restricted_hint_in_frontmatter_only_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/knowledge/fact-a.md",
+          "---\ntype: fact\ndescription: internal-only pricing detail\n"
+          "timestamp: 2026-07-05\n---\nclean body\n")
+    _, warnings = lint_repo(root)
+    assert any("fact-a.md" in w and "restricted-content heuristic" in w
+               for w in warnings)
+
+
+def test_restricted_hint_in_frontmatter_skipped_under_restricted(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "restricted/features/x/knowledge/fact-a.md",
+          "---\ntype: fact\ndescription: internal-only pricing detail\n"
+          "timestamp: 2026-07-05\n---\nclean body\n")
+    _, warnings = lint_repo(root)
+    assert not any("restricted-content heuristic" in w for w in warnings)
