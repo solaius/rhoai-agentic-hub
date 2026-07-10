@@ -13,3 +13,11 @@ Three proposals overlap on the same problem (a governed memory layer: scope tier
 - Wes Jackson's MemoryHub — [ref-memory-hub-repo.md](/features/agent-memory/knowledge/ref-memory-hub-repo.md)
 
 Open questions: if MemoryHub's IP/copyright blocker is resolved, should the Feast team's Write-loop phase adopt MemoryHub's curation engine rather than building Mem0 integration from scratch — or should all three remain separate options evaluated at the July 2026 architecture review? Do Zarecki's and Manganiello's Feast proposals themselves need to converge before that review?
+
+Update 2026-07-10: the 2026-07-07 sync effectively ruled **Feast out as
+the interim memory path** — its own maintainer (Francisco Arceo) called a
+feature store the wrong fit ("just because it can doesn't mean it
+should"), and the interim slot now belongs to the OGX memory tool +
+MemoryHub pair ([sync fact](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260707-transcript.md)).
+Zarecki's presentation may still happen; the question stays open until
+Sanjeev's architecture doc lands the governance-layer choice.

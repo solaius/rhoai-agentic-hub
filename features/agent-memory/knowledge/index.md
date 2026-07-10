@@ -2,7 +2,10 @@
 # Agent Memory — knowledge
 
 ## fact
+- [Agent memory 1:1 — paths forward (Peter × Sanjeev, 2026-06-30)](/features/agent-memory/knowledge/fact-agent-memory-1on1-paths-forward-20260630.md) — Standalone-service architecture position (decoupled from OGX AND AI Gateway), multi-backend requirement, substrate/intelligence/governance layering, and the revised phasing — 3.6 DP → 3.7 TP (Feb 2027) → 3.8 GA (Summit 2027).
 - [Agent Memory Team sync transcript (2026-06-23)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260623-transcript.md) — Team discussion of MemoryHub demo, OGX Memory Alpha MVP, and session-vs-long-term memory separation consensus.
+- [Agent Memory Team sync (2026-06-30)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260630-transcript.md) — Team repo launched (opendatahub-io/agent-memory), configurable-backends consensus (vector + file, extensible), Wes's file-vs-DB guidance, the PII/governance gap, and the episodic outcome-evaluation thread.
+- [Agent Memory Team sync (2026-07-07)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260707-transcript.md) — Francisco's OGX memory-tool demo (interim DP candidate), Feast ruled out as interim memory by its own maintainer, Mem0 engagement opened, MemoryHub gap list, and the "open everywhere" ruling.
 - ["Data guardrails" vs. "output guardrails" — a positioning distinction](/features/agent-memory/knowledge/fact-data-guardrails-positioning.md) — Jonathan Zarecki's framing for where guardrails fire — before data reaches the LLM (data guardrails) vs. after the LLM generates a response (output guardrails) — proposed as a differentiator when Feast is paired with TrustyAI.
 
 ## person
@@ -10,6 +13,7 @@
 - [Chaitany Patel](/features/agent-memory/knowledge/person-chaitany-patel.md) — Engineering, Feast team — built the OGX+Ollama EDA experiment and the schema-discovery-eda tool.
 - [Francisco Arceo](/features/agent-memory/knowledge/person-francisco-arceo.md) — Engineering — OGX/AI Gateway Responses API and Feast upstream maintainer; implemented the OGX Memory Alpha MVP.
 - [Jonathan Zarecki](/features/agent-memory/knowledge/person-jonathan-zarecki.md) — Principal PM, OpenShift AI (Feature Store + AI Gateway) — signed the RHOAI-RHCL agreement and authored the Feast+OGX agent memory proposal.
+- [Khaled Sulayman](/features/agent-memory/knowledge/person-khaled-sulayman.md) — Engineering — authored the memory-system evaluation-criteria framework (PR to opendatahub-io/agent-memory); interested in knowledge-graph memory systems.
 - [Ryan Cook](/features/agent-memory/knowledge/person-ryan-cook.md) — OCTO — initiative lead for the agent memory workstream.
 - [Sanjeev Rampal](/features/agent-memory/knowledge/person-sanjeev-rampal.md) — OCTO/ET — coordinates the agent memory workstream and leads candidate task prioritization.
 - [Umberto Manganiello](/features/agent-memory/knowledge/person-umberto-manganiello.md) — Engineering, Feast team — authored the Unified Platform Agentic Memory Infrastructure 3-phase proposal.
@@ -35,8 +39,10 @@
 - [Feast + OGX Agent Memory: Proposal](/features/agent-memory/knowledge/ref-feast-ogx-agent-memory-proposal.md) — Feast team's pitch to replace MemoryHub as the RHAISTRAT-1345 governance layer — not the current direction.
 - [redhat-ai-americas/memory-hub (GitHub)](/features/agent-memory/knowledge/ref-memory-hub-repo.md) — MemoryHub — Red Hat AI Americas' governed agent memory prototype on OpenShift AI (PostgreSQL+pgvector, 14 MCP tools).
 - [How We Built an AI Second Brain for 60K Knowledge Workers (case study)](/features/agent-memory/knowledge/ref-meta-ai-second-brain-blog.md) — Meta's org-scale agent knowledge/memory system for ~63K users — PARA structure, progressive disclosure, Claude Code harness.
+- [opendatahub-io/agent-memory (GitHub) — the workstream repo](/features/agent-memory/knowledge/ref-odh-agent-memory-repo.md) — The agent memory team's official ODH repo — starter issues, research/ + product/ folders, evaluation-criteria PR; the workstream's system of record ("open everywhere" ruling, 2026-07-07).
 - [OGX Memory Alpha Architecture](/features/agent-memory/knowledge/ref-ogx-memory-alpha-architecture.md) — Interactive diagram for OGX's persistent owner-scoped memory proposal — not the current direction, but a concrete MVP implementation.
 - [Oracle AI Agent Memory (competitive blog)](/features/agent-memory/knowledge/ref-oracle-ai-agent-memory-blog.md) — Oracle's oracleagentmemory — a framework-agnostic governed memory core on Oracle AI Database, with a four-type access-pattern taxonomy.
 - [Outcome: Agent Memory Primitives (RHAISTRAT-1345)](/features/agent-memory/knowledge/ref-rhaistrat-1345-outcome.md) — The Jira Outcome tracking agent memory work — no convergence yet on short-term state, long-term persistence, or context compaction.
 - [Unified Platform Agentic Memory Infrastructure](/features/agent-memory/knowledge/ref-unified-platform-agentic-memory-infrastructure.md) — A 3-phase Feast-based agent memory architecture (Discovery -> Retrieval -> Write loops) spanning 3.5 and 3.6.
 - [When Agent Memory Becomes a Platform Concern (opinion)](/features/agent-memory/knowledge/ref-wes-jackson-agent-memory-platform-blog.md) — Wes Jackson's argument that agent memory graduates from a harness feature to platform infrastructure at enterprise scale.
+- [Memory types — Wes Jackson (GDoc)](/features/agent-memory/knowledge/ref-wes-jackson-memory-types-doc.md) — Wes's memory-types paper shared in the 2026-06-30 sync — types matter for storage/retrieval decisions, not to the model once content is in context; procedural accumulation should graduate into skills.
