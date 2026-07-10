@@ -676,8 +676,11 @@ early):
   2–3 sources filed, entries gated, CI green after push. *(2026-07-09,
   `b543a4f` — mcp-catalog: partition + 3 new entries + 2 dedupe-driven
   updates; single write-gate covered partition creation cleanly.)*
-- [ ] 2. `hub.intake` against an existing feature with new sources (the
-  bulk-add path).
+- [x] 2. `hub.intake` against an existing feature with new sources (the
+  bulk-add path). *(2026-07-10, `daaef27` — agent-memory: 3 meeting
+  transcripts → 3 facts + 2 refs + 1 person + 2 dedupe-driven updates;
+  transcripts to gitignored work/transcripts/; dedupe correctly skipped
+  4 already-filed sources.)*
 - [x] 3. `hub.research` quick run, single lens, on the new partition —
   series born with `00` + one lens doc. *(2026-07-09, `c49269e` —
   combined with run 4 into one standard 2-lens run on mcp-catalog;
