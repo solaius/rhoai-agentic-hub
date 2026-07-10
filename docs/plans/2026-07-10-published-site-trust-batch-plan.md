@@ -204,7 +204,7 @@ In `scripts/hublib/disclosure.py`, replace `_scan_files` and `scan_repo` with:
 def _scan_files(root):
     """The public scan surface as (path, heuristic) pairs. Every file gets the
     restricted-patterns pass (errors); heuristic=True adds the generic
-    RESTRICTED_HINTS pass (warnings) — enablement HTML plus the generated
+    RESTRICTED_HINTS pass (warnings): enablement HTML plus the generated
     markdown that entry descriptions propagate into (#34). Markdown ENTRIES
     stay heuristic=False here: lint_entry (schema.py) already scans their
     full text. YAML surfaces get the patterns pass only."""
@@ -973,7 +973,7 @@ Create `scripts/hublib/refresh.py`:
 ```python
 """Refresh-site source configs (work/refresh-<slug>.yaml): find + load +
 validate. Consumed by the hub.refresh-site skill; findings fold into
-schema.lint_repo. Configs are tracked and PUBLIC (owner ruling 2026-07-10) —
+schema.lint_repo. Configs are tracked and PUBLIC (owner ruling 2026-07-10);
 the disclosure passes in disclosure.py scan them."""
 from pathlib import Path
 
