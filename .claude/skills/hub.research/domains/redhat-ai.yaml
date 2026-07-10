@@ -1,0 +1,75 @@
+# Domain config for the hub.research competitive lens.
+# Selection order: explicit ask > `features:` match > `default: true`.
+name: "Red Hat AI"
+slug: redhat-ai
+default: true
+# features: []  # optional hub feature ids that auto-select this domain
+
+key_question: >
+  How is Red Hat AI positioned in the enterprise AI platform market,
+  what are competitors doing, and what industry trends should we be
+  tracking?
+
+positioning_context: >
+  Red Hat ships a full-stack enterprise AI platform: RHEL AI
+  (single-node), OpenShift AI (orchestrated), AI Inference Server
+  (vLLM-based), and llm-d (distributed inference). Key differentiators
+  are open source, hybrid/multi-cloud portability, and NVIDIA
+  partnership. Evaluate findings against this positioning.
+
+search_areas:
+  - name: Enterprise AI Platforms
+    topics:
+      - enterprise AI platform comparison 2026
+      - Kubernetes-native AI platforms
+      - hybrid cloud AI deployment
+      - on-prem vs cloud AI infrastructure trends
+    sources: [company-blogs, product-announcements, analyst-reports]
+
+  - name: Direct Competitors
+    topics:
+      - NVIDIA AI Enterprise updates
+      - IBM watsonx releases and roadmap
+      - Google Vertex AI new features
+      - AWS SageMaker updates
+      - Azure AI platform changes
+      - Databricks Mosaic AI
+      - Anyscale Ray AI platform
+    sources: [company-blogs, product-announcements, press-releases]
+
+  - name: Open Source AI Ecosystem
+    topics:
+      - vLLM releases and adoption
+      - InstructLab community growth
+      - KServe ModelMesh updates
+      - open source LLM inference engines
+      - open source AI training frameworks
+    sources: [github, blogs, reddit, hacker-news]
+
+  - name: Industry Trends
+    topics:
+      - enterprise AI adoption trends
+      - AI infrastructure spending
+      - sovereign AI and data residency requirements
+      - EU AI Act compliance enterprise impact
+      - AI regulatory trends
+    sources: [analyst-reports, news, blogs]
+
+  - name: Analyst Coverage
+    topics:
+      - Gartner Magic Quadrant AI platforms
+      - Forrester Wave AI infrastructure
+      - IDC MarketScape AI
+      - Red Hat analyst mentions AI
+    sources: [analyst-reports, news]
+
+  - name: Partner Ecosystem
+    topics:
+      - NVIDIA Red Hat partnership updates
+      - IBM Red Hat AI integration
+      - cloud provider Red Hat AI support
+      - hardware vendor AI validated platforms
+    sources: [press-releases, company-blogs]
+
+# jira-gap (future): when the Jira hub skills land (backlog #2), a jira:
+# block here (project/components/jql) will drive the gap-analysis lens.
