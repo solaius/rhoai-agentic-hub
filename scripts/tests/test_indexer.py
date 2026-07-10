@@ -204,7 +204,7 @@ def test_faq_view(tmp_path):
     v = build_all(root, today=TODAY)["views/faq.md"]
     assert "## Unanswered" in v and "Quotas?" in v
     assert "## Most asked" in v and "2x · [Airgap?]" in v
-    assert "## All, by feature" in v and "### mcp-registry" in v
+    assert "## All, by home" in v and "### mcp-registry" in v
 
 
 def test_stale_view_includes_overdue_qa(tmp_path):
@@ -246,3 +246,42 @@ def test_artifacts_view(tmp_path):
     assert "published → mcp-registry/deck/" in v
     assert "connects: mcp-registry" in v
     assert "_no artifact.md descriptor yet_" in v and "(unpublished)" in v
+
+
+def test_connections_sorted_multi_item(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "- id: mcp-gateway\n  title: G\n  description: d\n")
+    write(root, "features/mcp-gateway/knowledge/fact-zeta.md",
+          "---\ntype: fact\ntitle: Zeta\ndescription: d\ntimestamp: 2026-07-01\n"
+          "features: [mcp-registry]\n---\nb\n")
+    write(root, "features/mcp-gateway/knowledge/fact-alpha.md",
+          "---\ntype: fact\ntitle: Alpha\ndescription: d\ntimestamp: 2026-07-02\n"
+          "features: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    assert "## Connections" in idx
+    assert idx.index("Alpha") < idx.index("Zeta")  # sorted by rootpath
+
+
+def test_connections_combine_entries_and_artifacts(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "- id: mcp-gateway\n  title: G\n  description: d\n")
+    write(root, "features/mcp-gateway/knowledge/fact-conn.md",
+          "---\ntype: fact\ntitle: Conn Fact\ndescription: d\ntimestamp: 2026-07-01\n"
+          "features: [mcp-registry]\n---\nb\n")
+    write(root, "features/mcp-gateway/enablement/deck/artifact.md",
+          "---\ntype: artifact\ntitle: Conn Deck\ndescription: d\ntimestamp: 2026-07-01\n"
+          "features: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    assert "Conn Fact" in idx and "Conn Deck" in idx
+
+
+def test_empty_narrative_dir_is_safe(tmp_path):
+    root = make_repo(tmp_path)
+    (root / "narrative").mkdir()
+    built = build_all(root, today=TODAY)
+    assert "narrative/index.md" in built
+    assert "narrative/knowledge/index.md" not in built

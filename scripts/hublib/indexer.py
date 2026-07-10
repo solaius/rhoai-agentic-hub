@@ -317,7 +317,7 @@ def build_all(root, today=None):
     for rp, m in qas:
         by_home.setdefault(_home(rp), []).append((rp, m))
     if by_home:
-        lines.append("## All, by feature")
+        lines.append("## All, by home")
         for home in sorted(by_home):
             lines.append(f"### {home}")
             for rp, m in sorted(by_home[home]):
