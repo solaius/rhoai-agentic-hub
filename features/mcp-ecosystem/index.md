@@ -10,6 +10,7 @@ MCP server building, partner/community onboarding pipeline, evaluation, and ecos
 - [work/](/features/mcp-ecosystem/work/)
 
 ## Connections
+- fact · [MCP catalog competitive landscape (July 2026)](/features/mcp-catalog/knowledge/fact-mcp-catalog-competitive-landscape.md) — Refreshed landscape — incumbents' moves (Docker OCI catalogs, Databricks Unity AI Gateway, ToolHive coopetition) plus five new enterprise entrants (AWS, Google, IBM, Salesforce/MuleSoft, Kong); the governance differentiator is eroding, the integrated-chain card still holds.
 - fact · [MCP Catalog — overview](/features/mcp-catalog/knowledge/fact-mcp-catalog-overview.md) — The MCP server storefront in RHOAI — what it is, the discover→deploy→connect→consume chain, roadmap (DP 3.4 shipped → TP 3.6 EA1 → GA 3.6 Stable, Nov 2026), tiers, and key links.
 - artifact · [MCP 2026-07-28 RC — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
 - story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.

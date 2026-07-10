@@ -2,7 +2,7 @@
 # MCP Ecosystem — knowledge
 
 ## fact
-- [MCP catalog/registry competitive landscape](/features/mcp-ecosystem/knowledge/fact-competitive-landscape-mcp-catalogs.md) — How Smithery, Docker, GitHub, ToolHive, Microsoft, and Databricks position their MCP catalogs/registries, and Red Hat's differentiation.
+- [MCP catalog/registry competitive landscape](/features/mcp-ecosystem/knowledge/fact-competitive-landscape-mcp-catalogs.md) — How Smithery, Docker, GitHub, ToolHive, Microsoft, and Databricks position their MCP catalogs/registries, and Red Hat's differentiation. SUPERSEDED 2026-07-09 by the refreshed July-2026 landscape.
 - [Gen MCP](/features/mcp-ecosystem/knowledge/fact-gen-mcp.md) — Tool for generating, containerizing, and production-wrapping MCP servers from API/CLI/HTTP definitions.
 - [MCP build server ecosystem landscape](/features/mcp-ecosystem/knowledge/fact-mcp-build-server-ecosystem.md) — Survey of tools for building MCP servers (gen-mcp, kmcp, FastMCP, fips-agents) — a growing customer/field need with no single tool covering all cases.
 - [MCP catalog metadata schema](/features/mcp-ecosystem/knowledge/fact-mcp-catalog-metadata-schema.md) — The defined metadata fields for MCP servers listed in the RHOAI catalog — core, MCP-specific, and security-indicator fields.

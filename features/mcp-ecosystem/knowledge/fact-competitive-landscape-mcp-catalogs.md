@@ -1,10 +1,11 @@
 ---
 type: fact
 title: MCP catalog/registry competitive landscape
-description: How Smithery, Docker, GitHub, ToolHive, Microsoft, and Databricks position their MCP catalogs/registries, and Red Hat's differentiation.
+description: How Smithery, Docker, GitHub, ToolHive, Microsoft, and Databricks position their MCP catalogs/registries, and Red Hat's differentiation. SUPERSEDED 2026-07-09 by the refreshed July-2026 landscape.
 timestamp: 2026-07-06
 tags: [mcp-ecosystem, competitive, mcp-registry]
-review_after: 2026-08-05
+status: superseded
+superseded_by: /features/mcp-catalog/knowledge/fact-mcp-catalog-competitive-landscape.md
 source: ai-asset-registry/docs/knowledge-registry.md §9 (as of 2026-07-05); third-party directories and three-way distinction from ai-asset-registry/docs/knowledge-review/competitive/landscape.md (as of 2026-07-05)
 ---
 Seven competitors identified, each solving a slice of MCP discovery:

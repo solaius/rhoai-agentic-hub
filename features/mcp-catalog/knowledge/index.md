@@ -2,8 +2,16 @@
 # MCP Catalog — knowledge
 
 ## fact
+- [MCP catalog competitive landscape (July 2026)](/features/mcp-catalog/knowledge/fact-mcp-catalog-competitive-landscape.md) — Refreshed landscape — incumbents' moves (Docker OCI catalogs, Databricks Unity AI Gateway, ToolHive coopetition) plus five new enterprise entrants (AWS, Google, IBM, Salesforce/MuleSoft, Kong); the governance differentiator is eroding, the integrated-chain card still holds.
 - [MCP Catalog — overview](/features/mcp-catalog/knowledge/fact-mcp-catalog-overview.md) — The MCP server storefront in RHOAI — what it is, the discover→deploy→connect→consume chain, roadmap (DP 3.4 shipped → TP 3.6 EA1 → GA 3.6 Stable, Nov 2026), tiers, and key links.
+- [MCP upstream status — registry, governance, spec (July 2026)](/features/mcp-catalog/knowledge/fact-mcp-upstream-status.md) — Official registry is big but immature (≥36K records, still preview/v0.1); MCP governed by the Linux Foundation's AAIF since Dec 2025; largest-ever spec revision finalizes 2026-07-28 (stateless HTTP); upstream expects vendor catalogs to federate as subregistries.
+
+## question
+- [Is Kubeflow Hub's MCP Catalog the RHOAI MCP Catalog's upstream?](/features/mcp-catalog/knowledge/question-kubeflow-hub-catalog-alignment.md) — Hub (RH-driven) shipped MCP Catalog v1alpha1 in Feb 2026; timing and stewardship suggest it is the RHOAI catalog's upstream implementation, but no doc states the relationship — confirm and document.
+- [Should the RHOAI MCP Catalog federate with the official MCP registry?](/features/mcp-catalog/knowledge/question-official-registry-federation.md) — Upstream expects vendor catalogs to act as subregistries (OpenAPI spec + namespaced _meta) or aggregators; RH has no stated posture — a TP-window (3.6 EA1) decision.
+- [What spec-version compatibility policy does the catalog certify at GA?](/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md) — The largest-ever MCP revision finalizes 2026-07-28 (stateless HTTP, handshake removed); catalog GA (Nov 2026) certifies servers ~4 months later with no stated 2025-11-25 vs 2026-07-28 compatibility matrix.
 
 ## reference
-- [kubeflow/mcp-server (GitHub)](/features/mcp-catalog/knowledge/ref-kubeflow-mcp-server-repo.md) — Kubeflow MCP Server (KEP-936, Apache-2.0, pre-release) — exposes Kubeflow Trainer operations as MCP tools for AI agents; filed at intake as the catalog's upstream repo, relationship to confirm.
+- [kubeflow/hub (GitHub) — MCP Catalog upstream (likely)](/features/mcp-catalog/knowledge/ref-kubeflow-hub-repo.md) — Kubeflow Hub (formerly model-registry; README — "Red Hat drives the project's development") shipped an MCP Catalog (v1alpha1 endpoints, McpServer/McpTool entities) in Feb 2026 — the likely upstream implementation of the RHOAI MCP Catalog.
+- [kubeflow/mcp-server (GitHub)](/features/mcp-catalog/knowledge/ref-kubeflow-mcp-server-repo.md) — Kubeflow MCP Server (KEP-936, Apache-2.0, pre-release) — exposes Kubeflow Trainer operations as MCP tools; verified unrelated to catalog/registry work — a catalog-entry candidate, not the catalog's upstream.
 - [MCP Catalog STRAT Jiras (umbrella RHAISTRAT-1339)](/features/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md) — The RHAISTRAT umbrella and known catalog STRATs — 1084/1306/1149 from the 3.4 DP cycle, 1859/1994 for 3.6; full enumeration pending the Jira hub skills.
