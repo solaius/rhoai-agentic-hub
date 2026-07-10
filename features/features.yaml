@@ -11,6 +11,9 @@ features:
 - id: mcp-registry
   title: MCP Registry
   description: The governance/system-of-record layer for MCP servers — lifecycle, data model, and the deployment-time Lifecycle Operator.
+  jira:
+    jql: '(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")'
+    ref_types: [Outcome, Feature]
 - id: mcp-ecosystem
   title: MCP Ecosystem
   description: MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.
