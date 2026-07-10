@@ -44,6 +44,9 @@ MongoDB, MariaDB. Catalog content upstream:
 
 ## Key links
 
+- Code upstream: [kubeflow/hub](/features/mcp-catalog/knowledge/ref-kubeflow-hub-repo.md)
+  (owner-confirmed 2026-07-10); content upstream:
+  [model-metadata-collection](/features/mcp-ecosystem/knowledge/ref-model-metadata-collection-repo.md)
 - [Launch blog (live)](/features/mcp-ecosystem/knowledge/ref-mcp-catalog-launch-blog.md)
 - [PM write-up / requirements GDoc](/features/mcp-registry/knowledge/ref-mcp-catalog-writeup.md)
 - [Catalog STRAT Jiras](/features/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md)

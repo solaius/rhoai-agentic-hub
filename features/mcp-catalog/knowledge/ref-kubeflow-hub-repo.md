@@ -1,7 +1,7 @@
 ---
 type: reference
-title: kubeflow/hub (GitHub) — MCP Catalog upstream (likely)
-description: Kubeflow Hub (formerly model-registry; README — "Red Hat drives the project's development") shipped an MCP Catalog (v1alpha1 endpoints, McpServer/McpTool entities) in Feb 2026 — the likely upstream implementation of the RHOAI MCP Catalog.
+title: kubeflow/hub (GitHub) — the MCP Catalog upstream
+description: Kubeflow Hub (formerly model-registry; README — "Red Hat drives the project's development") shipped an MCP Catalog (v1alpha1 endpoints, McpServer/McpTool entities) in Feb 2026 — the RHOAI MCP Catalog's upstream implementation (owner-confirmed 2026-07-10).
 resource: https://github.com/kubeflow/hub
 tags: [mcp-catalog, upstream, kubeflow]
 features: [mcp-registry]
@@ -24,8 +24,8 @@ MCP Catalog capability shipped Feb–Mar 2026 [verified 2026-07-09]:
   [model-metadata-collection](/features/mcp-ecosystem/knowledge/ref-model-metadata-collection-repo.md)
   as catalog content.
 
-Timing (Feb build → May RHOAI 3.4 DP announcement) plus RH stewardship
-makes this the likely real upstream of the RHOAI MCP Catalog — the repo
-provided at intake (kubeflow/mcp-server) verified unrelated. Confirmation
-tracked in
-[question-kubeflow-hub-catalog-alignment](/features/mcp-catalog/knowledge/question-kubeflow-hub-catalog-alignment.md).
+**Owner-confirmed (2026-07-10): this is the RHOAI MCP Catalog's current
+upstream** — the repo provided at intake (kubeflow/mcp-server) verified
+unrelated. Question record:
+[question-kubeflow-hub-catalog-alignment](/features/mcp-catalog/knowledge/question-kubeflow-hub-catalog-alignment.md)
+(answered).
