@@ -855,7 +855,8 @@ def test_jira_map_merges_snapshot_and_refs(tmp_path):
     assert "## mcp-registry" in view
     # make_repo already files ref-epic.md for RHAIRFE-1370 — row links to it
     assert "RHAIRFE-1370 · Feature · In Progress · RHOAI 3.5 — Epic summary" in view
-    assert "[Main epic](/features/mcp-registry/knowledge/ref-epic.md)" in view
+    assert "→ [Main epic](" in view
+    assert "(/features/mcp-registry/knowledge/ref-epic.md)" in view
     assert "withheld" in view                      # redacted-summary row
     assert "## Referenced elsewhere" not in view   # the only ref is covered
 
