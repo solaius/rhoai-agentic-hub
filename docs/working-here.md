@@ -40,9 +40,15 @@ approve its "create partition" proposal (it updates `features/features.yaml`
 and creates only the needed subdirectories).
 
 ## Keeping it healthy
+Start the day with `python scripts/hub_status.py` — one page: stale items,
+open questions by home, unanswered qa, evidence-less JTBDs, descriptor-less
+artifacts, log-rotation reminders, recent log, and the last push's CI state.
 `python scripts/hub_index.py` regenerates every index/view;
-`python scripts/hub_lint.py` checks structure and schemas; CI runs both on
-every push plus the test suite and the publish-manifest check.
+`python scripts/hub_lint.py` checks structure, schemas, and the disclosure
+net; CI runs both on every push plus the test suite and the
+publish-manifest check, and a `doctor.sh setup`-installed pre-commit hook
+runs lint + index-freshness before every local commit (bypass deliberately
+with `git commit --no-verify`).
 `views/stale-facts.md` lists what needs a refresh — clear it during
 consolidation.
 

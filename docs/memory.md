@@ -34,7 +34,7 @@ flowchart LR
 | `index.md` | the always-loaded tier — profiles, recent facts, recent log in one page | GENERATED, ≤200 lines (CI-enforced) |
 | `profiles/` | one file per volatile subject — `now`, `roadmap`, `strategy`, `preferences` | **update in place**; old value moves to the file's `## History` with date + source |
 | `facts/` | dated atomic working facts (process decisions, learnings) | append-oriented; supersede, never delete |
-| `log.md` | chronological trail, newest first — `## YYYY-MM-DD` headings, entries starting `**Creation**` / `**Update**` / `**Deprecation**` | via the gate; rotates yearly to `log-archive/<year>.md` |
+| `log.md` | chronological trail, newest first — `## YYYY-MM-DD` headings, entries starting `**Creation**` / `**Update**` / `**Deprecation**` | via the gate; rotates yearly to `log-archive/<year>.md` (`hub_index.py --rotate-log`) |
 | `.scratch/` | raw feed for consolidation | gitignored; harness writes freely; NOT part of the knowledge bundle |
 
 Agents read `memory/index.md` at session start (see [AGENTS.md](/AGENTS.md))

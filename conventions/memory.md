@@ -13,7 +13,8 @@ colleague would look up. "The 3.5 date moved" → `memory/profiles/roadmap.md`.
 - `facts/` — append-oriented dated atoms; supersede, never delete.
 - `log.md` — chronological trail, newest first, OKF format: `## YYYY-MM-DD`
   headings, entries starting `**Creation**` / `**Update**` / `**Deprecation**`.
-  Rotates yearly to `log-archive/<year>.md`.
+  Rotates yearly to `log-archive/<year>.md`
+  (`python scripts/hub_index.py --rotate-log`).
 - `.scratch/` — gitignored; Claude auto-memory writes here natively; raw feed
   for consolidation; NOT part of the OKF bundle.
 

@@ -25,9 +25,14 @@ private or move hosts without breaking a single published URL.
    - `validate.yml` re-checks the manifest (`hub_publish.py --check`:
      schema, sources exist, no duplicate dests) along with everything else.
    - `publish.yml` checks out both repos, runs
-     `hub_publish.py --pages-dir pages-repo --hub-sha $GITHUB_SHA`, and
-     pushes the result to the pages repo as `hub-publish-bot` (no-op commit
-     is skipped when nothing changed).
+     `hub_publish.py --pages-dir pages-repo --hub-sha $GITHUB_SHA`, then
+     gates on `hub_publish.py --check-links --pages-dir pages-repo` —
+     any broken internal href/src in the applied result fails the job
+     BEFORE anything ships — and only then pushes to the pages repo as
+     `hub-publish-bot` (no-op commit is skipped when nothing changed).
+     A red publish run with `broken link` errors means fix the links in
+     the source artifact and push again; run the same check locally with
+     `python scripts/hub_publish.py --check-links --pages-dir <clone>`.
 4. **The publisher applies the manifest**: copies each `source` to its
    `dest` in the pages clone, removes previously-published copies whose
    manifest entries were deleted, regenerates the landing `index.html` from
