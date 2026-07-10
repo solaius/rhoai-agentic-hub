@@ -1,9 +1,9 @@
 ---
 title: Agent Memory & Knowledge Research — Executive Summary
-description: Synthesis of the Phase 1 and Phase 2 agent-memory research series -- findings, proposed decomposition, sourcing direction, and open questions feeding the review gate.
-source: ai-asset-registry/agent-memory/research/00-executive-summary.md (as of 2026-07-05)
-timestamp: 2026-07-06
-review_after: 2026-08-05
+description: Living synthesis of the agent-memory research series (Phase 1, Phase 2, later additions, and the 2026-07-10 refresh) -- findings, decomposition, sourcing direction, and open questions.
+source: ai-asset-registry/agent-memory/research/00-executive-summary.md (as of 2026-07-05); refreshed in-hub 2026-07-10
+timestamp: 2026-07-10
+review_after: 2026-09-10
 ---
 
 # Agent Memory & Knowledge Research — Executive Summary
@@ -14,9 +14,18 @@ review_after: 2026-08-05
 
 **Author:** Peter Double (Principal PM — MCP & AI Asset Registries)
 
-**Status:** SYNTHESIS — this document summarizes both research phases. Phase 1 findings (docs 01–08) are DECIDED per [REVIEW-NOTES](REVIEW-NOTES.md). Phase 2 findings (docs 09–15) are EXPLORATORY — deep dives commissioned at the first Agent Memory Team Sync (2026-06-09). See [RHAISTRAT-1345](https://redhat.atlassian.net/browse/RHAISTRAT-1345).
+**Status:** SYNTHESIS — this document summarizes both research phases. Phase 1 findings (docs 01–08) are DECIDED per [REVIEW-NOTES](REVIEW-NOTES.md). Phase 2 findings (docs 09–15) are EXPLORATORY — deep dives commissioned at the first Agent Memory Team Sync (2026-06-09). See [RHAISTRAT-1345](https://redhat.atlassian.net/browse/RHAISTRAT-1345). Refreshed 2026-07-10 — see the refresh note below and [doc 19](19-market-direction-refresh-2026-07.md).
 
-**Series — Agent Memory & Knowledge Research (17 documents):**
+## Refresh note — 2026-07-10
+
+The quick refresh ([19 — Market & direction refresh](19-market-direction-refresh-2026-07.md)) records four changes against this synthesis; the decided Phase-1 baseline (D1–D6) is unchanged:
+
+1. **Delivery phasing superseded**: 3.6 = DP (deliberately) → 3.7 = TP (Feb 2027) → 3.8 = GA — replaces §5's "3.7+ (GA)" sketch (owner 1:1, 2026-06-30).
+2. **Delivery vehicle superseded**: agent memory is a **standalone service**, decoupled from OGX *and* the AI Gateway — doc 16's gateway-absorption premise carries a supersede note; the substrate-agnostic API posture stands.
+3. **Compliance timing nuanced**: GPAI enforcement starts 2026-08-02 as expected, but the Annex III high-risk deadline is provisionally deferred to 2027-12-02 (Digital Omnibus, adoption pending) — Q-G7's audit-trail urgency is now customer-driven more than date-driven.
+4. **Interim landscape settled for now**: Feast out as interim memory; OGX memory tool (interim DP) + MemoryHub (governance leader) are the candidate pair; official workstream repo is opendatahub-io/agent-memory.
+
+**Series — Agent Memory & Knowledge Research (20 documents + review notes):**
 **Phase 1 (completed 2026-05-17):**
 - 00 Executive Summary (this document)
 - [01 Landscape & Definitions](01-landscape-and-definitions.md)
@@ -35,7 +44,12 @@ review_after: 2026-08-05
 - [13 KV-Cache Memory Optimization](13-kv-cache-optimization.md)
 - [14 Enterprise Use Case Patterns](14-enterprise-use-cases.md)
 - [15 Multi-Modal Memory](15-multi-modal-memory.md)
-- [16 AI Gateway Memory Substrate](16-ai-gateway-memory-substrate.md)
+- [16 AI Gateway Memory Substrate](16-ai-gateway-memory-substrate.md) *(superseded 2026-07-10 — see doc 19)*
+**Later additions (post-2026-06-10):**
+- [17 Open Knowledge Format](17-open-knowledge-format.md)
+- [18 Filesystem Knowledge & Project Memory](18-filesystem-knowledge-and-project-memory.md)
+**Refresh (2026-07-10):**
+- [19 Market & Direction Refresh](19-market-direction-refresh-2026-07.md)
 - [REVIEW-NOTES](REVIEW-NOTES.md)
 
 ---
@@ -113,6 +127,13 @@ The AI Asset Registry is the cross-cutting governance *framework* these subsyste
 | 3 — Context Engineering | **RESTRUCTURE (re-couple)** | The one area that does not hold as an independent peer. The industry treats it as a sub-discipline of memory; OGX implements compaction *inside* the Responses layer. Keep as a named, measurable subsystem but characterize it as a capability layer over the substrate, not a peer. |
 
 ## 5. The Recommended Solution Direction (PROPOSED — doc 08)
+
+> Phasing note (2026-07-10): the release mapping below is superseded by
+> the revised plan — 3.6 = DP, 3.7 = TP (Summit 2027 setup), 3.8 = GA —
+> and the delivery vehicle is now a standalone memory service (see the
+> refresh note above and [doc 19](19-market-direction-refresh-2026-07.md)).
+> The option structure (C+D substrate, B governance, A for Agent
+> Knowledge, E as backends) remains the decided baseline per REVIEW-NOTES.
 
 Doc 08 maps the decomposition onto RHOAI/OCP component by component and evaluates five sourcing options (A — build fresh; B — productize MemoryHub; C — consume/extend OGX; D — upstream-contribute; E — partner with a memory vendor). No single option wins. The proposed direction is a **phased combination**:
 

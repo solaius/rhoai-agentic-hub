@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # AI Gateway Responses API as Memory Substrate
 
+> Superseded 2026-07-10 by [19-market-direction-refresh-2026-07](19-market-direction-refresh-2026-07.md) — the architecture direction moved to a standalone memory service decoupled from the gateway (2026-06-30/07-07 syncs); this doc stands as the record of the gateway-absorption option and its parity analysis.
+
 **Purpose:** Analyze whether the AI Gateway's Responses API implementation can replace OGX as the memory substrate foundation for the RHOAI agent memory strategy, map the 7 OGX primitives the strategy depends on to their gateway equivalents, and identify parity gaps.
 
 **Date:** 2026-06-10
