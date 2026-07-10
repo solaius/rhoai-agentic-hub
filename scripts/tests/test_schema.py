@@ -352,3 +352,15 @@ def test_signed_agreement_hint_is_warning(tmp_path):
           + "They signed a strategic collaboration agreement last week.\n")
     _, warnings = lint_repo(root)
     assert any("restricted-content heuristic" in w for w in warnings)
+
+
+def test_story_pillar_without_leading_slash_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "narrative/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
+    write(root, "narrative/knowledge/story-a.md",
+          ENTRY.format(t="story", extra="features: [mcp-registry]\n"
+                                        "pillar: narrative/knowledge/pillar-agents.md\n"))
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("leading-slash" in w for w in warnings)
