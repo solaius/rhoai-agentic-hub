@@ -53,7 +53,7 @@ families (design decisions D8/D11):
 | `hub.capture` | one durable item surfaces mid-session | inline confirm | memory or knowledge entry + reindex + commit |
 | `hub.consolidate` | session end / "consolidate memory" | batch approve/edit/reject, per-item public-vs-restricted | tracked store + clears `.scratch/` + one commit |
 | `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `features.yaml` on first use |
-| `hub.intake` | onboard a new feature area or bulk-add sources | plan confirm + batch write gate | partition (first use), ref-/typed entries, reindex + commit |
+| `hub.intake` | onboard a new feature area or bulk-add sources | ask-once upfront + batch write gate (incl. partition) | partition (first use), ref-/typed entries, reindex + commit |
 | `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
 | `hub.reindex` | after adding/editing entries; CI reports stale indexes | no | regenerates all `index.md` + `views/`, runs linter |
 | `hub.doctor` | new machine; something feels broken | setup mode confirms writes | per-machine config only (see [/docs/tooling.md](/docs/tooling.md)) |

@@ -34,7 +34,7 @@ pre-convention or migrated docs; `source:` marks migrated provenance) ·
   docs; it never deletes.
 - A finding contradicted by newer research gets a supersede note **in the
   old doc** — a blockquote directly under its H1:
-  `> Superseded 2026-07-09 by [NN-slug](NN-slug.md) — <one line why>.`
+  `> Superseded <YYYY-MM-DD> by [NN-slug](NN-slug.md) — <one line why>.`
   The old doc keeps its place in the series.
 - Conflicts between new findings and existing knowledge entries are
   surfaced at the write gate, never auto-resolved.

@@ -13,8 +13,9 @@ file) — then run the flow without further questions until the gate.
 1. ROUTE HOME: match the topic against features/features.yaml;
    story-shaped (pillar/cross-feature narrative) → narrative/. No fit →
    propose a new partition (id, title, one-line description) per
-   hub.file step 1: on approval append to features.yaml and create ONLY
-   the subdirectories this intake needs. A NEW partition also gets a
+   hub.file step 1; the features.yaml append and subdirectory creation
+   (ONLY what this intake needs) ride the step-4 gate with every other
+   write — there is no separate partition-approval moment. A NEW partition also gets a
    starter knowledge/fact-<id>-overview.md (what it is, current status,
    key links) built from the user's basic info. RHOAI-feature overviews
    link the RHOAI architecture repo
