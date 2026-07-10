@@ -14,7 +14,7 @@
 - [Partner MCP Catalog (3.4 DP — completed)](/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md) — A partner + community MCP server catalog shipped in the RHOAI 3.4 DP catalog for Summit; the business onboarding pipeline, technical bar, and disqualification criteria behind it.
 
 ## person
-- [Calum Murray](/features/mcp-ecosystem/knowledge/person-calum-murray.md) — Engineering — Gen MCP / MCP Checker; recurring, pointed voice on RHOAI Limited FAQ gaps.
+- [Calum Murray](/features/mcp-ecosystem/knowledge/person-calum-murray.md) — Engineering — Gen MCP / MCP Checker; recurring, pointed voice on RHOAI restricted use entitlement for OpenShift FAQ gaps.
 - [Daniele Martinoli](/features/mcp-ecosystem/knowledge/person-daniele-martinoli.md) — Ecosystem Engineering — did the original MCP validation research (Q3/Q4 FY25) that founded the ecosystem effort.
 - [Fernando Lozano](/features/mcp-ecosystem/knowledge/person-fernando-lozano.md) — Field/consulting — documented MCP implementation gaps in RHOAI 3.4 through hands-on testing.
 - [Jaideep Rao](/features/mcp-ecosystem/knowledge/person-jaideep-rao.md) — Engineering — authored the comprehensive MCP ecosystem best-practices deployment guide (RHAISTRAT-1149).

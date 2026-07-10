@@ -1,7 +1,7 @@
 ---
 type: person
 title: Gaurav Singh
-description: Product/Engineering — authored the RHOAI Limited & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
+description: Product/Engineering — authored the RHOAI restricted use entitlement for OpenShift & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
 role: Product/Engineering
 org: MCP Lifecycle Operator
 timestamp: 2026-07-06

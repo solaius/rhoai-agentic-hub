@@ -131,10 +131,10 @@ See [person-ryan-cook.md](/features/agent-memory/knowledge/person-ryan-cook.md) 
 
 See [question-feast-mem0-pluggable-storage.md](/features/agent-memory/knowledge/question-feast-mem0-pluggable-storage.md).
 
-### RHOAI Limited / OLS
+### RHOAI restricted use entitlement for OpenShift / OLS
 | Name | Role/Area | Notes |
 |---|---|---|
-| Joshua Wilson | Engineering, OLS | Raised the RHOAI Limited pricing/paywall concern for OLS's MCP features — already captured in [ref-rhoai-limited-mcp-lifecycle-faq.md](/restricted/features/mcp-registry/knowledge/ref-rhoai-limited-mcp-lifecycle-faq.md) |
+| Joshua Wilson | Engineering, OLS | Raised the RHOAI restricted use entitlement pricing/paywall concern for OLS's MCP features — already captured in [ref-rhoai-limited-mcp-lifecycle-faq.md](/restricted/features/mcp-registry/knowledge/ref-rhoai-limited-mcp-lifecycle-faq.md) |
 
 ### Agent starter kits & base images
 | Name | Role/Area | Notes |

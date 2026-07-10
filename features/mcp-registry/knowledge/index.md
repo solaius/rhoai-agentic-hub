@@ -9,7 +9,7 @@
 - [MCP server lifecycle — pipeline stages & status states (as documented)](/features/mcp-registry/knowledge/fact-mcp-server-lifecycle-stages.md) — The as-documented MCP server pipeline stages, the older linear 7-state governance model, and MLflow's native model-registry states — the baseline the proposed 4-track model (see fact-mcp-registry-data-model-proposal.md) supersedes.
 
 ## person
-- [Gaurav Singh](/features/mcp-registry/knowledge/person-gaurav-singh.md) — Product/Engineering — authored the RHOAI Limited & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
+- [Gaurav Singh](/features/mcp-registry/knowledge/person-gaurav-singh.md) — Product/Engineering — authored the RHOAI restricted use entitlement for OpenShift & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
 
 ## question
 - [Which lifecycle states are required for 3.5 Dev Preview vs. later?](/features/mcp-registry/knowledge/question-lifecycle-states-35-dp-scope.md) — Open question on how much of the proposed 4-track governance model (lifecycle/approval/verification/certification) needs to ship in the 3.5 DP cut.

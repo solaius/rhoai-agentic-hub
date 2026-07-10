@@ -11,4 +11,4 @@ Deployment primitive for MCP servers on Kubernetes: the `MCPServer` CRD creates 
 
 Ships bundled with RHOAI operator releases rather than as a standalone OperatorHub/OLM listing. Install presents a catalog during setup (e.g., OCP MCP, ACM MCP) plus Day 2 additions. No dependency on MCP Gateway — the Gateway is downstream, for routing. Qualification is split: the OCP team owns functional qualification, the RHOAI team owns deployment/integration qualification.
 
-Upstream code: [ref-mcp-lifecycle-operator-repo.md](/features/mcp-registry/knowledge/ref-mcp-lifecycle-operator-repo.md). Entitlement/packaging detail (RHOAI Limited requirement) lives in the restricted counterpart of this entry.
+Upstream code: [ref-mcp-lifecycle-operator-repo.md](/features/mcp-registry/knowledge/ref-mcp-lifecycle-operator-repo.md). Entitlement/packaging detail (RHOAI restricted use entitlement for OpenShift requirement) lives in the restricted counterpart of this entry.
