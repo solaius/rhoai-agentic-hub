@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from hublib import jiramap
 from hublib.jira import adf_to_text, client_from_env, probe_public
+from hublib.shellenv import load_env
 
 SWEEP_FIELDS = ["summary", "status", "issuetype", "resolution",
                 "fixVersions", "updated", "description"]
@@ -31,21 +32,7 @@ MAX_RESULTS = 500
 def _load_env(root):
     """restricted/.env fallback so the CLI works in shells that never sourced
     it. Only JIRA_* keys are read; existing env always wins."""
-    if os.environ.get("JIRA_SERVER"):
-        return
-    env = root / "restricted" / ".env"
-    if not env.is_file():
-        return
-    for raw in env.read_text(encoding="utf-8").splitlines():
-        line = raw.strip()
-        if line.startswith("export "):
-            line = line[len("export "):]
-        if line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        k = k.strip()
-        if k.startswith("JIRA_") and k not in os.environ:
-            os.environ[k] = v.strip().strip('"').strip("'")
+    load_env(root, prefixes=("JIRA_",))
 
 
 def _jira_cfg(root, feature):
