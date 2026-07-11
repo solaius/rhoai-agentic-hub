@@ -136,12 +136,19 @@ untested rather than claimed as passing.
   ssh-to-https rewrite correctly, so this is not a doctor bug: the install
   itself simply cannot be automated. `docs/setup.md` step 3 already covers it.
 
-**Machine B final state:** `21 ok, 0 warn, 3 fail` post-setup. With the
-section 7 downgrade the tracker FAIL becomes a WARN, leaving the two plugin
-FAILs, which clear once `/plugin` is run on B.
+**Machine B final state: `22 ok, 1 warn, 0 fail` (verified).** The route
+there: `18 ok / 1 warn / 5 fail` cold, then `21 ok / 0 warn / 3 fail` after
+`doctor.sh setup`, then `0 fail` once `/plugin` installed the two marketplace
+plugins and the section 7 ruling turned the tracker FAIL into a WARN. That
+remaining WARN is correct and expected: B does not do customer-feedback work,
+so it has no tracker clone and needs none.
 
-**Machine A:** `27 ok, 0 warn, 0 fail`. The retired `ai-asset-registry`
+**Machine A: `27 ok, 0 warn, 0 fail`.** The retired `ai-asset-registry`
 clone is no longer load-bearing for daily work.
+
+**Both machines reach `0 fail`, which is what R5 owed.** Note what that
+number now means: it is reachable, so a FAIL is once again a real signal
+rather than background noise a human learns to skim past.
 
 ## R6 — Cursor end-to-end validation (deferred, D2 debt)
 
