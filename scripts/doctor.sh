@@ -23,11 +23,68 @@ else
   fail "missing python deps — run: pip install -r scripts/requirements.txt (or doctor setup)"
 fi
 
-echo "[2] marketplace wiring"
-if [ -f "$ROOT/.claude/settings.json" ] && grep -q "opendatahub-skills" "$ROOT/.claude/settings.json"; then
-  ok "settings.json declares ODH marketplace (confirm installs with /plugin inside Claude Code)"
+echo "[2] marketplace wiring + plugin installs"
+SETTINGS="$ROOT/.claude/settings.json"
+if [ -f "$SETTINGS" ] && grep -q "opendatahub-skills" "$SETTINGS"; then
+  ok "settings.json declares ODH marketplace"
 else
   fail ".claude/settings.json missing ODH marketplace block"
+fi
+# Enablement (settings.json enabledPlugins) is NOT installation (the plugin
+# cache): /plugin clones each plugin into the profile's plugins dir. Enabled
+# but not installed means /rfe.create, /assess-rfe etc. silently don't exist
+# as skills (hit on 2026-07-10). There is no non-interactive install
+# (`claude plugin` has enable/disable but no install), so setup cannot do it;
+# what setup CAN fix is the known install blocker: the plugin installer
+# clones github-source plugins over SSH (git@github.com:), which dies with
+# "Permission denied (publickey)" on machines without a GitHub SSH key
+# unless the https insteadOf rewrite is present (see
+# memory/.scratch or fact-hub-build-operational-gotchas for lineage).
+PLUGROOT="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins"
+INSTALLED_JSON="$PLUGROOT/installed_plugins.json"
+MISSING_PLUGINS=""
+if [ -f "$SETTINGS" ]; then
+  while IFS= read -r plug; do
+    plug="${plug%$'\r'}"   # Windows python prints \r\n; a kept \r breaks the grep
+    [ -z "$plug" ] && continue
+    if [ -f "$INSTALLED_JSON" ] && grep -qF "\"$plug\"" "$INSTALLED_JSON"; then
+      ok "plugin installed: $plug"
+    else
+      MISSING_PLUGINS="$MISSING_PLUGINS $plug"
+      fail "plugin enabled but NOT installed: $plug (its skills won't exist in Claude Code)"
+    fi
+  done < <(python - "$SETTINGS" <<'PY'
+import json, sys
+try:
+    d = json.load(open(sys.argv[1]))
+except Exception:
+    sys.exit(0)
+for name, enabled in (d.get("enabledPlugins") or {}).items():
+    if enabled:
+        print(name)
+PY
+)
+fi
+if [ -n "$MISSING_PLUGINS" ]; then
+  # Precondition for the interactive install: can this machine clone from
+  # github at all the way the installer will try to?
+  if git config --global --get "url.https://github.com/.insteadof" >/dev/null 2>&1; then
+    ok "github ssh->https rewrite present (plugin clones will work)"
+  elif GIT_SSH_COMMAND="ssh -o BatchMode=yes -o ConnectTimeout=5" \
+       git ls-remote git@github.com:opendatahub-io/skills-registry.git HEAD >/dev/null 2>&1; then
+    ok "github ssh access works (plugin clones will work)"
+  elif [ "$MODE" = "setup" ]; then
+    if git config --global url."https://github.com/".insteadOf "git@github.com:"; then
+      ok "applied github ssh->https rewrite (installer clones over ssh; no key on this machine)"
+    else
+      fail "could not set the git insteadOf rewrite"
+    fi
+  else
+    fail "plugin install would fail: no github ssh key and no https rewrite - run: bash scripts/doctor.sh setup"
+    note "(setup applies: git config --global url.\"https://github.com/\".insteadOf \"git@github.com:\")"
+  fi
+  note "then install inside Claude Code: /plugin -> marketplace opendatahub-skills ->$MISSING_PLUGINS"
+  note "accept the workspace trust prompt if asked; finish with /reload-plugins (or restart)"
 fi
 
 echo "[3] auto-memory scratch redirect"

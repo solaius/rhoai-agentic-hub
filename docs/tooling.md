@@ -91,7 +91,7 @@ remediation command. Sections:
 | # | checks | setup mode fixes |
 |---|---|---|
 | 1 | python + pyyaml + pytest + httpx importable | `pip install -r scripts/requirements.txt` |
-| 2 | `.claude/settings.json` declares the ODH skills marketplace | — (tracked file; confirm installs with `/plugin`) |
+| 2 | `.claude/settings.json` declares the ODH skills marketplace AND every `enabledPlugins` entry is actually installed in the profile's plugin cache (enabled-but-not-installed means `/rfe.create`, `/assess-rfe` etc. silently don't exist); when installs are missing, verifies the installer's clone path works (github ssh key or https rewrite) | applies the `git config --global url."https://github.com/".insteadOf "git@github.com:"` rewrite when ssh to github is dead (the installer clones over ssh); the install itself stays interactive: `/plugin` inside Claude Code, then `/reload-plugins` |
 | 3 | auto-memory scratch redirect (`autoMemoryDirectory` → `memory/.scratch/`) | writes `.claude/settings.local.json`, creates `memory/.scratch/` |
 | 4 | `restricted/.env` exists with required keys (`JIRA_*`) + live Jira reachability (`hub_jira.py --check`, WARN when offline); sources it so later sections see the `CTRACK_*` overrides and MCP secrets | — (secrets are copied between machines by hand, never generated) |
 | 5 | pages repo cloned alongside (optional convenience) | — |

@@ -1,6 +1,6 @@
 ---
 name: hub.doctor
-description: Set up or health-check this machine for the hub — python deps, ODH marketplace wiring, auto-memory scratch redirect (autoMemoryDirectory), restricted/.env credentials, structure lint, and the MCP servers (rhai-tracker, slack + google-workspace, the slack podman runtime). Use on a new machine, after cloning, or when anything seems broken ("check my environment", "is my setup right", "run the doctor"), and for anything blocking an MCP server — "slack tools aren't loading", "is the slack mcp installed correctly", "invalid_auth", "install podman for slack", "google workspace mcp isn't connected". check = read-only, setup = writes.
+description: Set up or health-check this machine for the hub — python deps, ODH marketplace wiring + plugin installs (rfe-creator, assess-rfe actually installed, not just enabled), auto-memory scratch redirect (autoMemoryDirectory), restricted/.env credentials, structure lint, and the MCP servers (rhai-tracker, slack + google-workspace, the slack podman runtime). Use on a new machine, after cloning, or when anything seems broken ("check my environment", "is my setup right", "run the doctor"), when a marketplace skill like /rfe.create reports Unknown skill, and for anything blocking an MCP server — "slack tools aren't loading", "invalid_auth", "install podman for slack", "google workspace mcp isn't connected". check = read-only, setup = writes.
 ---
 
 # hub.doctor
@@ -20,9 +20,14 @@ description: Set up or health-check this machine for the hub — python deps, OD
    started the podman machine, tell the user to **RESTART Claude Code** —
    MCP servers and settings load at startup; nothing hot-loads.
 5. Checks the script cannot do from bash — handle conversationally:
-   - Marketplace plugins actually installed: have the user run /plugin and
-     confirm rfe-creator appears; if not, the workspace trust prompt was
-     probably declined — reopen the repo and accept it.
+   - Section 2 now detects enabled-but-not-installed plugins and, in setup,
+     fixes the github ssh clone blocker (insteadOf rewrite). The INSTALL
+     itself is interactive only: walk the user through /plugin ->
+     opendatahub-skills -> install each missing plugin -> /reload-plugins.
+     If /plugin shows nothing from the marketplace, the workspace trust
+     prompt was probably declined; reopen the repo and accept it. A
+     "Permission denied (publickey)" during install means section 2's
+     rewrite was not applied — re-run setup.
    - Section 8 "not configured" on a machine that used to work usually
      means the wrong Claude profile ($CLAUDE_CONFIG_DIR) — the section
      prints which config file it inspected; confirm the profile before
