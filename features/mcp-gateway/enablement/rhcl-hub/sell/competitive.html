@@ -126,6 +126,144 @@
       </section>
 
       <section class="card">
+        <h2>Catalog & Registry Landscape</h2>
+        <p>
+          A separate competitive layer sits above gateway-level competition: catalogs and registries that
+          discover, list, and vet MCP servers for consumption. Red Hat's <a href="../govern/catalog.html">MCP Catalog</a>
+          and <a href="../govern/registry.html">MCP Registry</a> compete here, distinct from the gateway comparison above.
+        </p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Catalog / Registry</th>
+              <th>Model</th>
+              <th>Submission</th>
+              <th>Verification</th>
+              <th>Install</th>
+              <th>Programmatic Access</th>
+              <th>Scale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Smithery</strong></td>
+              <td>Open, marketplace/catalog</td>
+              <td>Open publisher submissions</td>
+              <td>Community + site governance</td>
+              <td>Yes (installer CLI)</td>
+              <td>Yes (CLI/SDK)</td>
+              <td>Self-described largest marketplace; thousands of capabilities</td>
+            </tr>
+            <tr>
+              <td><strong>Docker MCP Catalog</strong></td>
+              <td>Mixed, curated (Docker Hub-integrated)</td>
+              <td>Curated/verified entries</td>
+              <td>Verified, versioned Docker images</td>
+              <td>Docker Desktop / MCP Toolkit</td>
+              <td>Yes (Docker tooling)</td>
+              <td>100+ verified tools at launch (Apr 2025)</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub MCP Registry</strong></td>
+              <td>Open, registry on GitHub</td>
+              <td>Community + vendor</td>
+              <td>GitHub identity &amp; curation</td>
+              <td>In-UI install flows (GitHub)</td>
+              <td>GitHub APIs</td>
+              <td>Announced as the official registry (Sep 2025)</td>
+            </tr>
+            <tr>
+              <td><strong>modelcontextprotocol.io registry</strong></td>
+              <td>Open, protocol-official registry</td>
+              <td>Open PR/publish workflow</td>
+              <td>OSS governance</td>
+              <td>Depends on clients</td>
+              <td>Live API docs</td>
+              <td>Positions itself as an app store for MCP servers</td>
+            </tr>
+            <tr>
+              <td><strong>Postman getmcp</strong></td>
+              <td>Open, hosted on Postman (curated catalog workspaces)</td>
+              <td>Curated by Postman + partners</td>
+              <td>Postman publisher verification</td>
+              <td>N/A (collections for testing)</td>
+              <td>Postman APIs/collections</td>
+              <td>Popular public workspace(s)</td>
+            </tr>
+            <tr>
+              <td><strong>MCPServers.org</strong></td>
+              <td>Open, community directory</td>
+              <td>Open submissions</td>
+              <td>Community moderation</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Broad community list</td>
+            </tr>
+            <tr>
+              <td><strong>MCP.so</strong></td>
+              <td>Open, third-party marketplace/directory</td>
+              <td>Open submissions</td>
+              <td>Site moderation</td>
+              <td>Some one-click install links</td>
+              <td>N/A</td>
+              <td>Claims 16k+ servers collected</td>
+            </tr>
+            <tr>
+              <td><strong>Pulse MCP</strong></td>
+              <td>Open, media-run directory</td>
+              <td>Curated</td>
+              <td>Media-run curation</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Reports 6k+ servers, updated daily</td>
+            </tr>
+            <tr>
+              <td><strong>mcpcatalog.io</strong></td>
+              <td>Open, public listing site</td>
+              <td>Unknown/open</td>
+              <td>Site governance</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Category-browsable site</td>
+            </tr>
+            <tr>
+              <td><strong>ToolHive Registry</strong></td>
+              <td>Open, registry + secure runtime (Stacklok)</td>
+              <td>Curated + open</td>
+              <td>Security-focused (sandboxed containers)</td>
+              <td>Yes (thv run CLI)</td>
+              <td>Yes (CLI + API server)</td>
+              <td>Focus on secure execution</td>
+            </tr>
+            <tr>
+              <td><strong>Microsoft Copilot Studio connectors</strong></td>
+              <td>Closed, vendor in-product catalog</td>
+              <td>Vendor controlled</td>
+              <td>Microsoft certification</td>
+              <td>In-product add (Copilot Studio)</td>
+              <td>N/A</td>
+              <td>Catalog of certified connectors</td>
+            </tr>
+            <tr>
+              <td><strong>Databricks Unity Catalog</strong> &dagger;</td>
+              <td>Closed, enterprise-governed</td>
+              <td>Internal registration, not a public MCP marketplace</td>
+              <td>Enterprise governance/ACLs</td>
+              <td>Databricks-native registration</td>
+              <td>Platform API</td>
+              <td>Enterprise data + AI governance context, not MCP-specific</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          &dagger; Databricks Unity Catalog is not covered in the MCP Catalog source document's Competitor
+          Comparison section. It is referenced from RHAIRFE-1456 business-justification context as a
+          general-purpose data and AI governance catalog, not an MCP-specific registry, so treat the row
+          above as approximate.
+        </p>
+      </section>
+
+      <section class="card">
         <h2>Key Insight</h2>
         <div class="callout callout--insight">
           <p>
@@ -150,13 +288,15 @@
         </ul>
       </section>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
             <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md">AI Gateway (Inference Gateway)</a></li>
             <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md">MCP Gateway</a></li>
+            <li><a href="https://docs.google.com/document/d/1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE">MCP Catalog</a> (Competitor Comparison section)</li>
+            <li><a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a> (business-justification competitor references)</li>
             <li>Source verification: internal</li>
           </ul>
         </div>

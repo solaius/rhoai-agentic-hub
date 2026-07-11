@@ -47,10 +47,10 @@
             </tr>
             <tr>
               <td><strong>SDK Migration</strong> — Should MCP Gateway, MCPLO, and OCP MCP Server migrate from mark3labs Go SDK to the official MCP SDK?</td>
-              <td>cmurray (Slack)</td>
+              <td>Gateway engineering</td>
               <td><span class="badge badge--medium">Medium</span></td>
-              <td>Under discussion</td>
-              <td>Aligning all three components on the same SDK simplifies maintenance and ensures spec compliance. Open question: timeline, migration effort, and breaking changes. Raised by cmurray in Slack.</td>
+              <td>Merged (week of 2026-07-07); performance regression under investigation</td>
+              <td>MCP Gateway's migration to the official MCP Go SDK merged to main the week of 2026-07-07. A post-migration performance run surfaced regressions under load (HTTP 500s, broker connection timeouts at high server counts); the team is triaging against upstream's passing perf workflow. MCPLO and OCP MCP Server migration timing is still open.</td>
             </tr>
             <tr>
               <td><strong>MCP Spec RC Support</strong> — Should the gateway support the new MCP spec Release Candidate and the current spec version simultaneously during the transition period?</td>
@@ -79,6 +79,34 @@
               <td><span class="badge badge--high">High</span></td>
               <td>Two workarounds proposed</td>
               <td><code>tool/list</code> fails without long-running credentials when OAuth is enabled. Two workarounds: (1) use service account tokens with extended TTL, or (2) implement a token refresh mechanism. Need to align on recommended approach.</td>
+            </tr>
+            <tr>
+              <td><strong>MCP Gateway Operator / RHOAI 3.5 Validation:</strong> Which MCP Gateway Operator version(s) are validated with RHOAI 3.5?</td>
+              <td>OCP Networking</td>
+              <td><span class="badge badge--high">High</span></td>
+              <td>Open</td>
+              <td>Blocks publication of the RHOAI 3.5 version-compatibility matrix for the MCP Gateway Operator (RHAISTRAT-1937, In Progress, targets RHOAI 3.5 GA).</td>
+            </tr>
+            <tr>
+              <td><strong>Layered-Product MCP Entitlement:</strong> When a layered product bundles its own MCP server (for example, an automation-platform-style layered product), what entitlement covers gateway protection for that server: an RHOAI purchase, an RHCL purchase, or something else?</td>
+              <td>Gateway PM</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Open</td>
+              <td>Posed as an open "Deployment Scenario" question in the MCP Gateway Delivery doc, without an answer. Affects entitlement/SKU design for any layered product that ships a bundled MCP server.</td>
+            </tr>
+            <tr>
+              <td><strong>Entitlement Parity with MaaS:</strong> Will MCP Gateway share all MaaS entitlements following RHCL's move to the AI BU?</td>
+              <td>PM</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Direction expected, not fully confirmed</td>
+              <td>Current Support Agreement documentation excludes MCP and Agents from the unlimited-token / token-metrics MaaS entitlements (RHCL rate limiting and Authorino remain included). Direction is expected to change following RHCL's move to the AI BU, but is not yet confirmed.</td>
+            </tr>
+            <tr>
+              <td><strong>Kagenti Removal, OpenShell Coverage:</strong> Kagenti is being removed from the roadmap; which OpenShell capabilities replace the Kagenti-provided paths the gateway docs reference, and on what timeline?</td>
+              <td>Agentic platform PM</td>
+              <td><span class="badge badge--high">High</span></td>
+              <td>Open</td>
+              <td>Direction as of 2026-07-10: Kagenti is being removed from the roadmap, with OpenShell expected to expand to cover its capabilities. Multiple hub pages reference Kagenti-provided paths (AuthBridge caching, Helm install source, OBO configuration guidance) that need a confirmed OpenShell replacement and migration timeline.</td>
             </tr>
           </tbody>
         </table>
@@ -110,7 +138,7 @@
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

@@ -15,11 +15,16 @@
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
       <h1>Features & Capabilities</h1>
-      <p class="lead">MCP Gateway provides enterprise-grade governance, security, and operational features for Model Context Protocol servers. Features are delivered across three milestones: Shipped, Technical Preview, and Planned for GA.</p>
+      <p class="lead">MCP Gateway provides enterprise-grade governance, security, and operational features for Model Context Protocol servers. Features are delivered across four milestones: Shipped, Technical Preview, Planned for GA, and vNext.</p>
 
       <h2>Shipped Features</h2>
 
       <p>The following features are available in MCP Gateway v0.7.1 (June 2026) and RHCL 1.3.3+:</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Since v0.7.1: API and CRD Updates</div>
+        <p>Gateway APIs were promoted to v1 (GA) on 2026-07-10. The <code>MCPGatewayExtension</code> CRD gained <code>spec.logLevel</code> and <code>spec.caCertBundleRef</code> fields on 2026-07-03 (see <a href="crds.html">CRDs & Configuration</a>). Auth type was renamed from <code>simple</code> to <code>apikey</code> on 2026-07-01, a breaking change for any existing config using <code>authType: simple</code>.</p>
+      </div>
 
       <div class="feature-grid">
         <div class="feature-card">
@@ -172,9 +177,9 @@
         </div>
       </div>
 
-      <h2>Planned for GA (Q4 2026)</h2>
+      <h2>Planned for GA (RHCL 1.5, Oct 2026)</h2>
 
-      <p>The following features are planned for General Availability in Q4 2026:</p>
+      <p>The following features are planned for General Availability in RHCL 1.5 (October 2026), the named GA vehicle for MCP Gateway:</p>
 
       <div class="feature-grid">
         <div class="feature-card">
@@ -244,6 +249,34 @@
         </div>
       </div>
 
+      <h2>vNext (Future)</h2>
+
+      <p>Beyond RHCL 1.5 GA, the roadmap's next tier (vNext) adds:</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">MCP Gateway UI Plugin</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>A dedicated OpenShift console plugin for visualizing and managing MCP Gateway configuration, virtual servers, and tool policies.</p>
+            <p class="feature-card__why">Why it matters: Gives platform teams a visual view into gateway state without requiring direct CRD inspection via CLI.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Analytics/Policy Recommendation</div>
+            <span class="badge badge--planned">Dev Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Usage analytics and recommended policy adjustments based on observed tool traffic, auth patterns, and error rates.</p>
+            <p class="feature-card__why">Why it matters: Helps platform teams tune access and rate-limit policies from real usage data instead of guesswork.</p>
+          </div>
+        </div>
+      </div>
+
       <h2>Feature Timeline</h2>
 
       <table>
@@ -267,13 +300,18 @@
           </tr>
           <tr>
             <td><strong>General Availability</strong></td>
-            <td>Q4 2026</td>
+            <td>RHCL 1.5 (Oct 2026)</td>
             <td>Deployment Operator, Security Plugin, Session Management, High Availability, Registry Integration, Extended MCP Capabilities</td>
+          </tr>
+          <tr>
+            <td><strong>vNext</strong></td>
+            <td>Future (after RHCL 1.5)</td>
+            <td>MCP Gateway UI Plugin, Analytics/Policy Recommendation</td>
           </tr>
         </tbody>
       </table>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

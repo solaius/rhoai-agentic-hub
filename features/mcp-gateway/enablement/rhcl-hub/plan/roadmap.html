@@ -71,6 +71,7 @@
             <li>Zero memory leaks</li>
           </ul>
           <p>This performance overhaul makes the gateway production-ready for high-scale enterprise deployments.</p>
+          <p>This result predates the July 2026 migration to the official MCP Go SDK. A partner performance-testing team's post-migration run found HTTP 500s under load at high concurrency and broker connection timeouts at high server counts; re-validation of these performance figures against the new SDK is in progress (see the <a href="open-questions.html">SDK Migration open question</a>).</p>
         </div>
       </section>
 
@@ -112,12 +113,12 @@
             </tr>
             <tr>
               <td><strong>General Availability</strong></td>
-              <td>Q4 2026</td>
+              <td>RHCL 1.5 (Oct 2026)</td>
               <td>
                 <ul>
-                  <li>Deployment Operator (MCP Gateway Operator)</li>
+                  <li>Deployment Operator (MCP Gateway Operator): ships as an external, customer-installed dependency, not bundled, auto-installed, or lifecycle-managed by RHOAI (platform policy: architecture overlay 0008 / ODH-ADR-0007). RHOAI documents it as a prerequisite, publishes a version-compatibility matrix, and surfaces a DSC/DSCI status condition when it's absent (RHAISTRAT-1937, In Progress, targets RHOAI 3.5 GA).</li>
                   <li>Security Plug-In (DDoS, Bot Management)</li>
-                  <li>Session Management (Resumable Sessions)</li>
+                  <li>Session Management (Resumable Sessions): needs redefinition, since the MCP spec RC (finalizing Jul 28, 2026) eliminates protocol-level sessions. See the <a href="../../../narrative/mcp-spec-rc-impact/">impact analysis</a>.</li>
                   <li>High Availability (Health Checks / Failover)</li>
                   <li><strong>MCP Registry Integration</strong></li>
                   <li>Extending Existing Capabilities (Prompts, Resources, Sampling)</li>
@@ -155,10 +156,16 @@
               <td>Developer Portal (OCP Console) TP, Extensions SDK DP II, gRPC Policy DP, Egress Gateway DP, Multi-Arch GA, Disconnected Environments GA</td>
             </tr>
             <tr>
+              <td><strong>1.5</strong></td>
+              <td>Oct 2026</td>
+              <td>GA</td>
+              <td>MCP Gateway GA, Developer Portal GA, Any Managed Kubernetes Support GA, Disconnected Environments Support GA</td>
+            </tr>
+            <tr>
               <td><strong>vNext</strong></td>
               <td>Future</td>
-              <td>v1.0 (GA candidate)</td>
-              <td>Any Kubernetes Support GA, Analytics / Policy Recommendation DP, Metrics-Based DNS Routing DP</td>
+              <td>Post-GA</td>
+              <td>MCP Gateway UI Plugin (TP), Analytics / Policy Recommendation (DP), Automated Cluster Failover (GA), Automated Workload Failover (DP), Non-Authenticated Developer Portal (DP), Metrics-Based DNS Routing DP</td>
             </tr>
           </tbody>
         </table>
@@ -177,8 +184,8 @@
             <tr>
               <td><strong>RHCL</strong></td>
               <td>1.4 GA</td>
-              <td>vNext</td>
-              <td>MCP Gateway ships in RHCL</td>
+              <td>1.5 (Oct 2026)</td>
+              <td>MCP Gateway ships in RHCL, reaches GA in 1.5</td>
             </tr>
             <tr>
               <td><strong>RHOAI</strong></td>
@@ -199,13 +206,15 @@
       <section>
         <h2>Upstream MCP Spec</h2>
         <div class="callout callout--source">
-          <h3>MCP Spec Release Candidate Published</h3>
-          <p>The Model Context Protocol specification has published a Release Candidate. The MCP Gateway team is evaluating whether to support both the new spec version and the current version simultaneously during the transition period.</p>
-          <p><strong>Status:</strong> Under discussion. Decision expected before GA.</p>
+          <h3>MCP Spec Release Candidate: Finalizes July 28, 2026</h3>
+          <p>The Release Candidate has been live since May 21, 2026 and finalizes July 28, 2026. It carries several breaking changes: the streamable HTTP transport goes stateless (no <code>initialize</code> handshake, no <code>Mcp-Session-Id</code>), <code>server/discover</code> becomes mandatory, SSE resumability is removed, OAuth Dynamic Client Registration is deprecated in favor of Client ID Metadata Documents, and tool schemas move to full JSON Schema 2020-12.</p>
+          <p>MCP Gateway is the most impacted RHOAI component: the GA-roadmap "Session Management (Resumable Sessions)" feature needs complete redefinition, since protocol-level sessions no longer exist.</p>
+          <p><strong>Status:</strong> RC in its validation window; Gateway team assessing rework scope ahead of the July 28 finalization.</p>
+          <p>See the full <a href="../../../narrative/mcp-spec-rc-impact/">MCP Spec RC Impact Analysis</a> for component-by-component detail.</p>
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

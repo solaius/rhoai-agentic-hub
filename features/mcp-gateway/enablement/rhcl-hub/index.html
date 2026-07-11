@@ -67,13 +67,13 @@
         <h2>What's New</h2>
         <ul style="list-style: none; margin-left: 0;">
           <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-green);">
-            <strong style="color: var(--text-primary);">v0.7.1 released (June 18, 2026)</strong> — Major performance gains: p95 latency at 500 servers dropped from 390ms to 47ms. Includes TLS hairpin fix and per-server SNI fix.
+            <strong style="color: var(--text-primary);">v0.7.1 released (June 18, 2026)</strong> — Major performance gains: p95 latency at 500 servers dropped from 390ms to 47ms. Includes TLS hairpin fix and per-server SNI fix. This result predates the July 2026 migration to the official MCP Go SDK: a partner performance-testing team observed significant post-migration regressions (HTTP 500s under load, broker connection timeouts at high server counts), and re-validation is in progress.
           </li>
           <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-green);">
             <strong style="color: var(--text-primary);">RHCL 1.4 GA (June 2026)</strong> — MCP Gateway ships as Technology Preview with OCP 4.22 support.
           </li>
           <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-blue);">
-            <strong style="color: var(--text-primary);">MCP spec RC published</strong> — Gateway support for new spec version under discussion upstream.
+            <strong style="color: var(--text-primary);">MCP spec RC finalizes July 28, 2026:</strong> Release Candidate live since May 21, 2026, with several breaking changes: streamable HTTP goes stateless (no <code>initialize</code>, no <code>Mcp-Session-Id</code>), mandatory <code>server/discover</code>, SSE resumability removed, OAuth DCR deprecated for Client ID Metadata Documents, and JSON Schema 2020-12 in tool schemas. MCP Gateway is the most impacted component: see the <a href="../../narrative/mcp-spec-rc-impact/" style="color: var(--rh-blue-light);">full impact analysis</a>.
           </li>
           <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-teal);">
             <strong style="color: var(--text-primary);">Active customer POC traction</strong> — evaluations underway with a large enterprise OEM customer, a major telecommunications provider, and a strategic hardware partner's joint-solution POC.
@@ -105,7 +105,7 @@
       </section>
 
       <!-- Footer -->
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <p>Sources: <a href="https://github.com/Kuadrant/mcp-gateway" style="color: var(--rh-blue-light); text-decoration: none;">Kuadrant/mcp-gateway</a></p>
         <p>Quick Reference: <a href="./reference.html" style="color: var(--rh-blue-light); text-decoration: none;">All external links</a></p>

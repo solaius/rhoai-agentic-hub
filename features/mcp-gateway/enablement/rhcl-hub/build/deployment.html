@@ -43,7 +43,7 @@
           <tr>
             <td><strong>OpenShift Service Mesh</strong></td>
             <td>3.x</td>
-            <td>Provides Envoy-based ingress gateway and ext_proc support required by MCP Gateway Router.</td>
+            <td>Provides Envoy-based ingress gateway and ext_proc support required by MCP Gateway Router. Can be auto-provisioned via the <code>openshift-default</code> GatewayClass instead of a manual Service Mesh Operator install (see Step 2).</td>
           </tr>
           <tr>
             <td><strong>Red Hat Connectivity Link (RHCL)</strong></td>
@@ -57,6 +57,7 @@
         <div class="callout__title">Version Support Gap — August 2026</div>
         <p>RHOAI 3.5 (Aug 2026) supports OCP 4.19, but RHCL 1.4+ will likely require OCP 4.20+. This configuration (RHOAI 3.5 + RHCL + OCP 4.19) is <strong>untested and best-effort support only</strong>.</p>
         <p>OCP 4.19 maintenance support ends December 2026 (only 4 months overlap). Customers are advised to upgrade to OCP 4.20+ for full support.</p>
+        <p><strong>Mitigation:</strong> Customers who want to avoid this gap entirely can remain on RHCL 1.3.x, which supports OCP 4.19, instead of upgrading to RHCL 1.4+.</p>
       </div>
 
       <h2>Installation Steps</h2>
@@ -74,6 +75,11 @@ oc get crd referencegrants.gateway.networking.k8s.io</code></pre>
       <pre><code>kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml</code></pre>
 
       <h3>Step 2: Install OpenShift Service Mesh 3</h3>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Alternative: Native GatewayClass (No Manual Service Mesh Install)</div>
+        <p>The <code>openshift-default</code> GatewayClass (controller <code>openshift.io/gateway-controller/v1</code>) auto-provisions a lightweight OpenShift Service Mesh alongside the Gateway, without a manual Service Mesh Operator subscription. This is a viable alternative to the manual install below for simpler deployments; the manual path remains available for environments that need full Service Mesh control.</p>
+      </div>
 
       <p>Install the Service Mesh Operator from OperatorHub:</p>
 
@@ -181,7 +187,10 @@ helm repo update</code></pre>
 
       <pre><code>oc get pods -n mcp-system
 oc get mcpgatewayextension -n mcp-system
-oc get mcpserver -n mcp-system</code></pre>
+oc get mcpserverregistration -n mcp-system
+oc get mcpvirtualserver -n mcp-system</code></pre>
+
+      <p>Note: with the v1 API promotion (2026-07-10), the former <code>MCPServer</code> Kind is now <code>MCPServerRegistration</code> (shortname <code>mcpsr</code>), and curated virtual servers use the new <code>MCPVirtualServer</code> Kind (shortname <code>mcpvs</code>). See <a href="crds.html">CRDs & Configuration</a>.</p>
 
       <h3>Test the MCP Endpoint</h3>
 
@@ -231,8 +240,8 @@ oc get mcpserver -n mcp-system</code></pre>
       <p>For external access, configure DNS to point to the OpenShift router or gateway service. Options:</p>
 
       <ul>
-        <li><strong>OpenShift Cluster Ingress Operator</strong>: Automatically creates DNS records for Routes (not applicable for Gateway API)</li>
-        <li><strong>ExternalDNS</strong>: Automates DNS record creation for Gateway resources (recommended for Gateway API)</li>
+        <li><strong>OpenShift Cluster Ingress Operator</strong>: Automatically creates DNS records for Routes. It can also auto-register Gateway API DNS records when the Gateway is created in the same namespace as the IngressController and the hostname falls within the cluster's DNS zone.</li>
+        <li><strong>ExternalDNS</strong>: Automates DNS record creation for Gateway resources (recommended for Gateway API, especially outside the Cluster Ingress Operator's auto-registration conditions)</li>
         <li><strong>Manual DNS</strong>: Create A/CNAME records pointing to the ingress gateway LoadBalancer IP</li>
       </ul>
 
@@ -277,7 +286,7 @@ metadata:
   namespace: gateway-system
 spec:
   from:
-  - group: kuadrant.io
+  - group: mcp.kuadrant.io
     kind: MCPGatewayExtension
     namespace: mcp-system
   to:
@@ -309,13 +318,14 @@ spec:
 
       <p>For now, backend TLS is achievable via Service Mesh mTLS (requires all services to be in the mesh).</p>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
             <li><a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">Kuadrant/mcp-gateway (GitHub)</a></li>
             <li><a href="https://ghcr.io/kagenti/charts/mcp-gateway" class="page-footer__link">MCP Gateway Helm Chart</a></li>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway/blob/main/docs/release-notes/1109-api-v1-migration.md" class="page-footer__link">MCP Gateway API v1 Migration Notes</a></li>
             <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
           </ul>
         </div>

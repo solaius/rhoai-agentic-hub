@@ -170,19 +170,7 @@
         </thead>
         <tbody>
           <tr class="status-table--shipped">
-            <td><strong>v1.3 (Current)</strong></td>
-            <td>
-              <ul>
-                <li>Developer Portal (RHDH) DP</li>
-                <li><strong>MCP Gateway TP</strong> (v0.6.0 in v1.3.3, April 30, 2026)</li>
-                <li>DNS Auto Cluster Failover DP</li>
-                <li>CoreDNS GA</li>
-              </ul>
-            </td>
-            <td><span class="badge badge--tp">TP</span> MCP Gateway 0.6.0 shipped in RHCL 1.3.3</td>
-          </tr>
-          <tr class="status-table--tp">
-            <td><strong>v1.4 (Next)</strong></td>
+            <td><strong>v1.4 (Current)</strong></td>
             <td>
               <ul>
                 <li>Developer Portal (OCP Console) TP</li>
@@ -193,21 +181,34 @@
                 <li>Disconnected Environments GA</li>
               </ul>
             </td>
-            <td><span class="badge badge--tp">Expected</span> June 2026 (adds OCP 4.22 support)</td>
+            <td><span class="badge badge--tp">TP</span> MCP Gateway remains Technical Preview in RHCL 1.4 (GA'd June 11, 2026; adds OCP 4.22 support)</td>
+          </tr>
+          <tr class="status-table--tp">
+            <td><strong>v1.5 (Next)</strong></td>
+            <td>
+              <ul>
+                <li><strong>MCP Gateway GA</strong></li>
+                <li>Developer Portal GA</li>
+                <li>Any Managed Kubernetes Support GA</li>
+                <li>Disconnected Environments Support GA</li>
+              </ul>
+            </td>
+            <td><span class="badge badge--planned">Expected</span> Oct 2026: MCP Gateway reaches General Availability in RHCL 1.5</td>
           </tr>
           <tr class="status-table--planned">
             <td><strong>vNext (Future)</strong></td>
             <td>
               <ul>
-                <li>Any Kubernetes Support GA</li>
                 <li>Analytics / Policy Recommendation DP</li>
                 <li>Metrics-Based DNS Routing DP</li>
               </ul>
             </td>
-            <td><span class="badge badge--planned">Q4 2026</span> MCP Registry integration planned</td>
+            <td><span class="badge badge--planned">Future</span> Beyond GA (v1.5); further enhancements TBD</td>
           </tr>
         </tbody>
       </table>
+
+      <p><em>Under consideration:</em> RHCL 2.0 is being discussed internally for a release alongside OCP 5.0, potentially aligned to Extended Update Support (EUS). This is not yet a confirmed roadmap commitment.</p>
 
       <h2>OpenShift Version Support Matrix</h2>
 
@@ -254,6 +255,7 @@
         <div class="callout__title">Known Gap: August 2026</div>
         <p>RHOAI 3.5 (August 2026) will support OCP 4.19, but RHCL 1.4 will likely not. This means the configuration (RHOAI 3.5 + RHCL + OCP 4.19) is <strong>untested and best-effort support only</strong>.</p>
         <p>OCP 4.19 maintenance support ends December 2026 (only 4 months of overlap with RHOAI 3.5 TP). Customers are advised to upgrade to OCP 4.20+ for full support.</p>
+        <p><strong>Mitigation:</strong> customers can also remain on RHCL 1.3.x, which supports OCP 4.19, instead of upgrading to RHCL 1.4: this avoids the gap entirely. Upgrading to OCP 4.20+ remains the full-support path.</p>
       </div>
 
       <h2>MCP Gateway Feature Roadmap in RHCL</h2>
@@ -323,6 +325,7 @@
         </div>
         <div class="feature-card__description">
           <p>MCP Gateway available via catalog (layered installation). OCP 5.0 includes entitlement to MCP Gateway for platform-internal MCP servers. MCP Gateway Operator declares dependency on RHCL Operator. Zero-cost SKU covers this use case.</p>
+          <p><strong>Risk:</strong> OCP 5.0 ships with OLM 1.0, which drops operator dependency declarations entirely. This auto-install pattern (the MCP Gateway Operator declaring a dependency on the RHCL Operator) is flagged internally as likely at risk under OLM 1.0, pending a new strategy.</p>
         </div>
       </div>
 
@@ -331,7 +334,9 @@
           <div class="feature-card__title">RHOAI Deployment</div>
         </div>
         <div class="feature-card__description">
-          <p>Gets zero-cost RHCL SKU entitlement (includes MCP Gateway). MCP auth via Authorino and AuthPolicy. RHCL rate limiting or token rate limiting available. <strong>Note:</strong> entitlement scope for MCP and Agent workloads is defined internally.</p>
+          <p>Gets zero-cost RHCL SKU entitlement (includes MCP Gateway). MCP auth via Authorino and AuthPolicy. RHCL rate limiting or token rate limiting available.</p>
+          <p>The MCP Gateway Operator itself is a customer-installed external prerequisite: per RHOAI platform policy (architecture overlay 0008, ODH-ADR-0007), RHOAI documents this dependency and surfaces its absence via a status condition, rather than bundling, auto-installing, or lifecycle-managing the operator.</p>
+          <p><strong>Entitlement scope:</strong> RHCL has moved from the OpenShift business unit to the AI business unit. The expected direction (not yet fully confirmed) is that MCP Gateway shares the same entitlements as Models-as-a-Service (MaaS); rate limiting for AI workloads and Authorino remain covered under the existing agreement. This MaaS parity point is pending confirmation.</p>
         </div>
       </div>
 
@@ -346,7 +351,7 @@
 
       <p>For detailed SKU pricing and entitlement matrix, see <a href="../plan/skus.html">Plan It &gt; SKUs & Entitlement</a>.</p>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

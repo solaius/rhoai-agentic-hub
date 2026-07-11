@@ -71,6 +71,25 @@
         <strong>Relationship:</strong> MCP Gateway and AI Gateway are <strong>complementary, not competing</strong>. Both share Envoy, Gateway API, and RHCL infrastructure (Authorino, Limitador).
       </div>
 
+      <h2>Recently Shipped</h2>
+      <ul>
+        <li><strong>Vertex Anthropic translator:</strong> Routes Claude on Vertex AI, translating Anthropic SDK requests to Vertex's messages API and stripping Anthropic-API-only fields (context_management, betas, mcp_servers, service_tier, container) that Vertex does not support.</li>
+        <li><strong>Provider-error metering:</strong> Provider error responses are now metered as a CloudEvent (<code>inference.request.error</code>) carrying status, error type, and message.</li>
+        <li><strong>GCP OAuth2 auth generator:</strong> Generates and automatically refreshes OAuth2 tokens for Vertex AI authentication.</li>
+      </ul>
+
+      <h2>Data-Plane Capabilities (vLLM)</h2>
+      <p>For self-hosted vLLM inference, the AI Gateway design covers a data-plane capability set distinct from the traffic-routing and IPP layers above:</p>
+      <ul>
+        <li>GPU planning</li>
+        <li>vLLM deployment and service creation, plus monitoring</li>
+        <li>Prefix-caching awareness</li>
+        <li>SLO- and load-aware routing</li>
+        <li>KV-cache awareness</li>
+        <li>Model versioning and deployments</li>
+        <li>Retry and fallback</li>
+      </ul>
+
       <h2>Shared Infrastructure</h2>
       <p>Both MCP Gateway and AI Gateway rely on:</p>
       <ul>
@@ -117,9 +136,9 @@
       <p><strong>Actor-chain tracking:</strong> When agent A calls agent B, all actors' SPIFFE IDs stored in the token's claims. OPA enforces the <strong>lowest permission level</strong> across the chain — prevents privilege escalation.</p>
 
       <h3>3. Guardrails Convergence</h3>
-      <p>MCP Gateway already ships guardrails (NeMo/TrustyAI) via ext_proc adapter. The same guardrails are needed for chat completions, Responses API, and external model egress. <strong>Convergence target:</strong> Extract guardrails into shared IPP plugin for both inference and MCP.</p>
+      <p>MCP Gateway already ships guardrails (NeMo/TrustyAI) via ext_proc adapter. Content Guardrails are owned by the TrustyAI operator team, not MCP Gateway, and are staged as RHOAI 3.4 Dev Preview (Summit) followed by RHOAI 3.5 Tech Preview. The same guardrails are needed for chat completions, Responses API, and external model egress. <strong>Convergence target:</strong> Extract guardrails into shared IPP plugin for both inference and MCP.</p>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

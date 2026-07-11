@@ -34,7 +34,7 @@
         <div class="feature-card">
           <h3><span class="badge badge--gap">Gap</span> Registry → Gateway Auto-Configuration</h3>
           <p><strong>What's Missing:</strong> Automated flow from MCP Registry approval to Gateway configuration. Today, registry and gateway are separate manual processes.</p>
-          <p><strong>Current State:</strong> Manual configuration via CRDs and ConfigMaps. When an MCP server is approved in the registry, a cluster admin must separately create an <code>MCPServer</code> resource and configure routing.</p>
+          <p><strong>Current State:</strong> Manual configuration via CRDs and ConfigMaps. When an MCP server is approved in the registry, a cluster admin must separately create an <code>MCPServerRegistration</code> resource and configure routing.</p>
           <p><strong>Roadmap:</strong> Registry integration is a GA milestone (Q4 2026). Target: registry approval → gateway configuration flows automatically.</p>
           <p><strong>Impact:</strong> Operational friction. Increases time-to-production and creates opportunity for configuration drift.</p>
           <p><strong>Source:</strong> Partner POC criteria #1, knowledge-review</p>
@@ -86,7 +86,7 @@
           <p><strong>What Works:</strong> AuthBridge includes in-process token caching. Exchanged tokens are cached in memory (SHA-256 keyed by <code>(subjectToken, audience)</code>) with lazy TTL eviction and 30-second pre-expiry refresh.</p>
           <p><strong>What's Missing:</strong> No external cache backend (e.g., Redis) for sharing cached tokens across multiple gateway replicas.</p>
           <p><strong>Workaround:</strong> For single-replica deployments, in-process memory is sufficient. For multi-replica HA deployments, each replica performs independent token exchanges (higher load on Keycloak).</p>
-          <p><strong>Roadmap:</strong> The Kagenti team has confirmed willingness to add Redis support. The refactor is small: extract a <code>Cacher</code> interface and implement a Redis adapter.</p>
+          <p><strong>Roadmap:</strong> The Kagenti team has confirmed willingness to add Redis support. The refactor is small: extract a <code>Cacher</code> interface and implement a Redis adapter. (This commitment predates the 2026-07-10 direction change: Kagenti is being removed from the roadmap, with OpenShell expected to expand to cover its capabilities, so the Redis path needs re-confirmation.)</p>
           <p><strong>Source:</strong> OEM customer discussion Q6</p>
         </div>
 
@@ -96,6 +96,14 @@
           <p><strong>Context:</strong> OCP 4.19 maintenance support ends Dec 2026 — only 4 months after RHOAI 3.5 ships. Gateway API is GA in OCP 4.19+, but RHCL testing has focused on newer OCP versions.</p>
           <p><strong>Recommendation:</strong> Customers deploying RHOAI 3.5 with RHCL should plan to upgrade to OCP 4.20+ for full support.</p>
           <p><strong>Source:</strong> Support Agreement, knowledge-review</p>
+        </div>
+
+        <div class="feature-card">
+          <h3><span class="badge badge--tp">Partial</span> OLM 1.0 Dependency Declarations (OCP 5.0)</h3>
+          <p><strong>Issue:</strong> OCP 5.0 moves to OLM 1.0, which drops operator dependency declarations entirely. The MCP Gateway Operator auto-install pattern (RHCL Operator declaring a dependency on MCP Gateway Operator) relies on OLM dependency declarations and will not work as-is under OLM 1.0.</p>
+          <p><strong>Context:</strong> Flagged internally as a likely risk affecting many operators, not just MCP Gateway. No replacement mechanism has been defined yet.</p>
+          <p><strong>Recommendation:</strong> A new install/dependency strategy is needed for the OCP 5.0 timeframe before the current auto-install pattern can be relied on.</p>
+          <p><strong>Source:</strong> RHCL Overview Deck, Support Agreement comment thread</p>
         </div>
 
         <div class="feature-card">
@@ -115,7 +123,7 @@
         <p>See <a href="../sell/customer-stories.html">Partner POC Analysis</a> for detailed POC positioning recommendations.</p>
       </section>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

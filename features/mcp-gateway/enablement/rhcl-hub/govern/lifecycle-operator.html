@@ -24,6 +24,10 @@
         <strong>Current Version:</strong> v0.2.0 (released June 17, 2026)
       </div>
 
+      <div class="callout callout--insight">
+        <strong>Since v0.2.0:</strong> Upstream activity beyond the last tagged release includes NetworkPolicy reconciliation per MCPServer operand with ingress/egress controls (2026-07-03), a TLS security profile configurable via environment variables, added RBAC update/patch verbs, and a Go 1.26.5 security bump. No new tagged release yet; v0.2.0 remains current.
+      </div>
+
       <h2>Purpose</h2>
       <p>The Lifecycle Operator is the deployment layer — it deploys MCP services. The <a href="../govern/registry.html">Registry</a> represents the governed MCP and its deployment/runtime associations. The operator does <strong>NOT</strong> own governance or lifecycle state.</p>
 
@@ -123,6 +127,9 @@
         <strong>Independence from Gateway:</strong> Standalone from MCP Gateway — lifecycle operator installs first, gateway is downstream. No dependency on MCP Gateway for deployment.
       </div>
 
+      <h2>RHOAI Productization (Proposed)</h2>
+      <p><a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a> (status: Approved, not started in engineering) proposes productizing the Lifecycle Operator as an automatically-deployed RHOAI Tech Preview platform component via DataScienceCluster (DSC) during standard RHOAI installation, following the same pattern as FeastOperator and LlamaStackOperator. This is distinct from today's model above: a standalone operator, not in OperatorHub/OLM, requiring manual RHOAI restricted use entitlement-gated install.</p>
+
       <h2>Update Delivery</h2>
       <p>Lifecycle Operator updates are bundled within RHOAI operator releases:</p>
       <ul>
@@ -137,13 +144,14 @@
         <li><strong>RHOAI Team:</strong> Deployment and integration qualification (rollout via RHOAI operator, prerequisites)</li>
       </ul>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
             <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator">kubernetes-sigs/mcp-lifecycle-operator</a></li>
             <li><a href="https://docs.google.com/document/d/1qZ66JjL99KhV-OF67ArQjT-GNOGiHYCKdLZW9ptqtHQ">FAQ on RHOAI restricted use entitlement & MCP Lifecycle Operator</a></li>
+            <li><a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a> (MCP Lifecycle Operator in RHOAI)</li>
           </ul>
         </div>
         <div class="related-pages">

@@ -32,6 +32,10 @@
         <strong>Relationship:</strong> The Catalog builds on the <a href="../govern/registry.html">Registry</a> (authoritative source), complements the Gateway (runtime enforcement), and operates in a federated and interoperable ecosystem.
       </div>
 
+      <div class="callout callout--gap">
+        <strong>Planned scope (PM vision, not shipped):</strong> The Catalog's long-term vision extends beyond MCP servers to manage Tools, Resources, Prompts, and Workloads, including workload-to-tool mappings, as first-class catalog entities. Planned capabilities include Tool Masking, Input Simplification, and Output Filtering (splitting multi-purpose tools into single-purpose variants and trimming LLM-irrelevant response fields), plus federation with external registries: Docker MCP Catalog, GitHub MCP Registry, Smithery, Microsoft Copilot Catalog, and Databricks Unity Catalog. None of this is shipped; current scope is MCP server discovery, browsing, and selection (see below).
+      </div>
+
       <h2>What Shipped in 3.4 DP</h2>
       <p>The first instantiation of the MCP Catalog shipped in RHOAI 3.4 DP (code freeze April 10, 2026) with partner and community MCP servers for a Summit splash.</p>
 
@@ -122,7 +126,7 @@
           </tr>
           <tr>
             <td>Deployment</td>
-            <td>On-cluster deployment, local hosting only (no remote for DP)</td>
+            <td>On-cluster deployment, local hosting only for DP; remote-hosted MCP server support planned after the DP release</td>
           </tr>
           <tr>
             <td>Container Image</td>
@@ -140,11 +144,15 @@
             <td>Security Indicators</td>
             <td>verifiedSource, sast, secureEndpoint, readOnlyTools</td>
           </tr>
+          <tr>
+            <td>Access & Revocation Metadata</td>
+            <td>Each tool entry also carries an access-type (read/write) flag plus revoked (boolean) and revokedReason (string) fields</td>
+          </tr>
         </tbody>
       </table>
 
       <h2>Upstream Integration</h2>
-      <p>Catalog sources are merged upstream in <code>opendatahub-io/model-metadata-collection</code> (PR merged with Red Hat, Partner, and Community sources).</p>
+      <p>Catalog sources are merged upstream in <code>opendatahub-io/model-metadata-collection</code> (PR merged with Red Hat, Partner, and Community sources), the <strong>content</strong> upstream. <a href="https://github.com/kubeflow/hub">kubeflow/hub</a> is the confirmed <strong>code</strong> upstream (owner ruling, 2026-07-10).</p>
 
       <h2>Post-Summit Plans</h2>
       <ul>
@@ -156,7 +164,7 @@
         <li>Community server positioning and criteria</li>
       </ul>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
@@ -164,6 +172,7 @@
             <li><a href="https://docs.google.com/document/d/1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE">MCP Catalog</a></li>
             <li><a href="https://docs.google.com/document/d/1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740">Partners MCP servers in RHOAI Catalog</a></li>
             <li><a href="https://github.com/opendatahub-io/model-metadata-collection">opendatahub-io/model-metadata-collection</a></li>
+            <li><a href="https://github.com/kubeflow/hub">kubeflow/hub</a></li>
           </ul>
         </div>
         <div class="related-pages">

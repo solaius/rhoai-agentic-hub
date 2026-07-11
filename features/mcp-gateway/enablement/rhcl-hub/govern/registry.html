@@ -47,43 +47,45 @@
 
       <p class="note">Source: <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8">MLflow MCP Registry Data Model Proposal</a> — this is a proposal/brain dump, not an approved design.</p>
 
-      <h2>Governance Tracks</h2>
-      <p>Unlike a single linear lifecycle, the proposal separates governance into four independent tracks:</p>
+      <h2>Governance Model</h2>
+      <p>The current data model proposal has collapsed governance into two independent enums, not the four-track model described in earlier drafts:</p>
       <table class="status-table">
         <thead>
           <tr>
-            <th>Track</th>
+            <th>Enum</th>
+            <th>Scope</th>
             <th>States</th>
-            <th>Purpose</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Lifecycle State</strong></td>
-            <td>Draft → Candidate → Published → Deprecated → Retired</td>
-            <td>Progression state of the version</td>
+            <td><strong>MCPServerStatus</strong></td>
+            <td>Asset-level (MCPServer)</td>
+            <td>Active → Deprecated → Retired</td>
           </tr>
           <tr>
-            <td><strong>Approval Status</strong></td>
-            <td>Draft → Pending → Approved → Rejected → Revoked</td>
-            <td>Authorization/governance decision</td>
-          </tr>
-          <tr>
-            <td><strong>Verification Status</strong></td>
-            <td>Unverified → Verified</td>
-            <td>Identity/source verification</td>
-          </tr>
-          <tr>
-            <td><strong>Certification Status</strong></td>
-            <td>None → Candidate → Certified → Expired → Revoked</td>
-            <td>Certification program compliance</td>
+            <td><strong>MCPPublishState</strong></td>
+            <td>Version-level (MCPServerVersion)</td>
+            <td>Draft → Published → Deprecated → Retired</td>
           </tr>
         </tbody>
       </table>
 
+      <div class="callout callout--gap">
+        <strong>Not yet modeled:</strong> The current dataclass has no explicit Approval Status, Verification Status, or Certification Status fields. Certification tracking remains an open question, not a modeled track.
+      </div>
+
       <div class="callout callout--insight">
         <strong>Design Principle:</strong> Governance metadata is first-class and separate from tags. The <code>server_json</code> on MCPServerVersion stores the canonical MCP payload following the <a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON">upstream MCP registry schema</a>.
       </div>
+
+      <h2>Observed Tool Metadata</h2>
+      <p>Two new entities separate cached, non-authoritative tool metadata from the canonical registry payload:</p>
+      <ul>
+        <li><strong>MCPObservedTool</strong>: a tool as observed from a live MCP endpoint, tracked independently of the server's canonical <code>server_json</code>.</li>
+        <li><strong>MCPObservedToolSnapshot</strong>: a point-in-time snapshot of observed tool metadata, intended for display and search UX.</li>
+      </ul>
+      <p>Populated either manually or by syncing the MCP client's <code>list_tools()</code> output.</p>
 
       <h2>MLflow Integration</h2>
       <p>Red Hat is collaborating upstream with MLflow/Databricks on MCP registry design. The data model proposal is undergoing RFC approval process. This collaboration informs the future generalized AI asset registry architecture.</p>
@@ -102,16 +104,18 @@
       <h2>Open Questions (from Reviewers)</h2>
       <ul>
         <li><strong>Dan Kuc:</strong> MLflow lifecycle states (None/Staging/Production/Archived) may need expansion for MCP</li>
-        <li><strong>Chris Hambridge:</strong> Should Lifecycle Operator create read-only "managed" registry entries?</li>
-        <li><strong>Matt Prahl:</strong> Clarified concept as "discovered" MCP servers from MLflow's perspective</li>
         <li><strong>Jon Burdo:</strong> Certification allowlist question may connect to RHAIRFE-294</li>
       </ul>
+
+      <div class="callout callout--insight">
+        <strong>Resolved (managed registry entries):</strong> Chris Hambridge's question ("should Lifecycle Operator create read-only 'managed' registry entries?") is answered. An <code>update_mode</code> field (<code>MANUAL</code> vs <code>SYSTEM_MANAGED</code>) governs whether a registry entry's mutable fields are user-edited or kept in sync by another system. This is the concrete mechanism behind Matt Prahl's "discovered" MCP server concept: system-populated entries where only description and tags remain user-editable.
+      </div>
 
       <div class="callout callout--gap">
         <strong>Integration Gap:</strong> Not yet integrated with Gateway — automated registry→gateway flow is GA target (Q4 2026). Today's manual gateway registration will be replaced by registry-driven configuration.
       </div>
 
-      <footer class="page-footer" data-verified="2026-06-21">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
