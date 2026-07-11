@@ -18,7 +18,7 @@ including review. "When" is a best guess, not a schedule.
 |---|---|---|---|---|
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 6 | R5: cross-machine continuity runbook + fixes it surfaces | **High**. Steps 2 and 3 executed 2026-07-11 on machine B (round-trip passed both directions; #14 answered). Step 1 (cold path) deferred: B was warm. Step 4 (push race) NOT executed. See R5 outcome below | Small (run it) | Steps 2-3 done; 1 and 4 open |
-| 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | In progress |
+| 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Done (follow-ups: project MCP enable + doctor rhai mirror) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
@@ -185,23 +185,54 @@ harness independence.
 
 ### R6 outcome (2026-07-11)
 
-**Status:** Code/config shipped. Validation runbook not yet executed.
+**Status:** Validation runbook executed in Cursor. Core daily loop works;
+project MCP enable is the main friction. Full write-up:
+[/docs/cursor.md](/docs/cursor.md).
 
-**Shipped:**
+**Shipped earlier (code/config):**
 - `.cursor/mcp.json` config (doctor-managed, section 8)
-- `docs/cursor.md` with setup, known differences, and gap table
+- `docs/cursor.md` (now filled with validation findings)
 - Linter guards for git-crypt (Task 1, benefits both enhancements)
 - Doctor section 11 (git-crypt)
 
-**Validation runbook (execute in Cursor, record everything):**
-1. [ ] Open repo in Cursor, confirm AGENTS.md loads, verify session-start rule
-2. [ ] Test skill discovery -- `/hub.capture` or equivalent
-3. [ ] MCP servers -- test one tool from each
-4. [ ] Full gated capture -> reindex -> commit -> push
-5. [ ] Multi-step skill: `hub.file`
-6. [ ] Record gaps in `docs/cursor.md`
+**Validation runbook results:**
+1. [x] AGENTS.md + session-start — **PASS** (agent read `memory/index.md` first)
+2. [x] Skill discovery — **PASS**. Cursor loads `.claude/skills/` natively
+   (compat with Claude/Codex skill dirs). No `.cursor/skills` symlink needed.
+   All 20 hub skills appeared in the agent skill list. Marketplace
+   `/plugin` wrappers remain Claude-only; CLIs still work.
+3. [~] MCP servers — **PARTIAL**. Doctor writes project `.cursor/mcp.json`
+   (`google-workspace`, `slack`). Cursor discovers them as
+   `project-0-rhoai-agentic-hub-*` but they stay **disconnected** until
+   enabled in Settings → MCP (project servers are not auto-approved as of
+   Cursor April 2026; user-level `~/.cursor/mcp.json` is). Google tool call
+   succeeded via the pre-existing **user-level** `google_workspace` server.
+   Slack: config + podman + image OK, tools unavailable until project
+   enable. `rhai-tracker`: on disk for Claude, **missing from**
+   `.cursor/mcp.json` (doctor section 7 mirror gap).
+4. [x] Memory tier — **PASS**. `memory/.scratch/` empty (0 files); capture
+   does not depend on scratch.
+5. [x] Full gated capture → reindex → commit → push — **PASS** (this session)
+6. [x] Multi-step `hub.file` — **PASS** (`ref-cursor-mcp-docs` under platform)
+7. [x] Gaps recorded in `docs/cursor.md`
 
-<!-- Fill in after running the validation -->
+**Predictions vs reality:**
+- Skills need `.cursor/skills` symlink — **DISPROVED**. Native `.claude/`
+  discovery works.
+- Scratch degrades gracefully — **CONFIRMED**.
+- Doctor MCP config is enough — **PARTIAL**. File is written correctly, but
+  a human must still enable project servers once per machine/workspace.
+- Three MCP servers usable after setup — **NOT YET**. Blocked on enable +
+  rhai-tracker missing from Cursor project config.
+
+**Follow-ups (not blocking daily hub.capture / reindex / commit):**
+- Owner: enable project `slack` (+ `google-workspace` if desired) in
+  Cursor Settings → MCP, then re-probe one Slack tool.
+- Doctor tweak: ensure section 7 always mirrors `rhai-tracker` into
+  `.cursor/mcp.json` when the Claude registration exists; document the
+  project-MCP enable step in `docs/setup.md` / `docs/mcp-servers.md`.
+- Optional: mirror Slack into `~/.cursor/mcp.json` for auto-approve
+  (workaround only — prefer project enable so doctor stays SoT).
 
 ---
 
