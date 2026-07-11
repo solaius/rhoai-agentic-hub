@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent Memory RFE Narrative - Red Hat OpenShift AI</title>
+  <meta name="description" content="The story of governed agent memory on OpenShift AI: the end goal, the fourteen RFEs, the proposed order in which they land, and the narrative at each stage." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === NAVIGATION === */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .hat {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      background: var(--rh-red); color: white;
+      font-family: var(--font-sans); font-weight: 800; font-size: 0.65rem;
+      border-radius: 4px;
+    }
+    .nav-title { font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.8rem; font-family: var(--font-text);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* === SECTIONS === */
+    section { padding: 5rem 1.5rem; scroll-margin-top: calc(var(--nav-height) + 16px); }
+    .section-inner { max-width: var(--content-max); margin: 0 auto; }
+    .section-label {
+      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--rh-red); margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 75ch; }
+    .accent     { color: var(--rh-red); }
+
+    /* === HERO === */
+    .hero {
+      min-height: 78vh;
+      display: flex; align-items: center; position: relative;
+      padding-top: calc(var(--nav-height) + 3rem);
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -50px; right: -100px;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .stats-strip { display: flex; gap: 2.5rem; margin-top: 2.25rem; flex-wrap: wrap; }
+    .stat-value { font-family: var(--font-sans); font-size: 2rem; font-weight: 800; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238, 0, 0, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+    }
+    .card h3 { font-family: var(--font-sans); font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin: 0.5rem 0 0.4rem; }
+    .card p  { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; }
+    .card .goal { margin-top: 0.6rem; font-size: 0.85rem; color: var(--text-muted); }
+    .card .goal strong { color: var(--rh-blue-light); font-weight: 600; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 2rem; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-top: 2rem; }
+
+    /* === BADGES === */
+    .key-badge {
+      display: inline-block;
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600;
+      color: var(--rh-blue-light);
+      background: rgba(0, 102, 204, 0.12);
+      border: 1px solid rgba(67, 148, 229, 0.35);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    a.key-badge:hover { color: #fff; border-color: var(--rh-blue-light); }
+    .landing-badge {
+      display: inline-block;
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      border-radius: 4px; padding: 0.25rem 0.65rem;
+      margin-left: 0.75rem; vertical-align: middle;
+    }
+    .landing-dp  { color: #6fd6d7; background: rgba(0,149,150,0.14); border: 1px solid rgba(0,149,150,0.45); }
+    .landing-tp  { color: var(--rh-blue-light); background: rgba(0,102,204,0.14); border: 1px solid rgba(67,148,229,0.45); }
+    .landing-ga  { color: #b3a3e8; background: rgba(103,83,172,0.16); border: 1px solid rgba(103,83,172,0.5); }
+    .landing-unfiled { color: var(--rh-orange); background: rgba(244,180,0,0.1); border: 1px dashed rgba(244,180,0,0.5); }
+
+    /* === INTERIM NARRATIVE CALLOUT === */
+    .interim {
+      margin-top: 2.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--rh-red);
+      border-radius: 0 12px 12px 0;
+      padding: 1.5rem 1.75rem;
+    }
+    .interim .interim-label {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--rh-red); margin-bottom: 0.6rem;
+    }
+    .interim p { font-size: 1.02rem; line-height: 1.6; color: var(--text-secondary); max-width: 85ch; }
+
+    /* === ORDER / LAYER DIAGRAM === */
+    .layers { margin-top: 2.5rem; display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+    .layer {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.1rem 1.4rem;
+      display: flex; align-items: baseline; gap: 1.25rem; flex-wrap: wrap;
+    }
+    .layer-step {
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+      color: var(--rh-red); letter-spacing: 0.14em; white-space: nowrap;
+    }
+    .layer-title { font-family: var(--font-sans); font-weight: 700; font-size: 0.98rem; color: var(--text-primary); }
+    .layer-detail { font-size: 0.85rem; color: var(--text-muted); flex-basis: 100%; }
+    .layer-detail .mono { font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary); }
+    .layer-arrow {
+      align-self: center; color: var(--border-muted);
+      font-size: 1.1rem; line-height: 1; padding: 0.35rem 0;
+    }
+
+    /* === PLANNING TABLE === */
+    table.waves { width: 100%; border-collapse: collapse; margin-top: 2rem; font-size: 0.88rem; }
+    table.waves th, table.waves td { text-align: left; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--border-subtle); }
+    table.waves th { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    table.waves td { color: var(--text-secondary); }
+    table.waves td:first-child { font-family: var(--font-sans); font-weight: 700; color: var(--text-primary); white-space: nowrap; }
+
+    /* === SCROLL ANIMATIONS === */
+    .animate-on-scroll { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .animate-on-scroll.visible { opacity: 1; transform: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    @media print {
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      nav { position: static; }
+      body, section { background: var(--bg-canvas); }
+      .animate-on-scroll { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .nav-links { gap: 1rem; }
+    }
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+      .grid-2, .grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Memory RFE Narrative</span>
+      </div>
+      <div class="nav-links">
+        <a href="#endgoal">End Goal</a>
+        <a href="#order">The Order</a>
+        <a href="#wave1">Wave 1</a>
+        <a href="#wave2">Wave 2</a>
+        <a href="#wave3">Wave 3</a>
+        <a href="#planning">Planning</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RED HAT OPENSHIFT AI &middot; RHAISTRAT-1345</div>
+      <h1 class="display-xl animate-on-scroll"><span class="accent">Agent memory</span> as a service:<br>the story of what we're building</h1>
+      <p class="lead animate-on-scroll">Fourteen RFEs, three proposed waves, one destination: agents on OpenShift AI that remember, in a way regulated enterprises can trust. This page tells the story: where it ends, what each piece is, the order the pieces land in, and the narrative you can tell at every stage along the way.</p>
+      <div class="stats-strip animate-on-scroll">
+        <div><div class="stat-value" style="color: var(--rh-red);">14</div><div class="stat-label">RFEs filed</div></div>
+        <div><div class="stat-value">3</div><div class="stat-label">Proposed waves</div></div>
+        <div><div class="stat-value">4</div><div class="stat-label">Memory access patterns</div></div>
+        <div><div class="stat-value">1</div><div class="stat-label">Governed service</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== END GOAL ===== -->
+  <section id="endgoal">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ACT ZERO &middot; THE DESTINATION</div>
+      <h2 class="display-lg animate-on-scroll">Where this ends: memory as a platform promise</h2>
+      <p class="lead animate-on-scroll">Every piece below exists to reach one end state. Hold this picture while reading the waves.</p>
+
+      <p class="body animate-on-scroll">An AI engineer builds an agent in whatever framework their team uses. The agent remembers: it keeps working context during a task, recalls past episodes, accumulates facts, and refines learned procedures, all through one platform capability the engineer never had to build. When the team changes frameworks, the memory comes along. The agent gets better with use, because memory captures, consolidates, and curates itself, weighting what worked and what failed.</p>
+
+      <p class="body animate-on-scroll">And every one of those memories is governed. Each record carries a scope and an origin. Writes are screened before anything sensitive can enter. Sharing across teams is a deliberate, recorded act, never an accident; conflicting memories are flagged, not silently absorbed. Engineers see what an agent remembered, and why it recalled what it recalled, inside Gen AI Studio. Platform engineers and compliance reviewers govern the whole estate from AI Hub: every store, every agent binding, every quarantined write, every line of the audit trail.</p>
+
+      <p class="body animate-on-scroll">The result is bigger than any single agent: the organization accumulates shared, trusted, inspectable knowledge across its agents. It runs self-hosted and air-gapped, on storage the environment chooses, on models the customer hosts. Enterprise governance, Kubernetes-native deployment, and an open interface in one offering: the position no hyperscaler, database vendor, or memory startup occupies.</p>
+
+      <div class="grid-4">
+        <div class="card animate-on-scroll">
+          <h3>One governed service</h3>
+          <p>Its own service, coexisting with the inference stack but dependent on none of it. Four memory access patterns over one store, on configurable backends.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3>Portable across frameworks</h3>
+          <p>Switching models is cheap; switching memory is not. The service makes memory survive the switch, from any major framework or harness.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3>Trusted when shared</h3>
+          <p>Scoped, screened, attributed, conflict-aware, and auditable. Shared memory that a security reviewer can approve, not a poisoned well.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3>Visible and operable</h3>
+          <p>Engineers steer memory in Gen AI Studio. Admins govern the estate in AI Hub. Nothing important happens only behind an API.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE ORDER ===== -->
+  <section id="order">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE SEQUENCE</div>
+      <h2 class="display-lg animate-on-scroll">Why the pieces land in this order</h2>
+      <p class="lead animate-on-scroll">Releases are proposals; dependencies are the real sequence. The 3.6, 3.7, and 3.8 landings below are what we plan around, not commitments. If a release shifts, the order holds, because it is driven by what each piece needs underneath it.</p>
+
+      <div class="layers">
+        <div class="layer animate-on-scroll">
+          <span class="layer-step">STEP 1</span>
+          <span class="layer-title">The service exists</span>
+          <span class="layer-detail">Everything hangs off the memory service itself. <span class="mono">2630</span> is the trunk; the interim studio tool <span class="mono">2632</span> runs beside it so users feel memory immediately.</span>
+        </div>
+        <div class="layer-arrow animate-on-scroll" aria-hidden="true">&#x25BC;</div>
+        <div class="layer animate-on-scroll">
+          <span class="layer-step">STEP 2</span>
+          <span class="layer-title">Governable from the first record</span>
+          <span class="layer-detail">Isolation <span class="mono">2633</span>, write screening <span class="mono">2634</span>, and write logging <span class="mono">2635</span> ship with the very first preview, plus the MCP access path <span class="mono">2631</span>. Compliance is never retrofitted.</span>
+        </div>
+        <div class="layer-arrow animate-on-scroll" aria-hidden="true">&#x25BC;</div>
+        <div class="layer animate-on-scroll">
+          <span class="layer-step">STEP 3</span>
+          <span class="layer-title">Intelligence and trust at scale</span>
+          <span class="layer-detail">Memory that builds itself <span class="mono">2636</span>, sharing with tiers, conflict handling, and provenance <span class="mono">2637</span>, and inspectable context handling <span class="mono">2638</span>. Trust mechanisms arrive before scale does.</span>
+        </div>
+        <div class="layer-arrow animate-on-scroll" aria-hidden="true">&#x25BC;</div>
+        <div class="layer animate-on-scroll">
+          <span class="layer-step">STEP 4</span>
+          <span class="layer-title">The estate becomes visible</span>
+          <span class="layer-detail">Registry governance <span class="mono">2639</span>, engineer visibility in Gen AI Studio <span class="mono">2640</span>, the admin console in AI Hub <span class="mono">2641</span>, harness integrations <span class="mono">2642</span>, and self-hosted model effectiveness <span class="mono">2643</span>. Surfaces come after the contracts they surface.</span>
+        </div>
+        <div class="layer-arrow animate-on-scroll" aria-hidden="true">&#x25BC;</div>
+        <div class="layer animate-on-scroll">
+          <span class="layer-step">STEP 5</span>
+          <span class="layer-title">Production hardening</span>
+          <span class="layer-detail">Full audit trail with erasure, operator and observability with FIPS, adversarial defense, quality benchmarks. Deliberately last, and deliberately unfiled until the earlier waves teach us what GA really needs.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== WAVE 1 ===== -->
+  <section id="wave1">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ACT ONE &middot; SIX RFEs</div>
+      <h2 class="display-lg animate-on-scroll">Wave 1: memory that works, governable from day one<span class="landing-badge landing-dp">Proposed landing: 3.6 Dev Preview</span></h2>
+      <p class="lead animate-on-scroll">The foundation wave delivers a working memory service and refuses to ship it ungoverned. Dev Preview is deliberate: it preserves the freedom to swap components before Tech Preview support, documentation, and sales obligations attach.</p>
+
+      <div class="grid-2">
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2630">RHAIRFE-2630</a>
+          <h3>Framework-agnostic agent memory service</h3>
+          <p>The core substrate: one governed store exposing working, episodic, semantic, and procedural access patterns, on operator-configurable backends (vector database and file store minimum, extensible to graph), with hybrid retrieval and a framework-agnostic API. Self-hosted, air-gap capable.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> everything else in the program hangs off this service; portability and backend freedom start here.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2631">RHAIRFE-2631</a>
+          <h3>Memory as governed MCP tools</h3>
+          <p>Store, search, and recall become MCP tool calls: discoverable in the platform catalog, correctly scoped to user and project even over stateless connections, governed like every other MCP server.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> one integration serves every MCP-capable harness, and memory joins the governed tool estate instead of sitting beside it.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2632">RHAIRFE-2632</a>
+          <h3>Built-in memory in Gen AI Studio (interim)</h3>
+          <p>The platform's existing Responses-layer memory tool, surfaced in the Gen AI Studio playground: explicit "remember this" plus implicit capture, per-user isolation, view and delete. Deliberately allowed to run alongside the comprehensive service.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> users feel memory now, demos stop starting cold, and real usage feedback de-risks everything that follows.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2633">RHAIRFE-2633</a>
+          <h3>Record-level scope isolation</h3>
+          <p>Every memory record carries a scope; reads return only what the caller's scope permits; teams on a shared cluster cannot read each other's memories, demonstrably.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> trust starts at the first record. Isolation shipped with the first preview is the floor everything shared is later built on.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2634">RHAIRFE-2634</a>
+          <h3>Sensitive-data screening on the write path</h3>
+          <p>Memory writes are screened for PII, secrets, and sensitive patterns; policy decides whether a flagged write is blocked, quarantined, or logged; admins review and remove what gets caught.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> regulated adoption depends on nothing toxic entering memory in the first place. Screening at the write path is cheaper than remediation ever is.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2635">RHAIRFE-2635</a>
+          <h3>Agent-memory write auditability</h3>
+          <p>Every write is recorded: who, what, when, into which scope, in a log that administrators can review and authorized users can export for compliance.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> the seed of the full audit trail. Compliance reviews get their first real artifact two releases before GA.</p>
+        </div>
+      </div>
+
+      <div class="interim animate-on-scroll">
+        <div class="interim-label">The story after Wave 1 lands</div>
+        <p>An agent on OpenShift AI remembers across sessions, from at least three major frameworks, on storage you choose, including fully disconnected clusters. Every memory is scoped, screened, and attributed from the very first record. Anyone can feel it working in the Gen AI Studio playground today. And because this is Dev Preview on purpose, any component can still be swapped before bigger obligations attach.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== WAVE 2 ===== -->
+  <section id="wave2">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ACT TWO &middot; EIGHT RFEs</div>
+      <h2 class="display-lg animate-on-scroll">Wave 2: from working memory to trusted, visible memory<span class="landing-badge landing-tp">Proposed landing: 3.7 Tech Preview</span></h2>
+      <p class="lead animate-on-scroll">The second wave turns a capable service into something teams rely on: memory that builds itself, is shared deliberately, and is visible to every persona that has to trust it. This is the wave that sets up the Summit 2027 story.</p>
+
+      <div class="grid-2">
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2636">RHAIRFE-2636</a>
+          <h3>Automatic memory creation and curation</h3>
+          <p>Relevant information is captured automatically during interactions; memories consolidate over time; episodic records carry outcome signal so failures are not repeated; curation quality is measurable and the approach is pluggable.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> "the agent gets better with use" becomes real. Manual-only capture never survives contact with production.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2637">RHAIRFE-2637</a>
+          <h3>Shared memory: tiers, conflicts, provenance</h3>
+          <p>Memory scoped to user, project, role, and organization tiers; sharing across a boundary is a deliberate, recorded promotion; conflicting memories are flagged with both origins; every record traces back to what created it.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> the organizational-memory step. Sharing without conflict handling and provenance would be a poisoned well; this wave couples them.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2638">RHAIRFE-2638</a>
+          <h3>Inspectable context engineering</h3>
+          <p>Long-running sessions hold up past context limits; compaction produces a human-readable record of what was kept, summarized, and dropped; relevant memories are assembled into context automatically; token efficiency is measured at equal quality.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> the read side of inspectability. A reviewer can reconstruct what the agent knew when it acted, and the cost story gets a number.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2639">RHAIRFE-2639</a>
+          <h3>Memory as a governed registry asset</h3>
+          <p>Memory services register in the AI Asset Registry with ownership and lifecycle state; agent-to-memory bindings are recorded and queryable; asset-level governance actions apply to memory like any other asset type.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> one control plane for models, prompts, MCP servers, and now memory. Decommissioning a store stops being a blind operation.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2640">RHAIRFE-2640</a>
+          <h3>Memory visibility in Gen AI Studio</h3>
+          <p>AI engineers see the stores available to them, attach one to an agent or session without code, inspect what the agent remembered and what it recalled in a given exchange, and correct records, all inside the studio.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> trust at the engineer level. Memory nobody can see gets turned off; memory you can steer stays on.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2641">RHAIRFE-2641</a>
+          <h3>Memory governance console in AI Hub</h3>
+          <p>One admin surface: inventory of services and stores, agent bindings, quarantine review and disposition, write-log review and export, scope-policy administration. Fully functional in disconnected deployments.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> governance becomes operable. Security reviews run against a console, not a curl command.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2642">RHAIRFE-2642</a>
+          <h3>Harness and framework integration packs</h3>
+          <p>Ready-made, versioned, maintained integrations for the major agent frameworks and harnesses: platform memory works out of the box, participating in each harness's native context assembly rather than requiring glue code.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> the framework-agnostic promise at adoption time. Portability that requires custom plumbing is not portability.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <a class="key-badge" href="https://redhat.atlassian.net/browse/RHAIRFE-2643">RHAIRFE-2643</a>
+          <h3>Memory effectiveness on smaller self-hosted models</h3>
+          <p>Memory that works reliably with the smaller models sovereign and on-premise customers actually run, with shipped guidance and assets, a measurable effectiveness bar, and disconnected usability.</p>
+          <p class="goal"><strong>Drives the end goal:</strong> the differentiator. The customers who chose self-hosted AI are exactly the ones the hyperscaler memory offerings cannot serve.</p>
+        </div>
+      </div>
+
+      <div class="interim animate-on-scroll">
+        <div class="interim-label">The story after Wave 2 lands</div>
+        <p>Memory now builds and curates itself, is shared across teams deliberately and with provenance, and is visible everywhere it matters: engineers steer it inside Gen AI Studio, admins govern the whole estate from AI Hub, and it works out of the box from the harnesses teams already use, on the models they host themselves. Long-running agents stay coherent and reviewable. This is the Tech Preview that carries the Summit 2027 demo.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== WAVE 3 ===== -->
+  <section id="wave3">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ACT THREE &middot; DIRECTIONAL</div>
+      <h2 class="display-lg animate-on-scroll">Wave 3: production trust<span class="landing-badge landing-ga">Proposed landing: 3.8 GA</span><span class="landing-badge landing-unfiled">Not yet filed</span></h2>
+      <p class="lead animate-on-scroll">The hardening act. These four are deliberately unfiled: the earlier waves will teach us what GA really requires, and these RFEs get written with that evidence in hand rather than guessed at now.</p>
+
+      <div class="grid-4">
+        <div class="card animate-on-scroll">
+          <h3>Append-only audit trail + erasure</h3>
+          <p>Every read and write in an immutable, inspectable trail, with erasure primitives. The GA gate that regulated customers have already named as their production condition.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3>Operator, observability, FIPS</h3>
+          <p>OLM-managed lifecycle, metrics and dashboards for SRE and support, FIPS validation end to end. The difference between a prototype and a Red Hat product.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3>Adversarial memory defense</h3>
+          <p>Injection patterns detected on write, poisoned memories quarantined, shared tiers protected. Memory treated as the attack surface it is.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <h3>Memory quality benchmarking</h3>
+          <p>Recall quality measurable against standard benchmarks before production rollout. The numbers that prove the sophisticated architecture earns its complexity.</p>
+        </div>
+      </div>
+
+      <div class="interim animate-on-scroll">
+        <div class="interim-label">The story after Wave 3 lands</div>
+        <p>Governed agent memory is production-ready for regulated environments: fully audited, erasable on demand, defended against poisoning, quality-measured, and operable by any OpenShift team. The destination from the top of this page is no longer a narrative. It ships.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== PLANNING ===== -->
+  <section id="planning">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">HOW TO USE THIS</div>
+      <h2 class="display-lg animate-on-scroll">Planning around the RFEs</h2>
+      <p class="lead animate-on-scroll">These RFEs are filed to be planned around: the waves say what needs what, and the proposed landings say where we currently expect each piece to fit. As engineering capacity and release scope firm up, pieces may move; the dependency order is what holds.</p>
+
+      <table class="waves animate-on-scroll">
+        <thead>
+          <tr><th>Wave</th><th>Proposed landing</th><th>Theme</th><th>RFEs</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Wave 1</td><td>RHOAI 3.6 Dev Preview</td><td>A working service, governable from the first record</td><td>2630, 2631, 2632, 2633, 2634, 2635</td></tr>
+          <tr><td>Wave 2</td><td>RHOAI 3.7 Tech Preview</td><td>Self-building, shareable, visible memory; Summit setup</td><td>2636, 2637, 2638, 2639, 2640, 2641, 2642, 2643</td></tr>
+          <tr><td>Wave 3</td><td>RHOAI 3.8 GA (directional)</td><td>Production hardening: audit, operations, defense, proof</td><td>Unfiled by design</td></tr>
+        </tbody>
+      </table>
+
+      <div style="display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap;">
+        <a class="animate-on-scroll" href="https://redhat.atlassian.net/browse/RHAISTRAT-1345" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--rh-red); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem;">
+          The Outcome: RHAISTRAT-1345 &#x2192;
+        </a>
+        <a class="animate-on-scroll" href="https://redhat.atlassian.net/issues/?jql=parent%20%3D%20RHAISTRAT-1345" style="display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border-muted); color: var(--text-secondary); padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem;">
+          All 14 child RFEs in Jira &#x2192;
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Peter Double &middot; Principal Product Manager, MCP &amp; AI Asset Registries &middot; RFE data as of 2026-07-10</p>
+  </footer>
+
+  <!-- ===== SCROLL ANIMATION OBSERVER ===== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)'
+              : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>
