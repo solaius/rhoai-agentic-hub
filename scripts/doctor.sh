@@ -539,5 +539,39 @@ else
   fi
 fi
 
+echo "[11] git-crypt (restricted/ encryption)"
+KEYFILE="$HOME/.git-crypt-keys/rhoai-agentic-hub.key"
+if command -v git-crypt >/dev/null 2>&1; then
+  ok "git-crypt installed ($(git-crypt version 2>/dev/null || echo 'unknown version'))"
+  # Check locked/unlocked state: read the first .md under restricted/ --
+  # if it starts with a NUL byte, it is a git-crypt encrypted blob.
+  LOCKED=0
+  FIRST_MD="$(find "$ROOT/restricted" -name '*.md' -type f 2>/dev/null | head -1)"
+  if [ -n "$FIRST_MD" ]; then
+    if head -c 1 "$FIRST_MD" 2>/dev/null | od -An -tx1 | grep -q '00'; then
+      LOCKED=1
+    fi
+  fi
+  if [ "$LOCKED" = 0 ]; then
+    ok "restricted/ is unlocked (plaintext)"
+  elif [ "$MODE" = "setup" ]; then
+    if [ -f "$KEYFILE" ]; then
+      if (cd "$ROOT" && git-crypt unlock "$KEYFILE" 2>/dev/null); then
+        ok "restricted/ unlocked with $KEYFILE"
+      else
+        fail "git-crypt unlock failed with $KEYFILE — try manually: cd $ROOT && git-crypt unlock $KEYFILE"
+      fi
+    else
+      fail "restricted/ is locked — copy the key file to $KEYFILE, then re-run setup"
+      note "get the key from your other machine: scp machine-a:~/.git-crypt-keys/rhoai-agentic-hub.key $KEYFILE"
+    fi
+  else
+    fail "restricted/ is locked — run: bash scripts/doctor.sh setup (needs key at $KEYFILE)"
+  fi
+else
+  warn "git-crypt not installed — restricted/ files cannot be decrypted on this machine"
+  note "install: choco install git-crypt (or scoop install git-crypt)"
+fi
+
 echo "== result: $PASS ok, $WARN warn, $FAIL fail"
 [ "$FAIL" -eq 0 ]
