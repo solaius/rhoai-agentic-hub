@@ -592,7 +592,7 @@ else
 fi
 
 echo "[11] git-crypt (restricted/ encryption)"
-KEYFILE="$HOME/.git-crypt-keys/rhoai-agentic-hub.key"
+KEYFILE="${GIT_CRYPT_KEY:-$HOME/.git-crypt-keys/rhoai-agentic-hub.key}"
 if command -v git-crypt >/dev/null 2>&1; then
   ok "git-crypt installed ($(git-crypt version 2>/dev/null || echo 'unknown version'))"
   # Check locked/unlocked state: read the first .md under restricted/ --
