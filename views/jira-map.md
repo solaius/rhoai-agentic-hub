@@ -215,6 +215,53 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75981 · Story · New · —
 - RHOAIENG-75984 · Story · New · —
 
+## mcp-catalog
+_swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")`_
+_summaries withheld — the source Jira is not anonymously readable_
+
+- RHAISTRAT-1084 · Feature · Closed · rhoai-3.4
+- RHAISTRAT-1149 · Feature · Release Pending · 3.5 EA1 RHOAI RELEASE
+- RHAISTRAT-1306 · Feature · Release Pending · —
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
+- RHAISTRAT-1859 · Feature · In Progress · 3.5 GA RHOAI RELEASE
+- RHAISTRAT-1938 · Feature · Closed · 3.5 GA RHOAI RELEASE
+- RHAISTRAT-1994 · Feature · New · —
+- RHAISTRAT-2027 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE
+- RHAISTRAT-2028 · Feature · In Progress · 3.5 GA RHOAI RELEASE
+- RHAISTRAT-2131 · Feature · New · —
+- RHOAIENG-44926 · Epic · Closed · —
+- RHOAIENG-46608 · Story · Closed · —
+- RHOAIENG-46617 · Story · Closed · —
+- RHOAIENG-48980 · Story · Closed · —
+- RHOAIENG-52381 · Task · Closed · —
+- RHOAIENG-52447 · Bug · Closed · —
+- RHOAIENG-52448 · Bug · Closed · —
+- RHOAIENG-52539 · Bug · Closed · —
+- RHOAIENG-52670 · Epic · Closed · —
+- RHOAIENG-52676 · Task · Closed · —
+- RHOAIENG-53385 · Epic · Closed · —
+- RHOAIENG-53850 · Epic · Closed · —
+- RHOAIENG-53852 · Story · Closed · —
+- RHOAIENG-56633 · Story · Closed · —
+- RHOAIENG-57609 · Story · Closed · —
+- RHOAIENG-57611 · Story · Resolved · —
+- RHOAIENG-57798 · Bug · Resolved · —
+- RHOAIENG-58226 · Task · Resolved · —
+- RHOAIENG-61246 · Task · Resolved · —
+- RHOAIENG-70053 · Epic · New · —
+- RHOAIENG-70088 · Task · Closed · —
+- RHOAIENG-71269 · Epic · Testing · —
+- RHOAIENG-72086 · Story · In Progress · —
+- RHOAIENG-72094 · Story · In Progress · —
+- RHOAIENG-72098 · Story · In Progress · —
+- RHOAIENG-72108 · Story · New · —
+- RHOAIENG-73372 · Epic · In Progress · —
+- RHOAIENG-75473 · Task · New · —
+- RHOAIENG-75482 · Task · Closed · —
+- RHOAIENG-75483 · Task · New · —
+- RHOAIENG-75484 · Task · New · —
+- RHOAIENG-75485 · Task · Closed · —
+
 ## mcp-lifecycle-operator
 _swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")`_
 _summaries withheld — the source Jira is not anonymously readable_

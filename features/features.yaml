@@ -20,6 +20,9 @@ features:
 - id: mcp-catalog
   title: MCP Catalog
   description: The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
+  jira:
+    jql: '(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")'
+    ref_types: [Outcome, Feature]
 - id: agent-registry
   title: Agent Registry
   description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop).
