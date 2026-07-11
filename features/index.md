@@ -11,3 +11,4 @@
 - [Agent Memory](/features/agent-memory/index.md) — Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.
 - [Agent Ops](/features/agent-ops/index.md) — Agent operations — observability, SDLC oversight, AgentOps positioning and talk tracks.
 - [Gen AI Studio](/features/gen-ai-studio/index.md) — Prompt/agent iteration studio — playground UX, usability research, studio integration.
+- [Agent Interop](/features/agent-interop/index.md) — Agent interoperability — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A communication, agent cards, BYO agent onboarding, discovery, and declarative harness configuration.

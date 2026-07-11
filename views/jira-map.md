@@ -42,5 +42,6 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75459 · Task · New · —
 
 ## Referenced elsewhere
+- HATSTRAT-314 → [HATSTRAT-314](/features/agent-interop/knowledge/ref-hatstrat-314.md)
 - RHAISTRAT-1339 → [MCP Catalog STRAT Jiras (umbrella RHAISTRAT-1339)](/features/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md)
 - RHAISTRAT-1345 → [Outcome: Agent Memory Primitives (RHAISTRAT-1345)](/features/agent-memory/knowledge/ref-rhaistrat-1345-outcome.md)

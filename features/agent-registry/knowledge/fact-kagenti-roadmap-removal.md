@@ -2,7 +2,7 @@
 type: fact
 description: Kagenti is being removed from the roadmap; OpenShell will expand to cover its capabilities (owner ruling 2026-07-10)
 timestamp: 2026-07-10
-features: [agent-registry, mcp-gateway]
+features: [agent-registry, mcp-gateway, agent-interop]
 ---
 Owner ruling (2026-07-10, during the first RHCL hub refresh gate): Kagenti
 is being removed from the roadmap, and OpenShell will expand to take over

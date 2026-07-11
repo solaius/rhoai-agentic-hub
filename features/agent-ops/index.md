@@ -10,6 +10,10 @@ Agent operations — observability, SDLC oversight, AgentOps positioning and tal
 - [work/](/features/agent-ops/work/)
 
 ## Connections
+- fact · [Agent Interop overview](/features/agent-interop/knowledge/fact-agent-interop-overview.md) — What agent-interop covers — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A, agent cards, BYO agent onboarding, discovery, declarative harness config — and current status.
+- fact · [Slack: #agentops-leads](/features/agent-interop/knowledge/fact-slack-agentops-leads.md) — AgentOps engineering leadership coordination channel on Red Hat internal Slack (channel ID not yet confirmed).
+- person · [Adel Zaalouk](/features/agent-interop/knowledge/person-adel-zaalouk.md) — Product Manager, Agentic AI, AI BU -- driving OpenShell convergence, owns agent-interop strategy and field alignment.
+- person · [Dimitri Saridakis](/features/agent-interop/knowledge/person-dimitri-saridakis.md) — AgentOps Engineering Manager -- pragmatic, team was on Kagenti but pivoting to OpenShell.
 - fact · [Three patterns for agent sandboxing](/narrative/knowledge/fact-agent-sandboxing-three-patterns.md) — Adel's three sandboxing patterns: (1) whole-process micro-VM isolation, (2) per-session/sub-agent isolation, (3) developer SDK-level primitives. OpenShell is the upstream project.
 - jtbd · [Evaluate and observe agents](/narrative/knowledge/jtbd-evaluate-observe-agents.md) — When I run agents in production, I want to evaluate and observe agent behavior, so I can detect failures, track costs, and prove compliance — MLflow, Eval Hub, OpenTelemetry.
 - jtbd · [Govern agent tool and model access](/narrative/knowledge/jtbd-govern-agent-tool-access.md) — When I manage a fleet of agents, I want to govern which tools and models each agent can access, so I can enforce least-privilege and audit agent actions — MCP Gateway, AI Gateway, SPIFFE.

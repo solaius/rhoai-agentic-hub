@@ -8,3 +8,6 @@ Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, 
 - [strategy/](/features/platform/strategy/)
 - [enablement/](/features/platform/enablement/)
 - [work/](/features/platform/work/)
+
+## Connections
+- reference · [Agentic AI FAQ (includes OpenShell/Kagenti positioning)](/features/agent-interop/knowledge/ref-kagenti-openshell-faq.md) — Comprehensive FAQ covering full agentic strategy, OpenShell positioning, Kagenti wind-down, ogx, MCP gateway, partners, field guidance. Maintained by Adel Zaalouk, last updated Jul 7 2026.
