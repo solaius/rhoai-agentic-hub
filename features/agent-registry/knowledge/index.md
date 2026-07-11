@@ -5,6 +5,7 @@
 - [Agent Catalog & Starter Kits (3.5 target)](/features/agent-registry/knowledge/fact-agent-catalog-starter-kits.md) — RHOAI AI Hub's curated deployable-agent catalog with a one-click deploy wizard, mirroring the MCP server catalog pattern.
 - [Agent Registry (upstream proposal)](/features/agent-registry/knowledge/fact-agent-registry.md) — Post-deployment registry for live, running agents — identity, health, discovery, trust — as a draft MLflow RFC Peter Double is taking over.
 - [Agentic Base Images (RHAIRFE-2443)](/features/agent-registry/knowledge/fact-agentic-base-images.md) — Proposed shared, Konflux-validated UBI base images for coding-agent harnesses (Claude Code, OpenCode, etc.) — AIPCC scope decision pending.
+- [fact-kagenti-roadmap-removal](/features/agent-registry/knowledge/fact-kagenti-roadmap-removal.md) — Kagenti is being removed from the roadmap; OpenShell will expand to cover its capabilities (owner ruling 2026-07-10)
 - [Kagenti (agent lifecycle management)](/features/agent-registry/knowledge/fact-kagenti.md) — Discovery/versioning layer for agents across their lifecycle, supporting the move from single agents to multi-agent systems — TP in RHOAI 3.4.
 
 ## person

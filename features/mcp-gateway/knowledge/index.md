@@ -8,6 +8,7 @@
 - [MCP Gateway <-> RHCL deployment dependency](/features/mcp-gateway/knowledge/fact-mcp-gateway-rhcl-deployment-dependency.md) — The dependency direction between MCP Gateway and RHCL, how it's packaged release over release, and the OLM 1.0 question at OCP 5.0.
 - [MCP Gateway feature roadmap (DP -> TP -> GA)](/features/mcp-gateway/knowledge/fact-mcp-gateway-roadmap.md) — Phased MCP Gateway rollout — what ships at Developer Preview, Technical Preview, and GA, including MCP Registry Integration landing at GA.
 - [MCP Gateway (Kuadrant/mcp-gateway)](/features/mcp-gateway/knowledge/fact-mcp-gateway.md) — Envoy-based WASM plug-in providing runtime connectivity and tool governance for MCP traffic — not a standalone gateway, not a guardrails replacement.
+- [fact-rhcl-ai-bu-entitlement-direction](/features/mcp-gateway/knowledge/fact-rhcl-ai-bu-entitlement-direction.md) — RHCL moved from the OpenShift BU to the AI BU; expected direction (not fully confirmed) is MCP Gateway sharing all MaaS entitlements
 
 ## person
 - [Christopher Ferreira](/features/mcp-gateway/knowledge/person-christopher-ferreira.md) — PM, RHCL — signatory of the RHOAI-RHCL internal support agreement.
