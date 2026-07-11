@@ -216,7 +216,7 @@
             <li>Catalog depends on Lifecycle Operator for deployment primitive</li>
             <li>Gateway depends on RHCL for infrastructure</li>
             <li>Registry depends on Catalog + Gateway + MCPLO for integration points</li>
-            <li>Gen AI Studio depends on Registry (ConfigMap bridge in 3.4, registry-backed in 3.5)</li>
+            <li>Gen AI Studio depends on Registry (ConfigMap bridge in 3.4; registry-backed once Registry TP lands in 3.6 EA1)</li>
           </ul>
           <p><strong>GA readiness criteria:</strong> All four components reach GA, registry→gateway auto-config works, end-to-end flow (Catalog → Deploy → Govern → Enforce → Consume) validated in production.</p>
         </div>
