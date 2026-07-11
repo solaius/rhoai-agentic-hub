@@ -135,3 +135,17 @@ def test_refresh_config_gets_no_heuristic_warning(tmp_path):
           "site: features/x/enablement/site/\nnotes: internal-only sweep list\n")
     _, warnings = scan_repo(tmp_path)
     assert warnings == []
+
+
+def test_triage_log_is_in_the_scan_surface(tmp_path):
+    # The tracked triage log is a new public surface. If the disclosure net
+    # does not scan it, a future change to the log format could leak Jira
+    # prose into a PUBLIC repo without anything noticing.
+    from hublib import disclosure
+
+    p = tmp_path / "features" / "mcp-registry" / "work" / "triage-log.yaml"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text("feature: mcp-registry\n", encoding="utf-8", newline="\n")
+
+    scanned = [f.name for f, _ in disclosure._scan_files(tmp_path)]
+    assert "triage-log.yaml" in scanned
