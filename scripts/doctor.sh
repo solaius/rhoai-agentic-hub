@@ -210,11 +210,18 @@ case "$CTRACK_DIR" in /*|?:*) ABS_CTRACK="$CTRACK_DIR" ;; *) ABS_CTRACK="$ROOT/$
 SERVER_JS="$ABS_CTRACK/server/mcp-server.js"
 SERVER_DIR="$ABS_CTRACK/server"
 
-# 7a. clone / presence
+# 7a. clone / presence. WARN, not FAIL (owner ruling 2026-07-11, surfaced by
+# R5 on machine B): the tracker is optional, only the customer-feedback skills
+# need it, and restricted/.env is copied between machines wholesale so its
+# CTRACK_* keys cannot signal intent. Hard-failing here made "0 fail"
+# unreachable on any machine that does not do customer-feedback work, which
+# trains people to skim past FAILs. The skills themselves fail loudly when
+# invoked without the tracker, so nothing is silently hidden. Severity is
+# intent-aware here for the same reason section 8 is.
 if [ -f "$SERVER_JS" ]; then
   ok "rhai-customer-tracker present ($ABS_CTRACK)"
 else
-  fail "rhai-customer-tracker missing at $ABS_CTRACK (clone ${CTRACK_REPO_URL:-git@gitlab.cee.redhat.com:rh-ai-pm/rhai-customer-tracker.git}, or set CTRACK_DIR/CTRACK_REPO_URL in restricted/.env)"
+  warn "rhai-customer-tracker not cloned at $ABS_CTRACK (only the customer-feedback skills need it; clone ${CTRACK_REPO_URL:-git@gitlab.cee.redhat.com:rh-ai-pm/rhai-customer-tracker.git}, or set CTRACK_DIR/CTRACK_REPO_URL in restricted/.env)"
 fi
 
 # 7b. register in .mcp.json — creates the file if absent (gitignored; see

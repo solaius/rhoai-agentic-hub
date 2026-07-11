@@ -17,7 +17,7 @@ including review. "When" is a best guess, not a schedule.
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
-| 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — steps 2-4 executed 2026-07-11 on machine B; step 1 (cold path) deferred (B was warm); see R5 outcome below | Small (run it) | Steps 2-4 done |
+| 6 | R5: cross-machine continuity runbook + fixes it surfaces | **High**. Steps 2 and 3 executed 2026-07-11 on machine B (round-trip passed both directions; #14 answered). Step 1 (cold path) deferred: B was warm. Step 4 (push race) NOT executed. See R5 outcome below | Small (run it) | Steps 2-3 done; 1 and 4 open |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
@@ -80,58 +80,68 @@ tracker path); `CTRACK_DIR` differs per machine (restricted/.env override).
 **Non-goals (stated plainly so nobody reads R5 as proving more than it did):**
 - Step 1 (cold path) was NOT executed: B was warm (already cloned, deps
   installed, restricted/.env copied). Machine C will self-verify via
-  `doctor.sh check`.
-- No cross-OS signal: B is Windows + Git Bash, same as A.
+  `doctor.sh check`, which is why #19 shipped as doctor coverage rather than
+  as a checklist a human has to remember to run.
+- No cross-OS signal: B is Windows + Git Bash, same as A. The doctor's shell
+  assumptions remain unproven on Linux and macOS.
+- Step 4 (push race) was NOT executed as designed. See below.
 
-**Step 2 (round-trip):** hub.capture committed and pushed from B
-(`5a49308`). A-side verification pending (pull + `hub_index.py --check`).
-The round-trip mechanism works: gated capture, explicit-path commit,
-push from B, no index drift.
+**Step 2 (round-trip): PASSED, both directions.**
+- B to A: `hub.capture` gated, committed and pushed from B (`5a49308`);
+  pulled on A, `hub_index.py --check` reported 0 stale, lint 0 errors, 222
+  tests green.
+- A to B: this outcome note itself was the payload, pushed from A and
+  verified on B.
 
-**Step 3 (restricted-tier, #14 evidence):**
-1. B needs **only `restricted/.env`** day-to-day (14 keys: JIRA, Google
-   OAuth, Slack tokens, GitHub, customer tracker config). The
-   `restricted/features/` and `restricted/memory/` trees do not exist on
-   B and were never needed. 10 lint warnings reference broken links to
-   restricted paths that live only on A (NDA-adjacent content).
-2. **No drift problem.** `.env` was copied once and has been stable. The
-   structural gap (A has restricted feature trees, B doesn't) is not
-   operational for B's daily workflows.
-3. **Manual copying is tolerable** for `.env` alone (one file, one copy).
-   It would NOT be tolerable if customer-feedback workflows ran on B
-   (dozens of NDA files, tracking drift manually).
+**Step 3 (restricted-tier, the #14 evidence): the run's most useful result.**
+1. B needs **only `restricted/.env`** day to day (14 keys: Jira, Google
+   OAuth, Slack tokens, GitHub, tracker config). The `restricted/features/`
+   and `restricted/memory/` trees do not exist on B and were never needed.
+2. **No drift problem.** `.env` was copied once and stayed stable.
+3. **Manual copying is tolerable** at one file. It would NOT be tolerable if
+   customer-feedback workflows ran on B (dozens of NDA files, drift tracked
+   by hand).
 
-**Recommendation for #14:** `restricted/.env` manual copy is sufficient
-for 1-2 machines. A private mirror of the full `restricted/` tree is
-only needed if customer-feedback workflows run on machine B or a third
-machine joins.
+**Ruling on #14:** manual `.env` copy is sufficient for 1-2 machines.
+Parked at Low. Revisit only if customer-feedback workflows move to B or a
+third machine joins.
 
-**Step 4 (push race):** a genuine two-machine simultaneous race was not
-orchestrated. However, a natural push race occurred during this session
-(the `research(narrative)` commit at `77970b6` hit a push rejection,
-resolved with `git pull --rebase`, pushed cleanly). The documented
-rebase discipline works.
+**Step 4 (push race): NOT EXECUTED.** A genuine two-machine simultaneous
+race was never orchestrated. A natural single-machine push rejection was
+resolved with `git pull --rebase` during the session, which is weaker
+evidence and does NOT validate the documented race discipline. Recorded as
+untested rather than claimed as passing.
 
 **Predictions vs reality:**
-- Podman engine: already installed on B (OK, no admin shell needed)
-- Slack tokens: **prediction disproved** - tokens DID travel via
-  `restricted/.env` copy. `slack auth ok: pedouble @ Red Hat` on B.
-- `.mcp.json`: doctor rewrites the tracker path (verified, CTRACK_DIR
-  differs per machine as expected)
-- `~/.bashrc` wiring: B had JIRA creds hardcoded in bashrc (not from
-  restricted/.env). Fixed by `hub_env.py --setup` during the test.
+- Podman engine: already installed on B, no admin shell needed.
+- Slack tokens: **prediction DISPROVED.** xoxc/xoxd travelled inside the
+  copied `restricted/.env` and authenticate on B (`slack auth ok: pedouble
+  @ Red Hat`). They are still per-login session tokens that will expire, so
+  the section 9 probe keeps earning its place: it names the failure in one
+  line instead of leaving it to be discovered mid-task.
+- `.mcp.json` is per-machine: confirmed, doctor rewrites the tracker path.
+- `~/.bashrc` wiring: B had Jira credentials **hardcoded in plaintext** in
+  two duplicate blocks, not sourced from `.env` at all. Removed during the
+  run; the hub block now sources them exclusively from `restricted/.env`.
 
-**What broke:** plugin installs (no github ssh key for marketplace clone),
-customer tracker clone (not needed for daily hub work), pre-commit hook
-(not installed). All fixable by `doctor.sh setup` except the ssh key
-(needs manual github key setup or the https rewrite).
+**Doctor gaps R5 surfaced, and what became of them:**
+- Section 7 hard-FAILed on a missing customer-tracker clone, so `0 fail` was
+  unreachable on any machine that does not do customer-feedback work. A
+  health target you cannot hit trains people to skim past FAILs. Owner ruling
+  2026-07-11: downgraded to WARN, matching section 8's intent-aware severity.
+  `restricted/.env` is copied between machines wholesale, so its `CTRACK_*`
+  keys cannot signal intent, which is why an opt-out key was rejected.
+- Plugin installs (`rfe-creator`, `assess-rfe`) FAIL on a fresh machine until
+  `/plugin` is run interactively in Claude Code. Section 2 DID apply the
+  ssh-to-https rewrite correctly, so this is not a doctor bug: the install
+  itself simply cannot be automated. `docs/setup.md` step 3 already covers it.
 
-**What was fixed during the test:** `~/.bashrc` now has the hub wiring
-block (was missing).
+**Machine B final state:** `21 ok, 0 warn, 3 fail` post-setup. With the
+section 7 downgrade the tracker FAIL becomes a WARN, leaving the two plugin
+FAILs, which clear once `/plugin` is run on B.
 
-**What is parked:** #14 annotated with evidence (manual `.env` copy is
-fine for now). Plugin install friction parked until the ssh key is set
-up on B.
+**Machine A:** `27 ok, 0 warn, 0 fail`. The retired `ai-asset-registry`
+clone is no longer load-bearing for daily work.
 
 ## R6 — Cursor end-to-end validation (deferred, D2 debt)
 
