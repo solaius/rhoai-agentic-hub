@@ -127,29 +127,15 @@ echo "[4] restricted/.env + shell wiring"
 # before this repo and the hub never configures or touches that auth.
 ENV_FILE="$ROOT/restricted/.env"
 if [ -f "$ENV_FILE" ]; then
-  # Source it (values never printed) so later sections can use it: section
-  # 7's CTRACK_* overrides, sections 8-9's MCP secrets. Handles both KEY=
-  # and 'export KEY=' line forms, which a plain grep for ^KEY= would not.
-  set -a
-  # shellcheck disable=SC1090
-  . "$ENV_FILE"
-  set +a
-  for k in JIRA_SERVER JIRA_USER JIRA_TOKEN; do
-    if [ -n "${!k:-}" ]; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
-  done
-  # Live probe (backlog #19's Jira slice): presence is not validity. WARN,
-  # not FAIL — offline machines must still pass the doctor.
-  if [ -n "${JIRA_SERVER:-}" ] && [ -n "${JIRA_TOKEN:-}" ]; then
-    if python "$ROOT/scripts/hub_jira.py" --check >/dev/null 2>&1; then
-      ok "jira reachable (hub_jira --check)"
-    else
-      warn "jira unreachable or auth failed — run: python scripts/hub_jira.py --check (expired JIRA_TOKEN? offline?)"
-    fi
-  fi
-  # Shell wiring (backlog #19). Hub tooling self-loads restricted/.env, but the
-  # marketplace rfe.* scripts read os.environ with no fallback, so JIRA_* must
-  # reach every shell. hub_env.py owns the ~/.bashrc block and removes the
-  # retired ai-asset-registry one. Logic lives in python because it is tested;
+  # Shell wiring (backlog #19), run BEFORE this process sources $ENV_FILE
+  # below: hub_env.py inspects the AMBIENT environment on purpose (it reads
+  # restricted/.env itself via --root), and if it ran after the sourcing it
+  # would always see JIRA_* in ITS OWN process and report "ok" even on a
+  # shell with no wiring at all - health the doctor never actually verified.
+  # Hub tooling self-loads restricted/.env, but the marketplace rfe.* scripts
+  # read os.environ with no fallback, so JIRA_* must reach every shell.
+  # hub_env.py owns the ~/.bashrc block and removes the retired
+  # ai-asset-registry one. Logic lives in python because it is tested;
   # idempotent profile editing is where bash quietly gets it wrong.
   if [ "$MODE" = "setup" ]; then ENV_MODE="--setup"; else ENV_MODE="--check"; fi
   # Capture output + exit status (stderr merged in) instead of streaming a
@@ -170,6 +156,25 @@ if [ -f "$ENV_FILE" ]; then
         *)     [ -n "${kind:-}" ] && warn "hub_env.py produced unexpected output: $kind" ;;
       esac
     done <<< "$ENV_OUT"
+  fi
+  # Source it (values never printed) so later sections can use it: section
+  # 7's CTRACK_* overrides, sections 8-9's MCP secrets. Handles both KEY=
+  # and 'export KEY=' line forms, which a plain grep for ^KEY= would not.
+  set -a
+  # shellcheck disable=SC1090
+  . "$ENV_FILE"
+  set +a
+  for k in JIRA_SERVER JIRA_USER JIRA_TOKEN; do
+    if [ -n "${!k:-}" ]; then ok "$k present"; else warn "$k missing in restricted/.env"; fi
+  done
+  # Live probe (backlog #19's Jira slice): presence is not validity. WARN,
+  # not FAIL - offline machines must still pass the doctor.
+  if [ -n "${JIRA_SERVER:-}" ] && [ -n "${JIRA_TOKEN:-}" ]; then
+    if python "$ROOT/scripts/hub_jira.py" --check >/dev/null 2>&1; then
+      ok "jira reachable (hub_jira --check)"
+    else
+      warn "jira unreachable or auth failed - run: python scripts/hub_jira.py --check (expired JIRA_TOKEN? offline?)"
+    fi
   fi
 else
   warn "restricted/.env not found (Jira-facing skills and MCP setup won't work; copy it from your other machine)"
@@ -449,24 +454,31 @@ fi
 # Auth probe (backlog #19). Section 8 proves the server is REGISTERED;
 # registration is not validity. xoxc/xoxd are per-login session tokens that do
 # not travel between machines, the exact gap R5 predicted for machine B.
-# WARN only, so an offline machine still reaches 0 fail.
-# Capture output + exit status (stderr merged in) instead of streaming a
-# discarded-stderr process substitution: a crashing CLI must WARN, not
-# silently move zero counters while doctor still prints 0 fail.
-SLACK_OUT="$(python "$ROOT/scripts/hub_slack.py" --check 2>&1)"
-SLACK_STATUS=$?
-if [ $SLACK_STATUS -ne 0 ] || [ -z "$SLACK_OUT" ]; then
-  warn "hub_slack.py --check did not run (exit $SLACK_STATUS) - run by hand to diagnose: python scripts/hub_slack.py --check"
-else
-  # Here-string, not a pipe: a pipe would put this loop in a subshell and
-  # lose the ok/warn counter increments.
-  while IFS=$'\t' read -r kind msg; do
-    case "$kind" in
-      ok)   ok "$msg" ;;
-      warn) warn "$msg" ;;
-      *)    [ -n "${kind:-}" ] && warn "hub_slack.py produced unexpected output: $kind" ;;
-    esac
-  done <<< "$SLACK_OUT"
+# WARN only, so an offline machine still reaches 0 fail. Gated on
+# SLACK_WANTED like the podman checks above it: a machine that never
+# configured slack should not get a permanent token-missing warn every run,
+# and a machine that DID configure it but is missing tokens should get this
+# warn once, not twice (the "no SLACK_XOXC_TOKEN" warn above already covers
+# it inside the SLACK_WANTED branch).
+if [ "$SLACK_WANTED" = 1 ]; then
+  # Capture output + exit status (stderr merged in) instead of streaming a
+  # discarded-stderr process substitution: a crashing CLI must WARN, not
+  # silently move zero counters while doctor still prints 0 fail.
+  SLACK_OUT="$(python "$ROOT/scripts/hub_slack.py" --check 2>&1)"
+  SLACK_STATUS=$?
+  if [ $SLACK_STATUS -ne 0 ] || [ -z "$SLACK_OUT" ]; then
+    warn "hub_slack.py --check did not run (exit $SLACK_STATUS) - run by hand to diagnose: python scripts/hub_slack.py --check"
+  else
+    # Here-string, not a pipe: a pipe would put this loop in a subshell and
+    # lose the ok/warn counter increments.
+    while IFS=$'\t' read -r kind msg; do
+      case "$kind" in
+        ok)   ok "$msg" ;;
+        warn) warn "$msg" ;;
+        *)    [ -n "${kind:-}" ] && warn "hub_slack.py produced unexpected output: $kind" ;;
+      esac
+    done <<< "$SLACK_OUT"
+  fi
 fi
 
 echo "[10] git pre-commit hook"

@@ -35,6 +35,12 @@ def _report_shell(env):
         doctorio.say("ok", "JIRA_* present in this shell")
 
 
+def _report_retired_unmarked(state):
+    for line in state["retired_unmarked"]:
+        doctorio.say("warn", f"~/.bashrc references the retired ai-asset-registry repo "
+                     f"outside a marked block, remove it by hand: {line}")
+
+
 def _report_profile(state, wired_msg):
     if state["hub_current"]:
         doctorio.say("ok", wired_msg)
@@ -48,9 +54,7 @@ def _report_profile(state, wired_msg):
     if state["retired_block"]:
         doctorio.say("warn", "~/.bashrc still sources the RETIRED ai-asset-registry "
                      ".env; setup removes it (the hub's .env supersedes it)")
-    for line in state["retired_unmarked"]:
-        doctorio.say("warn", f"~/.bashrc references the retired ai-asset-registry repo "
-                     f"outside a marked block, remove it by hand: {line}")
+    _report_retired_unmarked(state)
 
 
 def _check(env_file, profile, env):
@@ -75,6 +79,7 @@ def _setup(env_file, profile, env):
         return 0
     if updated == text:
         doctorio.say("ok", "~/.bashrc already wired to restricted/.env (no change)")
+        _report_retired_unmarked(state)
         _report_shell(env)
         return 0
     if profile.is_file():
@@ -84,6 +89,7 @@ def _setup(env_file, profile, env):
     profile.write_text(updated, encoding="utf-8", newline="\n")
     if state["retired_block"]:
         doctorio.say("wrote", "removed the retired ai-asset-registry block from ~/.bashrc")
+    _report_retired_unmarked(state)
     doctorio.say("wrote", "~/.bashrc now sources the hub's restricted/.env")
     return 0
 

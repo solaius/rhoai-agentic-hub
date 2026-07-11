@@ -72,6 +72,23 @@ def test_check_warns_about_the_retired_block(tmp_path, capsys):
     assert "warn" in kinds(lines)
 
 
+def test_setup_warns_about_an_unmarked_retired_line_and_still_writes(tmp_path, capsys):
+    # An unmarked bare line survives --setup on purpose (setup only removes
+    # the MARKED retired block); it must not survive SILENTLY. --setup has
+    # to say what it left behind, on both the "wrote" path and the
+    # "already wired, no change" path.
+    unmarked_line = "still using ai-asset-registry directly, not through the hub"
+    profile = f"alias python='py'\n{unmarked_line}\n"
+    root, home = make(tmp_path, profile=profile)
+    rc, lines = run(root, home, "--setup", capsys)
+    assert rc == 0
+    assert unmarked_line in msgs(lines)
+    assert "warn" in kinds(lines)
+    text = (home / ".bashrc").read_text(encoding="utf-8")
+    assert HUB_BEGIN in text
+    assert "wrote" in kinds(lines)
+
+
 def test_setup_writes_the_block_and_removes_the_retired_one(tmp_path, capsys):
     root, home = make(tmp_path, profile=RETIRED)
     rc, lines = run(root, home, "--setup", capsys)
@@ -104,6 +121,19 @@ def test_setup_creates_the_profile_when_absent(tmp_path, capsys):
     root, home = make(tmp_path, profile=None)
     run(root, home, "--setup", capsys)
     assert HUB_BEGIN in (home / ".bashrc").read_text(encoding="utf-8")
+
+
+def test_check_warns_unwired_when_env_present_and_no_profile_at_all(tmp_path, capsys):
+    # Machine B: restricted/.env was copied over, but this machine has never
+    # had a ~/.bashrc at all (not just unwired). --check must still warn
+    # about the missing wiring (not crash, not silently say nothing) and
+    # stay read-only (return 0, no file written).
+    root, home = make(tmp_path, profile=None)
+    rc, lines = run(root, home, "--check", capsys)
+    assert rc == 0
+    assert "warn" in kinds(lines)
+    assert "doctor.sh setup" in msgs(lines)
+    assert not (home / ".bashrc").exists()
 
 
 def test_setup_refuses_to_wire_a_missing_env(tmp_path, capsys):
