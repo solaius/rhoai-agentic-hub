@@ -53,6 +53,36 @@ def render_block(env_path: Path) -> str:
     ])
 
 
+class MalformedProfile(ValueError):
+    """Raised when the shell profile has an unbalanced hub marker block:
+    an orphan HUB_BEGIN with no matching HUB_END, or vice versa. This
+    happens when a previous write crashed mid-block or someone hand-edited
+    the profile. Guessing at a repair here risks silently deleting real
+    shell-profile content between the markers, so apply() refuses to touch
+    the file at all. A human needs to open ~/.bashrc and fix it by hand.
+    """
+
+
+def malformed_reason(text: str) -> str | None:
+    """None if the profile is safe for apply() to edit, else a human-
+    readable reason it is not. Unsafe means the count of standalone
+    HUB_BEGIN lines does not equal the count of standalone HUB_END lines.
+    Two well-formed hub blocks (2 begin, 2 end) are balanced, not
+    malformed: _strip_block already removes both cleanly, and apply()
+    then writes back a single block, which is the desired repair."""
+    lines = [line.strip() for line in text.splitlines()]
+    begins = lines.count(HUB_BEGIN)
+    ends = lines.count(HUB_END)
+    if begins != ends:
+        return (
+            f"unbalanced rhoai-agentic-hub markers in the shell profile: "
+            f"{begins} \"{HUB_BEGIN}\" line(s) but {ends} \"{HUB_END}\" "
+            "line(s). Fix ~/.bashrc by hand (add or remove the stray "
+            "marker) before rerunning."
+        )
+    return None
+
+
 def _has_block(text: str, begin: str, end: str) -> bool:
     lines = [line.strip() for line in text.splitlines()]
     return begin in lines and end in lines
@@ -95,7 +125,14 @@ def scan(text: str, env_path: Path) -> dict:
 
 def apply(text: str, env_path: Path) -> str:
     """Retired block removed, hub block upserted. Idempotent; a moved repo
-    path is repaired in place rather than duplicated."""
+    path is repaired in place rather than duplicated.
+
+    Raises MalformedProfile, before touching anything, if the hub markers
+    are unbalanced: an unterminated block cannot be safely repaired by
+    guessing, so we refuse rather than risk deleting real content."""
+    reason = malformed_reason(text)
+    if reason is not None:
+        raise MalformedProfile(reason)
     body = _strip_block(text.replace("\r\n", "\n"), RETIRED_BEGIN, RETIRED_END)
     body = _strip_block(body, HUB_BEGIN, HUB_END).rstrip("\n")
     block = render_block(env_path)

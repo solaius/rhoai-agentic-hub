@@ -1,8 +1,19 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from hublib import shellenv
-from hublib.shellenv import HUB_BEGIN, HUB_END, apply, load_env, render_block, scan
+from hublib.shellenv import (
+    HUB_BEGIN,
+    HUB_END,
+    MalformedProfile,
+    apply,
+    load_env,
+    malformed_reason,
+    render_block,
+    scan,
+)
 
 ENV = Path("C:/repo/restricted/.env")
 
@@ -82,9 +93,38 @@ def test_scan_reports_unmarked_retired_reference():
         '. "C:/Users/peter/Code/rh/ai-asset-registry/rhoai-restricted/.env"']
 
 
-def test_unterminated_marker_is_left_alone_not_truncated():
+def test_unterminated_hub_begin_raises_instead_of_being_repaired():
+    # Regression for the second-call data-loss bug: apply() must refuse an
+    # orphan HUB_BEGIN on the FIRST call rather than appending a second
+    # block, which a later apply() would then treat as "skip from the
+    # orphan begin to the new end" and silently eat everything between,
+    # including "half a block".
     text = f"keep me\n{HUB_BEGIN}\nhalf a block\n"
-    assert "keep me" in apply(text, ENV)
+    with pytest.raises(MalformedProfile):
+        apply(text, ENV)
+
+
+def test_orphan_hub_end_with_no_begin_also_raises():
+    text = f"keep me\nhalf a block\n{HUB_END}\n"
+    with pytest.raises(MalformedProfile):
+        apply(text, ENV)
+
+
+def test_malformed_reason_is_none_for_safe_profiles():
+    one_block = apply("", ENV)
+    two_blocks = one_block + "\n" + one_block
+    assert malformed_reason("") is None
+    assert malformed_reason("alias python='py'\n") is None
+    assert malformed_reason(one_block) is None
+    assert malformed_reason(two_blocks) is None
+
+
+def test_apply_collapses_two_well_formed_hub_blocks_into_one():
+    one_block = apply("", ENV)
+    two_blocks = one_block + "\n" + one_block
+    out = apply(two_blocks, ENV)
+    assert out.count(HUB_BEGIN) == 1
+    assert out.count(HUB_END) == 1
 
 
 def test_load_env_populates_prefixed_keys_and_existing_env_wins(tmp_path, monkeypatch):

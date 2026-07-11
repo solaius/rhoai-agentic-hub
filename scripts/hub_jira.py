@@ -10,7 +10,6 @@ docs/specs/2026-07-09-jira-hub-skills-design.md.
 import argparse
 import asyncio
 import datetime
-import os
 import sys
 from pathlib import Path
 
