@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-10
+- **Creation** - 3.7 TP wave filed: eight more RHAISTRAT-1345 children via rfe-creator pipeline, RHAIRFE-2636 (auto-curation), 2637 (shared tiers/provenance), 2638 (context engineering), 2639 (registry asset), 2640 (Gen AI Studio visibility), 2641 (AI Hub console), 2642 (harness integration packs), 2643 (small-model effectiveness); 2642/2643 split from one draft at review; all parented, labeled 3.7-candidate, dependency-linked to the 3.6 set; no target version until 3.7 exists in Jira. Outcome now has 14 children; 3.8 GA wave intentionally unfiled. rfes-filed fact updated.
 - **Update** - first hub.refresh-site run complete (RHCL hub, 03e3d04): 5-source sweep, 15 gated change-sets, 20 pages updated incl. spec-RC facts, SDK-regression qualifier, CRD Kind split verified against upstream; 2 owner rulings folded in (fact-kagenti-roadmap-removal, fact-rhcl-ai-bu-entitlement-direction); friction fixes committed (2871a6a); publish green, first UPDATED badge live.
 - **Creation** - fact-kagenti-roadmap-removal (owner ruling): Kagenti removed from roadmap, OpenShell expands to cover its capabilities; RHCL hub caveats applied; agent-registry re-scope follow-up flagged.
 - **Creation** - fact-rhcl-ai-bu-entitlement-direction (owner statement): RHCL moved OCP BU to AI BU; MCP Gateway expected to share all MaaS entitlements, pending confirmation; hub entitlement section updated.

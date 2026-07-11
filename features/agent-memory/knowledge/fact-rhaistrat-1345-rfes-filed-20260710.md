@@ -1,7 +1,7 @@
 ---
 type: fact
-title: "RHAISTRAT-1345 child RFEs filed (RHAIRFE-2630..2635, 2026-07-10)"
-description: Six agent-memory RFEs filed as children of RHAISTRAT-1345 via the rfe-creator pipeline, all targeting 3.6 EA2 RHOAI RELEASE; fulfills the 06-30 1:1 commitment to have scoped RFEs in by the week of 2026-07-07.
+title: "RHAISTRAT-1345 child RFEs filed (RHAIRFE-2630..2643, 2026-07-10)"
+description: Fourteen agent-memory RFEs filed as children of RHAISTRAT-1345 via the rfe-creator pipeline - six 3.6 DP basics (2630..2635, target 3.6 EA2 RHOAI RELEASE) plus eight 3.7 TP wave (2636..2643, no target version until 3.7 exists in Jira); fulfills the 06-30 1:1 commitment.
 tags: [agent-memory, jira, rfe, rhaistrat-1345]
 timestamp: 2026-07-10
 ---
@@ -26,8 +26,32 @@ All six: children of RHAISTRAT-1345 (native parent field), target version
 draft (right-sized 0/2 as a bundle); siblings are pairwise "relates to".
 Draft/review artifacts live in /artifacts/ (rfe-tasks, rfe-reviews).
 
-Still open: the RHAISTRAT-1345 Outcome text predates the 2026-06-30
-direction change (standalone service, 3.6 DP / 3.7 TP / 3.8 GA phasing),
-so the children are ahead of their umbrella; the rewrite delta is in
-[rhaistrat-1345-outcome-update](/features/agent-memory/strategy/rhaistrat-1345-outcome-update.md),
-which itself needs the same revision before pasting.
+## 3.7 TP wave (filed later the same day)
+
+Eight more children, same pipeline (reviewed 9-10/10, all feasible), no
+target version until the 3.7 versions exist in Jira; labels add
+`3.7-candidate`, with `gen-ai-studio`+`uxd` on 2640 and `ai-hub`+`uxd` on
+2641 per the [surface/persona rule](/features/platform/knowledge/fact-ai-hub-vs-gen-ai-studio-surfaces.md).
+
+| Key | Title | Notes |
+|---|---|---|
+| [RHAIRFE-2636](https://redhat.atlassian.net/browse/RHAIRFE-2636) | Automatic memory creation and curation | depends on 2630; relates to 2634 (shared write path) |
+| [RHAIRFE-2637](https://redhat.atlassian.net/browse/RHAIRFE-2637) | Org-wide shared memory: tiers, conflict handling, provenance | depends on 2633 |
+| [RHAIRFE-2638](https://redhat.atlassian.net/browse/RHAIRFE-2638) | Inspectable context engineering | depends on 2630 |
+| [RHAIRFE-2639](https://redhat.atlassian.net/browse/RHAIRFE-2639) | Memory as a governed AI Asset Registry asset | depends on 2630 |
+| [RHAIRFE-2640](https://redhat.atlassian.net/browse/RHAIRFE-2640) | Memory visibility for AI engineers in Gen AI Studio | depends on 2630; relates to 2632 (interim-tool graduation) |
+| [RHAIRFE-2641](https://redhat.atlassian.net/browse/RHAIRFE-2641) | Memory governance console in AI Hub | depends on 2639, 2637, 2634, 2635 |
+| [RHAIRFE-2642](https://redhat.atlassian.net/browse/RHAIRFE-2642) | Harness/framework memory integration packs | depends on 2630; split sibling of 2643 |
+| [RHAIRFE-2643](https://redhat.atlassian.net/browse/RHAIRFE-2643) | Memory effectiveness on smaller self-hosted models | depends on 2630; split sibling of 2642 |
+
+2642/2643 are the review-driven split of the harness-integrations draft
+(right-sized 1/2: different segments, independently shippable). Reviewer
+flags carried to strategy: harness-tier work pulled forward from the old
+3.8+ directional slot to 3.7 (confirm with Sanjeev), and closed CLI
+harnesses may only support tool/MCP-level integration.
+
+The Outcome description was rewritten in Jira 2026-07-10 (standalone
+service, three layers, 3.6 DP / 3.7 TP / 3.8 GA) and lists both waves.
+Remaining gap: the 3.8 GA wave (full audit trail + erasure,
+operator/observability/FIPS, adversarial defense, benchmarking) stays
+unfiled per the staging plan.
