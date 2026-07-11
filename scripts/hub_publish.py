@@ -16,6 +16,7 @@ def main():
     ap.add_argument("--hub-sha", default="")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--check-links", action="store_true")
+    ap.add_argument("--audience", choices=["public", "internal"], default="public")
     args = ap.parse_args()
     root = Path(__file__).resolve().parents[1]
     errors = validate_manifest(root)
@@ -38,12 +39,12 @@ def main():
     if not args.pages_dir:
         print("ERROR --pages-dir required unless --check")
         return 2
-    copied, warnings = apply(root, args.pages_dir, args.hub_sha)
+    copied, warnings = apply(root, args.pages_dir, args.hub_sha, audience=args.audience)
     for w in warnings:
         print(f"WARN  {w}")
     for d in copied:
         print(f"PUBLISHED {d}")
-    print(f"hub_publish: {len(copied)} artifact(s), landing regenerated")
+    print(f"hub_publish[{args.audience}]: {len(copied)} artifact(s), landing regenerated")
     return 0
 
 

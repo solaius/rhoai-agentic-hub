@@ -90,8 +90,7 @@ One manifest, two targets:
 Mechanics:
 
 - `hub_publish.py` routes entries by audience; each target gets its own
-  snapshot (`.publish-snapshot.json` stays public's; internal gets
-  `.publish-snapshot-internal.json`, same v2 schema) so NEW/UPDATED badges
+  snapshot (each target clone keeps its own .publish-snapshot.json (targets are separate clones, so snapshots are per-target by construction)) so NEW/UPDATED badges
   work per target and neither side sees phantom changes.
 - The two live hub entries flip `audience: public` to `internal`. Existing
   removal mechanics then clean the public site on the next publish run

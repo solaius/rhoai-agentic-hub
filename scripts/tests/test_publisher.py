@@ -52,6 +52,8 @@ def make_repo(tmp_path: Path) -> Path:
     (root / "publish").mkdir(parents=True, exist_ok=True)
     shutil.copy(REPO_ROOT / "publish" / "landing-template.html",
                 root / "publish" / "landing-template.html")
+    shutil.copy(REPO_ROOT / "publish" / "landing-template-internal.html",
+                root / "publish" / "landing-template-internal.html")
     return root
 
 
@@ -348,3 +350,22 @@ def test_badge_ages_out_after_window(tmp_path):
     # Not "badge--new" not in out: that class name is also present in the
     # template's static <style> block regardless of any card rendering it.
     assert ">NEW</span>" not in out
+
+
+def test_build_plan_internal_audience(tmp_path):
+    plan = build_plan(make_repo(tmp_path), audience="internal")
+    assert {p["dest"] for p in plan} == {"x/internal"}
+
+
+def test_apply_internal_target(tmp_path):
+    root = make_repo(tmp_path)
+    internal = tmp_path / "internal-pages"
+    internal.mkdir()
+    copied, warnings = apply(root, internal, hub_sha="abc", audience="internal")
+    assert copied == ["x/internal"]
+    assert (internal / "x/internal/index.html").is_file()
+    assert not (internal / "x/site").exists()
+    landing = (internal / "index.html").read_text(encoding="utf-8")
+    assert "Internal" in landing
+    snap = json.loads((internal / SNAPSHOT).read_text())
+    assert set(snap) == {"x/internal"}

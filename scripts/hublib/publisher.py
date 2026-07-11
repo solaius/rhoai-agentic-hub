@@ -62,13 +62,13 @@ def _feature_titles(root):
             if isinstance(f, dict) and f.get("id")}
 
 
-def build_plan(root):
+def build_plan(root, audience="public"):
     root = Path(root)
     titles = _feature_titles(root)
     order = list(titles)
     plan = []
     for e in load_manifest(root):
-        if e.get("audience") != "public":
+        if e.get("audience") != audience:
             continue
         src = root / e["source"]
         dest = e["dest"].strip("/")
@@ -109,10 +109,10 @@ def _card(p):
             f'        </a>')
 
 
-def generate_landing(root, plan, hub_sha=""):
+def generate_landing(root, plan, hub_sha="", template_name="landing-template.html"):
     """Render publish/landing-template.html: sections in group_key order,
     cards title-sorted within a section, badges from the publish snapshot."""
-    template = (Path(root) / "publish" / "landing-template.html") \
+    template = (Path(root) / "publish" / template_name) \
         .read_text(encoding="utf-8")
     groups = {}
     for p in plan:
@@ -137,9 +137,9 @@ def generate_landing(root, plan, hub_sha=""):
             .replace("{{SECTIONS}}", "\n".join(sections)))
 
 
-def apply(root, pages_dir, hub_sha=""):
+def apply(root, pages_dir, hub_sha="", audience="public"):
     root, pages = Path(root), Path(pages_dir)
-    plan = build_plan(root)
+    plan = build_plan(root, audience)
     warnings = []
     snap_path = pages / SNAPSHOT
     old = json.loads(snap_path.read_text(encoding="utf-8")) if snap_path.is_file() else {}
@@ -185,7 +185,9 @@ def apply(root, pages_dir, hub_sha=""):
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p["src"], target)
         copied.append(p["dest"])
-    (pages / "index.html").write_text(generate_landing(root, plan, hub_sha),
+    template_name = ("landing-template.html" if audience == "public"
+                     else "landing-template-internal.html")
+    (pages / "index.html").write_text(generate_landing(root, plan, hub_sha, template_name),
                                       encoding="utf-8", newline="\n")
     snap_path.write_text(
         json.dumps({p["dest"]: {"source": p["src"].relative_to(root).as_posix(),
