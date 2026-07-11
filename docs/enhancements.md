@@ -17,9 +17,7 @@ including review. "When" is a best guess, not a schedule.
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
-| 4 | `hub.refresh-site` — refresh the migrated RHCL/Management hub sites from live sources | **High** — the hubs are now the live copies and have no update path; they start rotting today | Medium | Now |
 | 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
-| 8 | Pages-site landing page upgrade (grouped, descriptor-driven) | High — the public front door; descriptors already carry the data | Small–Medium | Now/Next |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
 | 11 | `rice-strats` port (rubric already lives here) | Medium–High in scoring season, idle otherwise | Medium | Next (before the next RICE pass) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
@@ -42,7 +40,6 @@ including review. "When" is a best guess, not a schedule.
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
 | 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
-| 34 | Disclosure heuristic frontmatter gap | **Medium** — the generic `RESTRICTED_HINTS` net misses knowledge-entry frontmatter (lint_entry scans body only) and the generated views it propagates into; the local restricted-pattern pass covers frontmatter, CI's generic net does not (found by the 2026-07-09 batch's final review) | Small | Next |
 
 ---
 
@@ -106,14 +103,6 @@ harness independence.
 ---
 
 ## Human-usage enhancements
-
-**8 · Pages landing page upgrade.** The published site's generated index is
-a flat list. The publisher already has every artifact's title/description
-(manifest) and could group by area (mcp-gateway / mcp-ecosystem / …/
-narrative), add one-line descriptions, and a "new/updated" marker from the
-publish snapshot. This is the page customers/stakeholders actually see —
-the highest-visibility small win available. (`scripts/hublib/publisher.py`
-landing-page generation + tests.)
 
 **12 · Curated FAQ / JTBD publishing.** Already specced (narrative spec §9):
 when qa volume justifies it, ship a curated FAQ page (per audience) and a
@@ -237,16 +226,6 @@ GitLab). Lower priority: convenience, not a core PM workflow.
 
 ## Repo functionality & structure
 
-**4 · `hub.refresh-site`.** Successor to the old repo's
-knowledge-hub-create / update-*-hub skills, now urgent: the RHCL and
-Management hub sites live HERE and nothing updates them anymore (the old
-update skills target the old repo's copies and are retired with it).
-Scope: sweep live sources (GDocs, repos, Jira, Slack) per site, propose
-page diffs through a gate, re-verify the disclosure rules on every touched
-page (reuse the #5 lint), republish. Port-and-adapt, not lift-and-shift —
-and the disclosure-scrub rules from this migration become part of the
-skill's contract.
-
 **11 · `rice-strats` port.** Rubric already at
 `features/platform/strategy/rice-scoring-rubric.md`; the old skill needs
 its knowledge lookups repointed (feature partitions + narrative instead of
@@ -310,6 +289,14 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#34 + #8 + #4 published-site trust batch** - shipped 2026-07-10:
+  heuristic over full entry text + generated views/indexes in the disclosure
+  scan surface (#34); full-branded grouped landing page with snapshot-v2
+  NEW/UPDATED badges (#8); hub.refresh-site skill + tracked
+  refresh-<slug>.yaml configs for the RHCL and Management hubs, with the
+  disclosure contract the old update skills lacked (#4). Spec:
+  [/docs/specs/2026-07-10-published-site-trust-batch-design.md](/docs/specs/2026-07-10-published-site-trust-batch-design.md).
+  Plan: [/docs/plans/2026-07-10-published-site-trust-batch-plan.md](/docs/plans/2026-07-10-published-site-trust-batch-plan.md).
 - **#2 Jira hub skills** — shipped 2026-07-10 (`629cb3d`): `hublib/jira.py`
   (pm-toolkit client port, httpx), `hublib/jiramap.py` + `hub_jira.py`
   (check/try-jql/sweep/sync CLI), `hub.jira-sweep` + `hub.jira-sync`

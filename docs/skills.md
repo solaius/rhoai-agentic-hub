@@ -63,6 +63,7 @@ families (design decisions D8/D11):
 | `hub.reindex` | after adding/editing entries; CI reports stale indexes | no | regenerates all `index.md` + `views/`, runs linter |
 | `hub.doctor` | new machine; something feels broken | setup mode confirms writes | per-machine config only (see [/docs/tooling.md](/docs/tooling.md)) |
 | `hub.publish` | ship an enablement artifact to the public site | disclosure confirm | `publish/manifest.yaml` entry |
+| `hub.refresh-site` | refresh a published hub site from its live sources | batch write gate | surgical HTML edits to the site under `hub.publish`'s source path |
 | `hub.migrate` | bring old-repo content over | ruling per item | hub files only; old repo is read-only |
 | `presentation-create` | "create a presentation about X" | output path confirm | `features/<f>/enablement/<slug>/index.html` |
 | `blog-create` | draft/review a Red Hat blog post | pipeline checkpoints | drafts under `enablement/`; ships via Workfront |
@@ -142,6 +143,17 @@ most common way to go red.
 with a confirm, not a hand-edit. Adds/updates a manifest entry
 (source/dest/audience/title/description) and re-states what will become
 public. Pipeline mechanics: [/docs/publishing.md](/docs/publishing.md).
+
+**`hub.refresh-site`** — the update path for already-published hub sites
+(RHCL, Management, or any site with a `work/refresh-<slug>.yaml` config).
+Sweeps the config's live sources (GDocs, GitHub, Jira, Slack, local hub
+entries) in parallel, reports New/Changed/Confirmed-current/Fetch-failures
+per page, and gates the whole batch before writing a single edit. The
+disclosure contract (never introduce customer/partner names or deal detail,
+anonymized phrasing only, full product name on first use) is what the old
+repo's update-*-hub skills lacked. `hub_lint.py` must report 0 errors before
+commit; CI (`publish.yml`'s link-check step) is the link-check authority, not
+local checks.
 
 **`hub.migrate`** — the old repo
 ([ai-asset-registry](https://github.com/solaius/ai-asset-registry)) is

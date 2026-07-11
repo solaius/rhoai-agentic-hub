@@ -55,6 +55,7 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
 | hub.publish | add/update a publish manifest entry (gated) |
+| hub.refresh-site | refresh a published hub site from its live sources (gated page diffs, disclosure contract, republish) |
 | hub.migrate | bring content over from ai-asset-registry, reshaped |
 
 First-party content skills (ported from ai-asset-registry, adapted to hub conventions):

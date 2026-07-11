@@ -26,3 +26,13 @@ Rules:
   assets live inside it.
 
 Live root: https://solaius.github.io/rhoai-agentic-hub-pages/
+
+## Landing page + snapshot (v2)
+
+The pages-site landing page is rendered from `publish/landing-template.html`
+(tracked; self-contained inline CSS): artifacts grouped by area (feature
+`title` from features/features.yaml, routing-table order, Narrative last),
+one card per artifact, NEW/UPDATED badges for artifacts published or changed
+in the last 14 days. Badge state lives in `.publish-snapshot.json` (v2:
+`{dest: {source, hash, published, badge}}`); v1 snapshots migrate on the
+first run with no false badges.

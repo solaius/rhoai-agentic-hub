@@ -36,10 +36,15 @@ private or move hosts without breaking a single published URL.
 4. **The publisher applies the manifest**: copies each `source` to its
    `dest` in the pages clone, removes previously-published copies whose
    manifest entries were deleted, regenerates the landing `index.html` from
-   manifest titles/descriptions, and records the state in
-   `.publish-snapshot.json` (the snapshot is how it distinguishes "entry
-   removed → unpublish" from "never published", and how it warns when a
-   shipped `dest` changes).
+   `publish/landing-template.html` (tracked, self-contained inline CSS),
+   and records the state in `.publish-snapshot.json` (the snapshot is how
+   it distinguishes "entry removed → unpublish" from "never published", and
+   how it warns when a shipped `dest` changes). The landing page groups
+   artifacts by area (feature `title`, routing-table order, Narrative
+   last), one card per artifact, with NEW/UPDATED badges for artifacts
+   published or changed in the last 14 days. Badge state lives in the
+   snapshot (v2: `{dest: {source, hash, published, badge}}`); v1 snapshots
+   migrate on the first run with no false badges.
 5. **GitHub Pages** rebuilds the site from the pages repo. The artifact is
    live at `https://solaius.github.io/rhoai-agentic-hub-pages/<dest>`.
 

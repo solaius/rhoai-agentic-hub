@@ -37,10 +37,11 @@ that one file is not gated — reindex runs refresh it.)
 | `frontmatter.py` | markdown + YAML frontmatter parsing (`parse`, `load_file`), LF-normalized, `FrontmatterError` on malformed input |
 | `schema.py` | `lint_repo()` and `validate_manifest()`; owns the type vocabularies, filename-prefix map, skeleton contract, canonical-URI patterns, and the line budgets |
 | `indexer.py` | deterministic generation of every `index.md` and `views/` file from frontmatter; the `<!-- generated … -->` marker; `write_all` / `check` |
-| `publisher.py` | manifest-driven publishing into a pages clone: copy plan, unpublish-on-removal via `.publish-snapshot.json`, landing `index.html` generation; hardened against path traversal, `dest` type swaps, and escapes from the pages root |
+| `publisher.py` | manifest-driven publishing into a pages clone: copy plan, unpublish-on-removal via `.publish-snapshot.json` (v2: `{source, hash, published, badge}`), landing `index.html` rendered from `publish/landing-template.html` (grouped by area, NEW/UPDATED badges); hardened against path traversal, `dest` type swaps, and escapes from the pages root |
 | `jira.py` | async Jira REST client (pm-toolkit port): Cloud basic / DC bearer auth from `JIRA_*` env, JQL search with pagination, 429 retry, ADF→text, unauthenticated `probe_public`; write methods ported but unused by the hub.jira-* skills |
 | `jiramap.py` | the snapshot contract: whitelisted `issue_row`, byte-stable `build_snapshot`, `validate` (lint), `diff` (sync), `watched_keys` (ref-/jtbd backlinks) |
-| `disclosure.py` | local-first disclosure lint (`scan_repo`) — see "The disclosure lint" below |
+| `refresh.py` | refresh-site config find/load/validate (work/refresh-<slug>.yaml); findings fold into lint_repo |
+| `disclosure.py` | local-first disclosure lint (`scan_repo`) over enablement HTML, public knowledge entries, and generated views/indexes — see "The disclosure lint" below |
 | `status.py` | `build_brief` — assembles the morning-brief sections `hub_status.py` prints |
 | `logrotate.py` | `rotate_log` — moves previous-year `memory/log.md` sections into `memory/log-archive/<year>.md` |
 
