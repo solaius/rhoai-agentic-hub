@@ -234,7 +234,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-54732 · Story · Closed · —
 - RHOAIENG-54985 · Task · Closed · —
 - RHOAIENG-59053 · Story · Closed · —
-- RHOAIENG-65512 · Epic · In Progress · —
+- RHOAIENG-65512 · Epic · In Progress · — → [RHOAIENG-65512: MCPLO RHOAI productization epic](/features/mcp-lifecycle-operator/knowledge/ref-rhoaieng-65512-productization-epic.md)
 - RHOAIENG-65524 · Task · Closed · —
 - RHOAIENG-65530 · Task · In Progress · —
 - RHOAIENG-65532 · Task · New · 3.5 GA RHOAI RELEASE
@@ -301,3 +301,4 @@ _summaries withheld — the source Jira is not anonymously readable_
 
 ## Referenced elsewhere
 - HATSTRAT-314 → [HATSTRAT-314](/features/agent-interop/knowledge/ref-hatstrat-314.md)
+- OCPMCP-347 → [OCPMCP-347: MCP Gateway integration (GA scope)](/features/mcp-lifecycle-operator/knowledge/ref-ocpmcp-347-gateway-integration.md)
