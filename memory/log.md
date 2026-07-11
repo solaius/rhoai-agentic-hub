@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-11
+- **Update** - second hub.refresh-site run complete (Management hub, 0e21278 + replan e7d8527): 6-agent sweep incl. fable design review, 22 pages + nav/styles updated, RHCL reverse links, umbrella devolution plan recorded (work/management-hub-umbrella-plan.md) + backlog #35 (component hubs: mcp-catalog/hub, mcp-lifecycle-operator/hub, mcp-registry/hub slugs confirmed); owner re-plan applied same day: Registry DP misses 3.5 stable, Catalog TP + Registry TP + integration (RHAISTRAT-2027) push to 3.6 EA1, roadmap profile + fact-mcp-registry retargeted, both hubs corrected; 3 new heuristic warnings owner-triaged benign (triage fact extended). Both hub UPDATED badges live. Published-site trust batch (#34 #8 #4) FULLY ACCEPTED.
+
 ## 2026-07-10
 - **Creation** - fact-rfe-creator-windows-quirks (consolidate): python-not-python3, fcntl-blocked ID allocation, /tmp -> C:\tmp mapping, explicit --schema-type, plugin-cache script paths, CRLF-in-shell-loops; the machine knowledge behind the RHAIRFE-2630..2643 pipeline runs.
 - **Update** - tooling shipped without log lines earlier today, recorded now: doctor.sh section 2 verifies marketplace plugins are INSTALLED not just enabled (fails with named plugins, applies the github ssh->https rewrite in setup; /rfe.create "Unknown skill" trigger added to hub.doctor); all eight hub.* skills now commit with explicit paths instead of git add -A (shared-checkout guard after a cross-session sweep incident).
