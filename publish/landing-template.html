@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RHOAI Agentic Hub · Published artifacts</title>
+  <style>
+    :root {
+      --bg-canvas: #151515; --bg-elevated: #1a1a1a; --bg-card: #202020;
+      --text-primary: #ffffff; --text-secondary: #d2d2d2; --text-muted: #8a8a8a;
+      --rh-red: #ee0000; --rh-blue-light: #4394e5;
+      --border-subtle: #333333;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-canvas); color: var(--text-primary);
+           font-family: var(--font-text); line-height: 1.55; }
+    .hero { background: var(--bg-elevated); border-bottom: 3px solid var(--rh-red);
+            padding: 3rem 1.5rem 2.5rem; }
+    .hero-inner, .main-inner, .footer-inner { max-width: 1100px; margin: 0 auto; }
+    .hero h1 { font-family: var(--font-sans); font-size: 2.2rem; font-weight: 700; }
+    .hero .tagline { color: var(--text-secondary); font-size: 1.05rem;
+                     margin-top: .55rem; max-width: 46rem; }
+    .hero .stats { color: var(--text-muted); font-size: .82rem; margin-top: 1.1rem; }
+    main { padding: 1rem 1.5rem 4rem; }
+    .area { margin-top: 2.4rem; }
+    .area h2 { font-family: var(--font-sans); font-size: 1.22rem; font-weight: 600;
+               padding-bottom: .45rem; border-bottom: 1px solid var(--border-subtle); }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+             gap: 1rem; margin-top: 1.1rem; }
+    .card { display: block; background: var(--bg-card);
+            border: 1px solid var(--border-subtle); border-radius: 8px;
+            padding: 1.1rem 1.2rem; text-decoration: none;
+            transition: border-color .15s ease, transform .15s ease; }
+    .card:hover { border-color: var(--rh-red); transform: translateY(-2px); }
+    .card h3 { color: var(--text-primary); font-family: var(--font-sans);
+               font-size: 1.02rem; font-weight: 600; }
+    .card p { color: var(--text-secondary); font-size: .85rem; margin-top: .45rem; }
+    .badge { display: inline-block; font-size: .62rem; font-weight: 700;
+             letter-spacing: .06em; text-transform: uppercase; border-radius: 3px;
+             padding: .12rem .45rem; margin-left: .5rem; vertical-align: middle; }
+    .badge--new { background: var(--rh-red); color: #ffffff; }
+    .badge--updated { color: var(--rh-blue-light);
+                      border: 1px solid var(--rh-blue-light); }
+    .empty { color: var(--text-muted); margin-top: 2.4rem; }
+    footer { border-top: 1px solid var(--border-subtle); color: var(--text-muted);
+             font-size: .78rem; padding: 1.2rem 1.5rem 2.5rem; }
+    footer a { color: var(--rh-blue-light); }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>RHOAI Agentic Hub</h1>
+      <p class="tagline">Published enablement and strategy artifacts for agentic AI
+        on Red Hat OpenShift AI: MCP governance, agent infrastructure, and the
+        cross-feature stories behind them.</p>
+      <p class="stats">{{COUNT}} published artifacts{{META}}</p>
+    </div>
+  </header>
+  <main>
+    <div class="main-inner">
+{{SECTIONS}}
+    </div>
+  </main>
+  <footer>
+    <div class="footer-inner">Generated from publish/manifest.yaml. Do not edit
+      by hand. Source repo:
+      <a href="https://github.com/solaius/rhoai-agentic-hub">rhoai-agentic-hub</a>.</div>
+  </footer>
+</body>
+</html>

@@ -1,5 +1,4 @@
-"""Manifest-driven publishing: copy allowlisted public artifacts into the
-pages repo clone and regenerate its landing index.html + snapshot."""
+"""Manifest-driven publishing: copy allowlisted public artifacts into the pages repo clone and render its landing page from publish/landing-template.html."""
 import hashlib
 import html
 import json
@@ -97,36 +96,43 @@ def build_plan(root):
     return plan
 
 
-def generate_landing(plan, hub_sha=""):
-    items = "\n".join(
-        f'      <li><a href="{html.escape(p["href"])}">{html.escape(p["title"])}</a>'
-        f' — {html.escape(p["description"])}</li>'
-        for p in sorted(plan, key=lambda p: p["dest"]))
-    if not items:
-        items = "      <li>No published artifacts yet.</li>"
-    sha_line = (f'\n    <p class="meta">hub commit: {html.escape(hub_sha)}</p>'
-                if hub_sha else "")
-    return f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>rhoai-agentic-hub — published artifacts</title>
-  <style>
-    body {{ font-family: system-ui, sans-serif; max-width: 720px;
-           margin: 3rem auto; padding: 0 1rem; }}
-    .meta {{ color: #666; font-size: .85rem; }}
-  </style>
-</head>
-<body>
-  <h1>rhoai-agentic-hub — published artifacts</h1>
-  <ul>
-{items}
-  </ul>{sha_line}
-  <p class="meta">Generated from publish/manifest.yaml — do not edit by hand.</p>
-</body>
-</html>
-"""
+def _card(p):
+    badge = ""
+    if p.get("show_badge") == "new":
+        badge = ' <span class="badge badge--new">NEW</span>'
+    elif p.get("show_badge") == "updated":
+        badge = (' <span class="badge badge--updated">Updated '
+                 f'{html.escape(p.get("published") or "")}</span>')
+    return (f'        <a class="card" href="{html.escape(p["href"])}">\n'
+            f'          <h3>{html.escape(p["title"])}{badge}</h3>\n'
+            f'          <p>{html.escape(p["description"])}</p>\n'
+            f'        </a>')
+
+
+def generate_landing(root, plan, hub_sha=""):
+    """Render publish/landing-template.html: sections in group_key order,
+    cards title-sorted within a section, badges from the publish snapshot."""
+    template = (Path(root) / "publish" / "landing-template.html") \
+        .read_text(encoding="utf-8")
+    groups = {}
+    for p in plan:
+        key = (p.get("group_key", (1, "")), p.get("group", "Other"))
+        groups.setdefault(key, []).append(p)
+    sections = []
+    for (_, name), items in sorted(groups.items(), key=lambda kv: kv[0][0]):
+        cards = "\n".join(_card(p) for p in
+                          sorted(items, key=lambda p: p["title"].lower()))
+        sections.append(f'      <section class="area">\n'
+                        f'        <h2>{html.escape(name)}</h2>\n'
+                        f'        <div class="cards">\n{cards}\n        </div>\n'
+                        f'      </section>')
+    if not sections:
+        sections.append('      <p class="empty">No published artifacts yet.</p>')
+    meta = f' · hub commit {html.escape(hub_sha)}' if hub_sha else ""
+    return (template
+            .replace("{{COUNT}}", str(len(plan)))
+            .replace("{{META}}", meta)
+            .replace("{{SECTIONS}}", "\n".join(sections)))
 
 
 def apply(root, pages_dir, hub_sha=""):
@@ -177,7 +183,7 @@ def apply(root, pages_dir, hub_sha=""):
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p["src"], target)
         copied.append(p["dest"])
-    (pages / "index.html").write_text(generate_landing(plan, hub_sha),
+    (pages / "index.html").write_text(generate_landing(root, plan, hub_sha),
                                       encoding="utf-8", newline="\n")
     snap_path.write_text(
         json.dumps({p["dest"]: {"source": p["src"].relative_to(root).as_posix(),

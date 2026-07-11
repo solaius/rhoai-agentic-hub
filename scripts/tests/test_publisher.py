@@ -1,7 +1,10 @@
 import json
+import shutil
 from pathlib import Path
 
 from hublib.publisher import SNAPSHOT, apply, build_plan, check_links, generate_landing
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def write(root: Path, rel: str, text: str):
@@ -46,6 +49,9 @@ def make_repo(tmp_path: Path) -> Path:
     write(root, "features/x/enablement/internal/index.html", "<html>secret</html>")
     write(root, "publish/manifest.yaml", MANIFEST)
     write(root, "features/features.yaml", FEATURES_YAML)
+    (root / "publish").mkdir(parents=True, exist_ok=True)
+    shutil.copy(REPO_ROOT / "publish" / "landing-template.html",
+                root / "publish" / "landing-template.html")
     return root
 
 
@@ -58,12 +64,14 @@ def test_build_plan_public_only(tmp_path):
 
 
 def test_generate_landing_escapes_and_lists(tmp_path):
-    plan = build_plan(make_repo(tmp_path))
-    out = generate_landing(plan, hub_sha="abc123")
+    root = make_repo(tmp_path)
+    plan = build_plan(root)
+    out = generate_landing(root, plan, hub_sha="abc123")
     assert "A &lt;Site&gt;" in out
     assert 'href="x/site/"' in out
     assert "abc123" in out
     assert "Internal only" not in out
+    assert "<h2>X Feature</h2>" in out
 
 
 def test_apply_copies_and_snapshots(tmp_path):
@@ -288,3 +296,52 @@ def test_hash_source_dir_is_deterministic_and_content_sensitive(tmp_path):
     assert h1 == _hash_source(src)
     write(root, "features/x/enablement/site/style.css", "body{color:red}")
     assert _hash_source(src) != h1
+
+
+def test_generate_landing_group_order(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "narrative/enablement/story/index.html", "<html></html>")
+    write(root, "features/zed/enablement/deck/index.html", "<html></html>")
+    write(root, "publish/manifest.yaml", MANIFEST +
+          "- source: narrative/enablement/story/\n  dest: narrative/story/\n"
+          "  audience: public\n  title: Story\n  description: narr\n"
+          "- source: features/zed/enablement/deck/\n  dest: zed/deck/\n"
+          "  audience: public\n  title: Zed\n  description: unknown feature\n")
+    out = generate_landing(root, build_plan(root), "")
+    assert (out.index("<h2>X Feature</h2>") < out.index("<h2>zed</h2>")
+            < out.index("<h2>Narrative</h2>"))
+
+
+def test_generate_landing_empty_plan(tmp_path):
+    root = make_repo(tmp_path)
+    out = generate_landing(root, [], "")
+    assert "No published artifacts yet." in out
+
+
+def test_apply_landing_shows_new_badge(tmp_path):
+    root = make_repo(tmp_path)
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    apply(root, pages)
+    out = (pages / "index.html").read_text(encoding="utf-8")
+    assert "badge--new" in out and ">NEW</span>" in out
+
+
+def test_badge_ages_out_after_window(tmp_path):
+    from hublib.publisher import _hash_source
+    root = make_repo(tmp_path)
+    write(root, "publish/manifest.yaml",
+          "- source: features/x/enablement/site/\n  dest: x/site/\n"
+          "  audience: public\n  title: Old Site\n  description: D\n")
+    pages = tmp_path / "pages"
+    pages.mkdir()
+    digest = _hash_source(root / "features/x/enablement/site")
+    (pages / SNAPSHOT).write_text(json.dumps(
+        {"x/site": {"source": "features/x/enablement/site", "hash": digest,
+                    "published": "2020-01-01", "badge": "new"}}),
+        encoding="utf-8")
+    apply(root, pages)
+    out = (pages / "index.html").read_text(encoding="utf-8")
+    # Not "badge--new" not in out: that class name is also present in the
+    # template's static <style> block regardless of any card rendering it.
+    assert ">NEW</span>" not in out
