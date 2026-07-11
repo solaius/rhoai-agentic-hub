@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Entitlement — MCP Ecosystem Knowledge Hub</title>
+  <title>Entitlement — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -87,6 +87,10 @@
         <strong>RHOAI Token Scope Limitation:</strong> RHOAI entitlement for unlimited tokens and token metrics is scoped to MaaS (Model-as-a-Service) only. MCP and Agent workloads are explicitly excluded from this scope under the current RHOAI–RHCL support arrangement; entitlement scope for MCP and Agent workloads is defined internally.
       </div>
 
+      <div class="callout callout--insight">
+        <strong>At risk of supersession (owner ruling, 2026-07-10):</strong> RHCL has moved from the OpenShift business unit to the AI business unit. The expected direction, not yet fully confirmed, is that MCP Gateway shares all of the same entitlements as MaaS, which would flip the MCP/Agent exclusion above. The signed agreement still says what it says today; this caveat marks it at risk of supersession, pending confirmation.
+      </div>
+
       <h2>Subscription Tiers</h2>
 
       <h3>OpenShift Container Platform (Base)</h3>
@@ -121,6 +125,10 @@
         <strong>Key Limitation:</strong> RHOAI rate limiting and token metrics apply to MaaS workloads only. For MCP and Agent rate limiting, Full RHCL subscription is required.
       </div>
 
+      <div class="callout callout--insight">
+        <strong>Same caveat applies:</strong> if the AI BU MaaS-parity direction is confirmed (see the Token Scope Limitation callout above), MCP and Agent rate limiting would also move out of the Full-RHCL-only scope stated here. Not yet confirmed.
+      </div>
+
       <h3>Full RHCL</h3>
       <p>Enterprise-grade connectivity platform with multi-cluster resiliency:</p>
       <ul>
@@ -130,13 +138,19 @@
         <li><strong>Global Load Balancing</strong> — multi-cluster traffic distribution</li>
         <li><strong>Advanced Gateway Features</strong> — TLS reencryption, external provider egress, DDoS protection</li>
         <li><strong>MCP/Agent Rate Limiting</strong> — rate limiting for non-MaaS AI workloads</li>
+        <li><strong>Single-cluster constraint:</strong> Red Hat supports only a single instance of RHCL per cluster</li>
+        <li><strong>Non-AI workloads:</strong> customers using RHCL features for non-AI workloads or use cases must purchase a separate RHCL SKU</li>
       </ul>
 
       <h2>RHCL Pricing</h2>
       <p>SKU pricing detail for MCP Gateway on Red Hat Connectivity Link is maintained internally. Red Hat associates: see the internal RHCL SKU reference or contact the MCP Gateway PM.</p>
 
       <h2>RHOAI-RHCL Support Agreement</h2>
-      <p>Support-agreement scope and terms between RHOAI and RHCL are maintained internally. Red Hat associates: contact the MCP Gateway PM for details.</p>
+      <p>The RHOAI-RHCL support agreement is <strong>fully executed</strong>: all 10 stakeholders across RHCL and RHAI (PM, Engineering, and Support on both sides) signed between Mar 23 and Apr 28, 2026. Full scope and terms are maintained internally. Red Hat associates: contact the MCP Gateway PM for details.</p>
+
+      <div class="callout callout--source">
+        <strong>Scope: Case 1 only.</strong> This agreement covers Case 1: RHOAI deploying and using specific versions of RHCL components via images pushed to the registry by the RHCL team. Case 2, customers installing the full RHCL product alongside RHOAI for extended functionality, will be covered by a separate agreement, to be developed once those use cases are defined.
+      </div>
 
       <div class="callout callout--gap">
         <strong>Known Gap (Aug 2026):</strong> RHOAI 3.5 (Aug 2026) supports OCP 4.19, but RHCL 1.4 likely won't. Configuration is <strong>untested, best-effort only</strong>. OCP 4.19 maintenance support ends Dec 2026 (4-month overlap). Customers advised to upgrade to OCP 4.20+ for full support.
@@ -187,11 +201,40 @@
         </tbody>
       </table>
 
+      <div class="callout callout--insight">
+        <strong>Version Support Flexibility:</strong> RHCL commits to provide RHOAI with version-support projections for upcoming releases, to enable proactive planning. Both teams strive to support as many OCP versions as possible, absent technical limitations.
+      </div>
+
+      <h3>RHCL Forward OCP Lifecycle</h3>
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>OCP Version</th>
+            <th>RHCL Lifecycle Extends To</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OCP 4.22</td>
+            <td>May/Jun 2026</td>
+          </tr>
+          <tr>
+            <td>OCP 5.0</td>
+            <td>Oct 2026</td>
+          </tr>
+          <tr>
+            <td>OCP 4.23</td>
+            <td>2027 (date not yet set)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="color: var(--text-secondary);">RHCL 2.0 is being evaluated for OCP 5.0 / Extended Update Support (EUS) alignment.</p>
+
       <div class="callout callout--source">
         <strong>Source:</strong> <a href="https://docs.google.com/document/d/11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g" style="color: var(--rh-blue-light);">Internal support &amp; product agreement (access-controlled)</a> — RHOAI-RHCL support agreement (internal).
       </div>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

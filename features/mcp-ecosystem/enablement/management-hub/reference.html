@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quick Reference — MCP Ecosystem Knowledge Hub</title>
+  <title>Quick Reference — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
+
       <h1>Quick Reference</h1>
       <p class="lead">
         Essential links to upstream repositories, documentation, specifications, and related resources across the MCP ecosystem.
@@ -22,9 +24,9 @@
       <h2>Hub Network</h2>
       <ul>
         <li><a href="../../mcp-gateway/rhcl/">MCP Gateway Hub</a> — Gateway knowledge base and technical resources</li>
-        <li>MCP Catalog Hub — <em>coming soon</em></li>
-        <li>MCP Lifecycle Operator Hub — <em>coming soon</em></li>
-        <li>MCP Registry Hub — <em>coming soon</em></li>
+        <li>MCP Catalog Hub — <span class="badge badge--coming-soon">Dedicated hub planned</span></li>
+        <li>MCP Lifecycle Operator Hub — <span class="badge badge--coming-soon">Dedicated hub planned</span></li>
+        <li>MCP Registry Hub — <span class="badge badge--coming-soon">Dedicated hub planned</span></li>
       </ul>
 
       <h2>MCP Gateway</h2>
@@ -40,7 +42,8 @@
 
       <h2>MCP Catalog</h2>
       <ul>
-        <li><a href="https://github.com/opendatahub-io/model-metadata-collection" target="_blank" rel="noopener">opendatahub-io/model-metadata-collection</a> — Catalog upstream</li>
+        <li><a href="https://github.com/kubeflow/hub" target="_blank" rel="noopener">kubeflow/hub</a>: Catalog code upstream</li>
+        <li><a href="https://github.com/opendatahub-io/model-metadata-collection" target="_blank" rel="noopener">opendatahub-io/model-metadata-collection</a>: Catalog content upstream (PR merged)</li>
         <li><a href="https://docs.google.com/document/d/1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE" target="_blank" rel="noopener">MCP Catalog Design Doc</a></li>
         <li><a href="https://docs.google.com/document/d/1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740" target="_blank" rel="noopener">Partners MCP Catalog</a></li>
         <li><a href="https://www.redhat.com/en/blog/mcp-catalog-here-discover-deploy-and-connect-red-hat-openshift-ai" target="_blank" rel="noopener">MCP Catalog Blog</a></li>
@@ -84,6 +87,7 @@
         <li><a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">MCP Protocol Spec</a></li>
         <li><a href="https://www.openresponses.org/specification" target="_blank" rel="noopener">Open Responses Spec</a></li>
         <li><a href="https://registry.modelcontextprotocol.io" target="_blank" rel="noopener">MCP Registry (Anthropic)</a></li>
+        <li><a href="../../narrative/mcp-spec-rc-impact/">MCP Spec RC Impact Analysis</a>: how the MCP spec release candidate affects Registry, Catalog, and Lifecycle Operator</li>
       </ul>
 
       <h2>Demos and Media</h2>
@@ -94,14 +98,28 @@
 
       <h2>Internal Slack Channels</h2>
       <ul>
-        <li>#ai-asset-management</li>
-        <li>#forum-mcp-lifecycle-operator</li>
         <li>#mcp-gateway</li>
-        <li>#mcp-gateway-dev</li>
+        <li>#forum-ai-asset-management</li>
+        <li>#forum-mcp-lifecycle-operator</li>
+        <li>#forum-openshift-ai</li>
       </ul>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>This page is a curated link index; see the section links above for individual sources.</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./understand/what-is-mcp-management.html" class="page-footer__link">What Is MCP Management? — Problem and positioning</a></li>
+            <li><a href="./understand/ecosystem-architecture.html" class="page-footer__link">Ecosystem Architecture — How components connect</a></li>
+            <li><a href="./index.html" class="page-footer__link">Hub Home</a></li>
+          </ul>
+        </div>
       </footer>
     </main>
   </div>

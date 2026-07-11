@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Security Model — MCP Ecosystem Knowledge Hub</title>
+  <title>Security Model — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,22 +25,22 @@
           <div class="flow-step__title">Keycloak</div>
           <div class="flow-step__subtitle">Identity Provider</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">Authorino</div>
           <div class="flow-step__subtitle">Policy Enforcement</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step flow-step--highlight">
           <div class="flow-step__title">Wristband Tokens</div>
           <div class="flow-step__subtitle">Per-Tool Auth</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">MCP Gateway</div>
           <div class="flow-step__subtitle">Tool-Level RBAC</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">MCP Servers</div>
           <div class="flow-step__subtitle">Execution</div>
@@ -70,7 +70,7 @@
       <ul>
         <li><strong>JWT Authentication</strong> — Validates Bearer tokens against Keycloak OIDC</li>
         <li><strong>Wristband Signing</strong> — OPA Rego extracts per-server tool roles from JWT <code>resource_access</code> claim, signs into ES256 wristband JWT in <code>x-authorized-tools</code> header</li>
-        <li><strong>VirtualMCPServer Routing</strong> — CEL reads <code>groups</code> claim, sets <code>x-mcp-virtualserver</code> header</li>
+        <li><strong>MCPVirtualServer Routing</strong> — CEL reads <code>groups</code> claim, sets <code>x-mcp-virtualserver</code> header (<code>MCPVirtualServer</code> is the <code>mcp.kuadrant.io/v1</code> CRD Kind)</li>
       </ul>
 
       <h3>3. Wristband Tokens (Per-Tool Auth)</h3>
@@ -90,6 +90,19 @@
         <li><strong>ReferenceGrants</strong> — Cross-namespace references for MCPGatewayExtension → Gateway</li>
       </ul>
 
+      <h3>Authorization Layering</h3>
+      <p>Putting the above together, authorization is enforced in four ordered layers:</p>
+      <ol style="margin-left: var(--space-lg); color: var(--text-secondary);">
+        <li><strong>JWT validation:</strong> Authorino validates the Bearer token against Keycloak OIDC</li>
+        <li><strong>Per-server pattern matching:</strong> policy rules match the request against per-server tool-role patterns</li>
+        <li><strong>Wristband tool filtering:</strong> Authorino signs a wristband JWT scoping which tools are authorized, passed in <code>x-authorized-tools</code></li>
+        <li><strong>MCPVirtualServer routing:</strong> the Gateway routes the already-filtered request to the matching virtual server</li>
+      </ol>
+
+      <div class="callout callout--gap">
+        <strong>Not an access-control mechanism:</strong> MCPVirtualServer routing filters which tools are SEEN by a client, not which tools CAN BE CALLED. Access control is enforced upstream, at the wristband and AuthPolicy layers; a virtual server boundary alone should not be relied on to block a call.
+      </div>
+
       <h2>Agent Identity Tiers</h2>
       <table class="status-table" style="margin-top: var(--space-lg);">
         <thead>
@@ -107,14 +120,14 @@
           </tr>
           <tr>
             <td><strong>Tier 2</strong></td>
-            <td>SPIFFE/Authbridge — actor-chain identity propagation with service mesh mTLS</td>
+            <td>SPIFFE/AuthBridge — actor-chain identity propagation with service mesh mTLS<br><small>AuthBridge is Kagenti-delivered. Kagenti is being removed from the roadmap, with OpenShell expected to expand to cover its capabilities (owner ruling, 2026-07-10); this path needs re-confirmation.</small></td>
             <td><span class="badge badge--planned">Planned (3.5+)</span></td>
           </tr>
         </tbody>
       </table>
 
       <div class="callout callout--quote">
-        <strong>From AI Gateway F2F (April 2026):</strong> "Agent identity tiered: Tier 1 (OpenShell token masking), Tier 2 (Spire/Authbridge with actor-chain)."
+        <strong>From AI Gateway F2F (April 2026):</strong> "Agent identity tiered: Tier 1 (OpenShell token masking), Tier 2 (Spire/AuthBridge with actor-chain)."
       </div>
 
       <h2>Credential Brokering (Vault Integration)</h2>
@@ -150,7 +163,7 @@
         <tbody>
           <tr>
             <td><strong>Shared Gateway</strong></td>
-            <td>Policy-isolated teams with centralized governance. Single Gateway instance with per-team VirtualMCPServers and AuthPolicies.</td>
+            <td>Policy-isolated teams with centralized governance. Single Gateway instance with per-team MCPVirtualServers and AuthPolicies.</td>
           </tr>
           <tr>
             <td><strong>Gateway-per-Team</strong></td>
@@ -162,17 +175,18 @@
       <h2>Key Security Recommendations</h2>
       <ul>
         <li><strong>HTTP-based MCP servers only</strong> — stdio transport not supported by Gateway</li>
-        <li><strong>Wristband + VirtualMCPServer layering</strong> — defense-in-depth approach</li>
+        <li><strong>Wristband + MCPVirtualServer layering</strong> — defense-in-depth approach</li>
         <li><strong>Gateway-level AuthPolicy</strong> for auth/wristband; per-server HTTPRoute for credential injection</li>
         <li><strong>Prefer OpenShift OAuth federation</strong> over seed users in production Keycloak</li>
         <li><strong>Namespace isolation</strong> for multi-tenant deployments</li>
+        <li><strong>MCPLO endpoint TLS:</strong> now offers TLS 1.3 with ML-KEM (post-quantum), QE-verified July 2026</li>
       </ul>
 
       <h2>Deep Dive: Gateway Security</h2>
       <p>For comprehensive coverage of MCP Gateway security architecture, policy configuration, and wristband signing:</p>
       <p style="margin-top: var(--space-md);"><a href="../../../mcp-gateway/rhcl/understand/security.html" style="color: var(--rh-blue-light); text-decoration: none; font-weight: 600;">→ MCP Gateway Security Deep Dive</a></p>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

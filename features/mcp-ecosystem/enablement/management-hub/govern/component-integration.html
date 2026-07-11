@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Component Integration — MCP Ecosystem Knowledge Hub</title>
+  <title>Component Integration — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@
           <tr>
             <td><strong>MCPLO</strong></td>
             <td><strong>Gateway</strong></td>
-            <td>Manual admin registration via MCPServer CRD + manual ConfigMap</td>
+            <td>Manual admin registration via MCPServerRegistration CRD + manual ConfigMap</td>
             <td><span class="badge badge--gap">Manual</span><br><small>Target: Registry auto-config (GA Q4 2026)</small></td>
           </tr>
           <tr>
@@ -51,8 +51,8 @@
           <tr>
             <td><strong>Registry</strong></td>
             <td><strong>Catalog</strong></td>
-            <td>Sourcing metadata (trust tiers, verification status, health)</td>
-            <td><span class="badge badge--planned">Planned (3.5 TP)</span></td>
+            <td>Lifecycle-status enrichment only (active/deprecated flagging); not trust tiers or verification status, which remain out of scope until the four-track governance model ships</td>
+            <td><span class="badge badge--planned">Planned (3.6 EA1)</span><br><small>RHAISTRAT-2027, superseding RHAISTRAT-1938 (closed/obsolete)</small></td>
           </tr>
           <tr>
             <td><strong>Studio</strong></td>
@@ -63,8 +63,8 @@
           <tr>
             <td><strong>MCPLO</strong></td>
             <td><strong>Registry</strong></td>
-            <td>Auto-register deployed servers as "discovered" entries</td>
-            <td><span class="badge badge--planned">Under Discussion</span><br><small>Chris Hambridge, Matt Prahl feedback</small></td>
+            <td>MCPLO auto-registers deployed servers as "discovered" entries using <code>update_mode: SYSTEM_MANAGED</code> (vs. <code>MANUAL</code> for admin-entered records)</td>
+            <td><span class="badge badge--planned">Design resolved</span><br><small>Resolves the Hambridge/Prahl "discovered entries" question via <code>update_mode</code></small></td>
           </tr>
         </tbody>
       </table>
@@ -81,17 +81,17 @@
           <div class="flow-step__title">User browses Catalog</div>
           <div class="flow-step__subtitle">Discovers OpenShift MCP</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">Clicks "Deploy"</div>
           <div class="flow-step__subtitle">Selects namespace</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">Catalog creates MCPServer CRD</div>
           <div class="flow-step__subtitle">YAML applied to cluster</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">MCPLO watches CRD</div>
           <div class="flow-step__subtitle">Creates Deployment + Service</div>
@@ -104,7 +104,7 @@
           <h4 style="font-family: var(--font-sans); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-md);">Today (3.4) — Manual</h4>
           <ol style="margin-left: var(--space-lg); color: var(--text-secondary);">
             <li>MCPLO deploys MCP server (Pod + Service created)</li>
-            <li><strong>Admin manually registers</strong> server with Gateway via MCPServer CRD</li>
+            <li><strong>Admin manually registers</strong> server with Gateway via MCPServerRegistration CRD</li>
             <li><strong>Admin manually updates</strong> <code>gen-ai-aa-mcp-servers</code> ConfigMap with server URL</li>
             <li>Requires cluster-admin privileges for ConfigMap patch</li>
           </ol>
@@ -128,17 +128,17 @@
           <div class="flow-step__title">MCP server registered</div>
           <div class="flow-step__subtitle">In Registry (manual or auto)</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">Approval workflow</div>
           <div class="flow-step__subtitle">Governance review + approval</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step flow-step--highlight">
           <div class="flow-step__title">Registry updates Gateway</div>
           <div class="flow-step__subtitle">Auto-config MCPGatewayExtension</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-step">
           <div class="flow-step__title">Gateway routes traffic</div>
           <div class="flow-step__subtitle">Tools visible to Studio</div>
@@ -149,13 +149,13 @@
         <strong>Key Principle:</strong> Flow is always Catalog → Registry, never reverse. The Registry is the authoritative governance layer; the Catalog is the discovery layer.
       </div>
 
-      <h3>Flow 4: Catalog → Registry (Planned 3.5 TP)</h3>
-      <p>MCP servers configured in the Catalog can be registered INTO the Registry for governance:</p>
+      <h3>Flow 4: Catalog → Registry (Planned 3.6 EA1)</h3>
+      <p>MCP servers configured in the Catalog can be registered INTO the Registry for governance tracking. RHAISTRAT-2027 (superseding the closed/obsolete RHAISTRAT-1938) now carries this integration as fix version 3.6 EA1, not 3.5. Current scope delivers lifecycle-status enrichment; approval, verification, and certification tracks are proposed but not yet modeled (see <a href="./lifecycle-flow.html">Lifecycle Flow</a>):</p>
       <ul>
-        <li><strong>Registration</strong> — Catalog-discovered servers are submitted to Registry for governance tracking</li>
-        <li><strong>Governance metadata</strong> — Registry adds lifecycle state, approval status, certification, ownership</li>
-        <li><strong>Trust tiers</strong> — Registry's certification status may inform how servers are displayed back in the Catalog UI (certified, community, unverified)</li>
-        <li><strong>Deprecation tracking</strong> — Registry lifecycle state (deprecated/retired) can signal servers that should be removed from active use</li>
+        <li><strong>Registration:</strong> Catalog-discovered servers are submitted to Registry for governance tracking</li>
+        <li><strong>Governance metadata:</strong> Registry adds <code>MCPServerStatus</code> / <code>MCPPublishState</code> lifecycle state; approval, certification, and ownership tracks are proposed but not yet modeled in the current data model</li>
+        <li><strong>Lifecycle-status enrichment:</strong> Registry's lifecycle state (active or deprecated) informs how servers are surfaced back in the Catalog UI; trust tiers and verification status are a later-phase capability, not delivered by this integration</li>
+        <li><strong>Deprecation tracking:</strong> Registry lifecycle state (deprecated or retired) can signal servers that should be removed from active use</li>
       </ul>
 
       <h3>Flow 5: Studio → Gateway/Servers (Manual Bridge Today)</h3>
@@ -175,14 +175,14 @@ data:
       <p style="margin-top: var(--space-md); color: var(--text-secondary);">In 3.5, this ConfigMap will be replaced by direct Registry API consumption — Studio will query the Registry for approved MCP servers and their endpoints.</p>
 
       <h2>Open Questions</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--space-sm);"><strong>Resolved:</strong> "Should MCPLO create read-only 'discovered' registry entries?" (Chris Hambridge, Matt Prahl feedback) is resolved via the <code>update_mode</code> field (<code>MANUAL</code> vs. <code>SYSTEM_MANAGED</code>): MCPLO auto-registers deployed servers as "discovered" entries with <code>update_mode: SYSTEM_MANAGED</code>. See the Integration Map above.</p>
       <ul>
-        <li>Should MCPLO create read-only "discovered" registry entries? (Chris Hambridge, Matt Prahl feedback)</li>
         <li>How should registry state inform gateway behavior — full auto-config or approval-gated only?</li>
         <li>Which lifecycle states should trigger gateway configuration updates?</li>
         <li>Should registry support multi-registry federation for conflict resolution?</li>
       </ul>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
@@ -199,6 +199,7 @@ data:
             <li><a href="./lifecycle-flow.html">Lifecycle Flow</a></li>
             <li><a href="./security-model.html">Security Model</a></li>
             <li><a href="../understand/component-overview.html">Component Overview</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/ecosystem.html">RHCL Hub: Ecosystem Overview</a></li>
           </ul>
         </div>
       </footer>

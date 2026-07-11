@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Value Proposition | MCP Management Hub</title>
+  <title>Value Proposition - MCP Management Knowledge Hub</title>
   <link rel="stylesheet" href="../styles.css">
-  <script src="../nav.js"></script>
 </head>
-<body class="hub-layout">
-  <header id="hub-header" class="hub-header"></header>
-  <aside id="hub-sidebar" class="hub-sidebar"></aside>
-
-  <main class="hub-main">
-    <div class="breadcrumb"></div>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
 
     <h1>Value Proposition</h1>
     <p class="lead">From MCP chaos to governed enterprise infrastructure — the only full-lifecycle AI tool management platform.</p>
@@ -27,7 +26,7 @@
     <div class="callout callout--insight">
       <h2 class="callout__title">1. Discovery — MCP Catalog</h2>
       <p><strong>Pain:</strong> "Where do I find MCP servers? Which ones are certified? Which can I actually use?"</p>
-      <p><strong>Solution:</strong> Partner-verified catalog with 10+ certified MCP servers (Confluent, Dynatrace, Azure, EDB, Terraform) plus Red Hat (OpenShift, Ansible, Insights), community servers, and BYO registration. Discovery layer with security indicators, deployment templates, and RBAC visibility (you only see what you can deploy).</p>
+      <p><strong>Solution:</strong> Partner-verified catalog with 10 servers shipped (5 partner, 2 community, 3 Red Hat); certification program in design. Partners: Confluent, Dynatrace, Azure, EDB, Terraform. Red Hat: OpenShift, Ansible, Insights. Plus community servers and BYO registration. Discovery layer with security indicators, deployment templates, and RBAC visibility (you only see what you can deploy).</p>
       <p><strong>Proof:</strong> Shipped in RHOAI 3.4 (April 2026). 5 partners, 3 Red Hat, 2 community servers available day one. Consent-based partner pipeline scaled to 10+ organizations within 8 weeks.</p>
     </div>
 
@@ -35,7 +34,7 @@
       <h2 class="callout__title">2. Governance — MCP Registry</h2>
       <p><strong>Pain:</strong> "Who approved this server? Is it safe? Can I trust it? What version am I running? Is this certified?"</p>
       <p><strong>Solution:</strong> MLflow-backed registry with immutable versioning, approval workflows (Draft → Candidate → Published → Deprecated → Retired), verification status, certification tracking, and full audit trail. Governance metadata separated from MCP payload — upstream MCP schema preserved, Red Hat governance layered on top.</p>
-      <p><strong>Proof:</strong> TP in RHOAI 3.5 (Aug 2026), GA Q4 2026. Design validated with MLflow upstream — Red Hat driving skills registry design, submitting requirements/user stories to MLflow. Data model approved across Databricks, MLflow, and RHOAI engineering (June 2026).</p>
+      <p><strong>Proof:</strong> DP in RHOAI 3.5 (Aug 2026), GA Q4 2026. Red Hat driving skills registry design with MLflow upstream, submitting requirements/user stories to MLflow. Data model proposal under active review with Databricks/MLflow upstream (as of June 2026).</p>
     </div>
 
     <div class="callout callout--insight">
@@ -96,16 +95,26 @@
       </tbody>
     </table>
 
-    <div class="page-footer" data-verified="2026-06-22">
-      <div class="page-footer__links">
-        <a href="../understand/ecosystem-architecture.html" class="page-footer__link">Architecture Overview</a>
-        <a href="customer-stories.html" class="page-footer__link">Customer Stories</a>
-        <a href="competitive.html" class="page-footer__link">Competitive Landscape</a>
-      </div>
-      <div class="page-footer__verified">
-        <span class="staleness-indicator">✓</span> Verified: 2026-06-22 | Sources: Source verification: internal
-      </div>
-    </div>
-  </main>
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Source verification: internal</li>
+            <li>MCP Registry Data Model Proposal (Google Doc)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/ecosystem-architecture.html" class="page-footer__link">Architecture Overview</a></li>
+            <li><a href="customer-stories.html" class="page-footer__link">Customer Stories</a></li>
+            <li><a href="competitive.html" class="page-footer__link">Competitive Landscape</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
 </body>
 </html>

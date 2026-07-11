@@ -1,4 +1,4 @@
-/* === MCP Gateway Knowledge Hub Stylesheet === */
+/* === MCP Management Knowledge Hub Stylesheet (shared design tokens with the RHCL hub) === */
 
 /* === DESIGN TOKENS === */
 :root {
@@ -399,6 +399,15 @@ pre code {
   color: var(--text-muted);
 }
 
+.callout--warning {
+  border-left-color: var(--rh-orange);
+  background: rgba(244, 180, 0, 0.08);
+}
+
+.callout--warning .callout__title {
+  color: var(--rh-orange);
+}
+
 .callout__title {
   font-family: var(--font-sans);
   font-weight: 600;
@@ -442,6 +451,101 @@ pre code {
   color: var(--text-muted);
 }
 
+/* Component Cards (landing page) */
+.component-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.component-card__cta {
+  display: inline-block;
+  margin-top: auto;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--rh-red);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 4px;
+  font-size: var(--fs-body);
+  transition: background var(--transition-exit);
+}
+
+.component-card__cta:hover {
+  background: var(--rh-red-dark);
+}
+
+.component-card__meta {
+  margin-top: var(--space-sm);
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
+/* Quick Link Cards (landing page Quick Links section) */
+.quick-link-card {
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+}
+
+.quick-link-card__title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.quick-link-card__link {
+  color: var(--rh-blue-light);
+  text-decoration: none;
+  font-size: var(--fs-body);
+}
+
+/* Release Timeline (landing page) */
+.timeline-band {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: var(--space-lg);
+}
+
+.timeline-band__row {
+  display: flex;
+  gap: var(--space-xl);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.timeline-band__column {
+  flex: 1;
+  min-width: 200px;
+}
+
+.timeline-band__column-title {
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.timeline-band__items {
+  font-size: var(--fs-body);
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.timeline-band__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.timeline-arrow {
+  font-size: 2rem;
+  color: var(--text-muted);
+}
+
 /* Status Badges */
 .badge {
   display: inline-block;
@@ -472,6 +576,89 @@ pre code {
 .badge--gap {
   background: var(--rh-red-dark);
   color: #ffffff;
+}
+
+/* Additional badge variants (jira-tracker, open-questions, roadmap).
+   Grouped by meaning: green-ish = accepted/final, blue = in motion,
+   amber = open/pending, red = blocked, teal/purple = distinct review
+   states, gray = not available / deferred. */
+.badge--approved,
+.badge--accepted,
+.badge--decided {
+  background: var(--rh-green);
+  color: #ffffff;
+}
+
+.badge--in-progress,
+.badge--new {
+  background: var(--rh-blue);
+  color: #ffffff;
+}
+
+.badge--open,
+.badge--partial,
+.badge--stakeholder-review {
+  background: var(--rh-orange);
+  color: #000000;
+}
+
+.badge--blocked {
+  background: var(--rh-red-dark);
+  color: #ffffff;
+}
+
+.badge--acknowledged {
+  background: var(--rh-teal);
+  color: #ffffff;
+}
+
+.badge--research {
+  background: var(--rh-purple);
+  color: #ffffff;
+}
+
+.badge--not-available {
+  background: var(--border-muted);
+  color: var(--text-muted);
+}
+
+.badge--coming-soon {
+  background: transparent;
+  border: 1px solid var(--border-muted);
+  color: var(--text-muted);
+}
+
+/* Status Badge (component-overview version/stage chips) */
+.status-badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-badge--tp {
+  background: var(--rh-blue);
+  color: #ffffff;
+}
+
+.status-badge--dp {
+  background: var(--rh-green);
+  color: #ffffff;
+}
+
+.status-badge--design {
+  background: var(--rh-purple);
+  color: #ffffff;
+}
+
+.status-badge--coming-soon {
+  background: transparent;
+  border: 1px solid var(--border-muted);
+  color: var(--text-muted);
 }
 
 /* Status Table */
@@ -562,6 +749,31 @@ pre code {
   background: rgba(238, 0, 0, 0.05);
 }
 
+/* Flow Box (lifecycle-flow's top-level stage diagram; mirrors .flow-step) */
+.flow-box {
+  background: var(--bg-card);
+  border: 2px solid var(--border-muted);
+  border-radius: 4px;
+  padding: var(--space-md);
+  min-width: 140px;
+  text-align: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.flow-box__title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+  font-size: var(--fs-body);
+}
+
+.flow-box__desc {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+}
+
 .flow-arrow {
   color: var(--text-muted);
   font-size: 1.5rem;
@@ -572,7 +784,25 @@ pre code {
   content: "→";
 }
 
-/* Staleness Indicator */
+/* Source reference (small inline citation, e.g. gaps.html, jira-tracker.html) */
+.source-ref {
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Staleness Indicator: colored dot (via ::before) plus a text label
+   ("Verified N days ago") injected by nav.js's computeStaleness(). */
+.staleness-indicator {
+  font-size: var(--fs-body);
+  display: inline-flex;
+  align-items: center;
+}
+
+.staleness-indicator::before {
+  content: "\25CF  ";
+}
+
 .staleness-green {
   color: var(--rh-green);
 }

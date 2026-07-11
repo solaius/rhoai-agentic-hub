@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gaps — MCP Ecosystem Knowledge Hub</title>
+  <title>Gaps — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,7 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
 
       <h1>Known Gaps</h1>
       <p class="lead">Cross-cutting gaps across the MCP Ecosystem — documentation, integration, automation, and governance limitations in current releases.</p>
@@ -115,9 +116,22 @@
           <p><strong>Issue:</strong> MCP Registry does not exist in RHOAI 3.4. The governance backbone connecting Catalog, Lifecycle Operator, Gateway, and Gen AI Studio is missing.</p>
           <p><strong>Impact:</strong> No system of record for MCP lifecycle, approval, certification, or trust. Each component operates in isolation with manual handoffs.</p>
           <p><strong>Owner:</strong> RHOAI Registry Team</p>
-          <p><strong>Status:</strong> RHOAI 3.5 Dev Preview target (RHAIRFE-294, RHAIRFE-2421)</p>
+          <p><strong>Status:</strong> RHOAI 3.5 Dev Preview target (RHAIRFE-294, RHAIRFE-2421). <strong>Review by Aug 2026</strong>: this gap's status flips once 3.5 DP lands.</p>
           <p><strong>Workaround:</strong> Use manual workflows for governance; document MCP servers in spreadsheets or wikis; enforce approval via team processes.</p>
           <p class="source-ref">Source: MCP Registry Component Doc, Knowledge Registry #27</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            STDIO Transport Not Supported
+          </h3>
+          <p><strong>Issue:</strong> MCP Catalog and Registry currently support Streamable HTTP transport only. STDIO-based MCP servers cannot be listed, registered, or consumed through the governed path.</p>
+          <p><strong>Impact:</strong> Local and IDE-native MCP servers (a large share of community and developer tooling) are invisible to Catalog search and cannot be tracked in Registry.</p>
+          <p><strong>Owner:</strong> RHOAI Catalog Team, RHOAI Registry Team</p>
+          <p><strong>Status:</strong> Committed direction: three RFEs filed 2026-06-26: RHAIRFE-2514 (Catalog: list STDIO MCPs with local install info), RHAIRFE-2515 (Registry: allow registration/tracking of STDIO MCPs), RHAIRFE-2516 (spec-compliant IDE-native registry API for Cursor/Windsurf/VS Code). Delivery Features RHAISTRAT-2131/2132/2133, status New, no fix version yet.</p>
+          <p><strong>Workaround:</strong> None today; STDIO MCP servers must be installed and tracked manually outside the governed Catalog/Registry path.</p>
+          <p class="source-ref">Source: Jira sweep 2026-07-10 (RHAIRFE-2514/2515/2516, RHAISTRAT-2131/2132/2133)</p>
         </div>
 
         <div class="feature-card">
@@ -129,7 +143,7 @@
           <p><strong>Impact:</strong> Governance and runtime enforcement are disconnected. Approved MCPs do not automatically become available through gateway-secured endpoints.</p>
           <p><strong>Owner:</strong> MCP Gateway Team + MCP Registry Team (integration work)</p>
           <p><strong>Status:</strong> GA target (Q4 2026); manual registration path remains in 3.5</p>
-          <p><strong>Workaround:</strong> After Registry approval, manually create MCPServer CRD for Gateway or apply Gateway configuration YAML.</p>
+          <p><strong>Workaround:</strong> After Registry approval, manually create an MCPServerRegistration CRD for Gateway or apply Gateway configuration YAML.</p>
           <p class="source-ref">Source: MCP Gateway Roadmap, Knowledge Registry</p>
         </div>
       </section>
@@ -164,13 +178,13 @@
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
             <li>Fernando Lozano's MCP Notes (Google Doc: 1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8)</li>
-            <li>Source Verification Report (2026-06-22)</li>
+            <li>Source Verification Report (2026-06-22); Jira sweep (2026-07-10)</li>
             <li>Knowledge Registry (knowledge-registry.md #25-28)</li>
             <li>Component Knowledge Docs (mcp-gateway.md, mcp-catalog.md, mcp-registry.md)</li>
           </ul>
@@ -182,6 +196,7 @@
             <li><a href="open-questions.html">Open Questions</a></li>
             <li><a href="../build/end-to-end-setup.html">End-to-End Setup</a></li>
             <li><a href="../govern/entitlement.html">Entitlements</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/plan/gaps.html">RHCL Hub: Known Gaps</a></li>
           </ul>
         </div>
       </footer>

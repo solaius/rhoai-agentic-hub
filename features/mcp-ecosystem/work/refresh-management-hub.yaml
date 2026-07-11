@@ -4,11 +4,12 @@
 site: features/mcp-ecosystem/enablement/management-hub/
 sources:
   gdocs:
-  - {id: 1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y, title: Ecosystem Strategy}
-  - {id: 1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8, title: Partner Ecosystem}
-  - {id: 1vRu8pSLi6VMrX1Cdn64RdQTOhjQZG97BIxTRZadtjVY, title: Operators Deep Dive}
-  - {id: 11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y, title: MCPLO Support Agreement}
-  - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: Catalog Integration}
+  # titles verified against the live docs during the 2026-07-10 sweep
+  - {id: 1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y, title: MCP Ecosystem Best Practices}
+  - {id: 1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8, title: MCP Research Notes}
+  - {id: 1vRu8pSLi6VMrX1Cdn64RdQTOhjQZG97BIxTRZadtjVY, title: MCPLO Weekly Meeting Notes}
+  - {id: 11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y, title: MCP Registry MVP Requirements}
+  - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: MCP Catalog}
   - {id: 1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740, title: Partners MCP Catalog}
   - {id: 1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8, title: MCP Registry Data Model Proposal}
   - {id: 11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g, title: RHOAI Support Agreement with RHCL}

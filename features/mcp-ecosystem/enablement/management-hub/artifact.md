@@ -2,7 +2,7 @@
 type: artifact
 title: MCP Management Knowledge Hub
 description: 22-page enablement site covering the full MCP ecosystem (Gateway, Registry, Catalog, Lifecycle Operator) across understand/sell/build/govern/plan. Customer-engagement detail anonymized for public publication.
-timestamp: 2026-07-09
+timestamp: 2026-07-10
 features: [mcp-ecosystem]
 source: migrated+scrubbed from ai-asset-registry/mcps/ecosystem/hub/ (owner ruling 2b)
 ---

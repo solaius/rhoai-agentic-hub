@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Stories | MCP Management Hub</title>
+  <title>Customer Stories - MCP Management Knowledge Hub</title>
   <link rel="stylesheet" href="../styles.css">
-  <script src="../nav.js"></script>
 </head>
-<body class="hub-layout">
-  <header id="hub-header" class="hub-header"></header>
-  <aside id="hub-sidebar" class="hub-sidebar"></aside>
-
-  <main class="hub-main">
-    <div class="breadcrumb"></div>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
 
     <h1>Customer Stories</h1>
     <p class="lead">Real-world validation from customer POCs, partner integrations, and internal implementation experiences.</p>
@@ -32,7 +31,7 @@
         <h3 class="feature-card__title">What We Delivered</h3>
       </div>
       <p class="feature-card__description"><strong>10 Questions Answered:</strong> Comprehensive technical deep-dive covering Okta group mapping via Keycloak protocol mappers, token exchange for backend services, in-process token caching (10K entries, 30-second pre-expiry refresh), external Keycloak support (no co-location required), OBO configuration patterns, and full audit trail via Keycloak events + JWT <code>act</code> claim chain.</p>
-      <p class="feature-card__description"><strong>Key Validation:</strong> AuthBridge designed to transparently offload auth — MCP server receives validated token, no auth code required. Envoy sidecar (injected by Kagenti) handles JWT validation. The customer's "dumb MCP server" requirement confirmed as fully supported.</p>
+      <p class="feature-card__description"><strong>Key Validation:</strong> AuthBridge designed to transparently offload auth — MCP server receives validated token, no auth code required. Envoy sidecar (injected by Kagenti) handles JWT validation. The customer's "dumb MCP server" requirement confirmed as fully supported. <em>Kagenti is being removed from the roadmap as of 2026-07-10, with OpenShell expected to expand to cover this capability; this delivery claim is under revalidation. The historical attribution (Kagenti delivered and injected this) stands.</em></p>
       <div class="feature-card__why">
         <div class="feature-card__why-title">Sources</div>
         <ul>
@@ -136,16 +135,30 @@
       <p>This experience proves that Red Hat validates products by using them. When an internal engineer finds gaps, we document them, fix them, and ship the fix to customers. This is how we go from "technically correct docs" to "docs that actually help you succeed."</p>
     </div>
 
-    <div class="page-footer" data-verified="2026-06-22">
-      <div class="page-footer__links">
-        <a href="value-prop.html" class="page-footer__link">Value Proposition</a>
-        <a href="competitive.html" class="page-footer__link">Competitive Landscape</a>
-        <a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a>
-      </div>
-      <div class="page-footer__verified">
-        <span class="staleness-indicator">✓</span> Verified: 2026-06-22 | Sources: Source verification: internal
-      </div>
+    <div class="callout callout--source">
+      <p><strong>Gateway-specific stories:</strong> the OEM identity/token walkthrough and hardware-partner gap analysis above are ecosystem-level summaries. For the fuller Gateway-specific customer stories, see the <a href="../../../mcp-gateway/rhcl/sell/customer-stories.html">RHCL hub's Customer Stories</a>, the canonical source for Gateway engagements.</p>
     </div>
-  </main>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="value-prop.html" class="page-footer__link">Value Proposition</a></li>
+            <li><a href="competitive.html" class="page-footer__link">Competitive Landscape</a></li>
+            <li><a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/sell/customer-stories.html" class="page-footer__link">RHCL Customer Stories</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
 </body>
 </html>

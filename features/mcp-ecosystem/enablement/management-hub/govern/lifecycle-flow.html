@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lifecycle Flow — MCP Ecosystem Knowledge Hub</title>
+  <title>Lifecycle Flow — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,32 +25,32 @@
           <div class="flow-box__title">Discover</div>
           <div class="flow-box__desc">Catalog</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-box">
           <div class="flow-box__title">Deploy</div>
           <div class="flow-box__desc">MCPLO</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-box">
           <div class="flow-box__title">Register</div>
           <div class="flow-box__desc">Registry</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-box">
           <div class="flow-box__title">Configure</div>
           <div class="flow-box__desc">Gateway</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-box">
           <div class="flow-box__title">Consume</div>
           <div class="flow-box__desc">Studio</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-box">
           <div class="flow-box__title">Monitor</div>
           <div class="flow-box__desc">Observability</div>
         </div>
-        <div class="flow-arrow">→</div>
+        <div class="flow-arrow"></div>
         <div class="flow-box">
           <div class="flow-box__title">Retire</div>
           <div class="flow-box__desc">Deprecation</div>
@@ -148,53 +148,43 @@
         <strong>Key Difference:</strong> Today, each handoff (Deploy → Register → Configure) requires manual admin intervention. Target state: Registry is the single source of truth that drives automation across the ecosystem.
       </div>
 
-      <h2>Governance Tracks (Proposed for Registry)</h2>
-      <p>Unlike a single linear lifecycle, the proposed MCP Registry data model separates governance into four independent tracks:</p>
+      <h2>Governance Tracks (Current Data Model)</h2>
+      <p>The MCP Registry's current data model uses two independent enums, not the four-track governance model described in early design proposals:</p>
 
       <table class="status-table" style="margin-top: var(--space-lg);">
         <thead>
           <tr>
-            <th>Track</th>
+            <th>Enum</th>
             <th>States</th>
-            <th>Purpose</th>
+            <th>Scope</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><strong>Lifecycle State</strong></td>
-            <td>Draft, Candidate, Published, Deprecated, Retired</td>
-            <td>Progression state of the version</td>
+            <td><strong>MCPServerStatus</strong></td>
+            <td>ACTIVE, DEPRECATED, RETIRED</td>
+            <td>Server-level (3 states)</td>
           </tr>
           <tr>
-            <td><strong>Approval Status</strong></td>
-            <td>Draft, Pending, Approved, Rejected, Revoked</td>
-            <td>Authorization/governance decision</td>
-          </tr>
-          <tr>
-            <td><strong>Verification Status</strong></td>
-            <td>Unverified, Verified</td>
-            <td>Identity/source verification</td>
-          </tr>
-          <tr>
-            <td><strong>Certification Status</strong></td>
-            <td>None, Candidate, Certified, Expired, Revoked</td>
-            <td>Certification program compliance</td>
+            <td><strong>MCPPublishState</strong></td>
+            <td>DRAFT, PUBLISHED, DEPRECATED, RETIRED</td>
+            <td>Version-level (4 states)</td>
           </tr>
         </tbody>
       </table>
 
       <div class="callout callout--source">
-        <strong>Note:</strong> This data model is proposed, not finalized. See <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" style="color: var(--rh-blue-light);">MLflow MCP Registry Data Model Proposal</a> for full details.
+        <strong>Post-MVP phasing:</strong> No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model. The four-track governance model (Lifecycle State: Draft/Candidate/Published/Deprecated/Retired; Approval Status: Draft/Pending/Approved/Rejected/Revoked; Verification Status: Unverified/Verified; Certification Status: None/Candidate/Certified/Expired/Revoked) is a proposal, deferred post-MVP, not abandoned: "For MVP/DP we should follow the same path as they are taking for the skills registry upstream to speed up approval/implementation... we should follow immediately after with the governance implementation as proposed here" (doc comment thread). See <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" style="color: var(--rh-blue-light);">MLflow MCP Registry Data Model Proposal</a> for the full four-track proposal.
       </div>
 
       <h2>Governance Invariants</h2>
       <ul>
-        <li><code>lifecycle_state=PUBLISHED</code> implies <code>approval_status=APPROVED</code></li>
-        <li><code>approval_status=REJECTED</code> or <code>REVOKED</code> should not coexist with <code>lifecycle_state=PUBLISHED</code></li>
-        <li><code>workspace</code> on version resolves to same value as parent <code>MCPServer.workspace</code></li>
+        <li><code>MCPServerStatus</code> and <code>MCPPublishState</code> are independent enums; no approval, verification, or certification field exists in the current model to gate either transition</li>
+        <li><code>workspace</code> on a version resolves to the same value as the parent <code>MCPServer.workspace</code></li>
+        <li><code>update_mode</code> (<code>MANUAL</code> or <code>SYSTEM_MANAGED</code>) controls whether a controller such as MCPLO may write to the record; it does not itself change lifecycle or publish state</li>
       </ul>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

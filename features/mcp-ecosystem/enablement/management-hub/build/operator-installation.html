@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Operator Installation — MCP Ecosystem Knowledge Hub</title>
+  <title>Operator Installation — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
+
       <h1>Operator Installation</h1>
       <p class="lead">The MCP ecosystem on RHOAI involves a two-tier operator installation model. Installation order matters — Tier 1 must complete before Tier 2.</p>
 
@@ -126,12 +128,17 @@ EOF</code></pre>
       <h2>Tier 2: MCP Ecosystem</h2>
 
       <h3>1. MCP Lifecycle Operator</h3>
-      <p>Not available via OLM or Helm. Install manually from GitHub release manifests:</p>
-      <pre><code>oc apply -f https://github.com/openshift/mcp-lifecycle-operator/blob/release-v0.1.0/dist/install.yaml
+      <p>Not available via OLM or Helm. Install manually from the GitHub release asset (repo is <code>kubernetes-sigs/mcp-lifecycle-operator</code>; <code>openshift/mcp-lifecycle-operator</code> is a fork with no releases of its own):</p>
+      <pre><code>oc apply -f https://github.com/kubernetes-sigs/mcp-lifecycle-operator/releases/download/v0.2.0/install.yaml
 
 # Wait for operator to be ready
 oc wait --for=condition=Ready pod -l control-plane=controller-manager \
     -n mcp-lifecycle-operator-system --timeout=300s</code></pre>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Since v0.2.0 (upstream)</div>
+        <p>The operator now reconciles a <strong>NetworkPolicy per MCPServer operand</strong> automatically, so no manual NetworkPolicy prerequisite is needed. Its metrics/webhook server also supports TLS security-profile tuning via the <code>TLS_MIN_VERSION</code> and <code>TLS_CIPHER_SUITES</code> environment variables.</p>
+      </div>
 
       <h3>2. MCP Gateway Operator (for full Gateway setup)</h3>
       <p>Install via OLM using a custom CatalogSource:</p>
@@ -189,7 +196,7 @@ helm install vault hashicorp/vault \
   --set server.ha.replicas=3</code></pre>
 
       <h2>Validated Component Versions</h2>
-      <p>These versions have been tested and validated together on ROSA/OpenShift 4.21.6 with RHOAI 3.4.0:</p>
+      <p>These versions have been tested and validated together on ROSA/OpenShift 4.21.6 with RHOAI 3.4.0. <strong>Validated as of the RHOAI 3.4 validation run (2026-04-21)</strong>: this matrix reflects that run, not current-release validation; re-validate before relying on it against a newer RHOAI train.</p>
 
       <table>
         <thead>
@@ -270,7 +277,7 @@ oc get csv -n openshift-operators | grep mcp-gateway
 oc get keycloak -A
 oc get pods -n vault  # if Vault installed</code></pre>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

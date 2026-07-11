@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ecosystem Architecture — MCP Ecosystem Knowledge Hub</title>
+  <title>Ecosystem Architecture — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
+
       <h1>Ecosystem Architecture</h1>
       <p class="lead">How MCP components connect to deliver end-to-end governed AI tool access.</p>
 
@@ -174,9 +176,14 @@ data:
             <td>Deployment descriptor (image, ports, secrets, env vars)</td>
           </tr>
           <tr>
-            <td><code>MCPServer</code> (Gateway)</td>
+            <td><code>MCPServerRegistration</code> (Gateway)</td>
             <td>MCP Gateway Controller</td>
-            <td>Gateway registration (toolPrefix, targetRef to HTTPRoute)</td>
+            <td>Gateway registration (<code>spec.prefix</code>, <code>targetRef</code> to HTTPRoute), <code>mcp.kuadrant.io/v1</code></td>
+          </tr>
+          <tr>
+            <td><code>MCPVirtualServer</code> (Gateway)</td>
+            <td>MCP Gateway Controller</td>
+            <td>Curated virtual server composed from one or more registered backends, <code>mcp.kuadrant.io/v1</code></td>
           </tr>
           <tr>
             <td><code>MCPGatewayExtension</code></td>
@@ -220,7 +227,7 @@ data:
         </ol>
       </div>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

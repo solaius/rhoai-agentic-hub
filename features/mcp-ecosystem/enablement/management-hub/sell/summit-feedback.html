@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Summit & Field Feedback | MCP Management Hub</title>
+  <title>Summit &amp; Field Feedback - MCP Management Knowledge Hub</title>
   <link rel="stylesheet" href="../styles.css">
-  <script src="../nav.js"></script>
 </head>
-<body class="hub-layout">
-  <header id="hub-header" class="hub-header"></header>
-  <aside id="hub-sidebar" class="hub-sidebar"></aside>
-
-  <main class="hub-main">
-    <div class="breadcrumb"></div>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
 
     <h1>Summit & Field Feedback</h1>
     <p class="lead">Customer asks and feature requests from Red Hat Summit 2026 and field engagements.</p>
 
     <div class="callout callout--source">
-      <p><strong>Note:</strong> Summit feedback synthesis is based on Slack summaries from the <code>#ai-asset-management</code> channel. Full Slack channel search results were not available for this report — this section will be updated when additional summit feedback is aggregated.</p>
+      <p><strong>Note:</strong> Summit feedback synthesis is based on Slack summaries from the <code>#ai-asset-management</code> and <code>#mcp-lifecycle-operator</code> channels; sources verified 2026-07-10.</p>
+    </div>
+
+    <div class="callout callout--source">
+      <p><strong>Gateway-specific feedback:</strong> the component-interest matrix below is cross-component demand signal. For the fresher, fuller Gateway-specific Summit table (identity, observability, and cost asks from a 9-customer set), see the <a href="../../../mcp-gateway/rhcl/sell/summit-feedback.html">RHCL hub's Summit &amp; Field Feedback</a>.</p>
     </div>
 
     <h2>Top 3 Customer Asks</h2>
@@ -26,7 +29,7 @@
     <div class="callout callout--insight">
       <h2 class="callout__title">1. Identity & Token Exchange</h2>
       <p><strong>Customer Need:</strong> "How do I handle identity when my agent calls backend services? How do tokens flow through the stack?"</p>
-      <p><strong>Status:</strong> <span class="badge badge--shipped">Shipped</span> MCP Gateway + AuthBridge + Keycloak OIDC + Vault integration addresses this. Token exchange via Keycloak, OBO support via <code>act</code> claim chains, wristband signing for per-tool authorization, Vault secrets injection for backends requiring stored credentials (GitHub PATs, API keys).</p>
+      <p><strong>Status:</strong> <span class="badge badge--shipped">Shipped</span> MCP Gateway + AuthBridge + Keycloak OIDC + Vault integration addresses this. Token exchange via Keycloak, OBO support via <code>act</code> claim chains, wristband signing for per-tool authorization, Vault secrets injection for backends requiring stored credentials (GitHub PATs, API keys). <em>AuthBridge's current implementation is Kagenti-delivered; Kagenti is being removed from the roadmap as of 2026-07-10, with OpenShell expected to expand to cover this capability. Claim under revalidation.</em></p>
       <p><strong>Evidence:</strong> A large enterprise OEM customer validated "dumb MCP server" pattern (May 2026) — MCP server receives validated token in Authorization header, no auth code required. 10 technical Q&As answered covering Okta federation, token caching, OBO configuration, audit trail.</p>
     </div>
 
@@ -130,7 +133,7 @@
           <td><strong>Identity & Token Exchange</strong></td>
           <td><span class="badge badge--shipped">Shipped</span></td>
           <td>OEM Customer, Telecom Provider, Hardware Partner</td>
-          <td>MCP Gateway v0.6.0 (April 2026)</td>
+          <td>MCP Gateway v0.6.0 (April 2026); Kagenti-delivered, roadmap caveat above</td>
         </tr>
         <tr>
           <td><strong>Per-Tool Rate Limiting</strong></td>
@@ -170,9 +173,9 @@
         </tr>
         <tr>
           <td><strong>WebSocket & stdio Transports</strong></td>
-          <td><span class="badge badge--gap">Future</span></td>
+          <td><span class="badge badge--planned">Active RFEs</span></td>
           <td>Hardware Partner</td>
-          <td>TBD (not near-term)</td>
+          <td>RHAIRFE-2514/2515/2516 filed Jun 2026</td>
         </tr>
         <tr>
           <td><strong>Agent-to-Agent (A2A)</strong></td>
@@ -196,16 +199,29 @@
       </ul>
     </div>
 
-    <div class="page-footer" data-verified="2026-06-22">
-      <div class="page-footer__links">
-        <a href="value-prop.html" class="page-footer__link">Value Proposition</a>
-        <a href="customer-stories.html" class="page-footer__link">Customer Stories</a>
-        <a href="competitive.html" class="page-footer__link">Competitive Landscape</a>
-      </div>
-      <div class="page-footer__verified">
-        <span class="staleness-indicator">✓</span> Verified: 2026-06-22 | Sources: Source verification: internal, Partner gap analysis (POC gap analysis — internal), <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway F2F</a>
-      </div>
-    </div>
-  </main>
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Source verification: internal</li>
+            <li>Partner gap analysis (POC gap analysis — internal)</li>
+            <li>Slack sweep (#ai-asset-management, #mcp-lifecycle-operator, 2026-07-10)</li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway F2F</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="value-prop.html" class="page-footer__link">Value Proposition</a></li>
+            <li><a href="customer-stories.html" class="page-footer__link">Customer Stories</a></li>
+            <li><a href="competitive.html" class="page-footer__link">Competitive Landscape</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/sell/summit-feedback.html" class="page-footer__link">RHCL Summit Feedback</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
 </body>
 </html>

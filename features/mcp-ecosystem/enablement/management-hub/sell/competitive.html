@@ -3,16 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Competitive Landscape | MCP Management Hub</title>
+  <title>Competitive Landscape - MCP Management Knowledge Hub</title>
   <link rel="stylesheet" href="../styles.css">
-  <script src="../nav.js"></script>
 </head>
-<body class="hub-layout">
-  <header id="hub-header" class="hub-header"></header>
-  <aside id="hub-sidebar" class="hub-sidebar"></aside>
-
-  <main class="hub-main">
-    <div class="breadcrumb"></div>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
 
     <h1>Competitive Landscape</h1>
     <p class="lead">MCP ecosystem comparison — Red Hat is the only platform spanning discovery, governance, runtime, and consumption.</p>
@@ -107,12 +106,148 @@
       <h2 class="callout__title">Auth & Identity: The Enterprise Blocker</h2>
       <p>MCP protocol specification explicitly leaves auth and identity as open questions. Competitors assume "MCP server handles auth" — but MCP servers are simple tools, not auth-aware services. Red Hat solves this with gateway-layer auth (Keycloak OIDC, token exchange, OBO, Vault secrets injection), allowing MCP servers to remain "dumb" (receive validated token in Authorization header, no auth code required).</p>
       <p>A large enterprise OEM customer validated this architecture in May 2026: "I just want it to get the access token in its header and not have to worry about anything else." Red Hat confirmed this as fully supported via AuthBridge + Envoy sidecar. No competitor offers gateway-layer identity delegation.</p>
+      <p><em>Caveat (2026-07-10):</em> this AuthBridge/Envoy-sidecar implementation is Kagenti-delivered. Kagenti is being removed from the roadmap, with OpenShell expected to expand to cover this capability; this claim is under revalidation pending that transition.</p>
     </div>
 
     <div class="callout callout--insight">
       <h2 class="callout__title">Governance: The Missing Layer</h2>
       <p>Discovery catalogs answer "what exists?" but not "who approved it?" or "is it safe?" Red Hat's Registry adds governance workflows (Draft → Candidate → Published), approval status (Draft, Pending, Approved, Rejected, Revoked), verification status (Unverified, Verified), and certification status (None, Candidate, Certified, Expired, Revoked). No competitor has approval workflows or immutable versioning with governance metadata.</p>
       <p>A strategic hardware partner's gap analysis (June 2026) identified "Central Metadata Registry" as a gap because registry is not yet integrated with gateway (planned for GA Q4 2026). Even in gap state, Red Hat's registry is more mature than any competitor's discovery-only catalog.</p>
+    </div>
+
+    <h2>Catalog &amp; Registry Landscape</h2>
+
+    <p>A separate competitive layer sits above the ecosystem-level comparison above: catalogs and registries that discover, list, and vet MCP servers for consumption. This table covers the discovery-layer landscape specifically, using the source doc's own comparison categories.</p>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Catalog</th>
+          <th>Open/Closed</th>
+          <th>Primary Form</th>
+          <th>Submission</th>
+          <th>Verification/Trust</th>
+          <th>Install</th>
+          <th>Programmatic</th>
+          <th>Scope</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Smithery</strong></td>
+          <td>Open</td>
+          <td>Marketplace/catalog</td>
+          <td>Open publisher submissions</td>
+          <td>Community + site governance</td>
+          <td>Yes (installer CLI)</td>
+          <td>Yes (CLI/SDK)</td>
+          <td>"Largest" marketplace; thousands of capabilities</td>
+        </tr>
+        <tr>
+          <td><strong>Docker MCP Catalog</strong></td>
+          <td>Mixed (curated)</td>
+          <td>Catalog integrated with Docker Hub</td>
+          <td>Curated/verified entries</td>
+          <td>Verified, versioned Docker images</td>
+          <td>Yes (Docker Desktop/Toolkit)</td>
+          <td>Yes (Docker tooling)</td>
+          <td>"100+ verified tools" at launch (Apr 2025)</td>
+        </tr>
+        <tr>
+          <td><strong>GitHub MCP Registry</strong></td>
+          <td>Open</td>
+          <td>Registry on GitHub</td>
+          <td>Community + vendor</td>
+          <td>GitHub identity &amp; curation</td>
+          <td>"Install" flows in GitHub UI</td>
+          <td>GitHub APIs</td>
+          <td>Official registry announcement (Sep 2025)</td>
+        </tr>
+        <tr>
+          <td><strong>Official MCP Registry</strong></td>
+          <td>Open</td>
+          <td>Protocol-official registry</td>
+          <td>Open PR/publish</td>
+          <td>OSS governance</td>
+          <td>Depends on clients</td>
+          <td>Live API docs</td>
+          <td>"App store for MCP servers"</td>
+        </tr>
+        <tr>
+          <td><strong>Postman getmcp</strong></td>
+          <td>Open (hosted on Postman)</td>
+          <td>Curated catalog workspaces</td>
+          <td>Curated by Postman + partners</td>
+          <td>Postman publisher verification</td>
+          <td>N/A</td>
+          <td>Postman APIs/collections</td>
+          <td>Popular public workspace(s)</td>
+        </tr>
+        <tr>
+          <td><strong>MCPServers.org</strong> (Awesome MCP Servers)</td>
+          <td>Open</td>
+          <td>Community directory</td>
+          <td>Open submissions</td>
+          <td>Community moderation</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>Broad community list</td>
+        </tr>
+        <tr>
+          <td><strong>MCP.so</strong></td>
+          <td>Open (3rd-party)</td>
+          <td>Marketplace/directory</td>
+          <td>Open submissions</td>
+          <td>Site moderation</td>
+          <td>Some one-click links</td>
+          <td>N/A</td>
+          <td>Claims 16k+ servers collected</td>
+        </tr>
+        <tr>
+          <td><strong>Pulse MCP</strong></td>
+          <td>Open (media/directory)</td>
+          <td>Directory with counts &amp; updates</td>
+          <td>Curated</td>
+          <td>Media-run curation</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>Reports 6k+ servers (updated daily)</td>
+        </tr>
+        <tr>
+          <td><strong>MCP Catalog</strong> (mcpcatalog.io)</td>
+          <td>Open</td>
+          <td>Public listing site</td>
+          <td>Unknown/open</td>
+          <td>Site governance</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>Category-browsable site</td>
+        </tr>
+        <tr>
+          <td><strong>ToolHive Registry</strong> (Stacklok)</td>
+          <td>Open</td>
+          <td>Registry + secure runtime</td>
+          <td>Curated + open</td>
+          <td>Security-focused (sandboxed containers)</td>
+          <td>Yes (<code>thv run</code>)</td>
+          <td>Yes (CLI + API server)</td>
+          <td>Focus on secure execution</td>
+        </tr>
+        <tr>
+          <td><strong>Microsoft Copilot Studio</strong></td>
+          <td>Closed (vendor)</td>
+          <td>In-product catalog</td>
+          <td>Vendor controlled</td>
+          <td>Microsoft certification</td>
+          <td>In-product add</td>
+          <td>N/A</td>
+          <td>Catalog of certified connectors</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout--source">
+      <p><strong>Richer landscape:</strong> the RHCL hub carries a more complete Gateway-vantage version of this table (12 entries, including Databricks Unity Catalog, plus its own gateway-competitor profiles for IBM API Connect, Google GKE Inference Gateway, and Portkey/Bifrost). See the <a href="../../../mcp-gateway/rhcl/sell/competitive.html">RHCL hub's Competitive Landscape</a>.</p>
     </div>
 
     <h2>Competitive Positioning by Use Case</h2>
@@ -161,16 +296,28 @@
       <p>MCP Gateway and AI Gateway are complementary, not competing. MCP Gateway handles MCP protocol specifically; AI Gateway handles all AI traffic including inference, egress, Responses API, and A2A. Both share Envoy, Gateway API, and RHCL infrastructure. See <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway</a> for full context.</p>
     </div>
 
-    <div class="page-footer" data-verified="2026-06-22">
-      <div class="page-footer__links">
-        <a href="value-prop.html" class="page-footer__link">Value Proposition</a>
-        <a href="customer-stories.html" class="page-footer__link">Customer Stories</a>
-        <a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a>
-      </div>
-      <div class="page-footer__verified">
-        <span class="staleness-indicator">✓</span> Verified: 2026-06-22 | Sources: Source verification: internal, <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway Competitive Landscape</a>
-      </div>
-    </div>
-  </main>
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Source verification: internal</li>
+            <li>MCP Catalog doc (competitor table)</li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway Competitive Landscape</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="value-prop.html" class="page-footer__link">Value Proposition</a></li>
+            <li><a href="customer-stories.html" class="page-footer__link">Customer Stories</a></li>
+            <li><a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/sell/competitive.html" class="page-footer__link">RHCL Competitive Landscape</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
 </body>
 </html>

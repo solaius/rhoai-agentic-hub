@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>What Is MCP Management? — MCP Ecosystem Knowledge Hub</title>
+  <title>What Is MCP Management? — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
+
       <h1>What Is MCP Management?</h1>
       <p class="lead">MCP Management is Red Hat's unified ecosystem for discovering, governing, deploying, and consuming Model Context Protocol servers at enterprise scale.</p>
 
@@ -63,7 +65,7 @@
       <div class="callout callout--insight" style="border-left-color: var(--rh-green);">
         <div class="callout__title">RHOAI 3.4: MCP Management Begins <span class="badge badge--shipped" style="margin-left: var(--space-sm);">DP</span></div>
         <ol>
-          <li><strong>Discover</strong> — Browse the MCP Catalog in AI Hub (10 servers: 3 Red Hat, 5 partner, 2 community)</li>
+          <li><strong>Discover</strong> — Browse the MCP Catalog in AI Hub (10 servers: 3 Red Hat [OpenShift, Ansible AAP, Red Hat Insights/Lightspeed], 5 partner, 2 community)</li>
           <li><strong>Deploy</strong> — Deploy from catalog via MCP Lifecycle Operator <span class="badge badge--shipped" style="font-size: 0.6rem;">DP</span> (prerequisites still manual)</li>
           <li><strong>Register</strong> — Manually edit <code>gen-ai-aa-mcp-servers</code> ConfigMap to make servers visible in Gen AI Studio</li>
           <li><strong>Secure</strong> — MCP Gateway <span class="badge badge--tp" style="font-size: 0.6rem;">TP</span> via RHCL provides per-tool auth, identity-aware filtering</li>
@@ -101,10 +103,10 @@
       <div class="feature-card">
         <div class="feature-card__header">
           <div class="feature-card__title">MCP Registry</div>
-          <span class="badge badge--planned">Design Phase</span>
+          <span class="badge badge--planned">DP (3.5)</span>
         </div>
         <div class="feature-card__description">
-          <p><strong>Governance layer.</strong> System of record for MCP servers. Tracks lifecycle state (Draft → Candidate → Published → Deprecated), approval status, certification, ownership, and deployment visibility.</p>
+          <p><strong>Governance layer.</strong> Currently in design phase; Dev Preview (DP) targeted for RHOAI 3.5. System of record for MCP servers, tracking server status, version publish-state, ownership, and deployment visibility.</p>
         </div>
       </div>
 
@@ -141,7 +143,7 @@
 
       <p><strong>Not Just MCP:</strong> The MCP ecosystem is the first instantiation of a broader <strong>AI Asset Registry</strong> vision. The same governance patterns (catalog for discovery, registry for lifecycle, operator for deployment) will extend to agents, skills, guardrails, and other AI assets in future releases.</p>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

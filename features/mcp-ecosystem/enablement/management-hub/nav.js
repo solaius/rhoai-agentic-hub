@@ -41,12 +41,36 @@ const SPECIAL_PAGES = [
 ];
 
 const HUB_NETWORK = [
-  { title: '🏠 MCP Ecosystem Hub', path: '../../ecosystem/hub/index.html', self: true },
+  { title: '🏠 MCP Ecosystem Hub', path: '../../mcp-ecosystem/hub/', self: true },
   { title: '🔌 MCP Gateway Hub', path: '../../mcp-gateway/rhcl/' },
-  { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/index.html', comingSoon: true },
-  { title: '⚙️ MCP Lifecycle Operator Hub', path: '../../mcp-lifecycle-operator/hub/index.html', comingSoon: true },
-  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/index.html', comingSoon: true },
+  { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/', comingSoon: true },
+  { title: '⚙️ MCP Lifecycle Operator Hub', path: '../../mcp-lifecycle-operator/hub/', comingSoon: true },
+  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/', comingSoon: true },
 ];
+
+/**
+ * Sidebar section collapse state, persisted per browser tab via sessionStorage
+ * so expand/collapse choices survive navigation between pages.
+ */
+const SIDEBAR_STATE_KEY = 'mgmt-hub-sidebar-state';
+
+function getSidebarState() {
+  try {
+    return JSON.parse(sessionStorage.getItem(SIDEBAR_STATE_KEY) || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function setSidebarSectionState(sectionId, expanded) {
+  try {
+    const state = getSidebarState();
+    state[sectionId] = expanded;
+    sessionStorage.setItem(SIDEBAR_STATE_KEY, JSON.stringify(state));
+  } catch (e) {
+    // sessionStorage unavailable (e.g. private browsing); state just won't persist
+  }
+}
 
 /**
  * Determines the base path prefix for linking to root-level resources
@@ -106,6 +130,7 @@ function buildSidebar() {
 
   const current = findCurrentPage();
   const basePath = getBasePath();
+  const sidebarState = getSidebarState();
 
   let html = '<nav class="hub-sidebar__nav"><ul>';
 
@@ -117,12 +142,15 @@ function buildSidebar() {
   // Add each section with its pages
   for (const section of SITE_MAP) {
     const isCurrentSection = current?.sectionId === section.id;
+    const isExpanded = Object.prototype.hasOwnProperty.call(sidebarState, section.id)
+      ? sidebarState[section.id]
+      : isCurrentSection;
     html += `<li class="hub-sidebar__section">`;
     html += `<div class="hub-sidebar__section-title" data-section="${section.id}" style="cursor: pointer;">`;
-    html += `<span class="section-toggle">${isCurrentSection ? '▼' : '▶'}</span> `;
+    html += `<span class="section-toggle">${isExpanded ? '▼' : '▶'}</span> `;
     html += `${section.section}`;
     html += `</div>`;
-    html += `<ul class="section-pages" data-section="${section.id}" style="display: ${isCurrentSection ? 'block' : 'none'}; list-style: none;">`;
+    html += `<ul class="section-pages" data-section="${section.id}" style="display: ${isExpanded ? 'block' : 'none'}; list-style: none;">`;
 
     for (const page of section.pages) {
       const isActive = current?.page?.path === page.path;
@@ -163,14 +191,16 @@ function buildSidebar() {
       const sectionId = header.getAttribute('data-section');
       const pages = document.querySelector(`.section-pages[data-section="${sectionId}"]`);
       const toggle = header.querySelector('.section-toggle');
+      const nowExpanded = pages.style.display === 'none';
 
-      if (pages.style.display === 'none') {
+      if (nowExpanded) {
         pages.style.display = 'block';
         toggle.textContent = '▼';
       } else {
         pages.style.display = 'none';
         toggle.textContent = '▶';
       }
+      setSidebarSectionState(sectionId, nowExpanded);
     });
   });
 }
@@ -211,6 +241,13 @@ function buildHeader() {
   html += '<select class="quick-jump-select" aria-label="Quick jump to page" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-subtle); padding: 0.5rem; border-radius: 4px; font-family: var(--font-text); font-size: var(--fs-body);">';
   html += '<option value="">Jump to...</option>';
 
+  html += '<optgroup label="General">';
+  for (const specialPage of SPECIAL_PAGES) {
+    const isSelected = current?.page?.path === specialPage.path;
+    html += `<option value="${basePath}${specialPage.path}" ${isSelected ? 'selected' : ''}>${specialPage.title}</option>`;
+  }
+  html += '</optgroup>';
+
   for (const section of SITE_MAP) {
     html += `<optgroup label="${section.section}">`;
     for (const page of section.pages) {
@@ -246,7 +283,7 @@ function buildHeader() {
       sidebar.classList.remove('open');
     }
   }
-  mediaQuery.addListener(handleMobile);
+  mediaQuery.addEventListener('change', handleMobile);
   handleMobile(mediaQuery);
 
   menuToggle.addEventListener('click', () => {
@@ -323,6 +360,17 @@ function computeStaleness() {
     } else {
       indicator.classList.add('staleness-red');
     }
+
+    // Visible label alongside the colored dot (::before, styles.css)
+    let label;
+    if (daysSince <= 0) {
+      label = 'Verified today';
+    } else if (daysSince === 1) {
+      label = 'Verified 1 day ago';
+    } else {
+      label = `Verified ${daysSince} days ago`;
+    }
+    indicator.textContent = label;
   } catch (e) {
     console.error('Invalid data-verified date:', verifiedDate, e);
   }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Troubleshooting — MCP Ecosystem Knowledge Hub</title>
+  <title>Troubleshooting — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,6 +37,8 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
+
       <h1>Troubleshooting</h1>
       <p class="lead">Known issues, common failure points, and solutions for MCP deployment on RHOAI. Organized as Symptom → Cause → Fix.</p>
 
@@ -319,15 +321,17 @@ oc get kuadrant -n gateway-system
       <div class="callout callout--insight">
         <div class="callout__title">Additional Resources</div>
         <ul>
-          <li><strong>Slack:</strong> <code>#forum-openshift-ai</code> (MCP and RHOAI general questions)</li>
+          <li><strong>Slack:</strong> <code>#mcp-gateway</code> (MCP Gateway questions)</li>
+          <li><strong>Slack:</strong> <code>#forum-ai-asset-management</code> (MCP ecosystem general questions)</li>
           <li><strong>Slack:</strong> <code>#forum-mcp-lifecycle-operator</code> (MCPLO-specific issues)</li>
+          <li><strong>Slack:</strong> <code>#forum-openshift-ai</code> (MCP and RHOAI general questions)</li>
           <li><strong>GitHub Issues:</strong> <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/issues">MCPLO Issues</a></li>
           <li><strong>GitHub Issues:</strong> <a href="https://github.com/Kuadrant/mcp-gateway/issues">MCP Gateway Issues</a></li>
           <li><strong>Jira:</strong> File RFEs under project <code>RHAIRFE</code> for feature requests</li>
         </ul>
       </div>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

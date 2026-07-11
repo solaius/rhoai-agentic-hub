@@ -7,7 +7,7 @@
   is picked up it follows the standard workflow (brainstorm → spec → plan →
   build with owner gates); its ruling gets a `memory/log.md` line and the
   item moves to *Done* below or gets deleted.
-- **Owner:** Peter Double · **Last groomed:** 2026-07-10
+- **Owner:** Peter Double · **Last groomed:** 2026-07-11
 
 ## Priority view
 
@@ -40,6 +40,7 @@ including review. "When" is a best guess, not a schedule.
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
 | 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
+| 35 | Component hub build-out (Catalog, MCPLO, Registry) + Management-hub umbrella devolution | **High** - owner-committed content project; slugs pre-staged, sequenced plan recorded | Large (3 hubs + devolution) | Next |
 
 ---
 
@@ -103,6 +104,17 @@ harness independence.
 ---
 
 ## Human-usage enhancements
+
+**35 · Component hub build-out + umbrella devolution.** Owner ruling
+2026-07-10: dedicated hubs for MCP Catalog, MCP Lifecycle Operator, and MCP
+Registry (slugs `mcp-catalog/hub/`, `mcp-lifecycle-operator/hub/`,
+`mcp-registry/hub/`, pre-staged in the Management hub's nav); the Management
+hub thins to the umbrella. Build order Catalog then MCPLO then Registry;
+seed each from BOTH parents (RHCL govern pages + Management component
+sections) in one pass. Full devolution map + sequenced plan:
+[/features/mcp-ecosystem/work/management-hub-umbrella-plan.md](/features/mcp-ecosystem/work/management-hub-umbrella-plan.md).
+Each new hub ships with a `work/refresh-<slug>.yaml` so hub.refresh-site
+covers it from day one.
 
 **12 · Curated FAQ / JTBD publishing.** Already specced (narrative spec §9):
 when qa volume justifies it, ship a curated FAQ page (per audience) and a

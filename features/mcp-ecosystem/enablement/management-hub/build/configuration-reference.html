@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Configuration Reference — MCP Ecosystem Knowledge Hub</title>
+  <title>Configuration Reference — MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,8 @@
     <header id="hub-header"></header>
     <aside id="hub-sidebar"></aside>
     <main class="hub-main">
+      <div class="breadcrumb"></div>
+
       <h1>Configuration Reference</h1>
       <p class="lead">Quick reference for all configmaps, CRDs, labels, and configuration artifacts used in the MCP ecosystem.</p>
 
@@ -69,7 +71,7 @@
             <td>MCPGatewayExtension CRD</td>
             <td>Gateway namespace</td>
             <td>Configure MCP Gateway</td>
-            <td>Kuadrant/mcp-gateway</td>
+            <td><code>mcp.kuadrant.io/v1</code></td>
           </tr>
           <tr>
             <td>AuthPolicy CRD</td>
@@ -162,40 +164,65 @@ data:
     toolsets = ["core", "config"]</code></pre>
 
       <h3>MCPServer CRD</h3>
+      <p>Current schema (<code>mcp.x-k8s.io/v1alpha1</code>, verified against the upstream CRD 2026-07-10) nests config under <code>source</code>, <code>config</code>, and <code>runtime</code>. It is not a flat spec.</p>
       <pre><code>apiVersion: mcp.x-k8s.io/v1alpha1
 kind: MCPServer
 metadata:
   name: ocp-mcp
   namespace: my-mcp
 spec:
-  image: quay.io/rhoai-mcp/openshift-mcp-server:latest
-  serviceAccountName: mcp-viewer
-  configMapRef:
-    name: openshift-mcp-server-config
-  ports:
-  - name: mcp
-    containerPort: 8080
-    protocol: TCP
-  env:
-  - name: LOG_LEVEL
-    value: "debug"</code></pre>
+  source:
+    type: ContainerImage
+    containerImage:
+      ref: registry.redhat.io/openshift-mcp-beta/openshift-mcp-server-rhel9:0.2
+  config:
+    port: 8080
+    path: /mcp
+    arguments:
+    - --config
+    - /etc/mcp-config/config.toml
+    storage:
+    - path: /etc/mcp-config
+      permissions: ReadOnly
+      source:
+        configMap:
+          name: openshift-mcp-server-config
+  runtime:
+    security:
+      serviceAccountName: mcp-viewer</code></pre>
 
       <h3>MCPGatewayExtension CRD</h3>
-      <pre><code>apiVersion: kuadrant.io/v1alpha1
+      <p>Current schema (<code>mcp.kuadrant.io/v1</code>, promoted from <code>kuadrant.io/v1alpha1</code> 2026-07-10). Full Gateway CRD reference lives in the <a href="../../../mcp-gateway/rhcl/build/crds.html">MCP Gateway Knowledge Hub</a>.</p>
+      <pre><code>apiVersion: mcp.kuadrant.io/v1
 kind: MCPGatewayExtension
 metadata:
-  name: mcp-gateway
+  name: mcp-gateway-config
   namespace: mcp-gateway
 spec:
-  gatewayRef:
+  # targetRef.sectionName is required: names the Gateway listener to attach to
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
     name: istio-gateway
     namespace: gateway-system
-  trustedHeadersKey: wristband-public-key
-  virtualServers:
-  - name: default
-    servers:
-    - name: openshift-mcp
-      url: http://ocp-mcp.my-mcp.svc.cluster.local:8080/mcp</code></pre>
+    sectionName: http
+
+  # Optional: broker-router log verbosity (debug, info, warn, error)
+  logLevel: info
+
+  # Optional: base CA trust pool for upstream MCP server TLS connections
+  # (Secret must carry the label mcp.kuadrant.io/secret: "true")
+  caCertBundleRef:
+    name: mcp-gateway-ca-bundle
+
+  # Optional: redis-based session storage; in-memory storage is used when omitted
+  sessionStore:
+    secretName: mcp-session-redis
+
+  # Optional: OAuth protected resource metadata (/.well-known/oauth-protected-resource)
+  oauthProtectedResource:
+    authorizationServers:
+    - https://keycloak.example.com/realms/mcp</code></pre>
 
       <h3>AuthPolicy CRD (Gateway-Level)</h3>
       <pre><code>apiVersion: kuadrant.io/v1beta2
@@ -285,7 +312,58 @@ spec:
   - group: gateway.networking.k8s.io
     kind: Gateway</code></pre>
 
-      <footer class="page-footer" data-verified="2026-06-22">
+      <h2>Bring Your Own MCP Server</h2>
+      <p>Packaging and publishing an MCP server that isn't Red Hat- or partner-provided. Today this is a manual workflow; it's tracked for future catalog automation under <a href="https://redhat.atlassian.net/browse/RHAIRFE-2081">RHAIRFE-2081</a> and <a href="https://redhat.atlassian.net/browse/RHAIRFE-2082">RHAIRFE-2082</a>.</p>
+
+      <h3>Container-Packaging Checklist</h3>
+      <ul>
+        <li><strong>Base image:</strong> build on a UBI (Universal Base Image) base.</li>
+        <li><strong>Transport:</strong> use explicit HTTP transport, not stdio. A stdio-only server run this way will start, produce no error output, and exit silently; the failure won't surface.</li>
+        <li><strong>Bind address:</strong> bind <code>0.0.0.0</code>, not <code>127.0.0.1</code>.</li>
+        <li><strong>Credentials:</strong> accept credentials via HTTP headers, not environment variables or baked-in config, so the Gateway/Vault credential-injection path works.</li>
+        <li><strong>MCP path:</strong> declare a stable, documented MCP path (e.g. <code>/mcp</code>).</li>
+        <li><strong>Health endpoint:</strong> expose a health endpoint for liveness/readiness probing.</li>
+      </ul>
+
+      <h3>Restricted-SCC Compliance</h3>
+      <p>OpenShift's <code>restricted</code> Security Context Constraint is the default for MCP server workloads:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Non-root</td>
+            <td>Container must not run as UID 0.</td>
+          </tr>
+          <tr>
+            <td>Drop all capabilities</td>
+            <td>No Linux capabilities beyond the restricted default set.</td>
+          </tr>
+          <tr>
+            <td>No privilege escalation</td>
+            <td><code>allowPrivilegeEscalation: false</code>.</td>
+          </tr>
+          <tr>
+            <td>Read-only root filesystem</td>
+            <td>Container filesystem is read-only; use storage mounts (ConfigMap/Secret/EmptyDir) for writable paths.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Catalog-YAML Metadata Spec</h3>
+      <ul>
+        <li>Top level: <code>name</code>, <code>provider</code>, <code>description</code>, <code>version</code>, <code>transports</code>, <code>artifacts</code>, <code>deploymentMode</code></li>
+        <li>Per-tool <code>accessType</code>: <code>read_only</code>, <code>read_write</code>, or <code>execute</code></li>
+        <li><code>runtimeMetadata</code>: drives the deployment modal's pre-filled prerequisites</li>
+        <li><code>securityIndicators</code>: mapped from the restricted-SCC validation checklist results above</li>
+      </ul>
+      <p>Schema reference: <a href="https://github.com/kubeflow/hub/blob/main/docs/catalog-yaml-reference.md">github.com/kubeflow/hub: catalog-yaml-reference.md</a>. Worked examples still live in <a href="https://github.com/opendatahub-io/model-metadata-collection/tree/main/input/mcp_servers">opendatahub-io/model-metadata-collection</a>: the schema reference and the worked examples currently live in two separate repos.</p>
+
+      <footer class="page-footer" data-verified="2026-07-10">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
