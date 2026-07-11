@@ -21,7 +21,7 @@ including review. "When" is a best guess, not a schedule.
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Done (follow-ups: project MCP enable + doctor rhai mirror) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Shipped (interim) |
-| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | **Medium–High** — un-park condition met 2026-07-11: customer-feedback gathering ran on B, where the restricted tree doesn't exist, so the session bypassed the local-first ingest flow entirely. R5 had parked this on the evidence that B never touched those workflows; that no longer holds | Medium | Next (un-parked 2026-07-11; see R5 outcome addendum) |
+| ~~14~~ | ~~`restricted/` cross-machine sync~~ | Done | Done | Done |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
 | ~~19~~ | ~~Doctor: env wiring + Slack probe~~ | Done | Done | Done |
@@ -392,11 +392,8 @@ protected-GitLab tail stays open, still tracked as the remaining scope of
 this item. Spec:
 [/docs/specs/2026-07-11-component-hub-buildout-design.md](/docs/specs/2026-07-11-component-hub-buildout-design.md).
 
-**14 · `restricted/` sync.** Manual copy is the current contract and R5
-will measure its pain. Options in rough preference order: a private
-GitLab/GitHub mirror holding only `restricted/` (same layout, separate
-repo, cloned into place), git-crypt in-repo (key management burden), or
-keep manual with a doctor-assisted rsync checklist. Decide after R5 data.
+**14 · `restricted/` sync.** Shipped 2026-07-11 via git-crypt. See Done
+section below.
 
 **19 · Remaining old-doctor coverage.** `~/.bashrc` sourcing of
 `restricted/.env` (so `JIRA_*` reaches every shell — required by the `rfe.*`
