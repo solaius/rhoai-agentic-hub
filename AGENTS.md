@@ -52,6 +52,8 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.research | lens-scoped deep research → research/ series + gated entries |
 | hub.jira-sweep | sweep Jira into a feature — scope discovery, public snapshot, gated refs |
 | hub.jira-sync | diff stored Jira scopes + watched keys; propose updates via the gate |
+| hub.jira-triage | run the RFE triage ceremony for a feature - scan, review in a browser, gated batch write-back to Jira (labels, comments, close, approve) |
+| hub.jira-hygiene | audit one Jira issue against its type checklist (read-only) |
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
 | hub.publish | add/update a publish manifest entry (gated) |

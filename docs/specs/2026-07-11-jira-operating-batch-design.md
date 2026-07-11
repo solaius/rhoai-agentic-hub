@@ -144,6 +144,25 @@ each is a review/optimize/enhance pass, not a lift-and-shift.
    and collides with the no-em-dashes preference; scope is embedded in a
    `data-` attribute instead.
 
+10. **Label writes switched from read-modify-write to atomic add (review
+    finding, fixed during implementation).** The design as originally
+    written in this section had triage round-trip `current_labels` from the
+    report and PUT `existing + new` via `update_issue`. A review caught this
+    as CRITICAL before ship: Jira's PUT replaces the labels array wholesale,
+    so a stale or hand-edited decisions file (the export sits in scratch
+    between the browser step and the gate, and the file format invites
+    hand-editing) would silently DELETE any label added to the issue in the
+    meantime, and could smuggle the protected `<release>-committed` label
+    into a write it was never meant to reach. Fixed by adding
+    `JiraClient.add_label`, which PUTs
+    `{"update": {"labels": [{"add": l}]}}` - additive by construction, so it
+    cannot remove a label no matter how stale the input. `update_issue` and
+    `create_issue` are now dead code with zero call sites repo-wide;
+    `current_labels` survives only as an ADVISORY hint for a "label already
+    present, skip it" idempotency check in `plan_decisions`, never as
+    payload material. See
+    [/memory/facts/fact-jira-write-surface.md](/memory/facts/fact-jira-write-surface.md).
+
 ## Architecture
 
 | path | holds |
@@ -215,9 +234,13 @@ not be resolved), not just what succeeded.
                                 "current_labels": ["mcp", "3.6-candidate"]}}}
 ```
 
-`current_labels` round-trips through a hidden cell so label writes stay
-read-modify-write and idempotent (pm-toolkit's discipline, kept). `feature`
-comes from a `data-feature` attribute, not a title scrape (decision 8).
+`current_labels` round-trips through a hidden cell, but it is ADVISORY ONLY:
+it feeds a "label already present, skip it" idempotency check in
+`plan_decisions` and is never carried into a Jira write payload. Label writes
+themselves use Jira's atomic add operation (`JiraClient.add_label`, see
+decision 10), so they cannot delete anything even if this field is stale or
+hand-edited. `feature` comes from a `data-feature` attribute, not a title
+scrape (decision 8).
 
 ### Action vocabulary (the entire write surface)
 
@@ -410,9 +433,11 @@ All offline and CI-safe, matching the house style in `scripts/tests/`
   most likely to be wrong. Then transition resolution: an exact match resolves;
   a case-mismatched name still resolves; no match rejects; two matches reject
   rather than guess. Then `apply_decisions`: a rejected action issues no
-  request at all; a label write carries the full existing array; a `close`
-  whose transition did not resolve posts **no comment** (the half-apply
-  regression test); a partial failure returns a coherent split.
+  request at all; a label write is a structurally additive atomic add (one
+  `{"update": {"labels": [{"add": l}]}}` op, no `fields`, no labels array) so
+  a stale `current_labels` cannot delete anything (decision 10's regression
+  test); a `close` whose transition did not resolve posts **no comment** (the
+  half-apply regression test); a partial failure returns a coherent split.
 - `test_hub_triage.py`: CLI arg and error paths only, never the network
   (`--out` mandatory, unknown feature exits 2, argparse errors via
   `pytest.raises(SystemExit)`), following `test_hub_jira.py`.

@@ -33,7 +33,15 @@ families (design decisions D8/D11):
   [/conventions/research.md](/conventions/research.md).
 - **Jira:** `hub.jira-sweep <feature>` (scope discovery → tracked snapshot +
   gated refs) then `hub.jira-sync` on demand — diff-driven refresh; the map
-  lives in [/views/jira-map.md](/views/jira-map.md).
+  lives in [/views/jira-map.md](/views/jira-map.md). `hub.jira-hygiene` audits
+  one issue against its type checklist (read-only). `hub.jira-triage <feature>`
+  runs the periodic RFE triage ceremony - scan, review in a browser report,
+  gated batch write-back. **`hub.jira-triage` is the only skill in this hub
+  that writes to Jira**, and its surface is bounded to exactly four actions:
+  add a label, post a comment, fire the `close` transition, fire the
+  `approve` transition - nothing else, ever, and always through the inline
+  gate. It cannot assign, edit fields, or create issues. Every other
+  `hub.jira-*` skill stays read-only.
 - **Artifact:** `presentation-create` (or `blog-mockup`) → self-contained
   `features/<f>/enablement/<slug>/` → `hub.publish` → live on the pages
   site. Building never publishes by itself.
@@ -60,6 +68,8 @@ families (design decisions D8/D11):
 | `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
 | `hub.jira-sweep` | sweep Jira for one feature (snapshot + strategic refs) | scope confirm + batch write gate | features.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
 | `hub.jira-sync` | refresh swept scopes + watched keys against live Jira | batch write gate | snapshot refreshes, ref-/jtbd updates, reindex + commit |
+| `hub.jira-hygiene` | audit one Jira issue against its type checklist | no (read-only, reports in chat) | nothing - it reports, it does not fix |
+| `hub.jira-triage` | run the periodic RFE triage ceremony for a feature | browser review + inline batch gate, line by line | Jira: labels, comments, `close`/`approve` transitions (ONLY skill that writes to Jira); repo: `work/triage-log.yaml`, reindex + commit |
 | `hub.reindex` | after adding/editing entries; CI reports stale indexes | no | regenerates all `index.md` + `views/`, runs linter |
 | `hub.doctor` | new machine; something feels broken | setup mode confirms writes | per-machine config only (see [/docs/tooling.md](/docs/tooling.md)) |
 | `hub.publish` | ship an enablement artifact to the public site | disclosure confirm | `publish/manifest.yaml` entry |
@@ -133,6 +143,35 @@ Jira key referenced by ref- `resource:` URLs or jtbd `jira:` lists even
 outside the scopes. Consequences (snapshot refresh, ref- status notes,
 jtbd `delivered` nudges, new ref- candidates) are proposed through the
 gate; an all-quiet run is a one-line report.
+
+**`hub.jira-hygiene`** - audits one Jira issue (`--audit KEY` on `hub_jira.py`)
+against type-specific checklists (`checklists.md` in the skill directory):
+RHAIRFE Feature Request, RHAISTRAT Feature, maturity-chain DP/TP/GA, RHAIENG
+Epic, plus all-issues basics. Naming, parent/clone links, Fix Version,
+Components, labels, refinement docs. Read-only against Jira, writes nothing
+to the repo - it reports a table in chat, it does not fix. A `help` mode
+answers hierarchy/lifecycle questions from the same checklist doc without
+touching Jira. Fixes route to a human in Jira or to `hub.jira-triage`'s
+comment action.
+
+**`hub.jira-triage`** - the periodic RFE triage ceremony for one feature:
+`scripts/hub_triage.py --scan` fetches the feature's open Feature Requests
+(same stored `jira:` JQL scope as `hub.jira-sweep`/`hub.jira-sync`), flags
+staleness, classifies, and suggests an action per issue, then renders a
+browser report (full Jira fidelity, so it lands under `restricted/`, never
+tracked). The human reviews in the browser and exports decisions; `--plan`
+renders those decisions as a gate table with no network call; the skill
+shows that table as the inline batch gate (TRANSITIONS separate from
+LABELS/COMMENTS, since transitions are the destructive ones) before
+anything fires. **This is the only skill in the hub with a Jira write
+surface**, and it is deliberately narrow: add a label, post a comment, fire
+the `close` transition, fire the `approve` transition - that's the entire
+vocabulary. It cannot assign, edit fields, or create issues. `--apply` is
+the one CLI mode that writes to Jira; `--scan` and `--plan` never do. The
+tracked result (`features/<f>/work/triage-log.yaml`) is prose-free by
+design - no summaries, no comment bodies - so it needs no redaction in this
+PUBLIC repo. See
+[/memory/facts/fact-jira-write-surface.md](/memory/facts/fact-jira-write-surface.md).
 
 **`hub.reindex`** — wraps `python scripts/hub_index.py` + `hub_lint.py`.
 Run it (or let capture/consolidate run it) after **any** entry edit —
