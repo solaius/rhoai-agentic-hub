@@ -614,11 +614,11 @@ if command -v git-crypt >/dev/null 2>&1; then
         fail "git-crypt unlock failed with $KEYFILE — try manually: cd $ROOT && git-crypt unlock $KEYFILE"
       fi
     else
-      fail "restricted/ is locked — copy the key file to $KEYFILE, then re-run setup"
+      warn "restricted/ is locked — copy the key file to $KEYFILE, then re-run setup"
       note "get the key from your other machine: scp machine-a:~/.git-crypt-keys/rhoai-agentic-hub.key $KEYFILE"
     fi
   else
-    fail "restricted/ is locked — run: bash scripts/doctor.sh setup (needs key at $KEYFILE)"
+    warn "restricted/ is locked — run: bash scripts/doctor.sh setup (needs key at $KEYFILE)"
   fi
 else
   warn "git-crypt not installed — restricted/ files cannot be decrypted on this machine"
