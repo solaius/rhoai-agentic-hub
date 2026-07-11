@@ -152,13 +152,25 @@ if [ -f "$ENV_FILE" ]; then
   # retired ai-asset-registry one. Logic lives in python because it is tested;
   # idempotent profile editing is where bash quietly gets it wrong.
   if [ "$MODE" = "setup" ]; then ENV_MODE="--setup"; else ENV_MODE="--check"; fi
-  while IFS=$'\t' read -r kind msg; do
-    case "$kind" in
-      ok)    ok "$msg" ;;
-      wrote) ok "$msg (open a new shell for it to take effect)" ;;
-      warn)  warn "$msg" ;;
-    esac
-  done < <(python "$ROOT/scripts/hub_env.py" $ENV_MODE 2>/dev/null)
+  # Capture output + exit status (stderr merged in) instead of streaming a
+  # discarded-stderr process substitution: a crashing CLI must WARN, not
+  # silently move zero counters while doctor still prints 0 fail.
+  ENV_OUT="$(python "$ROOT/scripts/hub_env.py" $ENV_MODE 2>&1)"
+  ENV_STATUS=$?
+  if [ $ENV_STATUS -ne 0 ] || [ -z "$ENV_OUT" ]; then
+    warn "hub_env.py $ENV_MODE did not run (exit $ENV_STATUS) - run by hand to diagnose: python scripts/hub_env.py $ENV_MODE"
+  else
+    # Here-string, not a pipe: a pipe would put this loop in a subshell and
+    # lose the ok/warn counter increments.
+    while IFS=$'\t' read -r kind msg; do
+      case "$kind" in
+        ok)    ok "$msg" ;;
+        wrote) ok "$msg (open a new shell for it to take effect)" ;;
+        warn)  warn "$msg" ;;
+        *)     [ -n "${kind:-}" ] && warn "hub_env.py produced unexpected output: $kind" ;;
+      esac
+    done <<< "$ENV_OUT"
+  fi
 else
   warn "restricted/.env not found (Jira-facing skills and MCP setup won't work; copy it from your other machine)"
 fi
@@ -438,12 +450,24 @@ fi
 # registration is not validity. xoxc/xoxd are per-login session tokens that do
 # not travel between machines, the exact gap R5 predicted for machine B.
 # WARN only, so an offline machine still reaches 0 fail.
-while IFS=$'\t' read -r kind msg; do
-  case "$kind" in
-    ok)   ok "$msg" ;;
-    warn) warn "$msg" ;;
-  esac
-done < <(python "$ROOT/scripts/hub_slack.py" --check 2>/dev/null)
+# Capture output + exit status (stderr merged in) instead of streaming a
+# discarded-stderr process substitution: a crashing CLI must WARN, not
+# silently move zero counters while doctor still prints 0 fail.
+SLACK_OUT="$(python "$ROOT/scripts/hub_slack.py" --check 2>&1)"
+SLACK_STATUS=$?
+if [ $SLACK_STATUS -ne 0 ] || [ -z "$SLACK_OUT" ]; then
+  warn "hub_slack.py --check did not run (exit $SLACK_STATUS) - run by hand to diagnose: python scripts/hub_slack.py --check"
+else
+  # Here-string, not a pipe: a pipe would put this loop in a subshell and
+  # lose the ok/warn counter increments.
+  while IFS=$'\t' read -r kind msg; do
+    case "$kind" in
+      ok)   ok "$msg" ;;
+      warn) warn "$msg" ;;
+      *)    [ -n "${kind:-}" ] && warn "hub_slack.py produced unexpected output: $kind" ;;
+    esac
+  done <<< "$SLACK_OUT"
+fi
 
 echo "[10] git pre-commit hook"
 # Kills the #1 CI failure (edit -> forget reindex -> red) and runs the
