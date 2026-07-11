@@ -22,7 +22,7 @@ features:
   description: The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
 - id: agent-registry
   title: Agent Registry
-  description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.
+  description: Post-deployment agent registry, agent catalog/starter kits, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop).
 - id: platform
   title: Platform
   description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
