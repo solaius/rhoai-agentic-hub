@@ -1,0 +1,25 @@
+# Source list for hub.refresh-site (see .claude/skills/hub.refresh-site/).
+# Tracked and PUBLIC by owner ruling 2026-07-10; scanned by the disclosure
+# lint. Seeded from the old repo's update-gateway-hub skill.
+site: features/mcp-gateway/enablement/rhcl-hub/
+sources:
+  gdocs:
+  - {id: 14ekB7bfRxvpZNl1SLBoD_MUQ7T4Ot5Tes3xvyftFOW0, title: RHCL Overview Deck}
+  - {id: 1asuSND63alcJGIExLH-VvBzevtKleuuWge39lO5Su7Q, title: MCP Gateway Delivery}
+  - {id: 1liziAy55qQBd80qRN63WTZjhu5mJRQ4-OlogP_edftQ, title: MCP Gateway on OpenShift}
+  - {id: 11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g, title: Support Agreement}
+  - {id: 1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8, title: Data Model Proposal}
+  - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: MCP Catalog}
+  - {id: 1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740, title: Partners MCP Catalog}
+  github:
+  - Kuadrant/mcp-gateway
+  - kubernetes-sigs/mcp-lifecycle-operator
+  - opendatahub-io/ai-gateway-payload-processing
+  jira:
+    keys: [RHAIRFE-1370, RHAIRFE-1457, RHAIRFE-1456, RHAISTRAT-1937]
+  slack:
+    channels: [mcp-gateway, mcp-gateway-dev]
+    window_days: 14
+  local:
+  - features/mcp-gateway/knowledge/
+  - features/mcp-gateway/research/
