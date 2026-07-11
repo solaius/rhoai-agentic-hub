@@ -309,3 +309,190 @@ def test_scan_survives_a_transitions_fetch_failure():
 
     rows = run(go())
     assert rows[0]["transitions"] == []
+
+
+# -- plan_decisions (pure) --
+
+def scan_row(**kw):
+    r = row(**kw)
+    r["flags"] = []
+    r["classification"] = "needs_attention"
+    r["suggestion"] = {"action": "", "reason": ""}
+    return r
+
+
+CLOSABLE = [{"id": "31", "name": "Closed", "to": "Closed"}]
+
+
+def test_plan_sorts_actions_into_buckets():
+    rows = [scan_row(key="A-1", labels=["old"]),
+            scan_row(key="A-2", transitions=CLOSABLE),
+            scan_row(key="A-3")]
+    decisions = {
+        "A-1": {"action": "backlog", "current_labels": ["old"]},
+        "A-2": {"action": "close"},
+        "A-3": {"action": "skip"},
+    }
+    plan = triage.plan_decisions(decisions, rows)
+    assert plan["labels"] == [
+        {"key": "A-1", "action": "backlog", "label": "pm-backlogged",
+         "current_labels": ["old"]}]
+    assert plan["transitions"][0]["key"] == "A-2"
+    assert plan["transitions"][0]["transition"]["id"] == "31"
+    assert plan["skipped"] == [{"key": "A-3", "action": "skip",
+                                "detail": "skipped"}]
+    assert plan["rejected"] == []
+
+
+def test_plan_rejects_unsupported_actions():
+    rows = [scan_row(key="A-1")]
+    plan = triage.plan_decisions({"A-1": {"action": "assign"}}, rows)
+    assert plan["rejected"][0]["key"] == "A-1"
+    assert "not a supported action" in plan["rejected"][0]["detail"]
+    assert plan["labels"] == []
+
+
+def test_plan_rejects_a_close_with_no_matching_transition():
+    rows = [scan_row(key="A-1", transitions=[])]
+    plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
+    assert plan["transitions"] == []
+    assert plan["comments"] == []          # the half-apply guard
+    assert "no matching transition" in plan["rejected"][0]["detail"]
+
+
+def test_plan_rejects_a_decision_for_an_issue_not_in_the_scan():
+    plan = triage.plan_decisions({"GHOST-9": {"action": "backlog"}},
+                                 [scan_row(key="A-1")])
+    assert "not in the scan" in plan["rejected"][0]["detail"]
+
+
+def test_plan_skips_a_label_already_present():
+    rows = [scan_row(key="A-1", labels=["pm-backlogged"])]
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "backlog", "current_labels": ["pm-backlogged"]}}, rows)
+    assert plan["labels"] == []
+    assert plan["skipped"][0]["detail"] == "label pm-backlogged already present"
+
+
+def test_plan_roadmap_requires_a_release():
+    rows = [scan_row(key="A-1")]
+    plan = triage.plan_decisions({"A-1": {"action": "roadmap"}}, rows)
+    assert "needs a release" in plan["rejected"][0]["detail"]
+
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "roadmap", "release": "3.6"}}, rows)
+    assert plan["labels"][0]["label"] == "3.6-candidate"
+
+
+def test_plan_never_writes_a_committed_label():
+    rows = [scan_row(key="A-1")]
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "roadmap", "release": "3.6-committed"}}, rows)
+    assert plan["labels"] == []
+    assert "committed" in plan["rejected"][0]["detail"]
+
+
+def test_plan_close_carries_the_default_comment():
+    rows = [scan_row(key="A-1", transitions=CLOSABLE)]
+    plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
+    assert plan["transitions"][0]["comment"] == triage.DEFAULT_CLOSE_COMMENT
+
+
+# -- apply_decisions --
+
+def test_apply_writes_labels_comments_and_transitions_in_order():
+    seen = []
+
+    def handler(request):
+        seen.append((request.method, request.url.path,
+                     json.loads(request.content or b"{}")))
+        return httpx.Response(204 if request.method == "PUT" else 200, json={})
+
+    rows = [scan_row(key="A-1", labels=["old"]),
+            scan_row(key="A-2", transitions=CLOSABLE)]
+    plan = triage.plan_decisions({
+        "A-1": {"action": "backlog", "current_labels": ["old"]},
+        "A-2": {"action": "close"},
+    }, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    assert len(result["applied"]) == 2
+    assert result["errors"] == []
+
+    # label write carries the FULL array, not just the new label
+    put = [s for s in seen if s[0] == "PUT"][0]
+    assert put[2]["fields"]["labels"] == ["old", "pm-backlogged"]
+
+    # transitions go last, and the close comment precedes its transition
+    kinds = [(m, p.rsplit("/", 1)[-1]) for m, p, _ in seen]
+    assert kinds.index(("POST", "comment")) < kinds.index(("POST", "transitions"))
+    assert kinds[-1] == ("POST", "transitions")
+
+
+def test_apply_never_touches_jira_for_a_rejected_decision():
+    seen = []
+
+    def handler(request):
+        seen.append(request.url.path)
+        return httpx.Response(200, json={})
+
+    rows = [scan_row(key="A-1", transitions=[])]        # cannot close
+    plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    assert seen == []                                   # zero requests
+    assert result["applied"] == []
+    assert len(result["rejected"]) == 1
+
+
+def test_apply_partial_failure_still_applies_the_rest():
+    def handler(request):
+        if request.url.path.endswith("/A-2/transitions") \
+                and request.method == "POST":
+            return httpx.Response(400, json={"errorMessages": ["workflow moved"]})
+        return httpx.Response(204 if request.method == "PUT" else 200, json={})
+
+    rows = [scan_row(key="A-1", labels=[]),
+            scan_row(key="A-2", transitions=CLOSABLE)]
+    plan = triage.plan_decisions({
+        "A-1": {"action": "backlog", "current_labels": []},
+        "A-2": {"action": "close"},
+    }, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    applied_keys = [a["key"] for a in result["applied"]]
+    assert "A-1" in applied_keys                        # label still landed
+    assert any(e["key"] == "A-2" for e in result["errors"])
+
+
+# -- build_triage_log --
+
+def test_triage_log_is_yaml_and_carries_no_jira_prose():
+    rows = [scan_row(key="A-1", summary="Secret internal roadmap detail",
+                     labels=[], transitions=CLOSABLE)]
+    plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
+
+    async def go():
+        async with client_with(
+                lambda r: httpx.Response(200, json={})) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    text = triage.build_triage_log("mcp-registry", "project = X", rows, plan,
+                                   result, TODAY)
+    assert "do not hand-edit" in text
+    assert "feature: mcp-registry" in text
+    assert "Secret internal roadmap detail" not in text   # NO Jira prose
+    assert "transition: Open -> Closed" in text or "Closed" in text

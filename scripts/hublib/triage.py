@@ -11,6 +11,7 @@ import asyncio
 import datetime
 
 import httpx
+import yaml
 
 STALE_THRESHOLD_DAYS = 90
 STAKEHOLDER_STALE_DAYS = 270
@@ -263,3 +264,200 @@ async def scan(client, jql, today):
         row["classification"] = classify_rfe(row, today)
         row["suggestion"] = suggest_action(row, today)
     return rows
+
+
+def plan_decisions(decisions, rows):
+    """Turn the browser's exported decisions into an explicit, inspectable
+    plan. PURE: this is what the gate renders, and nothing here touches Jira.
+
+    Every rejection carries its reason. Nothing is ever silently dropped
+    (spec decision 2).
+    """
+    by_key = {r["key"]: r for r in rows}
+    plan = {"labels": [], "comments": [], "transitions": [],
+            "rejected": [], "skipped": []}
+
+    for key, decision in decisions.items():
+        action = (decision or {}).get("action") or "skip"
+        row = by_key.get(key)
+
+        if row is None:
+            plan["rejected"].append({
+                "key": key, "action": action,
+                "detail": "not in the scan (stale decisions file?)"})
+            continue
+        if action not in SUPPORTED_ACTIONS:
+            plan["rejected"].append({
+                "key": key, "action": action,
+                "detail": f"'{action}' is not a supported action. This hub "
+                          f"writes labels, comments, close and approve only."})
+            continue
+        if action == "skip":
+            plan["skipped"].append({"key": key, "action": "skip",
+                                    "detail": "skipped"})
+            continue
+
+        # current_labels round-trips through the report so label writes stay
+        # read-modify-write. Fall back to the scanned row if it is absent.
+        current = list(decision.get("current_labels") or row.get("labels") or [])
+
+        if action in LABEL_ACTIONS:
+            label = LABEL_ACTIONS[action]
+            if action == "roadmap":
+                release = (decision.get("release") or "").strip()
+                if not release:
+                    plan["rejected"].append({
+                        "key": key, "action": action,
+                        "detail": "roadmap needs a release (for example 3.6)"})
+                    continue
+                if release.endswith(PROTECTED_LABEL_SUFFIX) \
+                        or PROTECTED_LABEL_SUFFIX in release:
+                    plan["rejected"].append({
+                        "key": key, "action": action,
+                        "detail": f"'{release}' would write a committed label. "
+                                  f"That is set on the STRAT side, never here."})
+                    continue
+                label = f"{release}-candidate"
+            if label in current:
+                plan["skipped"].append({
+                    "key": key, "action": action,
+                    "detail": f"label {label} already present"})
+                continue
+            plan["labels"].append({"key": key, "action": action, "label": label,
+                                   "current_labels": current})
+            continue
+
+        if action == "comment":
+            body = (decision.get("comment") or "").strip()
+            if not body:
+                plan["rejected"].append({
+                    "key": key, "action": action,
+                    "detail": "comment action with no comment text"})
+                continue
+            plan["comments"].append({"key": key, "action": "comment",
+                                     "comment": body})
+            continue
+
+        # close | approve: resolve the transition NOW, before the gate.
+        transition, reason = resolve_transition(action, row.get("transitions") or [])
+        if transition is None:
+            plan["rejected"].append({"key": key, "action": action,
+                                     "detail": reason})
+            continue
+        entry = {"key": key, "action": action, "transition": transition,
+                 "from": row.get("status") or "?", "comment": None}
+        if action == "close":
+            # The comment and the transition are a UNIT. If we could not
+            # resolve the transition we rejected above, so no comment is
+            # posted on an issue that stays open (the pm-toolkit bug).
+            entry["comment"] = ((decision.get("comment") or "").strip()
+                                or DEFAULT_CLOSE_COMMENT)
+        plan["transitions"].append(entry)
+
+    return plan
+
+
+async def apply_decisions(client, plan):
+    """Execute an approved plan. Labels, then comments, then transitions:
+    a workflow surprise on the sharpest action cannot strand the cheap ones.
+
+    Per-item try/except. One failure never sinks the batch.
+    """
+    result = {"applied": [], "skipped": list(plan["skipped"]),
+              "rejected": list(plan["rejected"]), "errors": []}
+
+    for item in plan["labels"]:
+        labels = list(item["current_labels"]) + [item["label"]]
+        try:
+            await client.update_issue(item["key"], {"labels": labels})
+        except httpx.HTTPError as exc:
+            result["errors"].append({"key": item["key"], "action": item["action"],
+                                     "detail": f"label write failed: {exc}"})
+            continue
+        result["applied"].append({"key": item["key"], "action": item["action"],
+                                  "detail": f"+label {item['label']}"})
+
+    for item in plan["comments"]:
+        try:
+            await client.add_comment(item["key"], item["comment"])
+        except httpx.HTTPError as exc:
+            result["errors"].append({"key": item["key"], "action": "comment",
+                                     "detail": f"comment failed: {exc}"})
+            continue
+        result["applied"].append({"key": item["key"], "action": "comment",
+                                  "detail": "comment posted"})
+
+    for item in plan["transitions"]:
+        key, action, transition = item["key"], item["action"], item["transition"]
+        if item.get("comment"):
+            try:
+                await client.add_comment(key, item["comment"])
+            except httpx.HTTPError as exc:
+                result["errors"].append({
+                    "key": key, "action": action,
+                    "detail": f"close comment failed, transition NOT attempted: {exc}"})
+                continue
+        try:
+            await client.transition_issue(key, transition["id"])
+        except httpx.HTTPError as exc:
+            detail = f"transition to {transition['name']} failed: {exc}"
+            if item.get("comment"):
+                detail += (" (the close comment HAS already posted; the issue "
+                           "is still open. Resolve it in Jira.)")
+            result["errors"].append({"key": key, "action": action,
+                                     "detail": detail})
+            continue
+        result["applied"].append({
+            "key": key, "action": action,
+            "detail": f"{item['from']} -> {transition['to'] or transition['name']}"})
+
+    return result
+
+
+def build_triage_log(feature, jql, rows, plan, result, today):
+    """The tracked record: keys, flags, decisions, outcomes. NO Jira prose
+    (no summaries, no comment bodies, no assignee names) so it needs no
+    redaction in a PUBLIC repo (spec decision 4).
+    """
+    outcome_by_key = {}
+    labels_by_key = {}
+    transition_by_key = {}
+    for bucket, name in (("applied", "applied"), ("skipped", "skipped"),
+                         ("rejected", "rejected"), ("errors", "error")):
+        for item in result[bucket]:
+            outcome_by_key.setdefault(item["key"], name)
+    for item in plan["labels"]:
+        labels_by_key.setdefault(item["key"], []).append(item["label"])
+    for item in plan["transitions"]:
+        t = item["transition"]
+        transition_by_key[item["key"]] = \
+            f"{item['from']} -> {t.get('to') or t.get('name')}"
+
+    entries = []
+    for row in sorted(rows, key=lambda r: r["key"]):
+        key = row["key"]
+        if key not in outcome_by_key:
+            continue          # not decided this pass: not our business to log
+        entries.append({
+            "key": key,
+            "flags": list(row.get("flags") or []),
+            "suggestion": (row.get("suggestion") or {}).get("action") or "",
+            "decision": _decision_of(key, plan),
+            "outcome": outcome_by_key[key],
+            "labels_added": labels_by_key.get(key, []),
+            "transition": transition_by_key.get(key),
+        })
+
+    doc = {"feature": feature, "jql": jql, "triaged": today.isoformat(),
+           "issues": entries}
+    header = ("# generated by hub.jira-triage (scripts/hub_triage.py) - "
+              "do not hand-edit\n")
+    return header + yaml.safe_dump(doc, sort_keys=False, allow_unicode=True)
+
+
+def _decision_of(key, plan):
+    for bucket in ("labels", "comments", "transitions", "rejected", "skipped"):
+        for item in plan[bucket]:
+            if item["key"] == key:
+                return item["action"]
+    return ""
