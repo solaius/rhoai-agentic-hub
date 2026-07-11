@@ -51,3 +51,16 @@ def test_check_loads_slack_tokens_from_restricted_env(tmp_path, capsys, monkeypa
 def test_check_is_required(tmp_path):
     with pytest.raises(SystemExit):
         hub_slack.main([])
+
+
+def test_check_protects_the_protocol_when_the_probe_message_has_a_tab_and_newline(
+        tmp_path, capsys, monkeypatch):
+    async def fake_probe(transport=None):
+        return ("warn", "slack said\tsomething odd\nacross two lines")
+
+    monkeypatch.setattr(hub_slack, "probe", fake_probe)
+    rc = hub_slack.main(["--check", "--root", str(make_repo(tmp_path))])
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert out.count("\t") == 1
+    assert out.count("\n") == 1

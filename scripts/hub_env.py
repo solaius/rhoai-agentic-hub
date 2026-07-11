@@ -19,40 +19,37 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from hublib import doctorio
 from hublib.shellenv import MalformedProfile, apply, malformed_reason, scan
 
 JIRA_KEYS = ("JIRA_SERVER", "JIRA_USER", "JIRA_TOKEN")
 
 
-def _say(kind, message):
-    print(f"{kind}\t{message}")
-
-
 def _report_shell(env):
     missing = [k for k in JIRA_KEYS if not env.get(k)]
     if missing:
-        _say("warn", f"{', '.join(missing)} not set in this shell "
+        doctorio.say("warn", f"{', '.join(missing)} not set in this shell "
                      f"(open a new shell after setup, or the rfe.* skills "
                      f"will prompt you to export them by hand)")
     else:
-        _say("ok", "JIRA_* present in this shell")
+        doctorio.say("ok", "JIRA_* present in this shell")
 
 
 def _report_profile(state, wired_msg):
     if state["hub_current"]:
-        _say("ok", wired_msg)
+        doctorio.say("ok", wired_msg)
     elif state["hub_block"]:
-        _say("warn", "~/.bashrc sources a different repo path (moved clone?); "
+        doctorio.say("warn", "~/.bashrc sources a different repo path (moved clone?); "
                      "repair with: bash scripts/doctor.sh setup")
     else:
-        _say("warn", "~/.bashrc does not source restricted/.env; the "
+        doctorio.say("warn", "~/.bashrc does not source restricted/.env; the "
                      "marketplace rfe.* skills need JIRA_* in the shell. "
                      "Fix with: bash scripts/doctor.sh setup")
     if state["retired_block"]:
-        _say("warn", "~/.bashrc still sources the RETIRED ai-asset-registry "
+        doctorio.say("warn", "~/.bashrc still sources the RETIRED ai-asset-registry "
                      ".env; setup removes it (the hub's .env supersedes it)")
     for line in state["retired_unmarked"]:
-        _say("warn", f"~/.bashrc references the retired ai-asset-registry repo "
+        doctorio.say("warn", f"~/.bashrc references the retired ai-asset-registry repo "
                      f"outside a marked block, remove it by hand: {line}")
 
 
@@ -60,7 +57,7 @@ def _check(env_file, profile, env):
     text = profile.read_text(encoding="utf-8") if profile.is_file() else ""
     reason = malformed_reason(text)
     if reason is not None:
-        _say("warn", reason)
+        doctorio.say("warn", reason)
     else:
         _report_profile(scan(text, env_file),
                         "~/.bashrc sources the hub's restricted/.env")
@@ -74,20 +71,20 @@ def _setup(env_file, profile, env):
         state = scan(text, env_file)
         updated = apply(text, env_file)
     except MalformedProfile as exc:
-        _say("warn", str(exc))
+        doctorio.say("warn", str(exc))
         return 0
     if updated == text:
-        _say("ok", "~/.bashrc already wired to restricted/.env (no change)")
+        doctorio.say("ok", "~/.bashrc already wired to restricted/.env (no change)")
         _report_shell(env)
         return 0
     if profile.is_file():
         backup = profile.with_suffix(profile.suffix + ".bak")
         backup.write_text(text, encoding="utf-8", newline="\n")
-        _say("ok", f"backed up {profile.name} to {backup.name}")
+        doctorio.say("ok", f"backed up {profile.name} to {backup.name}")
     profile.write_text(updated, encoding="utf-8", newline="\n")
     if state["retired_block"]:
-        _say("wrote", "removed the retired ai-asset-registry block from ~/.bashrc")
-    _say("wrote", "~/.bashrc now sources the hub's restricted/.env")
+        doctorio.say("wrote", "removed the retired ai-asset-registry block from ~/.bashrc")
+    doctorio.say("wrote", "~/.bashrc now sources the hub's restricted/.env")
     return 0
 
 
@@ -108,7 +105,7 @@ def main(argv=None):
     profile = home / ".bashrc"
 
     if not env_file.is_file():
-        _say("warn", "restricted/.env not found, nothing to wire "
+        doctorio.say("warn", "restricted/.env not found, nothing to wire "
                      "(copy it from your other machine, then re-run setup)")
         return 0
     if args.check:

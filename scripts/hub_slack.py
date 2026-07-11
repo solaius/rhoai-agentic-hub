@@ -14,6 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from hublib import doctorio
 from hublib.shellenv import load_env
 from hublib.slack import probe
 
@@ -28,7 +29,7 @@ def main(argv=None):
     root = Path(args.root) if args.root else Path(__file__).resolve().parents[1]
     load_env(root, prefixes=("SLACK_",))
     kind, message = asyncio.run(probe())
-    print(f"{kind}\t{message}")
+    doctorio.say(kind, message)
     return 0
 
 

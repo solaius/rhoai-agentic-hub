@@ -82,6 +82,24 @@ def test_probe_missing_tokens_warns(monkeypatch):
     assert "SLACK_XOXC_TOKEN" in msg
 
 
+def test_probe_html_body_warns_and_never_raises():
+    def handler(request):
+        return httpx.Response(200, text="<html><body>captive portal</body></html>")
+
+    kind, msg = run(probe(transport=transport(handler)))
+    assert kind == "warn"
+    assert "not valid Slack JSON" in msg
+
+
+def test_probe_json_list_body_warns_and_never_raises():
+    def handler(request):
+        return httpx.Response(200, json=["not", "a", "dict"])
+
+    kind, msg = run(probe(transport=transport(handler)))
+    assert kind == "warn"
+    assert "not valid Slack JSON" in msg
+
+
 def test_probe_never_returns_fail():
     for payload in ({"ok": True}, {"ok": False, "error": "invalid_auth"},
                     {"ok": False, "error": "ratelimited"}):

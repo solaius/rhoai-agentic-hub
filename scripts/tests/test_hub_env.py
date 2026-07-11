@@ -128,6 +128,7 @@ def test_setup_against_malformed_profile_does_not_write_and_warns(tmp_path, caps
     assert rc == 0
     assert (home / ".bashrc").read_text(encoding="utf-8") == MALFORMED
     assert "warn" in kinds(lines)
+    assert not (home / ".bashrc.bak").exists()
 
 
 def test_check_against_malformed_profile_warns_to_fix_by_hand(tmp_path, capsys):
@@ -136,3 +137,16 @@ def test_check_against_malformed_profile_warns_to_fix_by_hand(tmp_path, capsys):
     assert rc == 0
     assert "warn" in kinds(lines)
     assert "fix" in msgs(lines).lower() and "hand" in msgs(lines).lower()
+
+
+def test_check_protects_the_protocol_when_a_retired_reference_line_has_a_tab(
+        tmp_path, capsys):
+    tab_line = "\tstill using ai-asset-registry\tclone directly, not through the hub"
+    root, home = make(tmp_path, profile=f"keep me\n{tab_line}\n")
+    rc = hub_env.main(["--check", "--root", str(root), "--home", str(home)])
+    out = capsys.readouterr().out
+    lines = out.splitlines()
+    assert rc == 0
+    matching = [l for l in lines if "still using ai-asset-registry" in l]
+    assert len(matching) == 1
+    assert matching[0].count("\t") == 1

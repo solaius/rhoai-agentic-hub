@@ -55,6 +55,21 @@ async def probe(transport: httpx.AsyncBaseTransport | None = None) -> tuple[str,
     except httpx.HTTPError as exc:
         return ("warn", f"slack unreachable ({exc.__class__.__name__}), offline? "
                         f"re-run: python scripts/hub_slack.py --check")
+    except ValueError:
+        # resp.json() raises json.JSONDecodeError (a ValueError subclass) on
+        # a non-JSON body. A captive portal or corporate proxy answering
+        # HTTP 200 with an HTML page is the realistic cause on a VPN.
+        return ("warn", "slack auth.test response was not valid Slack JSON "
+                        "(body did not parse as JSON), likely a captive "
+                        "portal or corporate proxy on this network: retry "
+                        "off that network, or check the proxy settings")
+    if not isinstance(data, dict):
+        # Valid JSON (a list, null, a number, ...) that is not the object
+        # shape Slack always returns, same likely cause as above.
+        return ("warn", "slack auth.test response was not valid Slack JSON "
+                        "(body was not a JSON object), likely a captive "
+                        "portal or corporate proxy on this network: retry "
+                        "off that network, or check the proxy settings")
     if data.get("ok"):
         return ("ok", f"slack auth ok: {data.get('user', '?')} "
                       f"@ {data.get('team', '?')}")
