@@ -1324,3 +1324,27 @@ Not a subagent task. In the main session, after Tasks 1-8 are merged and pushed 
 - Tasks 1 and 2 change what `hub_lint.py` warns about on the REAL repo. Their reports must list the new warnings verbatim so the owner can triage them (precedent: fact-disclosure-warning-triage-2026-07-10).
 - Task 5 produces `../landing-preview.html` OUTSIDE the repo for the owner to eyeball; delete it after review.
 - Push once after Task 8 review (publish.yml then ships the new landing page), before Task 9.
+
+## Acceptance outcomes
+
+**Task 9 (RHCL hub) - 2026-07-10, commit 03e3d04, publish run 29136086438 green.**
+5-source sweep (all succeeded; 2 workarounds), 15 gated change-sets approved
+with two owner rulings (Kagenti roadmap removal with OpenShell expansion;
+RHCL moved to the AI BU with MaaS-entitlement parity expected, pending
+confirmation), 20 pages updated, landing page shows its first UPDATED badge.
+Friction found and fixed before Task 10:
+
+- RHCL Overview Deck is a Slides file: `get_doc_as_markdown` 404s; skill now
+  documents the `get_presentation` fallback.
+- Sweep findings must carry source-table cell values verbatim: the first
+  competitive-matrix apply drew on general knowledge and needed a 65-cell
+  true-up pass against the source doc; skill now mandates verbatim carry.
+- Slack MCP channel-name cache broken (`get_channel_id_by_name` empty,
+  `refresh_channel_cache` false); workaround: resolve channel IDs via
+  `search_messages`. Candidate hub.doctor probe follow-up.
+- `#mcp-gateway-dev` archived 2026-07-02: removed from the RHCL config.
+- Upstream drift found mid-apply beyond the sweep findings (MCPServer Kind
+  split into MCPServerRegistration/MCPVirtualServer; MCPGatewayExtension
+  field set changed): resolved by verify-then-apply against fetched CRD
+  yamls; skill now states the verify-before-edit rule for version-sensitive
+  claims.

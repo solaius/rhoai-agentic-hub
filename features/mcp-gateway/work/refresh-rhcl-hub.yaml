@@ -18,7 +18,8 @@ sources:
   jira:
     keys: [RHAIRFE-1370, RHAIRFE-1457, RHAIRFE-1456, RHAISTRAT-1937]
   slack:
-    channels: [mcp-gateway, mcp-gateway-dev]
+    # mcp-gateway-dev archived 2026-07-02, folded into mcp-gateway
+    channels: [mcp-gateway]
     window_days: 14
   local:
   - features/mcp-gateway/knowledge/

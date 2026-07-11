@@ -19,8 +19,14 @@ keeps them OUT.
 3. SWEEP (parallel subagents, one per source type; each returns findings as
    structured notes, never edits):
    - gdocs: google-workspace `get_doc_as_markdown` with `include_comments`
-     true, `user_google_email: pedouble@redhat.com`.
+     true, `user_google_email: pedouble@redhat.com`. A Slides source 404s
+     there; fall back to `get_presentation` + `list_presentation_comments`.
+     When a source table will be reproduced on a page (e.g. a competitive
+     matrix), carry its cell values verbatim into the findings; apply
+     agents must never fill table cells from general knowledge.
    - github: `gh` CLI - releases, commits, README/doc changes since baseline.
+     Version-sensitive claims (CRD groups, Kinds, field names) are verified
+     against the fetched upstream files before an apply agent edits them.
    - jira: stored `work/jira-snapshot.yaml` plus live check via
      `python scripts/hub_jira.py` / `hublib/jira.py` (keys and jql from the
      config).
