@@ -52,23 +52,6 @@ def validate(root):
                           f"or narrative/enablement/<slug>/")
         elif not (root / site.strip("/")).is_dir():
             errors.append(f"{rel}: site does not exist: {site}")
-        sources = data.get("sources")
-        if not isinstance(sources, dict) or not sources:
-            errors.append(f"{rel}: 'sources' must be a non-empty mapping")
-            continue
-        for stype, val in sources.items():
-            if stype not in SOURCE_TYPES:
-                errors.append(f"{rel}: unknown source type '{stype}' "
-                              f"(known: {', '.join(sorted(SOURCE_TYPES))})")
-            elif not val:
-                errors.append(f"{rel}: source type '{stype}' is empty")
-        for i, doc in enumerate(sources.get("gdocs") or []):
-            if not isinstance(doc, dict) or not doc.get("id"):
-                errors.append(f"{rel}: gdocs[{i}] needs an 'id'")
-        slack = sources.get("slack")
-        if slack is not None and (not isinstance(slack, dict)
-                                  or not slack.get("channels")):
-            errors.append(f"{rel}: slack needs a 'channels' list")
         sections = data.get("sections")
         if sections is not None:
             if not isinstance(sections, dict):
@@ -86,4 +69,21 @@ def validate(root):
                                             str(val.get("project") or ""))):
                         errors.append(f"{rel}: sections.jira_tracker needs "
                                       f"project: <JIRAPROJECT>")
+        sources = data.get("sources")
+        if not isinstance(sources, dict) or not sources:
+            errors.append(f"{rel}: 'sources' must be a non-empty mapping")
+            continue
+        for stype, val in sources.items():
+            if stype not in SOURCE_TYPES:
+                errors.append(f"{rel}: unknown source type '{stype}' "
+                              f"(known: {', '.join(sorted(SOURCE_TYPES))})")
+            elif not val:
+                errors.append(f"{rel}: source type '{stype}' is empty")
+        for i, doc in enumerate(sources.get("gdocs") or []):
+            if not isinstance(doc, dict) or not doc.get("id"):
+                errors.append(f"{rel}: gdocs[{i}] needs an 'id'")
+        slack = sources.get("slack")
+        if slack is not None and (not isinstance(slack, dict)
+                                  or not slack.get("channels")):
+            errors.append(f"{rel}: slack needs a 'channels' list")
     return errors, warnings

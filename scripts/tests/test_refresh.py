@@ -132,3 +132,12 @@ def test_sections_block_invalid(tmp_path):
           VALID + "sections:\n  bogus: 1\n  jtbd: yes please\n  jira_tracker: {}\n")
     errors, _ = validate(tmp_path)
     assert len([e for e in errors if "section" in e]) == 3
+
+
+def test_sections_errors_survive_missing_sources(tmp_path):
+    make_site(tmp_path)
+    write(tmp_path, "features/x/work/refresh-site.yaml",
+          "site: features/x/enablement/site/\nsections:\n  bogus: 1\n")
+    errors, _ = validate(tmp_path)
+    assert any("unknown section 'bogus'" in e for e in errors)
+    assert any("sources" in e for e in errors)
