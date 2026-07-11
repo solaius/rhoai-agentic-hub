@@ -476,3 +476,27 @@ def test_restricted_tree_skipped_when_encrypted(tmp_path):
     errors, warnings = lint_repo(root)
     assert errors == []
     assert not any("restricted" in w for w in warnings)
+
+
+def test_restricted_tree_handles_mixed_plaintext_leftover_and_encrypted_blob(tmp_path):
+    """Regression (#14 follow-up): a locked checkout can have a stray
+    UNTRACKED plaintext file sitting right next to TRACKED git-crypt
+    ciphertext (e.g. left behind from before the tree was encrypted). Locked
+    state is per-file, not "read the first .md found" -- the linter must not
+    crash on the ciphertext file, and must still lint the plaintext file
+    that sits beside it."""
+    root = make_repo(tmp_path)
+    know = tmp_path / "restricted" / "features" / "x" / "knowledge"
+    know.mkdir(parents=True)
+    # Sorts before "fact-b.md" so a first-file-found heuristic would have
+    # inspected this encrypted file first and (correctly) called it locked --
+    # the bug was the opposite ordering, covered by fact-b existing at all.
+    (know / "fact-a.md").write_bytes(b"\x00GITCRYPT\x00\x00\x02\x00" + b"\xff" * 50)
+    write(root, "restricted/features/x/knowledge/fact-b.md",
+          "---\ndescription: d\ntimestamp: 2026-07-05\n---\nbody\n")
+    errors, warnings = lint_repo(root)
+    # The encrypted file produced nothing; the plaintext file was actually
+    # linted and its real problem (missing 'type') surfaced normally.
+    assert any("fact-b.md" in e and "missing required field 'type'" in e
+                for e in errors)
+    assert not any("fact-a.md" in e for e in errors)

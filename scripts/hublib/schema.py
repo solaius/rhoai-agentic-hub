@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from . import frontmatter, jiramap, publisher, refresh
+from . import frontmatter, gitcrypt, jiramap, publisher, refresh
 
 KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question", "qa", "jtbd"}
 # pillar/story are narrative-layer-only (spec D12/D14) — invalid under features/.
@@ -136,6 +136,8 @@ def _lint_research(root, research, warnings):
     for doc in sorted(research.glob("*.md")):
         if doc.name in RESEARCH_EXEMPT:
             continue
+        if gitcrypt.is_git_crypt_blob(doc):
+            continue  # locked-state git-crypt blob, nothing to lint
         rel = _rel(root, doc)
         try:
             meta, _ = frontmatter.load_file(doc)
@@ -151,6 +153,8 @@ def _lint_research(root, research, warnings):
 
 def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, feature_ids=None):
     rel = _rel(root, path)
+    if gitcrypt.is_git_crypt_blob(path):
+        return  # locked-state git-crypt blob, nothing to lint (never a crash)
     try:
         meta, _ = frontmatter.load_file(path)
     except frontmatter.FrontmatterError as exc:
@@ -333,24 +337,18 @@ def validate_manifest(root):
     return errors
 
 
-def _is_git_crypt_locked(restricted):
-    """Detect git-crypt locked state by reading the first .md file found."""
-    for md in restricted.rglob("*.md"):
-        try:
-            text = md.read_text(encoding="utf-8")
-            return text.startswith("\x00")
-        except (UnicodeDecodeError, ValueError):
-            return True
-    return False
-
-
 def lint_repo(root):
     root = Path(root)
     errors, warnings = [], []
     feature_ids = _feature_ids(root)
     _lint_tree(root, root, errors, warnings, feature_ids)
     restricted = root / "restricted"
-    if restricted.is_dir() and not _is_git_crypt_locked(restricted):
+    if restricted.is_dir():
+        # No directory-wide "locked" gate here: git-crypt encrypts per file,
+        # so a checkout can mix tracked ciphertext with a stray untracked
+        # plaintext file. lint_entry/_lint_research skip each git-crypt blob
+        # they hit individually, which naturally reduces to "skip everything"
+        # on a fully locked tree and "lint the readable rest" on a mixed one.
         _lint_tree(root, restricted, errors, warnings, feature_ids)
     snap_errors, snap_warnings = jiramap.validate(root)
     errors.extend(snap_errors)

@@ -150,6 +150,19 @@ def test_load_env_missing_file_is_a_noop(tmp_path):
     load_env(tmp_path, prefixes=("JIRA_",))  # must not raise
 
 
+def test_load_env_skips_a_git_crypt_encrypted_env_file(tmp_path, monkeypatch):
+    # Regression (#14 follow-up): a locked checkout (no git-crypt key on this
+    # machine) sees restricted/.env as ciphertext. load_env must skip it
+    # silently, same as a missing file, instead of crashing on decode.
+    (tmp_path / "restricted").mkdir()
+    (tmp_path / "restricted" / ".env").write_bytes(
+        b"\x00GITCRYPT\x00\x00\x02\x00" + b"\xff" * 50)
+    monkeypatch.delenv("JIRA_SERVER", raising=False)
+
+    load_env(tmp_path, prefixes=("JIRA_",))  # must not raise
+    assert "JIRA_SERVER" not in os.environ
+
+
 def test_out_of_order_markers_end_before_begin_raises():
     # The exact case from the task spec: END appears before BEGIN.
     # Has 1 BEGIN and 1 END (balanced count), but out of sequence, which

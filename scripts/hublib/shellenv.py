@@ -14,6 +14,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from . import gitcrypt
+
 HUB_BEGIN = "# >>> rhoai-agentic-hub env >>>"
 HUB_END = "# <<< rhoai-agentic-hub env <<<"
 RETIRED_BEGIN = "# >>> ai-asset-registry env >>>"
@@ -23,9 +25,12 @@ RETIRED_MARKER = "ai-asset-registry"
 
 def load_env(root: Path, prefixes: tuple[str, ...] = ()) -> None:
     """Populate os.environ from <root>/restricted/.env for shells that never
-    sourced it. Existing env always wins. Empty prefixes loads every key."""
+    sourced it. Existing env always wins. Empty prefixes loads every key.
+
+    A git-crypt encrypted .env (locked checkout, no key configured on this
+    machine) is skipped silently, same as a missing file -- never a crash."""
     env = Path(root) / "restricted" / ".env"
-    if not env.is_file():
+    if not env.is_file() or gitcrypt.is_git_crypt_blob(env):
         return
     for raw in env.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
