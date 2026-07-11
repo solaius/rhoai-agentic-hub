@@ -118,6 +118,30 @@ def _coerce_str(value):
     return None if value is None else str(value)
 
 
+def _coerce_current_labels(value):
+    """current_labels is ADVISORY ONLY (see triage.plan_decisions): it only
+    feeds a "label already present, skip it" check and is never carried into
+    a Jira payload, because label writes are atomic adds (JiraClient.add_
+    label). So the safe move on anything malformed is to omit it and let the
+    freshly-scanned row's labels (the authoritative source) be used instead
+    - that can only cause an extra harmless, idempotent write attempt, never
+    a wrong one. Returns a list of strings, or None to mean "omit".
+    """
+    if not isinstance(value, list):
+        # int, bool, float, str, dict: not a labels list. Omit rather than
+        # guess; plan_decisions falls back to the scanned row's labels.
+        return None
+    cleaned = []
+    for item in value:
+        if isinstance(item, str):
+            cleaned.append(item)
+        elif isinstance(item, (dict, list)) or item is None:
+            continue  # not string-coercible sensibly: drop
+        else:
+            cleaned.append(str(item))
+    return cleaned
+
+
 def _normalize_decisions(payload):
     """Validate and coerce the untrusted, human/browser-generated decisions
     payload before it reaches triage.plan_decisions. Returns
@@ -147,7 +171,9 @@ def _normalize_decisions(payload):
             if field in decision:
                 clean[field] = _coerce_str(decision[field])
         if "current_labels" in decision:
-            clean["current_labels"] = decision["current_labels"]
+            labels = _coerce_current_labels(decision["current_labels"])
+            if labels is not None:
+                clean["current_labels"] = labels
         normalized[key] = clean
     return normalized, None
 
