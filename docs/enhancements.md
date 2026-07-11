@@ -17,14 +17,14 @@ including review. "When" is a best guess, not a schedule.
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
-| 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
+| 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — steps 2-4 executed 2026-07-11 on machine B; step 1 (cold path) deferred (B was warm); see R5 outcome below | Small (run it) | Steps 2-4 done |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
-| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Medium — R5 will feel this pain first-hand | Medium | After R5 |
+| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Low (R5 evidence: `.env` manual copy is tolerable for 1-2 machines; full mirror only needed if customer-feedback workflows run on B or a third machine joins) | Medium | Parked |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
-| 19 | Doctor: `~/.bashrc` env wiring + Slack connectivity probe (the Jira probe shipped 2026-07-10 with #2) | Low–Medium — remaining slice is env wiring + Slack | Small | With R5 |
+| ~~19~~ | ~~Doctor: env wiring + Slack probe~~ | Done | Done | Done |
 | 20 | Agent context pack (`hub_index.py --brief`) | Medium — cheaper session bootstrap for agents | Small–Medium | Later |
 | 21 | Human search over the published site (static index) | Medium — humans lack grep | Medium | Later |
 | 22 | Narrative growth: stories for Inference/Data/Safety & Governance pillars | Medium — content, not tooling; map has `_no stories yet_` ×3 | Small each | As stories emerge |
@@ -74,6 +74,64 @@ engine install needs the admin shell (doctor prints it, human must act);
 Slack xoxc/xoxd tokens are per-login session tokens — B needs its own
 extraction or fresh copies; `.mcp.json` is per-machine (doctor rewrites the
 tracker path); `CTRACK_DIR` differs per machine (restricted/.env override).
+
+### R5 outcome (2026-07-11)
+
+**Non-goals (stated plainly so nobody reads R5 as proving more than it did):**
+- Step 1 (cold path) was NOT executed: B was warm (already cloned, deps
+  installed, restricted/.env copied). Machine C will self-verify via
+  `doctor.sh check`.
+- No cross-OS signal: B is Windows + Git Bash, same as A.
+
+**Step 2 (round-trip):** hub.capture committed and pushed from B
+(`5a49308`). A-side verification pending (pull + `hub_index.py --check`).
+The round-trip mechanism works: gated capture, explicit-path commit,
+push from B, no index drift.
+
+**Step 3 (restricted-tier, #14 evidence):**
+1. B needs **only `restricted/.env`** day-to-day (14 keys: JIRA, Google
+   OAuth, Slack tokens, GitHub, customer tracker config). The
+   `restricted/features/` and `restricted/memory/` trees do not exist on
+   B and were never needed. 10 lint warnings reference broken links to
+   restricted paths that live only on A (NDA-adjacent content).
+2. **No drift problem.** `.env` was copied once and has been stable. The
+   structural gap (A has restricted feature trees, B doesn't) is not
+   operational for B's daily workflows.
+3. **Manual copying is tolerable** for `.env` alone (one file, one copy).
+   It would NOT be tolerable if customer-feedback workflows ran on B
+   (dozens of NDA files, tracking drift manually).
+
+**Recommendation for #14:** `restricted/.env` manual copy is sufficient
+for 1-2 machines. A private mirror of the full `restricted/` tree is
+only needed if customer-feedback workflows run on machine B or a third
+machine joins.
+
+**Step 4 (push race):** a genuine two-machine simultaneous race was not
+orchestrated. However, a natural push race occurred during this session
+(the `research(narrative)` commit at `77970b6` hit a push rejection,
+resolved with `git pull --rebase`, pushed cleanly). The documented
+rebase discipline works.
+
+**Predictions vs reality:**
+- Podman engine: already installed on B (OK, no admin shell needed)
+- Slack tokens: **prediction disproved** - tokens DID travel via
+  `restricted/.env` copy. `slack auth ok: pedouble @ Red Hat` on B.
+- `.mcp.json`: doctor rewrites the tracker path (verified, CTRACK_DIR
+  differs per machine as expected)
+- `~/.bashrc` wiring: B had JIRA creds hardcoded in bashrc (not from
+  restricted/.env). Fixed by `hub_env.py --setup` during the test.
+
+**What broke:** plugin installs (no github ssh key for marketplace clone),
+customer tracker clone (not needed for daily hub work), pre-commit hook
+(not installed). All fixable by `doctor.sh setup` except the ssh key
+(needs manual github key setup or the https rewrite).
+
+**What was fixed during the test:** `~/.bashrc` now has the hub wiring
+block (was missing).
+
+**What is parked:** #14 annotated with evidence (manual `.env` copy is
+fine for now). Plugin install friction parked until the ssh key is set
+up on B.
 
 ## R6 — Cursor end-to-end validation (deferred, D2 debt)
 
@@ -293,6 +351,16 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#19 Doctor: env wiring + Slack probe** — shipped 2026-07-11
+  (`823e90e..6b74ab7`): `hublib/shellenv.py` (profile-block transforms,
+  shared restricted/.env reader), `hub_env.py` (--check/--setup CLI),
+  `hublib/slack.py` (auth.test probe), `hub_slack.py` (--check CLI),
+  `hublib/doctorio.py` (kind-TAB-message boundary). Doctor section 4
+  extended with shell wiring, section 9 extended with Slack auth probe.
+  Machine A repaired (retired ai-asset-registry block removed, hub block
+  written). R5 steps 2-4 executed on machine B 2026-07-11. Spec:
+  [/docs/specs/2026-07-11-r5-cross-machine-design.md](/docs/specs/2026-07-11-r5-cross-machine-design.md).
+  Plan: [/docs/plans/2026-07-11-r5-cross-machine-plan.md](/docs/plans/2026-07-11-r5-cross-machine-plan.md).
 - **#34 + #8 + #4 published-site trust batch** - shipped 2026-07-10:
   heuristic over full entry text + generated views/indexes in the disclosure
   scan surface (#34); full-branded grouped landing page with snapshot-v2
