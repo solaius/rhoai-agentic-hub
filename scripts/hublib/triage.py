@@ -9,6 +9,7 @@ Spec: docs/specs/2026-07-11-jira-operating-batch-design.md
 """
 import asyncio
 import datetime
+import re
 
 import httpx
 import yaml
@@ -35,6 +36,12 @@ SUPPORTED_ACTIONS = frozenset(
 
 # Never written by this hub: <release>-committed is set on the STRAT side.
 PROTECTED_LABEL_SUFFIX = "-committed"
+
+# A release comes from a free-text browser field and is concatenated straight
+# into a Jira label. Jira labels admit no whitespace, so an unscreened release
+# either 400s the write or silently invents a label nobody meant ("3.6-x" ->
+# "3.6-x-candidate"). Letters, digits, dot, underscore, hyphen; nothing else.
+RELEASE_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
 DEFAULT_CLOSE_COMMENT = "Closed during PM triage pass. Reopen if still needed."
 
@@ -303,11 +310,13 @@ def plan_decisions(decisions, rows):
                                     "detail": "skipped"})
             continue
 
-        # The freshly-scanned row wins: it is never the staler source. The
-        # decisions file's current_labels is only a fallback for the
-        # "already present, skip it" check. It NEVER builds a payload:
-        # label writes are atomic adds (JiraClient.add_label), so a stale
-        # current_labels can no longer destroy anything.
+        # ADVISORY ONLY. The freshly-scanned row wins: it is never the staler
+        # source. This exists solely for the "label already present, skip it"
+        # check below and it MUST NEVER build a payload - a stale or
+        # hand-edited current_labels rebuilt into a labels array is exactly
+        # what deleted live labels before. Label writes are atomic adds
+        # (JiraClient.add_label), and this value is deliberately NOT carried
+        # into the plan entry so no future author can reach for it.
         current = list(row.get("labels") or decision.get("current_labels") or [])
 
         if action in LABEL_ACTIONS:
@@ -318,6 +327,13 @@ def plan_decisions(decisions, rows):
                     plan["rejected"].append({
                         "key": key, "action": action,
                         "detail": "roadmap needs a release (for example 3.6)"})
+                    continue
+                if not RELEASE_RE.match(release):
+                    plan["rejected"].append({
+                        "key": key, "action": action,
+                        "detail": f"release '{release}' is not label-safe. Use "
+                                  f"letters, digits, dot, underscore or hyphen "
+                                  f"only, with no spaces (for example 3.6)."})
                     continue
                 if _is_protected(release):
                     plan["rejected"].append({
@@ -339,8 +355,9 @@ def plan_decisions(decisions, rows):
                     "key": key, "action": action,
                     "detail": f"label {label} already present"})
                 continue
-            plan["labels"].append({"key": key, "action": action, "label": label,
-                                   "current_labels": current})
+            # Only what the write needs: key, action, and the ONE label to add.
+            # current_labels is not carried forward (see above).
+            plan["labels"].append({"key": key, "action": action, "label": label})
             continue
 
         if action == "comment":
@@ -377,10 +394,17 @@ async def apply_decisions(client, plan):
     """Execute an approved plan. Labels, then comments, then transitions:
     a workflow surprise on the sharpest action cannot strand the cheap ones.
 
-    Per-item try/except. One failure never sinks the batch. ValueError is
-    caught alongside httpx.HTTPError because add_comment decodes JSON after
-    raise_for_status: a 200 with a junk body raises ValueError, and an
-    uncaught one would abort the batch mid-flight.
+    Per-item try/except. One failure never sinks the batch. The catches are
+    httpx.HTTPError ONLY: a transport or status failure is the sole way a
+    write can fail to land. Catching ValueError here once looked prudent and
+    was in fact the half-apply bug in disguise: add_comment decoded JSON after
+    raise_for_status, so a 200 carrying an SSO login page (a real Jira DC
+    behavior) raised ValueError on a comment Jira had ALREADY created, and
+    this loop recorded "comment failed, transition NOT attempted" over a
+    comment that was sitting on a still-open issue. add_comment now absorbs
+    the undecodable body (the 2xx proves the write); any ValueError reaching
+    this loop is a genuine bug and must surface loudly, not be relabelled as
+    a failed write.
     """
     result = {"applied": [], "skipped": list(plan["skipped"]),
               "rejected": list(plan["rejected"]), "errors": []}
@@ -390,7 +414,7 @@ async def apply_decisions(client, plan):
             # Atomic ADD. No read-modify-write: this cannot remove a label
             # that was added to the issue after the scan.
             await client.add_label(item["key"], item["label"])
-        except (httpx.HTTPError, ValueError) as exc:
+        except httpx.HTTPError as exc:
             result["errors"].append({"key": item["key"], "action": item["action"],
                                      "detail": f"label write failed: {exc}"})
             continue
@@ -400,7 +424,7 @@ async def apply_decisions(client, plan):
     for item in plan["comments"]:
         try:
             await client.add_comment(item["key"], item["comment"])
-        except (httpx.HTTPError, ValueError) as exc:
+        except httpx.HTTPError as exc:
             result["errors"].append({"key": item["key"], "action": "comment",
                                      "detail": f"comment failed: {exc}"})
             continue
@@ -412,14 +436,14 @@ async def apply_decisions(client, plan):
         if item.get("comment"):
             try:
                 await client.add_comment(key, item["comment"])
-            except (httpx.HTTPError, ValueError) as exc:
+            except httpx.HTTPError as exc:
                 result["errors"].append({
                     "key": key, "action": action,
                     "detail": f"close comment failed, transition NOT attempted: {exc}"})
                 continue
         try:
             await client.transition_issue(key, transition["id"])
-        except (httpx.HTTPError, ValueError) as exc:
+        except httpx.HTTPError as exc:
             detail = f"transition to {transition['name']} failed: {exc}"
             if item.get("comment"):
                 detail += (" (the close comment HAS already posted; the issue "

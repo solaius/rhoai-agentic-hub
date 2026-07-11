@@ -335,9 +335,12 @@ def test_plan_sorts_actions_into_buckets():
         "A-3": {"action": "skip"},
     }
     plan = triage.plan_decisions(decisions, rows)
+    # current_labels is advisory input only. It must NOT be carried into the
+    # entry: it is the exact field whose misuse deleted live labels, and an
+    # entry that still holds it invites a future author to rebuild the array.
     assert plan["labels"] == [
-        {"key": "A-1", "action": "backlog", "label": "pm-backlogged",
-         "current_labels": ["old"]}]
+        {"key": "A-1", "action": "backlog", "label": "pm-backlogged"}]
+    assert "current_labels" not in plan["labels"][0]
     assert plan["transitions"][0]["key"] == "A-2"
     assert plan["transitions"][0]["transition"]["id"] == "31"
     assert plan["skipped"] == [{"key": "A-3", "action": "skip",
@@ -420,6 +423,28 @@ def test_plan_committed_guard_is_case_insensitive():
         {"A-1": {"action": "roadmap", "release": "3.6-COMMITTED"}}, rows)
     assert plan["labels"] == []
     assert "committed" in plan["rejected"][0]["detail"].lower()
+
+
+def test_plan_rejects_a_release_that_is_not_label_safe():
+    # release is free text from a browser field and is concatenated straight
+    # into a Jira label. A space produces a label Jira 400s on; anything else
+    # exotic invents a label nobody meant. Screen it before it becomes one.
+    rows = [scan_row(key="A-1")]
+    for bad in ("3.6 candidate", "3.6/x", "", "  ", "a b", "3,6",
+                "3.6;drop", "3.6\tx", "3.6\nx"):
+        plan = triage.plan_decisions(
+            {"A-1": {"action": "roadmap", "release": bad}}, rows)
+        assert plan["labels"] == [], bad
+        assert len(plan["rejected"]) == 1, bad
+        # Never silently dropped: every rejection carries a reason.
+        assert plan["rejected"][0]["detail"], bad
+
+    # ...and the shapes a real release actually takes still pass.
+    for good in ("3.6", "3.6.1", "rhoai_3.6", "v3-6"):
+        plan = triage.plan_decisions(
+            {"A-1": {"action": "roadmap", "release": good}}, rows)
+        assert plan["rejected"] == [], good
+        assert plan["labels"][0]["label"] == f"{good}-candidate"
 
 
 def test_plan_close_carries_the_default_comment():
@@ -652,18 +677,28 @@ def test_triage_log_omits_detail_when_there_is_no_error():
 
 
 def test_apply_survives_a_200_with_a_non_json_body():
-    # add_comment decodes JSON after raise_for_status. A 200 carrying junk
-    # raises ValueError, which must be an item-level error, not a batch abort.
+    # The half-apply, inverted. A 200 on the comment POST means Jira ACCEPTED
+    # AND CREATED the comment; only decoding the response body failed (Jira DC
+    # behind SSO really does return a 200 HTML login page). Treating that as
+    # "the comment failed" and skipping the transition orphans a close comment
+    # on an issue that stays open while the audit trail swears nothing was
+    # written - the very bug this design exists to prevent. So: the comment
+    # counts as APPLIED, and on a close the transition IS attempted.
+    seen = []
+
     def handler(request):
+        seen.append((request.method, request.url.path))
         if request.url.path.endswith("/comment"):
             return httpx.Response(200, text="<html>not json</html>")
         return httpx.Response(204)
 
     rows = [scan_row(key="A-1", labels=[]),
-            scan_row(key="A-2", transitions=CLOSABLE)]
+            scan_row(key="A-2", transitions=CLOSABLE),
+            scan_row(key="A-3")]
     plan = triage.plan_decisions({
         "A-1": {"action": "backlog"},
         "A-2": {"action": "close"},
+        "A-3": {"action": "comment", "comment": "ping"},
     }, rows)
 
     async def go():
@@ -671,6 +706,36 @@ def test_apply_survives_a_200_with_a_non_json_body():
             return await triage.apply_decisions(c, plan)
 
     result = run(go())
-    assert [a["key"] for a in result["applied"]] == ["A-1"]   # label landed
-    assert result["errors"][0]["key"] == "A-2"
-    assert "close comment failed" in result["errors"][0]["detail"]
+    assert result["errors"] == []                     # nothing failed to write
+    applied = {a["key"]: a["detail"] for a in result["applied"]}
+    assert set(applied) == {"A-1", "A-2", "A-3"}
+    assert applied["A-1"] == "+label pm-backlogged"
+    assert applied["A-3"] == "comment posted"         # junk body != lost write
+    assert applied["A-2"] == "New -> Closed"          # the close COMPLETED
+    # The transition was actually attempted, not just reported.
+    assert ("POST", "/rest/api/2/issue/A-2/transitions") in seen
+
+
+def test_add_comment_junk_body_does_not_strand_the_close_comment():
+    # The regression guard, at the seam. If add_comment ever goes back to
+    # letting a ValueError escape a successful POST, apply_decisions turns it
+    # into "close comment failed, transition NOT attempted" - the orphaned
+    # comment. Assert the comment posted AND the transition followed it.
+    def handler(request):
+        if request.url.path.endswith("/comment"):
+            return httpx.Response(200, text="<html>SSO login</html>")
+        return httpx.Response(204)
+
+    rows = [scan_row(key="A-1", transitions=CLOSABLE)]
+    plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    assert result["errors"] == []
+    assert [a["key"] for a in result["applied"]] == ["A-1"]
+    detail = result["applied"][0]["detail"]
+    assert "NOT attempted" not in detail
+    assert "failed" not in detail

@@ -402,7 +402,8 @@ class JiraClient:
     # -- Comments --
 
     async def add_comment(self, issue_key: str, body: str | dict) -> dict:
-        """Post a comment on a Jira issue. Returns the created comment.
+        """Post a comment on a Jira issue. Returns the created comment, or
+        ``{}`` if the response body could not be decoded.
 
         ``body`` can be a markdown string (auto-converted to ADF) or a
         pre-built ADF dict.
@@ -412,7 +413,18 @@ class JiraClient:
             json={"body": _ensure_adf(body)},
         )
         resp.raise_for_status()
-        return resp.json()
+        try:
+            return resp.json()
+        except ValueError:
+            # The POST succeeded, so the comment WAS created. Some Jira
+            # deployments return a 200 with a non-JSON body (an SSO login
+            # page). Losing the response payload is not losing the write,
+            # and a caller told "this failed" would strand the comment.
+            logger.warning(
+                "comment on %s posted but the response body was not JSON",
+                issue_key,
+            )
+            return {}
 
     # -- Transitions --
 

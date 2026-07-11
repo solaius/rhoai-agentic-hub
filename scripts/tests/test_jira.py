@@ -129,6 +129,37 @@ def test_add_label_is_an_atomic_add_never_a_field_replace():
     assert "fields" not in seen["body"]      # a replace would delete labels
 
 
+def test_add_comment_tolerates_a_200_with_a_non_json_body():
+    # A 2xx on the comment POST means Jira ACCEPTED AND CREATED the comment.
+    # Some deployments (DC behind SSO) then answer with an HTML login page.
+    # Failing to decode the response is NOT failing to write: raising here
+    # would tell the caller the comment never posted while it sits on the
+    # issue, which is how a close comment gets orphaned on an open issue.
+    def handler(request):
+        return httpx.Response(200, content=b"<html>not json</html>")
+
+    async def case():
+        async with JiraClient("https://jira.example.com", personal_token="p",
+                              transport=httpx.MockTransport(handler)) as client:
+            return await client.add_comment("A-1", "hello")
+
+    assert run(case()) == {}          # no raise, and no pretend payload
+
+
+def test_add_comment_still_raises_on_a_real_http_failure():
+    # Tolerating a junk body must not tolerate a rejected write.
+    def handler(request):
+        return httpx.Response(403, content=b"<html>denied</html>")
+
+    async def case():
+        async with JiraClient("https://jira.example.com", personal_token="p",
+                              transport=httpx.MockTransport(handler)) as client:
+            await client.add_comment("A-1", "hello")
+
+    with pytest.raises(httpx.HTTPStatusError):
+        run(case())
+
+
 def test_probe_public_fail_closed():
     def handler(request):
         assert "authorization" not in request.headers  # probe must carry no auth
