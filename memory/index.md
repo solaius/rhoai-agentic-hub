@@ -4,9 +4,9 @@
 > Always read this first. Regenerate with `python scripts/hub_index.py`.
 
 ## Profiles (current state)
-- [now](/memory/profiles/now.md) — Now: DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live
+- [now](/memory/profiles/now.md) — Now: 12 partitions (added mcp-lifecycle-operator + agent-interop), deep research complete on both — daily PM work running on the hub
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash, no em dashes
-- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry DP misses 3.5 stable; Catalog TP + Registry TP + integration push to RHOAI 3.6 EA1; full RHOAI/MCP release train through GA
+- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCPLO TP in 3.5 (OCP entitlement, gateway=GA scope), Registry DP misses 3.5; Catalog TP + Registry TP to 3.6 EA1; MCPLO/Registry/Catalog GAs in 3.6; OCP5 includes MCPLO via RHOAI Limited
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts

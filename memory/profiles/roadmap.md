@@ -1,23 +1,25 @@
 ---
 type: profile
-description: "Roadmap: MCP Registry DP misses 3.5 stable; Catalog TP + Registry TP + integration push to RHOAI 3.6 EA1; full RHOAI/MCP release train through GA"
+description: "Roadmap: MCPLO TP in 3.5 (OCP entitlement, gateway=GA scope), Registry DP misses 3.5; Catalog TP + Registry TP to 3.6 EA1; MCPLO/Registry/Catalog GAs in 3.6; OCP5 includes MCPLO via RHOAI Limited"
 timestamp: 2026-07-11
 status: current
 valid_from: 2026-07-11
 review_after: 2026-08-10
 source: owner statement 2026-07-11 (Registry/Catalog re-plan); previously ai-asset-registry/docs/knowledge-registry.md §6 (as of 2026-07-05); phased-sequencing context from ai-asset-registry/docs/knowledge-review/overview/roadmap.md (as of 2026-07-05)
 ---
-- **RHOAI 3.5** — MCP Gateway deployment in RHOAI (documented external dependency per RHAISTRAT-1937); MCPLO TP (target Jul 24, 2026, flagged on risk); Agent registries. MCP Registry Dev Preview will NOT land in 3.5 stable (owner, 2026-07-11).
+- **RHOAI 3.5** — MCP Gateway deployment in RHOAI (documented external dependency per RHAISTRAT-1937); MCPLO TP (RHAISTRAT-1773, target mid-Aug 2026); Agent registries. MCP Registry Dev Preview will NOT land in 3.5 stable (owner, 2026-07-11). MCPLO gateway integration is explicitly GA scope, not TP (Slack decision, May 2026). MCPLO ships with OCP entitlement (not RHOAI-only) — base OCP customers get MCPLO; RHOAI adds Registry, Authorino, Limitador.
+- **OCP-side MCPLO TP** — OCPSTRAT-3263 targets mid-July 2026 (OCP team's functional TP). This is earlier than the RHOAI 3.5 TP because OCP owns functional qualification while RHOAI owns deployment/integration qualification.
 - **RHOAI 3.6 EA1** — the push: MCP Catalog TP + MCP Registry TP together, alongside Catalog-Registry integration (RHAISTRAT-2027). Jira fixversions being re-targeted to match.
-- **RHOAI 3.6** — component GAs formalized against it (RHAISTRAT-1993/1994/1995; code freeze Oct 23, 2026). MCP Gateway GA rides RHCL 1.5 (Oct 2026).
-- **OCP 5.0** — future. MCP Servers + MCP Gateway included.
-- Related Jira: RHAIRFE-1370 (main), RHAIRFE-1457 (gateway in RHOAI), RHAIRFE-1456 (lifecycle operator in RHOAI); RHAISTRAT-2027 (integration, 3.6 EA1).
+- **RHOAI 3.6** — component GAs formalized against it (RHAISTRAT-1993/1994/1995; code freeze Oct 23, 2026). MCP Gateway GA rides RHCL 1.5 (Oct 2026). MCPLO GA (RHAISTRAT-1995, OCPSTRAT-2879) — addresses dependency awareness, operational maturity, documentation, and Agent Sandbox/Code Mode integration. Operator maturity gap: currently Level 1-2, GA requires Level 3-4.
+- **OCP 5.0** — future. MCP Servers + MCP Gateway + MCPLO included via RHOAI Limited entitlement. Install flow: RHOAI with capability toggles (Inference, Gateway, Guardrails, MCPLO on/off). OLS will transition from internal MCP server to MCPLO-deployed OCP MCP server (subscription cliff risk flagged).
+- Related Jira: RHAIRFE-1370 (main), RHAIRFE-1457 (gateway in RHOAI), RHAIRFE-1456 (lifecycle operator in RHOAI); RHAISTRAT-2027 (integration, 3.6 EA1); RHOAIENG-65512 (MCPLO productization epic); OCPMCP-347 (gateway integration, GA scope).
 
 **Phased sequencing** (from the old repo's separate roadmap doc, `docs/knowledge-review/overview/roadmap.md`): Phase 1 = MCP Registry (3.5 DP, above). Phase 2 = Agent & Skills Registry — already in flight today as the separate `agent-registry` and `skills-registry` partitions, not a literal joint "phase 2" effort. Phases 3-4 as originally planned (a unified plugin framework spanning all asset types; full supply-chain/federation automation; notebooks, pipelines, and evaluators as registry assets) described the cross-cutting "AI Asset Registry" product framework — that partition was itself removed as a dead proposal in R2 batch 2, and this hub currently tracks each asset type as its own partition rather than building one unifying registry product. **Per owner ruling**: this unified-registry ambition is dormant, not doctrine — historical planning intent, not a current direction, but not closed off either; the owner may return to it if it comes up. Treat Phases 3-4 as inactive — neither a live commitment nor a permanently killed idea.
 
 **Staleness flag**: no fresh 3.5 dates were provided as of this update (2026-07-06). RHOAI 3.4's Apr 10, 2026 code-freeze date has already passed (see History) with its ship status not reconfirmed this pass — treat the targets above as last-known, not verified current.
 
 ## History
+- 2026-07-11 — **Update** — MCPLO details enriched from intake, Jira sweep, Slack review, and 5-lens research: OCP TP mid-July vs RHOAI TP mid-Aug distinction, RHAISTRAT-1995 GA in 3.6, gateway integration = GA scope (Slack decision), OCP entitlement (not RHOAI-only), OLS transition risk, operator maturity gap (Level 1-2 to 3-4), RHOAIENG-65512 and OCPMCP-347 added to related Jira. (source: mcp-lifecycle-operator intake session)
 - 2026-07-11 - **Update** - Registry/Catalog re-plan (owner statement during the Management hub refresh): prior value "RHOAI 3.5 - MCP Registry Dev Preview; ... hardening, registry integration, gateway configuration" superseded. Registry DP misses 3.5 stable; Catalog TP + Registry TP + Catalog-Registry integration (RHAISTRAT-2027) all target 3.6 EA1; Jira fixversions still show 3.5 on some items pending re-targeting. Both published hubs corrected the same day. (source: owner, 2026-07-11)
 - 2026-07-06 — **Update** — added phased-sequencing context from `docs/knowledge-review/overview/roadmap.md` (R2 batch 5); per owner ruling, the original Phase 3-4 "unified AI Asset Registry" framing is dormant historical planning intent — not a current direction, but not closed off — rather than dead or doctrine. (source: R2 batch 5 apply — owner ruling)
 - 2026-07-06 — **Update** — resolved label conflict: monolith §6 named the RHOAI 3.5 row "(TP target)" while describing its content as "MCP Registry Dev Preview" — resolved to Dev Preview per owner ruling, matching this hub's established 3.5 = Dev Preview framing (CLAUDE.md; this profile's own prior value). (source: R2 batch 3 apply — owner ruling)

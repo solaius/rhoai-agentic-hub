@@ -1,29 +1,28 @@
 ---
 type: profile
-description: "Now: DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live"
-timestamp: 2026-07-06
+description: "Now: 12 partitions (added mcp-lifecycle-operator + agent-interop), deep research complete on both — daily PM work running on the hub"
+timestamp: 2026-07-11
 status: current
-valid_from: 2026-07-06
-review_after: 2026-07-20
+valid_from: 2026-07-11
+review_after: 2026-07-25
 ---
-- **DOCUMENT PARITY COMPLETE**: all workspace research/strategy documents
-  migrated (batch 6: 48 docs incl. the 19-doc agent-memory series); every
-  meaningful text file from the old repo now lives in the hub or was ruled
-  dead/covered.
-- **R4 waves 1–3 done**: `presentation-create` (wave 1: ported + first
-  enablement artifact published, mcp-registry catalog deck), `blog-create`/
-  `blog-mockup` (wave 2: ported, guide co-located as skill reference; first
-  real blog post is the smoke), and `customer-feedback-ingest`/`refresh`/
-  `sync` (wave 3: ported — tracker data model splits restricted local HTML +
-  transcripts from the external `rhai-customer-tracker` sibling repo; `doctor.sh`
-  section 7 registers the `rhai-tracker` MCP server; all six real customer
-  names found in the old skill text were scrubbed to placeholders; first
-  real ingest/sync is the smoke). **Active R4 waves complete.** Remaining:
-  `knowledge-hub-create` and the HTML hub sites (RHCL, MCP ecosystem)
-  continue on-touch, gated on publishing decisions; `rice-strats` remains
-  unscheduled; R5/R6 runbooks unchanged.
+- **12 feature partitions**: skills-registry, mcp-gateway, mcp-registry,
+  mcp-ecosystem, mcp-catalog, agent-registry, platform, agent-memory,
+  agent-ops, gen-ai-studio, mcp-lifecycle-operator, agent-interop.
+- **mcp-lifecycle-operator**: full intake (19 entries from blog, upstream
+  repo, FAQ GDoc, OCP5 deck, user journey doc), Jira sweep (39 issues,
+  stored JQL across RHAISTRAT/RHOAIENG/OCPSTRAT), Slack channel review
+  (2,406 msgs, 10 key decisions), and 5-lens deep research (upstream,
+  architecture, competitive, requirements, landscape). 28 knowledge
+  entries + 6 research docs + 7 restricted entries.
+- **agent-interop**: full intake + Jira sweep + 4-lens research +
+  landscape + jira-gap lenses (concurrent session).
+- **Document parity**: still complete from batch 6 (all workspace docs
+  migrated). R4 waves 1-3 done. Remaining: `knowledge-hub-create` and
+  HTML hub sites on-touch; `rice-strats` retired (owner ruling).
 
 ## History
+- 2026-07-11 — **Update** — superseded: "DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live." Two new feature partitions added (mcp-lifecycle-operator, agent-interop) with full intake, Jira sweep, and deep research for each. Partition count: 9 → 12. rice-strats retired. (source: intake sessions 2026-07-11)
 - 2026-07-06 — **Update** — superseded: "R4 waves 1–2 done: `presentation-create`
   (wave 1: ported + first enablement artifact published, mcp-registry catalog
   deck) and `blog-create`/`blog-mockup` (wave 2: ported, guide co-located as
