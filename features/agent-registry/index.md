@@ -10,7 +10,6 @@ Post-deployment agent registry, agent catalog/starter kits, agentic base images,
 - [work/](/features/agent-registry/work/)
 
 ## Connections
-- decision · [OpenShell chosen as strategic bet over Kagenti](/features/agent-interop/knowledge/decision-openshell-strategic-bet.md) — [redacted: moved to restricted/]
 - fact · [Agent Interop overview](/features/agent-interop/knowledge/fact-agent-interop-overview.md) — What agent-interop covers — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A, agent cards, BYO agent onboarding, discovery, declarative harness config — and current status.
 - fact · [OpenShell capability gaps from Kagenti](/features/agent-interop/knowledge/fact-openshell-capability-gaps.md) — What OpenShell lacks that Kagenti had (or planned) -- declarative CR, GitOps, Agent Runtime Contract, token exchange at high severity; MLflow, A2A discovery, SPIFFE maturity at medium.
 - person · [Adel Zaalouk](/features/agent-interop/knowledge/person-adel-zaalouk.md) — Product Manager, Agentic AI, AI BU -- driving OpenShell convergence, owns agent-interop strategy and field alignment.
