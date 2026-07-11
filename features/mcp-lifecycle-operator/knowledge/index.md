@@ -19,7 +19,10 @@
 
 ## reference
 - [Manage MCP servers on Red Hat OpenShift with the MCP lifecycle operator (blog)](/features/mcp-lifecycle-operator/knowledge/ref-dp-announcement-blog.md) — Public Red Hat blog announcing MCPLO v0.1.0 Dev Preview -- MCPServer CRD walkthrough, security defaults, MCP Catalog integration.
+- [OCPSTRAT-2879: MCP lifecycle operator GA (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-2879-mcplo-ga.md) — OCP-side General Availability feature for the MCP Lifecycle Operator -- full lifecycle management, Gateway integration, network policies, Prometheus monitors, Agent Sandbox/Code Mode support.
+- [OCPSTRAT-3263: MCP lifecycle operator TP (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-3263-mcplo-tp.md) — OCP-side Technology Preview feature for the MCP Lifecycle Operator -- CRD-based MCPServer API, RBAC, install-time and Day 2 server management, targeting mid-July 2026.
 - [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md) — RHOAI Outcome STRAT for the MCP Lifecycle Operator productization.
 - [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md) — Technology Preview productization STRAT for the MCP Lifecycle Operator in RHOAI.
+- [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md) — GA feature for the MCP Lifecycle Operator in RHOAI -- graduating from TP to full production support with dependency awareness, operational maturity, and documentation.
 - [#forum-mcp-lifecycle-operator (Slack channel)](/features/mcp-lifecycle-operator/knowledge/ref-slack-forum-mcp-lifecycle-operator.md) — Slack channel for MCP Lifecycle Operator discussion -- cross-team (OCP + RHOAI). Not yet reviewed (Slack MCP needed).
 - [kubernetes-sigs/mcp-lifecycle-operator (upstream)](/features/mcp-lifecycle-operator/knowledge/ref-upstream-repo.md) — Upstream Kubernetes operator repo for declarative MCP server deployment -- SIG Apps governance, Apache-2.0, Go.

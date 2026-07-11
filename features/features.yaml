@@ -38,6 +38,9 @@ features:
 - id: mcp-lifecycle-operator
   title: MCP Lifecycle Operator
   description: Kubernetes operator for declarative MCP server deployment and lifecycle management — upstream kubernetes-sigs project, productized in RHOAI operator for 3.5.
+  jira:
+    jql: '(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")'
+    ref_types: [Outcome, Feature]
 - id: agent-interop
   title: Agent Interop
   description: Agent interoperability — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A communication, agent cards, BYO agent onboarding, discovery, and declarative harness configuration.

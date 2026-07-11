@@ -83,7 +83,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1956 · Feature · New · — → [RHAISTRAT-1956: Agent Metadata Extraction](/features/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
 - RHAISTRAT-1993 · Feature · New · — → [MCP Registry General Availability (RHAISTRAT-1993)](/features/mcp-registry/knowledge/ref-rhaistrat-1993-ga.md)
 - RHAISTRAT-1994 · Feature · New · —
-- RHAISTRAT-1995 · Feature · New · —
+- RHAISTRAT-1995 · Feature · New · — → [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md)
 - RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/features/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
 - RHAISTRAT-2027 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE
 - RHAISTRAT-2028 · Feature · In Progress · 3.5 GA RHOAI RELEASE
@@ -214,6 +214,50 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75421 · Story · New · —
 - RHOAIENG-75981 · Story · New · —
 - RHOAIENG-75984 · Story · New · —
+
+## mcp-lifecycle-operator
+_swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")`_
+_summaries withheld — the source Jira is not anonymously readable_
+
+- OCPSTRAT-2879 · Feature · In Progress · — — MCP lifecycle operator : GA   → [OCPSTRAT-2879: MCP lifecycle operator GA (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-2879-mcplo-ga.md)
+- OCPSTRAT-3263 · Feature · In Progress · — — MCP lifecycle operator : TP - Mid July 2026 → [OCPSTRAT-3263: MCP lifecycle operator TP (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-3263-mcplo-tp.md)
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
+- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
+- RHAISTRAT-1995 · Feature · New · — → [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md)
+- RHOAIENG-27566 · Sub-task · Closed · —
+- RHOAIENG-49762 · Epic · Closed · —
+- RHOAIENG-52641 · Task · Closed · —
+- RHOAIENG-53377 · Story · Closed · —
+- RHOAIENG-53378 · Story · Closed · —
+- RHOAIENG-54715 · Bug · Closed · rhoai-3.4
+- RHOAIENG-54730 · Story · Closed · —
+- RHOAIENG-54732 · Story · Closed · —
+- RHOAIENG-54985 · Task · Closed · —
+- RHOAIENG-59053 · Story · Closed · —
+- RHOAIENG-65512 · Epic · In Progress · —
+- RHOAIENG-65524 · Task · Closed · —
+- RHOAIENG-65530 · Task · In Progress · —
+- RHOAIENG-65532 · Task · New · 3.5 GA RHOAI RELEASE
+- RHOAIENG-66057 · Sub-task · Closed · —
+- RHOAIENG-66058 · Sub-task · Closed · —
+- RHOAIENG-66059 · Sub-task · Closed · —
+- RHOAIENG-66060 · Sub-task · Closed · —
+- RHOAIENG-66061 · Sub-task · Closed · —
+- RHOAIENG-66062 · Sub-task · Closed · —
+- RHOAIENG-70871 · Sub-task · Closed · —
+- RHOAIENG-70903 · Epic · Resolved · —
+- RHOAIENG-71452 · Epic · Resolved · —
+- RHOAIENG-72309 · Epic · Closed · —
+- RHOAIENG-72310 · Story · Closed · —
+- RHOAIENG-72311 · Story · Closed · —
+- RHOAIENG-75366 · Epic · New · —
+- RHOAIENG-75369 · Story · New · 3.5 GA RHOAI RELEASE
+- RHOAIENG-75542 · Story · Review · —
+- RHOAIENG-75543 · Task · New · —
+- RHOAIENG-75544 · Task · New · —
+- RHOAIENG-75545 · Task · New · —
+- RHOAIENG-75546 · Task · New · —
+- RHOAIENG-75547 · Task · New · —
 
 ## mcp-registry
 _swept 2026-07-10 · `(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")`_
