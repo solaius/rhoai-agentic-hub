@@ -7,7 +7,10 @@ resolve BEFORE the gate rather than during apply (spec decision 3).
 
 Spec: docs/specs/2026-07-11-jira-operating-batch-design.md
 """
+import asyncio
 import datetime
+
+import httpx
 
 STALE_THRESHOLD_DAYS = 90
 STAKEHOLDER_STALE_DAYS = 270
@@ -173,3 +176,90 @@ def suggest_action(row, today):
     if cls == "backlogged":
         return {"action": "", "reason": "already backlogged"}
     return {"action": "backlog", "reason": "no roadmap signal yet"}
+
+
+RFE_FILTER = 'issuetype = "Feature Request" AND resolution = Unresolved'
+
+SCAN_FIELDS = ["summary", "status", "assignee", "priority", "labels",
+               "components", "updated", "created", "issuelinks"]
+
+MAX_RESULTS = 500
+TRANSITION_CONCURRENCY = 5
+
+
+def compose_jql(feature_jql):
+    """The feature's stored scope, narrowed to open RFEs (spec decision 5).
+    ORDER BY is stripped from the stored scope: it would be illegal mid-query.
+    """
+    base = feature_jql.strip()
+    order = ""
+    lowered = base.lower()
+    if " order by " in lowered:
+        cut = lowered.rindex(" order by ")
+        base, order = base[:cut].strip(), base[cut:].strip()
+    return f"({base}) AND {RFE_FILTER} " + (order or "ORDER BY updated ASC")
+
+
+def resolve_transition(action, transitions):
+    """(transition, "") on success, (None, reason) on failure. PURE.
+
+    Resolved during the scan so the gate can name the transition that will
+    fire. pm-toolkit resolved this during apply, AFTER posting the close
+    comment, so a workflow with no matching transition left a "Closed during
+    PM triage pass" comment on an issue that stayed open. That half-apply is
+    the bug this function exists to prevent.
+    """
+    if action == "close":
+        wanted = CLOSE_TRANSITION_NAMES
+    elif action == "approve":
+        wanted = APPROVE_TRANSITION_NAMES
+    else:
+        return None, f"'{action}' is not a transition action"
+
+    matches = [t for t in transitions
+               if (t.get("name") or "").strip().lower() in wanted]
+    if not matches:
+        available = ", ".join(t.get("name", "?") for t in transitions) or "none"
+        return None, (f"no matching transition for '{action}' in this workflow "
+                      f"(available: {available})")
+    if len(matches) > 1:
+        names = ", ".join(t.get("name", "?") for t in matches)
+        return None, (f"ambiguous transition for '{action}': {names}. "
+                      f"Resolve it in Jira, not here.")
+    return matches[0], ""
+
+
+async def fetch_transitions(client, rows):
+    """Fill row["transitions"] for every row, concurrently. A failure on one
+    issue leaves that row with an empty list: close/approve will then be
+    rejected at the gate for it, which is the correct fail-closed behavior.
+    """
+    sem = asyncio.Semaphore(TRANSITION_CONCURRENCY)
+
+    async def one(row):
+        async with sem:
+            try:
+                raw = await client.get_transitions(row["key"])
+            except httpx.HTTPError:
+                return
+        row["transitions"] = [
+            {"id": t.get("id"), "name": t.get("name"),
+             "to": (t.get("to") or {}).get("name")}
+            for t in raw
+        ]
+
+    await asyncio.gather(*(one(r) for r in rows))
+
+
+async def scan(client, jql, today):
+    """Fetch, normalize, flag, classify, suggest, and resolve transitions.
+    Everything the report and the gate need, in one pass. Read-only."""
+    issues = await client.search(jql, fields=SCAN_FIELDS,
+                                 max_results=MAX_RESULTS)
+    rows = [issue_to_row(i) for i in issues]
+    await fetch_transitions(client, rows)
+    for row in rows:
+        row["flags"] = flag_staleness(row, today)
+        row["classification"] = classify_rfe(row, today)
+        row["suggestion"] = suggest_action(row, today)
+    return rows
