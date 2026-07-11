@@ -26,12 +26,18 @@ and Slack MCP servers are covered by steps 6–7 below plus
    [/docs/mcp-servers.md](/docs/mcp-servers.md); if the other machine has
    `restricted/features/` or `restricted/memory/` content, copy the whole
    `restricted/` tree.
-7. Re-run `bash scripts/doctor.sh setup` — with `.env` in place it also
-   writes the Slack + Google Workspace MCP servers into your Claude config
-   and prepares the Slack podman runtime (traps and manual steps, e.g. the
-   podman engine install: [/docs/mcp-servers.md](/docs/mcp-servers.md)) —
-   then restart Claude Code once more.
-8. Verify: `bash scripts/doctor.sh check` → `0 fail`. You're done.
+7. Re-run `bash scripts/doctor.sh setup` - with `.env` in place it also
+   writes the Slack + Google Workspace MCP servers into your Claude config,
+   prepares the Slack podman runtime (traps and manual steps, e.g. the
+   podman engine install: [/docs/mcp-servers.md](/docs/mcp-servers.md)), and wires
+   `restricted/.env` into `~/.bashrc` so `JIRA_*` reaches every shell (the
+   marketplace `rfe.*` skills read the environment directly and have no
+   fallback). Then **open a new shell** and restart Claude Code once more.
+8. Verify: `bash scripts/doctor.sh check` -> `0 fail`. You're done.
+
+Note: the `~/.bashrc` wiring reaches Claude Code's Bash tool, not its
+PowerShell tool. If a skill runs Jira scripts through PowerShell it will not
+see `JIRA_*`; hub scripts self-load `restricted/.env` and are unaffected.
 
 Optional: clone the pages repo alongside for inspecting published output:
 `git clone https://github.com/solaius/rhoai-agentic-hub-pages.git`

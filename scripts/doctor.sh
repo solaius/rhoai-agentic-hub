@@ -121,7 +121,7 @@ else
   fail "autoMemoryDirectory not set — run: bash scripts/doctor.sh setup"
 fi
 
-echo "[4] restricted/.env"
+echo "[4] restricted/.env + shell wiring"
 # The .env carries repo tooling secrets only (Jira, MCP servers, tracker
 # overrides) — never LLM-provider credentials; Claude Code/Cursor is set up
 # before this repo and the hub never configures or touches that auth.
@@ -146,6 +146,19 @@ if [ -f "$ENV_FILE" ]; then
       warn "jira unreachable or auth failed — run: python scripts/hub_jira.py --check (expired JIRA_TOKEN? offline?)"
     fi
   fi
+  # Shell wiring (backlog #19). Hub tooling self-loads restricted/.env, but the
+  # marketplace rfe.* scripts read os.environ with no fallback, so JIRA_* must
+  # reach every shell. hub_env.py owns the ~/.bashrc block and removes the
+  # retired ai-asset-registry one. Logic lives in python because it is tested;
+  # idempotent profile editing is where bash quietly gets it wrong.
+  if [ "$MODE" = "setup" ]; then ENV_MODE="--setup"; else ENV_MODE="--check"; fi
+  while IFS=$'\t' read -r kind msg; do
+    case "$kind" in
+      ok)    ok "$msg" ;;
+      wrote) ok "$msg (open a new shell for it to take effect)" ;;
+      warn)  warn "$msg" ;;
+    esac
+  done < <(python "$ROOT/scripts/hub_env.py" $ENV_MODE 2>/dev/null)
 else
   warn "restricted/.env not found (Jira-facing skills and MCP setup won't work; copy it from your other machine)"
 fi
@@ -321,7 +334,7 @@ for kind, msg in report: print(f"{kind}\t{msg}")
 PY
 )
 
-echo "[9] slack MCP runtime (podman)"
+echo "[9] slack MCP runtime (podman) + auth probe"
 # Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 7.
 # Section 8 can write the slack config while the thing that RUNS it is
 # missing — "slack configured" does NOT mean slack will load. Its command is
@@ -420,6 +433,17 @@ else
     fi
   fi
 fi
+
+# Auth probe (backlog #19). Section 8 proves the server is REGISTERED;
+# registration is not validity. xoxc/xoxd are per-login session tokens that do
+# not travel between machines, the exact gap R5 predicted for machine B.
+# WARN only, so an offline machine still reaches 0 fail.
+while IFS=$'\t' read -r kind msg; do
+  case "$kind" in
+    ok)   ok "$msg" ;;
+    warn) warn "$msg" ;;
+  esac
+done < <(python "$ROOT/scripts/hub_slack.py" --check 2>/dev/null)
 
 echo "[10] git pre-commit hook"
 # Kills the #1 CI failure (edit -> forget reindex -> red) and runs the
