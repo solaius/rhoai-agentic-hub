@@ -4,6 +4,16 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-11
+- **Update** - backlog #14 (restricted/ cross-machine sync) un-parked, Low/Parked -> Medium-High/Next: the R5 revisit condition fired the same day the ruling was written — customer-feedback gathering ran on machine B, where restricted/features/ does not exist, so the session bypassed the local-first ingest flow (and with it the sync push gate). Interim method stands (hand-copy per docs/setup.md step 6); approach still open (private mirror vs git-crypt — note restricted/ already mirrors hub layout and lints locally, which a private mirror reuses as-is). Addendum recorded under the R5 outcome ruling; stale "item 11" cross-ref in the R5 runbook fixed to #14.
+- **Creation** - Jira operating batch shipped (#30, #27b, #29):
+  hub.jira-hygiene (audit-only), the hub.research jira-gap lens (promoted from
+  FUTURE), and hub.jira-triage, which makes the first Jira write in the hub's
+  history - labels, comments, close and approve, all gated. Transitions resolve
+  before the gate so nothing half-applies (the pm-toolkit close_stale bug).
+  Full-fidelity report lives in restricted/; the tracked triage-log.yaml is
+  prose-free by design. Ruled out: assign, field edits, issue creation.
+  Deferred: cross-component discovery, comment digests.
+  New fact: fact-jira-write-surface.
 - **Update** - R5 outcome CORRECTED on review from machine A (`6a2c95a`), and an owner ruling folded in. Three over-claims retracted: step 4 (push race) was NOT executed (a natural single-machine push rejection is not a two-machine race, so the rebase discipline remains UNVALIDATED); the round trip had only run B-to-A (A side now verified: 0 stale, lint clean, 222 tests, and the A-to-B direction is `6a2c95a` itself); machine B never reached 0 fail (post-setup 21 ok / 0 warn / 3 fail). Owner ruling: doctor section 7 hard-failed on a missing customer-tracker clone, making 0 fail unreachable on any machine that does not do customer-feedback work (a health target you cannot hit trains people to skim past FAILs), so a missing clone is now a WARN, intent-aware like section 8; an opt-out key was rejected because restricted/.env is copied between machines wholesale and its CTRACK_* keys therefore cannot signal intent. Plugin FAILs on B are NOT a doctor bug: section 2 applied the ssh-to-https rewrite correctly, the interactive `/plugin` install simply cannot be automated. Backlog #6 re-marked: steps 2-3 done, steps 1 and 4 open.
 - **Update** - R5 steps 2-4 executed on machine B: step 2 round-trip (capture `5a49308` committed/pushed from B), step 3 restricted-tier (only .env needed, manual copy tolerable, #14 annotated Low/Parked), step 4 race (see the correction line above: NOT actually executed). #19 moved to Done, R5 outcome section written.
 - **Creation** - fact-r5-machine-b-baseline: doctor baseline 18 ok / 1 warn / 5 fail; Slack tokens traveled (disproved prediction); fails were plugin installs, tracker clone, pre-commit hook.

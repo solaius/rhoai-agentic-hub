@@ -21,7 +21,7 @@ including review. "When" is a best guess, not a schedule.
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
-| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Low (R5 evidence: `.env` manual copy is tolerable for 1-2 machines; full mirror only needed if customer-feedback workflows run on B or a third machine joins) | Medium | Parked |
+| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | **Medium–High** — un-park condition met 2026-07-11: customer-feedback gathering ran on B, where the restricted tree doesn't exist, so the session bypassed the local-first ingest flow entirely. R5 had parked this on the evidence that B never touched those workflows; that no longer holds | Medium | Next (un-parked 2026-07-11; see R5 outcome addendum) |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
 | ~~19~~ | ~~Doctor: env wiring + Slack probe~~ | Done | Done | Done |
@@ -32,10 +32,7 @@ including review. "When" is a best guess, not a schedule.
 | 24 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
 | 25 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
 | 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
-| 27 | Jira gap analysis — `hub.research` jira-gap lens (remainder of the pm-toolkit research port) | **Medium–High** — "NOT building" early warnings mapping competitor moves vs. active Jira work; the competitive-sweep half shipped 2026-07-09 as the `hub.research` competitive lens | Medium | Next — #2 shipped 2026-07-10 |
 | 28 | PM standup brief — Jira + Slack + Gemini + AI news (pm-toolkit port) | **Medium–High** — the personal daily loop across all systems; complements #15 (hub-only brief) | Medium | Next |
-| 29 | RFE triage batch workflow (pm-toolkit port) | **Medium–High** — periodic triage ceremony (scan → classify → interactive HTML report → batch apply); distinct from assess-rfe (single-issue quality); RICE scoring retired, see Deliberately not doing | Medium | Next |
-| 30 | Jira hygiene auditor (pm-toolkit port) | **Medium** — audit individual issues against type-specific checklists (links, labels, naming, Fix Version, refinement); companion to #2 (data filing) | Small–Medium | Next |
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
 | 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
@@ -61,7 +58,7 @@ becomes a doctor section, a setup.md fix, or a backlog item here.
    then the reverse direction.
 3. Restricted-tier reality check: confirm which restricted files B actually
    needs day-to-day, how stale A↔B copies drift, and whether manual copying
-   is tolerable — this feeds item 11 (restricted sync).
+   is tolerable — this feeds item 14 (restricted sync).
 4. Race handling: intentionally create a push race (commit on both machines)
    and confirm the rebase discipline documented in the plans works for a
    human following the docs.
@@ -107,6 +104,16 @@ tracker path); `CTRACK_DIR` differs per machine (restricted/.env override).
 **Ruling on #14:** manual `.env` copy is sufficient for 1-2 machines.
 Parked at Low. Revisit only if customer-feedback workflows move to B or a
 third machine joins.
+
+**Addendum, later 2026-07-11 — #14 un-parked.** The revisit condition fired
+the same day the ruling was written: customer-feedback gathering was run on
+B, where `restricted/features/` does not exist, and the session bypassed the
+local-first ingest flow entirely (no tracker to write to, straight past the
+gate). Interim method stands — hand-copy the missing `restricted/features/`
+files from A per `docs/setup.md` step 6 — but #14 moves to Next. Approach
+(private mirror vs git-crypt) still open; note `restricted/` already mirrors
+the hub layout and the linter checks it when present, which a private mirror
+repo could reuse as-is.
 
 **Step 4 (push race): NOT EXECUTED.** A genuine two-machine simultaneous
 race was never orchestrated. A natural single-machine push rejection was
@@ -370,6 +377,24 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#30 + #27(b) + #29 Jira operating batch** - shipped 2026-07-11: the three
+  capabilities unblocked by #2's client. `hub.jira-hygiene` audits one issue
+  against type checklists (read-only; pm-toolkit's Create mode ruled out).
+  `hub.research` gains the `jira-gap` lens, promoted from FUTURE, driven by the
+  domain YAML's `jira:` block ("what we are NOT building" is the payload).
+  `hub.jira-triage` runs the triage ceremony and makes **the first Jira write
+  in this hub's history**, bounded to labels, comments, and the close and
+  approve transitions, every one of them gated line by line.
+  Spec: [/docs/specs/2026-07-11-jira-operating-batch-design.md](/docs/specs/2026-07-11-jira-operating-batch-design.md).
+  Plan: [/docs/plans/2026-07-11-jira-operating-batch-plan.md](/docs/plans/2026-07-11-jira-operating-batch-plan.md).
+  **NOT a complete pm-toolkit port, deliberately** - do not read "Done" as
+  "everything came over". Ruled out: assignment, field edits, issue creation
+  (owner ruling, spec decision 2). Deferred, still available if wanted:
+  cross-component discovery (needed an "adjacent components" config that does
+  not exist, spec decision 5) and comment-thread digests (needed an LLM
+  provider key, which the 2026-07-08 ruling forbids, spec decision 6). The
+  83-row pm-component-ownership registry was not ported: real names and emails
+  cannot enter a public repo, and feature JQL scopes replace it.
 - **#19 Doctor: env wiring + Slack probe** — shipped 2026-07-11
   (`823e90e..6b74ab7`): `hublib/shellenv.py` (profile-block transforms,
   shared restricted/.env reader), `hub_env.py` (--check/--setup CLI),
