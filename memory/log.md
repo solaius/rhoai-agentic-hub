@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-11
+- **Update** - backlog #11 (rice-strats port) retired to Deliberately not doing (owner ruling): RICE scoring work no longer needed in this hub; rubric stays as reference, qa-to-RICE evidence hook retired with it.
 - **Update** - second hub.refresh-site run complete (Management hub, 0e21278 + replan e7d8527): 6-agent sweep incl. fable design review, 22 pages + nav/styles updated, RHCL reverse links, umbrella devolution plan recorded (work/management-hub-umbrella-plan.md) + backlog #35 (component hubs: mcp-catalog/hub, mcp-lifecycle-operator/hub, mcp-registry/hub slugs confirmed); owner re-plan applied same day: Registry DP misses 3.5 stable, Catalog TP + Registry TP + integration (RHAISTRAT-2027) push to 3.6 EA1, roadmap profile + fact-mcp-registry retargeted, both hubs corrected; 3 new heuristic warnings owner-triaged benign (triage fact extended). Both hub UPDATED badges live. Published-site trust batch (#34 #8 #4) FULLY ACCEPTED.
 
 ## 2026-07-10

@@ -19,7 +19,6 @@ including review. "When" is a best guess, not a schedule.
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 6 | R5 — cross-machine continuity runbook + fixes it surfaces | **High** — second machine is already in use; every gap found is a real workflow break | Small (run it) | Now |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
-| 11 | `rice-strats` port (rubric already lives here) | Medium–High in scoring season, idle otherwise | Medium | Next (before the next RICE pass) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
 | 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | Medium — R5 will feel this pain first-hand | Medium | After R5 |
@@ -35,7 +34,7 @@ including review. "When" is a best guess, not a schedule.
 | 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
 | 27 | Jira gap analysis — `hub.research` jira-gap lens (remainder of the pm-toolkit research port) | **Medium–High** — "NOT building" early warnings mapping competitor moves vs. active Jira work; the competitive-sweep half shipped 2026-07-09 as the `hub.research` competitive lens | Medium | Next — #2 shipped 2026-07-10 |
 | 28 | PM standup brief — Jira + Slack + Gemini + AI news (pm-toolkit port) | **Medium–High** — the personal daily loop across all systems; complements #15 (hub-only brief) | Medium | Next |
-| 29 | RFE triage batch workflow (pm-toolkit port) | **Medium–High** — periodic triage ceremony (scan → classify → interactive HTML report → batch apply); distinct from assess-rfe (single-issue quality) and RICE (#11, scoring) | Medium | Next |
+| 29 | RFE triage batch workflow (pm-toolkit port) | **Medium–High** — periodic triage ceremony (scan → classify → interactive HTML report → batch apply); distinct from assess-rfe (single-issue quality); RICE scoring retired, see Deliberately not doing | Medium | Next |
 | 30 | Jira hygiene auditor (pm-toolkit port) | **Medium** — audit individual issues against type-specific checklists (links, labels, naming, Fix Version, refinement); companion to #2 (data filing) | Small–Medium | Next |
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
@@ -165,11 +164,6 @@ brittleness — an assist, never the system of record.
 propose jtbd candidates from recurring qa entries + tracker interests
 (gated). Needs qa volume first.
 
-**qa → RICE evidence hook (spec Phase 2, rides with #11).** When
-`rice-strats` is ported, its justification comments should cite `asks:`
-recurrence counts and qa Gaps sections as Reach/Impact evidence — the
-capture loop starts paying for itself in prioritization.
-
 **27 · Jira gap analysis (`hub.research` jira-gap lens).** The remaining
 half of the pm-toolkit research port: strategic alignment analysis that
 maps active Jira work against competitive developments and surfaces "NOT
@@ -201,8 +195,8 @@ sections (Untriaged, Waiting on Input, Backlogged) plus a suggestion engine
 JSON export/import for batch decisions back to Jira (roadmap/backlog/
 needs-uxd/clarify/close-stale labels); (5) summarize results. Also has
 `discover_cross_component_rfes()` for adjacent-component scanning.
-Distinct from `assess-rfe` (single-issue quality rubric) and RICE (#11,
-prioritization scoring) — this is the periodic triage ceremony.
+Distinct from `assess-rfe` (single-issue quality rubric) and RICE
+prioritization scoring (retired to Deliberately not doing) — this is the periodic triage ceremony.
 
 **30 · Jira hygiene auditor.** Port pm-toolkit's `jira-hygiene` — three
 modes: Audit (fetch an issue, check against type-specific checklists for
@@ -238,12 +232,6 @@ GitLab). Lower priority: convenience, not a core PM workflow.
 
 ## Repo functionality & structure
 
-**11 · `rice-strats` port.** Rubric already at
-`features/platform/strategy/rice-scoring-rubric.md`; the old skill needs
-its knowledge lookups repointed (feature partitions + narrative instead of
-the monolith) and the qa/RICE hook above designed in. Port before the next
-scoring cycle rather than during it.
-
 **13 · `audience: internal` target.** The manifest schema already accepts
 `internal`; nothing implements it. A second publish target (VPN'd GitLab
 Pages or a private pages repo) would give internal-only artifacts — the
@@ -258,8 +246,8 @@ repo, cloned into place), git-crypt in-repo (key management burden), or
 keep manual with a doctor-assisted rsync checklist. Decide after R5 data.
 
 **19 · Remaining old-doctor coverage.** `~/.bashrc` sourcing of
-`restricted/.env` (so `JIRA_*` reaches every shell — required by `rfe.*` /
-`rice-strats` on a hub-only machine) plus Jira and Slack connectivity
+`restricted/.env` (so `JIRA_*` reaches every shell — required by the `rfe.*`
+skills on a hub-only machine) plus Jira and Slack connectivity
 probes as new doctor sections. Natural companion to R5. (Per the
 2026-07-08 ruling: no LLM-provider credential handling in any form.)
 The Jira connectivity probe shipped 2026-07-10 with #2 (doctor section 4
@@ -296,6 +284,10 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   system IS the retrieval design; revisit only if it demonstrably fails.
 - **No auto-publishing of raw views** — publishing stays a per-artifact
   disclosure decision (D5/D16), permanently.
+- **No `rice-strats` port** (owner ruling 2026-07-11): RICE scoring work
+  no longer needs to live in this hub. The rubric at
+  `features/platform/strategy/rice-scoring-rubric.md` stays as reference;
+  the qa → RICE evidence hook that rode with the port is retired with it.
 - **No LLM-provider credential handling** — owner ruling 2026-07-08,
   recorded in the preferences profile.
 
