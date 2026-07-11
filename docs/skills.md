@@ -144,7 +144,7 @@ with a confirm, not a hand-edit. Adds/updates a manifest entry
 (source/dest/audience/title/description) and re-states what will become
 public. Pipeline mechanics: [/docs/publishing.md](/docs/publishing.md).
 
-**`hub.refresh-site`** — the update path for already-published hub sites
+**`hub.refresh-site`**: the update path for already-published hub sites
 (RHCL, Management, or any site with a `work/refresh-<slug>.yaml` config).
 Sweeps the config's live sources (GDocs, GitHub, Jira, Slack, local hub
 entries) in parallel, reports New/Changed/Confirmed-current/Fetch-failures
