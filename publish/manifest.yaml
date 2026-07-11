@@ -76,3 +76,8 @@
   audience: public
   title: MCP Management Knowledge Hub
   description: 22-page enablement site covering the full MCP ecosystem (Gateway, Registry, Catalog, Lifecycle Operator) across understand/sell/build/govern/plan. Customer-engagement detail anonymized for public publication.
+- source: features/agent-memory/enablement/agent-memory-rfe-narrative/
+  dest: agent-memory/rfe-narrative/
+  audience: public
+  title: Agent Memory RFE Narrative
+  description: Scrolling narrative of the agent-memory RFE program - the end goal, the fourteen filed RFEs, the dependency-driven order across three proposed waves (3.6 DP, 3.7 TP, 3.8 GA directional), and the story you can tell at each stage.
