@@ -48,6 +48,7 @@ def _scan_files(root):
         ("narrative/knowledge/*.md", False),
         ("features/*/work/jira-snapshot.yaml", False),
         ("features/*/work/refresh-*.yaml", False),
+        ("artifacts/**/*.md", False),
         ("narrative/work/refresh-*.yaml", False),
         ("views/*.md", True),
         ("memory/index.md", True),

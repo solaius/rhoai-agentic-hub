@@ -1,0 +1,4 @@
+status: completed
+action: split
+reason: "split into 3 children: record-level scope isolation, write-path sensitive-data screening, and write auditability (Right-sized scored 0/2)"
+children: [RFE-005, RFE-006, RFE-007]
