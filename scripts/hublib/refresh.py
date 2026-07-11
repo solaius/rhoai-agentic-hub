@@ -3,10 +3,12 @@ validate. Consumed by the hub.refresh-site skill; findings fold into
 schema.lint_repo. Configs are tracked and PUBLIC (owner ruling 2026-07-10);
 the disclosure passes in disclosure.py scan them."""
 from pathlib import Path
+import re
 
 import yaml
 
 SOURCE_TYPES = {"gdocs", "github", "jira", "slack", "local"}
+SECTION_KEYS = {"jtbd", "jira_tracker"}
 CONFIG_GLOBS = ("features/*/work/refresh-*.yaml", "narrative/work/refresh-*.yaml")
 
 
@@ -67,4 +69,21 @@ def validate(root):
         if slack is not None and (not isinstance(slack, dict)
                                   or not slack.get("channels")):
             errors.append(f"{rel}: slack needs a 'channels' list")
+        sections = data.get("sections")
+        if sections is not None:
+            if not isinstance(sections, dict):
+                errors.append(f"{rel}: sections must be a mapping")
+            else:
+                for key, val in sections.items():
+                    if key not in SECTION_KEYS:
+                        errors.append(f"{rel}: unknown section '{key}' "
+                                      f"(allowed: {', '.join(sorted(SECTION_KEYS))})")
+                    elif key == "jtbd" and not isinstance(val, bool):
+                        errors.append(f"{rel}: sections.jtbd must be true|false")
+                    elif key == "jira_tracker" and (
+                            not isinstance(val, dict)
+                            or not re.match(r"^[A-Z][A-Z0-9]*$",
+                                            str(val.get("project") or ""))):
+                        errors.append(f"{rel}: sections.jira_tracker needs "
+                                      f"project: <JIRAPROJECT>")
     return errors, warnings

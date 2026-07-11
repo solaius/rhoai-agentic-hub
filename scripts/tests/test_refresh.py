@@ -117,3 +117,18 @@ def test_lint_repo_wires_refresh_validation(tmp_path):
     write(tmp_path, "features/x/work/refresh-site.yaml", "sources:\n  github: [a/b]\n")
     errors, _ = lint_repo(tmp_path)
     assert any("refresh-site.yaml" in e and "missing 'site'" in e for e in errors)
+
+
+def test_sections_block_valid(tmp_path):
+    make_site(tmp_path)
+    write(tmp_path, "features/x/work/refresh-site.yaml",
+          VALID + "sections:\n  jtbd: true\n  jira_tracker: {project: RHAISTRAT}\n")
+    assert validate(tmp_path) == ([], [])
+
+
+def test_sections_block_invalid(tmp_path):
+    make_site(tmp_path)
+    write(tmp_path, "features/x/work/refresh-site.yaml",
+          VALID + "sections:\n  bogus: 1\n  jtbd: yes please\n  jira_tracker: {}\n")
+    errors, _ = validate(tmp_path)
+    assert len([e for e in errors if "section" in e]) == 3

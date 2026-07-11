@@ -1,6 +1,6 @@
 ---
 name: hub.refresh-site
-description: Refresh a published enablement hub site (RHCL hub, Management hub, or any site with a work/refresh-<slug>.yaml config) from its live sources - GDocs, GitHub, Jira, Slack, and local hub entries. Sweeps for changes, proposes page-level diffs through the inline gate, applies surgical edits, bumps data-verified footers, re-runs the disclosure net, and republishes. Use when the user says "refresh the rhcl hub", "update the management hub", "refresh the site", or when data-verified dates look stale.
+description: Refresh a published enablement hub site (RHCL hub, Management hub, or any site with a work/refresh-<slug>.yaml config) from its live sources - GDocs, GitHub, Jira, Slack, and local hub entries, maintaining the standard JTBD and Jira Tracker sections where the config declares them. Sweeps for changes, proposes page-level diffs through the inline gate, applies surgical edits, bumps data-verified footers, re-runs the disclosure net, and republishes. Use when the user says "refresh the rhcl hub", "update the management hub", "refresh the site", or when data-verified dates look stale.
 ---
 
 # hub.refresh-site
@@ -35,6 +35,14 @@ keeps them OUT.
      channel IDs via global `search_messages` metadata, then
      `get_channel_history` by ID.
    - local: the hub knowledge/research paths listed in the config.
+   - jtbd: when sections.jtbd is true, re-derive the hub's job set
+     (narrative/knowledge/jtbd-*.md whose features: list contains the hub's
+     feature id) and diff against the Jobs to be Done page (new jobs, changed
+     status/evidence, removals).
+   - jira tracker: when sections.jira_tracker is set, re-run
+     python scripts/hub_jira.py --sweep <feature> (refreshes
+     work/jira-snapshot.yaml), filter issues to keys of the configured
+     project, and diff against the tracker page rows.
    Any unreachable source (Slack tokens expire; VPN) degrades to a "Fetch
    failures" report section - the run continues.
 4. CHANGE REPORT. Categorized: New / Changed / Confirmed-current / Fetch
@@ -56,6 +64,12 @@ keeps them OUT.
    - Bump the site's artifact.md `timestamp`.
    - `python scripts/hub_lint.py` must report 0 errors before commit
      (restricted-pattern hits are hard blockers - fix content, never bypass).
+   - Tracker rows show key, type, public summary (render "(summary withheld)"
+     when the snapshot summary is null: the unauthenticated-probe rule), status,
+     fix versions, updated date, linked to
+     https://issues.redhat.com/browse/<KEY>. Jira unreachable = propose no
+     tracker change; the stale data-verified date is the signal. Never
+     hand-fill tracker cells from memory.
 7. COMMIT + REPUBLISH. Commit `refresh(<slug>): <summary>` with a bulleted
    body of applied changes; push; resolve the run id with
    `gh run list --repo solaius/rhoai-agentic-hub --workflow publish.yml --limit 1 --json databaseId -q '.[0].databaseId'`
