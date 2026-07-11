@@ -26,8 +26,14 @@ worktree) and contaminated each other through two distinct mechanisms:
 - One worktree per session; `.claude/worktrees/` is gitignored (`f9a1e31`).
 - Verify `git status --porcelain` is clean before starting work and
   before dispatching any subagent.
-- Verify `git diff --cached --stat` shows only your files before every
-  commit; prefer path-scoped commits over `git add -A` when another
-  session may be active.
+- **Commit with pathspecs, always**: `git commit -m "..." -- <your paths>`
+  commits only those paths, so files another session staged physically
+  cannot ride along. Inspection alone (`git diff --cached --stat` before
+  committing) is NOT a sufficient guard: in scripted command chains the
+  commit runs before anyone reads the stat. Recurred 2026-07-10 even
+  after the add -A ban (`b6f8b6a` swept a management-hub refresh batch
+  mid-staging; content was gate-approved so no rollback, but the commit
+  message misattributes it). All hub.* skills now prescribe the
+  pathspec-commit form.
 - Controllers cross-check each task commit's `git show --stat` against
   the task's expected file list.

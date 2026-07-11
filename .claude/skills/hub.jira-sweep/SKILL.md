@@ -48,7 +48,8 @@ Jira — never comment, transition, or edit issues.
    never the scripts). Commit: stage the sweep's writes plus regenerated
    indexes/views explicitly, NEVER `git add -A` (shared checkout, see
    fact-concurrent-session-git-hygiene); check `git diff --cached --stat`,
-   then `git commit -m "jira(<feature>): sweep - <n> issues, <m> refs"`
+   then commit with pathspecs:
+   `git commit -m "jira(<feature>): sweep - <n> issues, <m> refs" -- <those paths>`
    && `git push`.
 7. Offer follow-ups, never auto-run: a `hub.jira-sync` cadence, or ref-
    entries for non-strategic issues the user names (hub.capture path).

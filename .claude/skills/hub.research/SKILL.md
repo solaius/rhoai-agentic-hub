@@ -71,7 +71,8 @@ jira-gap (FUTURE — refuse politely; the Jira hub skills landed
    not the scripts). Commit: stage the approved files plus regenerated
    indexes/views explicitly, NEVER `git add -A` (shared checkout, see
    fact-concurrent-session-git-hygiene); check `git diff --cached --stat`,
-   then `git commit -m "research(<home>): <lenses> <depth>"` &&
-   `git push`.
+   then commit with pathspecs:
+   `git commit -m "research(<home>): <lenses> <depth>" -- <those paths>`
+   && `git push`.
 8. Offer follow-ups the run surfaced (a deeper lens pass, hub.intake for
    an adjacent topic) — never auto-run them.

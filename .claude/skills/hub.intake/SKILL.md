@@ -47,8 +47,8 @@ file) — then run the flow without further questions until the gate.
    content, not the scripts). Commit: stage the approved files plus
    regenerated indexes/views explicitly, NEVER `git add -A` (shared
    checkout, see fact-concurrent-session-git-hygiene); check
-   `git diff --cached --stat`, then
-   `git commit -m "intake(<home>): <topic>"` && `git push`.
+   `git diff --cached --stat`, then commit with pathspecs:
+   `git commit -m "intake(<home>): <topic>" -- <those paths>` && `git push`.
 6. OFFER RESEARCH: suggest `hub.research <home>` with a lens set fitted
    to what intake revealed (unknown competitive space → competitive;
    heavy technical sources → architecture + upstream; scoping gaps →

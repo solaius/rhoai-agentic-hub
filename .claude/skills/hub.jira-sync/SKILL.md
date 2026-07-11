@@ -36,6 +36,6 @@ in features/features.yaml. Spec:
    scripts/hub_lint.py` (0 errors). Commit: stage this run's writes plus
    regenerated indexes/views explicitly, NEVER `git add -A` (shared
    checkout, see fact-concurrent-session-git-hygiene); check
-   `git diff --cached --stat`, then
-   `git commit -m "jira(sync): <features> - <summary>"` &&
-   `git push`.
+   `git diff --cached --stat`, then commit with pathspecs:
+   `git commit -m "jira(sync): <features> - <summary>" -- <those paths>`
+   && `git push`.

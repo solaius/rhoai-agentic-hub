@@ -50,7 +50,8 @@ Input: the item, from the user's words or session context.
       "features/*/knowledge/index.md" narrative/index.md
       narrative/knowledge/index.md views/`, check
       `git diff --cached --stat` for anything this capture did not write,
-      then `git commit -m "mem: capture <slug>"`.
+      then commit WITH PATHSPECS so another session's staged files cannot
+      ride along: `git commit -m "mem: capture <slug>" -- <those same paths>`.
       (Restricted files are gitignored and won't be staged — correct.)
 5. On reject: discard everything, no writes.
 

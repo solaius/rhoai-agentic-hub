@@ -31,6 +31,8 @@ description: Sweep memory/.scratch/ (Claude auto-memory) plus the current sessio
    indexes/views explicitly, NEVER `git add -A` (shared checkout across
    sessions, see fact-concurrent-session-git-hygiene); check
    `git diff --cached --stat` for anything this run did not write, then
-   `git commit -m "mem: consolidate - <n> items"` then `git push`.
+   commit with pathspecs (foreign staged files cannot ride along):
+   `git commit -m "mem: consolidate - <n> items" -- <those same paths>`
+   then `git push`.
 10. Report: promoted / rejected / conflicts resolved, plus anything now listed
     in /views/stale-facts.md.

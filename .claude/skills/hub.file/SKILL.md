@@ -34,5 +34,5 @@ Input: the source (URL or file) + whatever context the user gave.
 8. Commit: stage the filed entry (+ features.yaml if a partition was
    created) plus regenerated indexes/views explicitly, NEVER `git add -A`
    (shared checkout, see fact-concurrent-session-git-hygiene); check
-   `git diff --cached --stat`, then
-   `git commit -m "know(<f>): file <slug>"` && `git push`.
+   `git diff --cached --stat`, then commit with pathspecs:
+   `git commit -m "know(<f>): file <slug>" -- <those paths>` && `git push`.
