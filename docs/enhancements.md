@@ -16,7 +16,6 @@ including review. "When" is a best guess, not a schedule.
 
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
-| 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 6 | R5: cross-machine continuity runbook + fixes it surfaces | **High**. Steps 2 and 3 executed 2026-07-11 on machine B (round-trip passed both directions; #14 answered). Step 1 (cold path) deferred: B was warm. Step 4 (push race) NOT executed. See R5 outcome below | Small (run it) | Steps 2-3 done; 1 and 4 open |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Done (follow-ups: project MCP enable + doctor rhai mirror) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
@@ -32,7 +31,6 @@ including review. "When" is a best guess, not a schedule.
 | 24 | Multi-writer promotion (CONTRIBUTING, PR gate discipline) | Low now, High if a second PM joins | Medium | When real (D1) |
 | 25 | `rhoai-atlas` template extraction (hublib as reusable core) | Low now — strategic later | Large | Someday |
 | 26 | Pages-site usage analytics | Low — informative, adds an external dependency | Small | Maybe never |
-| 28 | PM standup brief — Jira + Slack + Gemini + AI news (pm-toolkit port) | **Medium–High** — the personal daily loop across all systems; complements #15 (hub-only brief) | Medium | Next |
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
 | 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
@@ -285,15 +283,6 @@ the hub; cheap to add then.
 
 ## Agent-usage enhancements
 
-**3 · Feature staleness sweep.** Per-feature "what's outdated?" — compare
-each `fact-`/`ref-`/`question-` entry's `timestamp` and `review_after`
-against current sources (Jira status, GDoc last-modified, upstream repo
-activity). Flag entries that look stale, propose updates or `superseded`
-status through the gate. `customer-feedback-refresh` does this for the
-tracker; this generalizes the pattern to knowledge entries. Could run as
-a standalone skill or as a mode of `hub.intake` ("intake --refresh
-mcp-gateway").
-
 **20 · Agent context pack.** `python scripts/hub_index.py --brief` emits a
 single size-budgeted markdown pack: memory index + features table +
 narrative map + open questions + stale queue, trimmed to ~N tokens.
@@ -315,21 +304,9 @@ maps active Jira work against competitive developments and surfaces "NOT
 building" gaps as early warnings. Ships as a `hub.research` lens (the
 skill already names it as FUTURE) now that #2 (shipped 2026-07-10)
 provides the Jira intake pipeline; the domain YAML gains a `jira:` block
-(project/components/JQL) to drive it. The competitive sweep half — domain-config-driven web
-research (`domains/redhat-ai.yaml`) — shipped 2026-07-09 as the
+(project/components/JQL) to drive it. The competitive sweep half -- domain-config-driven web
+research (`domains/redhat-ai.yaml`) -- shipped 2026-07-09 as the
 `hub.research` competitive lens (see Done).
-
-**28 · PM standup brief.** Port pm-toolkit's `pm-standup` — a personal
-daily brief pulling from: Jira (assigned/reported/blocked/approaching
-deadlines/comments needing response), Slack (messages to you + mentions,
-classified as Needs Response vs. FYI), Gemini Meeting Notes (Google Drive
-search for "Notes by Gemini" → action item extraction), and AI news (top
-enterprise AI items + Red Hat mentions). Output is structured priorities
-(Urgent/Important/Monitor). Complements #15 (`hub_status.py` morning
-brief), which is hub-centric (stale items, open questions, CI state) —
-the standup is system-centric (what needs my attention today across all
-tools). pm-toolkit also has `weekly-plan` (calendar analysis, carry-over
-tracking, focus blocks) — consider porting both as a pair.
 
 **29 · RFE triage batch workflow.** Port pm-toolkit's `rfe-triage` — a
 5-step playbook: (1) prepare — set component scope and JQL; (2) scan —
@@ -443,6 +420,19 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#28 PM standup brief + weekly plan** -- shipped 2026-07-11: `hub.standup`
+  (daily brief from Jira/Slack/Gemini Notes/AI News using the "Product
+  Manager" JQL field) and `hub.weekly-plan` (weekly superset with Google
+  Calendar analysis and carry-over tracking). Both are prompt-only skills;
+  hub.standup is read-only, hub.weekly-plan writes a checklist file outside
+  the repo. Spec:
+  [/docs/specs/2026-07-11-standup-sweep-batch-design.md](/docs/specs/2026-07-11-standup-sweep-batch-design.md).
+- **#3 Feature staleness sweep** -- shipped 2026-07-11: `hub.sweep` skill
+  combining date-arithmetic staleness (conventions/staleness.yaml defaults)
+  with live source cross-referencing (Jira status, GDoc last-modified,
+  GitHub activity). Flags stale entries and proposes updates through the
+  standard gate. Prompt-only skill, no Python backbone. Spec:
+  [/docs/specs/2026-07-11-standup-sweep-batch-design.md](/docs/specs/2026-07-11-standup-sweep-batch-design.md).
 - **#14 restricted/ cross-machine sync** -- shipped 2026-07-11: git-crypt
   encrypts `restricted/` in-repo (`.gitattributes` patterns, `.env.example`
   stays plaintext). Linter guards skip encrypted files gracefully on CI.
