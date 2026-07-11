@@ -387,6 +387,21 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   approve transitions, every one of them gated line by line.
   Spec: [/docs/specs/2026-07-11-jira-operating-batch-design.md](/docs/specs/2026-07-11-jira-operating-batch-design.md).
   Plan: [/docs/plans/2026-07-11-jira-operating-batch-plan.md](/docs/plans/2026-07-11-jira-operating-batch-plan.md).
+  **SHIPPED, NOT YET ACCEPTED: 0 of 5 acceptance runs done** (they need live
+  Jira and the owner at the gate; checklist at the end of the plan). Until run
+  3 and run 4 happen, the write path has never touched production Jira. Run 3
+  is a real pass approved for labels and comments ONLY (proving scan, report,
+  browser export, gate, apply and log end to end while the sharp tool stays
+  holstered); run 4 is the first real `close` and `approve`; run 5
+  deliberately exercises the rejection path (a workflow with no matching close
+  transition), which is the branch least likely to be hit by accident.
+  **Design changed during implementation, in the code's favour:** review found
+  that the planned read-modify-write of the labels array could DELETE labels
+  when the decisions file was stale (Jira's PUT replaces the array wholesale),
+  so the label write became atomic (`JiraClient.add_label` sends Jira's
+  `{"update": {"labels": [{"add": l}]}}`). Label deletion is now structurally
+  impossible rather than merely guarded, and the write surface narrowed:
+  `update_issue` and `create_issue` have zero call sites repo-wide.
   **NOT a complete pm-toolkit port, deliberately** - do not read "Done" as
   "everything came over". Ruled out: assignment, field edits, issue creation
   (owner ruling, spec decision 2). Deferred, still available if wanted:
@@ -451,8 +466,8 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   both skills carry the RHOAI architecture repo as standing context
   (`504b476`). Fully accepted.
 - **#27(a) competitive sweep** — shipped 2026-07-09 inside `hub.research`
-  (competitive lens + domain configs); #27(b) jira-gap re-scoped above,
-  gated on #2.
+  (competitive lens + domain configs); #27(b) jira-gap shipped 2026-07-11 with
+  the Jira operating batch (see above). #27 is now closed in full.
 - 2026-07-09 — **#5 disclosure lint** — `restricted/lint-patterns.txt`
   (gitignored, errors) over enablement HTML + knowledge entries;
   `RESTRICTED_HINTS` hardened (dollar figures, signed-agreement) and extended
