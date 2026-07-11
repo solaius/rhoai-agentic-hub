@@ -13,10 +13,15 @@ Spec: [/docs/specs/2026-07-11-jira-operating-batch-design.md](/docs/specs/2026-0
 2. FETCH. `python scripts/hub_jira.py --audit <KEY>`. Read the YAML dump. It is
    the only source of facts; do not fetch anything else, and do not guess at
    fields it does not carry.
-3. JUDGE. Read `checklists.md` in this skill directory. Pick the checklist that
-   matches the dump's `type`, and also apply the "All issues" checklist. Walk
-   every line. A check you cannot evaluate from the dump is a Warning with the
-   reason, never a Pass.
+3. JUDGE. Read `checklists.md` in this skill directory. Always apply "All
+   issues" and "House style" - those two run on every issue regardless of
+   type. Then pick the checklist that matches the dump's `type`. If the
+   maturity-chain trigger fires (summary contains `[DP]`/`[TP]`/`[GA]` or a
+   bare DP/TP/GA stage suffix, or `labels` contains `DP`/`TP`/`GA`), also
+   apply "Maturity-chain features" - it is layered on top of the RHAISTRAT
+   Feature checklist, not a substitute for it. Walk every line. A check you
+   cannot evaluate from the dump is a Warning with the reason, never a Pass,
+   and never a guess.
 4. REPORT. One table, in chat, nothing written anywhere:
    `| Check | Pass/Fail/Warning | Detail |`
    Then prioritized fixes, most load-bearing first. Quote the issue's own text

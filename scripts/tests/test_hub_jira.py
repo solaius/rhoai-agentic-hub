@@ -1,6 +1,9 @@
+import asyncio
 from pathlib import Path
 
+import httpx
 import pytest
+import yaml
 
 import hub_jira
 
@@ -72,3 +75,127 @@ def test_audit_needs_no_out_dir(tmp_path, monkeypatch):
                         "--root", str(make_repo(tmp_path))])
     assert rc == 0
     assert calls["ran"] is True
+
+
+def _issue_response(with_parent=True):
+    parent = None
+    if with_parent:
+        parent = {
+            "key": "RHAISTRAT-1",
+            "fields": {
+                "summary": "Outcome summary",
+                "issuetype": {"name": "Outcome"},
+            },
+        }
+    return {
+        "key": "RHAISTRAT-100",
+        "fields": {
+            "summary": "[Feat] Example feature",
+            "status": {"name": "In Progress"},
+            "assignee": {"displayName": "A Person"},
+            "priority": {"name": "High"},
+            "issuetype": {"name": "Feature"},
+            "components": [],
+            "labels": [],
+            "fixVersions": [],
+            "parent": parent,
+            "description": None,
+            "issuelinks": [
+                {
+                    "type": {"outward": "documents", "inward": "is documented by"},
+                    "outwardIssue": {
+                        "key": "CCS-1",
+                        "fields": {
+                            "summary": "[ccs] doc task",
+                            "issuetype": {"name": "Task"},
+                            "status": {"name": "Open"},
+                        },
+                    },
+                }
+            ],
+        },
+    }
+
+
+def _run_audit(monkeypatch, key, handler):
+    monkeypatch.setenv("JIRA_SERVER", "https://jira.example.com")
+    monkeypatch.setenv("JIRA_USER", "user@example.com")
+    monkeypatch.setenv("JIRA_TOKEN", "tok")
+    transport = httpx.MockTransport(handler)
+
+    async def case():
+        return await hub_jira._audit(key, transport=transport)
+
+    return asyncio.run(case())
+
+
+def test_audit_parent_carries_key_and_type(tmp_path, capsys, monkeypatch):
+    def handler(request):
+        if "/issue/RHAISTRAT-100" in str(request.url):
+            return httpx.Response(200, json=_issue_response())
+        if "/search/jql" in str(request.url):
+            return httpx.Response(200, json={"issues": [], "isLast": True})
+        raise AssertionError(f"unexpected request: {request.url}")
+
+    rc = _run_audit(monkeypatch, "RHAISTRAT-100", handler)
+    assert rc == 0
+    dump = yaml.safe_load(capsys.readouterr().out)
+    assert dump["parent"]["key"] == "RHAISTRAT-1"
+    assert dump["parent"]["type"] == "Outcome"
+    assert dump["parent"]["summary"] == "Outcome summary"
+
+
+def test_audit_link_records_carry_summary(tmp_path, capsys, monkeypatch):
+    def handler(request):
+        if "/issue/RHAISTRAT-100" in str(request.url):
+            return httpx.Response(200, json=_issue_response())
+        if "/search/jql" in str(request.url):
+            return httpx.Response(200, json={"issues": [], "isLast": True})
+        raise AssertionError(f"unexpected request: {request.url}")
+
+    rc = _run_audit(monkeypatch, "RHAISTRAT-100", handler)
+    assert rc == 0
+    dump = yaml.safe_load(capsys.readouterr().out)
+    assert dump["links"][0]["summary"] == "[ccs] doc task"
+
+
+def test_audit_children_populated_on_success(tmp_path, capsys, monkeypatch):
+    def handler(request):
+        if "/issue/RHAISTRAT-100" in str(request.url):
+            return httpx.Response(200, json=_issue_response())
+        if "/search/jql" in str(request.url):
+            return httpx.Response(200, json={
+                "issues": [{
+                    "key": "RHAIENG-1",
+                    "fields": {
+                        "summary": "Epic 1",
+                        "status": {"name": "Open"},
+                        "issuetype": {"name": "Epic"},
+                    },
+                }],
+                "isLast": True,
+            })
+        raise AssertionError(f"unexpected request: {request.url}")
+
+    rc = _run_audit(monkeypatch, "RHAISTRAT-100", handler)
+    assert rc == 0
+    dump = yaml.safe_load(capsys.readouterr().out)
+    assert dump["children_lookup"] == "ok"
+    assert dump["children"] == [{
+        "key": "RHAIENG-1", "type": "Epic", "status": "Open", "summary": "Epic 1",
+    }]
+
+
+def test_audit_failing_children_lookup_degrades_gracefully(tmp_path, capsys, monkeypatch):
+    def handler(request):
+        if "/issue/RHAISTRAT-100" in str(request.url):
+            return httpx.Response(200, json=_issue_response())
+        if "/search/jql" in str(request.url):
+            return httpx.Response(500)
+        raise AssertionError(f"unexpected request: {request.url}")
+
+    rc = _run_audit(monkeypatch, "RHAISTRAT-100", handler)
+    assert rc == 0
+    dump = yaml.safe_load(capsys.readouterr().out)
+    assert dump["children"] == []
+    assert dump["children_lookup"].startswith("failed:")

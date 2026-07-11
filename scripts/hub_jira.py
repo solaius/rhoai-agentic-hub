@@ -4,7 +4,8 @@ docs/specs/2026-07-09-jira-hub-skills-design.md.
 
   --check                       connectivity/auth probe (doctor section 4)
   --try-jql '<jql>'             scope discovery: count + sample rows
-  --audit <KEY>                 read-only structured dump of one issue (hub.jira-hygiene)
+  --audit <KEY>                 read-only structured dump of one issue, incl.
+                                 a best-effort children search (hub.jira-hygiene)
   --sweep <feature> --out DIR   proposed snapshot + ref candidates -> DIR
   --sync [<feature>] --out DIR  diff stored snapshots + watched keys -> report + DIR
 """
@@ -71,20 +72,39 @@ async def _try_jql(jql, sample):
     return 0
 
 
-async def _audit(key):
+async def _audit(key, transport=None):
     """Read-only structured dump of one issue for hub.jira-hygiene to judge.
 
     Prints YAML, not prose. The skill applies the checklists; this only
-    supplies the facts. Never writes anything, anywhere.
+    supplies the facts. Never writes anything, anywhere. ``transport`` is
+    test-only (httpx.MockTransport injection); production callers leave it
+    None and client_from_env() picks a real transport.
     """
     fields = [
         "summary", "status", "assignee", "priority", "issuetype", "project",
         "issuelinks", "components", "labels", "created", "updated",
         "fixVersions", "parent", "description",
     ]
-    async with client_from_env() as client:
+    async with client_from_env(transport=transport) as client:
         issue = await client.get_issue_with_links(key, fields=fields)
         base = client.base_url
+        children = []
+        children_lookup = "ok"
+        try:
+            child_issues = await client.search(
+                f'parent = "{key}"',
+                fields=["summary", "status", "issuetype"], max_results=50)
+        except httpx.HTTPError as exc:
+            children_lookup = f"failed: {exc}"
+        else:
+            for c in child_issues:
+                cf = c.get("fields", {})
+                children.append({
+                    "key": c.get("key"),
+                    "type": (cf.get("issuetype") or {}).get("name"),
+                    "status": (cf.get("status") or {}).get("name"),
+                    "summary": cf.get("summary", ""),
+                })
     f = issue.get("fields", {})
     links = []
     for link in f.get("issuelinks") or []:
@@ -101,7 +121,18 @@ async def _audit(key):
             "key": other.get("key"),
             "type": (of.get("issuetype") or {}).get("name"),
             "status": (of.get("status") or {}).get("name"),
+            "summary": of.get("summary"),
         })
+    parent_raw = f.get("parent")
+    if parent_raw:
+        pf = parent_raw.get("fields") or {}
+        parent = {
+            "key": parent_raw.get("key"),
+            "type": (pf.get("issuetype") or {}).get("name"),
+            "summary": pf.get("summary"),
+        }
+    else:
+        parent = None
     dump = {
         "key": issue.get("key"),
         "url": f"{base}/browse/{issue.get('key')}",
@@ -113,8 +144,10 @@ async def _audit(key):
         "components": [c.get("name") for c in f.get("components") or []],
         "labels": list(f.get("labels") or []),
         "fix_versions": [v.get("name") for v in f.get("fixVersions") or []],
-        "parent": (f.get("parent") or {}).get("key"),
+        "parent": parent,
         "links": links,
+        "children": children,
+        "children_lookup": children_lookup,
         "description": adf_to_text(f.get("description")),
     }
     print(yaml.safe_dump(dump, sort_keys=False, allow_unicode=True))
