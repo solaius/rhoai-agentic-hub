@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>End-to-End Setup — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .track-selector {
+      display: flex;
+      gap: var(--space-md);
+      margin: var(--space-xl) 0 var(--space-2xl) 0;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: var(--space-xs);
+      background: var(--bg-card);
+    }
+    .track-selector__btn {
+      flex: 1;
+      padding: var(--space-md) var(--space-lg);
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      border-radius: 6px;
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s var(--ease-out-pop);
+    }
+    .track-selector__btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-secondary);
+    }
+    .track-selector__btn.active {
+      background: var(--rh-blue);
+      color: var(--text-primary);
+    }
+    .track-content {
+      display: none;
+    }
+    .track-content.active {
+      display: block;
+    }
+    .step-number {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      background: var(--rh-blue);
+      color: var(--text-primary);
+      font-weight: 700;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 2rem;
+      margin-right: var(--space-sm);
+    }
+  </style>
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>End-to-End Setup</h1>
+      <p class="lead">Complete implementation guide for deploying MCP servers in RHOAI. Choose your track based on your deployment requirements.</p>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Do I Need the Gateway?</div>
+        <p><strong>Gateway is NOT required for basic playground usage.</strong> Use Track A for demos and testing. Use Track B for production with identity-based access control, per-tool metrics, and credential brokering.</p>
+        <p><em>Confirmed by the MCP product management team and a Red Hat solutions architect.</em></p>
+      </div>
+
+      <div class="track-selector">
+        <button class="track-selector__btn active" data-track="minimal">Track A: Minimal Setup (Playground)</button>
+        <button class="track-selector__btn" data-track="full">Track B: Full Setup (Gateway + Auth)</button>
+      </div>
+
+      <!-- TRACK A: Minimal Setup -->
+      <div class="track-content active" data-track="minimal">
+        <h2>Track A: Minimal Setup (Playground without Gateway)</h2>
+        <p>Get MCP working in Gen AI Studio playground with minimal infrastructure. No Gateway, Keycloak, or Vault required.</p>
+
+        <h3><span class="step-number">1</span>Install MCP Lifecycle Operator</h3>
+        <p>The MCPLO is not available via OLM or Helm. Install manually from the GitHub release asset (repo is <code>kubernetes-sigs/mcp-lifecycle-operator</code>):</p>
+        <pre><code># Download and apply the manifest
+oc apply -f https://github.com/kubernetes-sigs/mcp-lifecycle-operator/releases/download/v0.2.0/install.yaml
+
+# Wait for operator to be healthy
+oc get pod -n mcp-lifecycle-operator-system</code></pre>
+        <p>Verify all pods are Running before proceeding.</p>
+
+        <h3><span class="step-number">2</span>Enable MCP Catalog in RHOAI</h3>
+        <p>The MCP Catalog is not enabled by default. Patch the dashboard config:</p>
+        <pre><code>oc patch odhdashboardconfigs odh-dashboard-config \
+    -n redhat-ods-applications \
+    --type=merge \
+    -p '{"spec":{"dashboardConfig":{"mcpCatalog":true}}}'</code></pre>
+        <p>Wait for the RHOAI web UI to update. Refresh your browser. <strong>AI Hub → MCP Servers</strong> should now appear in the navigation.</p>
+
+        <h3><span class="step-number">3</span>Create Namespace with Dashboard Label</h3>
+        <p><strong>Critical:</strong> The namespace must have a special label to appear in the RHOAI web UI. This label <strong>cannot be applied via the OCP console or <code>oc new-project</code></strong> — you must use a manifest:</p>
+        <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: my-mcp
+EOF</code></pre>
+
+        <div class="callout callout--gap">
+          <div class="callout__title">Common Issue: Namespace Doesn't Appear in RHOAI UI</div>
+          <p><strong>Cause:</strong> Missing <code>opendatahub.io/dashboard: "true"</code> label.</p>
+          <p><strong>Fix:</strong> Cannot set via <code>oc new-project</code> or OCP console. Must apply via manifest as shown above.</p>
+        </div>
+
+        <h3><span class="step-number">4</span>Create Prerequisites</h3>
+        <p>The MCP Catalog does NOT create prerequisites automatically (this would require privilege escalation). You must create them manually for each MCP server:</p>
+        <pre><code># Service account with cluster-wide read access
+oc create serviceaccount mcp-viewer -n my-mcp
+oc create clusterrolebinding my-mcpviewer-read \
+    --clusterrole view \
+    --serviceaccount my-mcp:mcp-viewer
+
+# Configuration for the OpenShift MCP server
+oc apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openshift-mcp-server-config
+  namespace: my-mcp
+data:
+  config.toml: |
+    log_level = 5
+    port = "8080"
+    read_only = true
+    toolsets = ["core", "config"]
+EOF</code></pre>
+
+        <div class="callout callout--gap">
+          <div class="callout__title">Common Issue: "failed to create Deployment / ConfigMap not found"</div>
+          <p><strong>Cause:</strong> Prerequisites not created before deploying from catalog.</p>
+          <p><strong>Fix:</strong> The catalog does NOT create ServiceAccounts, ConfigMaps, or RBAC automatically. Create them BEFORE deploying the MCP server.</p>
+        </div>
+
+        <h3><span class="step-number">5</span>Deploy MCP Server</h3>
+        <p><strong>Option A — From the Catalog UI:</strong></p>
+        <ol>
+          <li>Navigate to <strong>AI Hub → MCP Servers</strong></li>
+          <li>Click the <strong>openshift-mcp-server</strong> tile</li>
+          <li>Read the README for prerequisites (you already created them in Step 4)</li>
+          <li>Click <strong>Deploy MCP Server</strong></li>
+          <li>Name the deployment (e.g., "ocp-mcp") and select the <code>my-mcp</code> namespace</li>
+          <li>Click <strong>Deploy</strong></li>
+        </ol>
+
+        <p><strong>Option B — From manifests (bypassing catalog):</strong></p>
+        <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: mcp.x-k8s.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: ocp-mcp
+  namespace: my-mcp
+spec:
+  source:
+    type: ContainerImage
+    containerImage:
+      ref: registry.redhat.io/openshift-mcp-beta/openshift-mcp-server-rhel9:0.2
+  config:
+    port: 8080
+    path: /mcp
+    storage:
+    - path: /etc/mcp-config
+      permissions: ReadOnly
+      source:
+        configMap:
+          name: openshift-mcp-server-config
+  runtime:
+    security:
+      serviceAccountName: mcp-viewer
+EOF</code></pre>
+        <p>See <a href="./configuration-reference.html">Configuration Reference</a> for the full MCPServer CRD field reference.</p>
+
+        <p>Verify the deployment:</p>
+        <pre><code>oc get mcpserver -n my-mcp
+oc get pods -n my-mcp</code></pre>
+
+        <h3><span class="step-number">6</span>Register MCP Server in Gen AI Studio</h3>
+        <p><strong>This is the critical bridge.</strong> The <code>gen-ai-aa-mcp-servers</code> configmap tells Gen AI Studio about available MCP servers:</p>
+        <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gen-ai-aa-mcp-servers
+  namespace: redhat-ods-applications
+data:
+  OpenShift-MCP: |
+    {
+      "url": "http://ocp-mcp.my-mcp.svc.cluster.local:8080/mcp",
+      "description": "Red Hat OpenShift MCP server"
+    }
+EOF</code></pre>
+
+        <p>Verify the server appears in the RHOAI UI:</p>
+        <ul>
+          <li>Navigate to <strong>Gen AI Studio → AI asset endpoints → MCP Servers</strong></li>
+          <li>You should see "OpenShift-MCP" listed</li>
+        </ul>
+
+        <div class="callout callout--gap">
+          <div class="callout__title">Common Issue: "MCP tab empty in playground"</div>
+          <p><strong>Cause:</strong> Configmap not created, created in wrong namespace, or server URL incorrect.</p>
+          <p><strong>Fix:</strong> Ensure the configmap is in <code>redhat-ods-applications</code> namespace and the server URL matches the actual service name and port.</p>
+        </div>
+
+        <h3><span class="step-number">7</span>Create Playground and Enable MCP</h3>
+        <ol>
+          <li>Navigate to <strong>Gen AI Studio → Playgrounds</strong></li>
+          <li>Click <strong>Create Playground</strong></li>
+          <li>Select a project with a <strong>tool-calling model</strong> deployed (e.g., mistral-7b-instruct or larger)</li>
+          <li>In the playground settings panel, click the <strong>MCP</strong> tab</li>
+          <li>Check the <strong>OpenShift-MCP</strong> checkbox</li>
+        </ol>
+
+        <div class="callout callout--gap">
+          <div class="callout__title">Common Issue: "Model can't handle tool output"</div>
+          <p><strong>Cause:</strong> Small models (like llama-3.2-3b-instruct) struggle with large tool responses (e.g., listing all pods with all attributes).</p>
+          <p><strong>Fix:</strong> Use focused prompts like "list all projects" instead of "list all pods". Or use a larger tool-calling model.</p>
+        </div>
+
+        <h3><span class="step-number">8</span>Verify with Test Prompt</h3>
+        <p>In the playground, submit a test prompt that would use the MCP tools:</p>
+        <pre><code>list all projects in the cluster</code></pre>
+
+        <p><strong>Expected behavior:</strong></p>
+        <ol>
+          <li>The model recognizes this requires the OpenShift MCP server</li>
+          <li>The playground calls the <code>list_projects</code> tool</li>
+          <li>The model responds with a summary of all OpenShift projects</li>
+        </ol>
+
+        <p><strong>Example output:</strong></p>
+        <blockquote>
+          <p>I found 15 projects in your OpenShift cluster: default, kube-system, my-mcp, openshift-operators, redhat-ods-applications...</p>
+        </blockquote>
+      </div>
+
+      <!-- TRACK B: Full Setup -->
+      <div class="track-content" data-track="full">
+        <h2>Track B: Full Setup (Gateway + Keycloak + Vault)</h2>
+        <p>Production-grade setup with identity-based access control, per-tool metrics, credential brokering, and virtual MCP server aggregation.</p>
+
+        <div class="callout callout--warning">
+          <div class="callout__title">Complexity Warning</div>
+          <p>This track requires <strong>Service Mesh, Keycloak, Vault, and cert-manager</strong>. Only proceed if you need production-grade auth and governance. For demos and testing, use Track A.</p>
+        </div>
+
+        <h3><span class="step-number">1</span>Install Tier 1 Operators (via OperatorHub)</h3>
+        <p>These are platform prerequisites installed via OperatorHub:</p>
+        <ul>
+          <li><strong>OpenShift Service Mesh</strong> (<code>stable</code>) — Programs Envoy for Gateway; handles mTLS</li>
+          <li><strong>cert-manager</strong> (<code>stable-v1</code>) — TLS certificates and ClusterIssuers</li>
+          <li><strong>Red Hat Connectivity Link</strong> (<code>stable</code>) — Kuadrant, Authorino, Limitador</li>
+          <li><strong>RHOAI</strong> (may require custom CatalogSource for 3.4.0+)</li>
+        </ul>
+        <p>See <a href="./operator-installation.html">Operator Installation</a> for detailed instructions and version requirements.</p>
+
+        <h3><span class="step-number">2</span>Install Tier 2 Operators (post-platform)</h3>
+        <p>These are MCP ecosystem components installed after platform operators:</p>
+        <ul>
+          <li><strong>MCP Gateway Operator</strong> — OLM via custom CatalogSource; watches MCPGatewayExtension CRs</li>
+          <li><strong>RHBK (Keycloak)</strong> — Identity management</li>
+          <li><strong>MCP Lifecycle Operator</strong> — Manual YAML apply from <code>v0.2.0</code></li>
+          <li><strong>HashiCorp Vault</strong> — Helm chart for dynamic secret injection (optional)</li>
+        </ul>
+        <p>See <a href="./operator-installation.html">Operator Installation</a> for installation order and validated versions.</p>
+
+        <h3><span class="step-number">3</span>Set Up Gateway Namespace</h3>
+        <p>Create a dedicated namespace for Gateway components and install via Helm:</p>
+        <pre><code>oc new-project mcp-gateway
+
+# Install MCP Gateway with controller disabled (Kuadrant manages routing)
+helm upgrade -i mcp-gateway oci://ghcr.io/kuadrant/charts/mcp-gateway \
+  -n mcp-gateway \
+  --set controller.enabled=false \
+  --set publicHost=gateway.apps.example.com</code></pre>
+        <p>Create an OpenShift Route with edge TLS termination pointing to the Gateway service.</p>
+
+        <h3><span class="step-number">4</span>Configure Keycloak</h3>
+        <p>Set up Keycloak realm with two OIDC clients:</p>
+        <ul>
+          <li><strong>Confidential client</strong> for Gateway broker (service-to-service with client secret)</li>
+          <li><strong>Public client</strong> for Gen AI Studio/Playground (authorization code flow, no secret)</li>
+        </ul>
+        <p>Configure realm roles (<code>user</code>, <code>admin</code>) and map per-server tool roles in <code>resource_access</code> claim.</p>
+        <p>See <a href="../../../mcp-gateway/rhcl/build/auth-setup.html">MCP Gateway Auth Setup</a> for detailed Keycloak configuration.</p>
+
+        <h3><span class="step-number">5</span>Create Wristband Signing Keys</h3>
+        <p>Generate ECDSA key pair for wristband signing:</p>
+        <pre><code># Generate private key
+openssl ecparam -name prime256v1 -genkey -noout -out wristband-private.pem
+
+# Extract public key
+openssl ec -in wristband-private.pem -pubout -out wristband-public.pem
+
+# Create secrets
+oc create secret generic wristband-signing-key \
+  -n mcp-gateway \
+  --from-file=key.pem=wristband-private.pem
+
+oc create secret generic wristband-public-key \
+  -n mcp-gateway \
+  --from-file=key.pem=wristband-public.pem</code></pre>
+
+        <p>Patch MCPGatewayExtension to reference the public key:</p>
+        <pre><code>oc patch mcpgatewayextension mcp-gateway \
+  -n mcp-gateway \
+  --type=merge \
+  -p '{"spec":{"trustedHeadersKey":"wristband-public-key"}}'</code></pre>
+
+        <h3><span class="step-number">6</span>Create Gateway-Level AuthPolicy</h3>
+        <p>Single AuthPolicy targeting Gateway's MCP listener handles:</p>
+        <ul>
+          <li><strong>JWT authentication</strong> — Validates Bearer tokens against Keycloak OIDC</li>
+          <li><strong>Wristband signing</strong> — OPA Rego extracts per-server tool roles from JWT <code>resource_access</code> claim, signs into ES256 wristband JWT in <code>x-authorized-tools</code> header</li>
+          <li><strong>VirtualMCPServer routing</strong> — CEL reads <code>groups</code> claim, sets <code>x-mcp-virtualserver</code> header</li>
+        </ul>
+        <p>See <a href="./configuration-reference.html">Configuration Reference</a> for full AuthPolicy YAML examples.</p>
+
+        <h3><span class="step-number">7</span>Deploy MCP Servers and Register Gateway URL</h3>
+        <p>Deploy MCP servers as in Track A, but register the <strong>gateway URL</strong> (not individual server URLs) in <code>gen-ai-aa-mcp-servers</code>:</p>
+        <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gen-ai-aa-mcp-servers
+  namespace: redhat-ods-applications
+data:
+  MCP-Gateway: |
+    {
+      "url": "https://gateway.apps.example.com/mcp",
+      "description": "MCP Gateway (all servers)"
+    }
+EOF</code></pre>
+        <p>The Gateway will route to backend MCP servers based on VirtualMCPServer configuration and user identity.</p>
+
+        <h3><span class="step-number">8</span>Verify from Playground</h3>
+        <p>Create a playground, select the Gateway endpoint, and authenticate via Keycloak:</p>
+        <ol>
+          <li>Navigate to <strong>Gen AI Studio → Playgrounds</strong></li>
+          <li>Click <strong>Create Playground</strong></li>
+          <li>In settings, enable <strong>MCP-Gateway</strong></li>
+          <li>You'll be redirected to Keycloak for login</li>
+          <li>After login, submit a test prompt: "list all projects in the cluster"</li>
+        </ol>
+        <p>The Gateway will validate your JWT, extract tool permissions from the wristband, and route to the appropriate MCP server based on your identity and groups.</p>
+      </div>
+
+      <h2>Alternative Validation & Deployment Paths (Unsupported)</h2>
+      <p>Two additional paths surfaced in field notes. Neither is part of Track A or Track B; treat both as unsupported-but-useful alternatives.</p>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Claude Code Local Validation</div>
+        <p>Validate the OpenShift MCP server independent of RHOAI/Gen AI Studio using Claude Code:</p>
+        <pre><code>claude mcp add-json kubernetes-mcp-server '{"command":"npx","args":["-y","kubernetes-mcp-server@latest","--read-only"],"env":{"KUBECONFIG":"..."}}'</code></pre>
+        <p><strong>Caveat:</strong> this runs the MCP server <strong>locally via npx</strong>, not against the remote cluster-deployed instance. Useful for isolating client-side issues, not a substitute for Track A/B verification.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Direct Helm Path (Bypasses MCPLO and Catalog)</div>
+        <p>Deploy the MCP server directly via Helm chart, skipping the MCP Lifecycle Operator and Catalog UI entirely:</p>
+        <pre><code>helm upgrade -i ocp-mcp oci://ghcr.io/containers/charts/kubernetes-mcp-server \
+  -n my-mcp</code></pre>
+        <p>Wire the resulting service into <code>gen-ai-aa-mcp-servers</code> manually, by local service hostname, the same manual bridge step as Track A step 6.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y" class="page-footer__link">Jaideep Rao's MCP Ecosystem Best Practices</a></li>
+            <li><a href="https://docs.google.com/document/d/1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8" class="page-footer__link">Fernando Lozano's MCP Research Notes</a></li>
+            <li><a href="https://redhat-internal.slack.com/archives/C03UGJY6Z1A/p1781205008257009" class="page-footer__link">Slack Troubleshooting Thread</a></li>
+            <li><a href="https://www.redhat.com/en/blog/manage-mcp-servers-red-hat-openshift-mcp-lifecycle-operator" class="page-footer__link">MCPLO Blog (May 28 2026)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./operator-installation.html" class="page-footer__link">Operator Installation</a></li>
+            <li><a href="./configuration-reference.html" class="page-footer__link">Configuration Reference</a></li>
+            <li><a href="./troubleshooting.html" class="page-footer__link">Troubleshooting</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+  <script>
+    // Track selector toggle logic
+    document.querySelectorAll('.track-selector__btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update button states
+        document.querySelectorAll('.track-selector__btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Update content visibility
+        const track = btn.getAttribute('data-track');
+        document.querySelectorAll('.track-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.querySelector(`.track-content[data-track="${track}"]`).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configuration Reference — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Configuration Reference</h1>
+      <p class="lead">Quick reference for all configmaps, CRDs, labels, and configuration artifacts used in the MCP ecosystem.</p>
+
+      <h2>Configuration Artifacts</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Artifact</th>
+            <th>Namespace</th>
+            <th>Purpose</th>
+            <th>Format</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>odhdashboardconfigs</code> patch</td>
+            <td><code>redhat-ods-applications</code></td>
+            <td>Enable MCP Catalog and Gen AI Studio features</td>
+            <td><code>mcpCatalog: true</code>, <code>genAiStudio: true</code></td>
+          </tr>
+          <tr>
+            <td><code>gen-ai-aa-mcp-servers</code> ConfigMap</td>
+            <td><code>redhat-ods-applications</code></td>
+            <td>Register MCP servers for Gen AI Studio consumption</td>
+            <td>JSON: <code>{"url": "...", "description": "..."}</code></td>
+          </tr>
+          <tr>
+            <td><code>opendatahub.io/dashboard: "true"</code></td>
+            <td>Target namespace label</td>
+            <td>Make namespace visible in RHOAI UI project selector</td>
+            <td>Namespace metadata label (must apply via manifest)</td>
+          </tr>
+          <tr>
+            <td>ServiceAccount + ClusterRoleBinding</td>
+            <td>MCP server namespace</td>
+            <td>RBAC for MCP server (e.g., cluster-wide read)</td>
+            <td>Standard Kubernetes RBAC</td>
+          </tr>
+          <tr>
+            <td>ConfigMap (server config)</td>
+            <td>MCP server namespace</td>
+            <td>MCP server runtime configuration</td>
+            <td>Per-server format (e.g., TOML for OpenShift MCP)</td>
+          </tr>
+          <tr>
+            <td>MCPServer CRD</td>
+            <td>MCP server namespace</td>
+            <td>Deploy MCP server via MCPLO</td>
+            <td><code>mcp.x-k8s.io/v1alpha1</code></td>
+          </tr>
+          <tr>
+            <td>MCPGatewayExtension CRD</td>
+            <td>Gateway namespace</td>
+            <td>Configure MCP Gateway</td>
+            <td><code>mcp.kuadrant.io/v1</code></td>
+          </tr>
+          <tr>
+            <td>AuthPolicy CRD</td>
+            <td>Gateway namespace</td>
+            <td>Authentication and authorization</td>
+            <td>Kuadrant Authorino</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Full YAML Examples</h2>
+
+      <h3>Enable MCP Catalog</h3>
+      <pre><code>oc patch odhdashboardconfigs odh-dashboard-config \
+    -n redhat-ods-applications \
+    --type=merge \
+    -p '{"spec":{"dashboardConfig":{"mcpCatalog":true}}}'</code></pre>
+
+      <h3>Namespace with Dashboard Label</h3>
+      <pre><code>apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: my-mcp</code></pre>
+
+      <h3>gen-ai-aa-mcp-servers ConfigMap</h3>
+      <pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gen-ai-aa-mcp-servers
+  namespace: redhat-ods-applications
+data:
+  OpenShift-MCP: |
+    {
+      "url": "http://ocp-mcp.my-mcp.svc.cluster.local:8080/mcp",
+      "description": "Red Hat OpenShift MCP server"
+    }
+  GitHub-MCP: |
+    {
+      "url": "http://github-mcp.my-mcp.svc.cluster.local:8080/mcp",
+      "description": "GitHub MCP server"
+    }</code></pre>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Gateway Integration</div>
+        <p>When using MCP Gateway, put the <strong>gateway URL</strong> in this configmap instead of individual server URLs. The Gateway will handle routing to backend servers based on identity and VirtualMCPServer configuration.</p>
+        <pre><code>data:
+  MCP-Gateway: |
+    {
+      "url": "https://gateway.apps.example.com/mcp",
+      "description": "MCP Gateway (all servers)"
+    }</code></pre>
+      </div>
+
+      <h3>ServiceAccount and RBAC</h3>
+      <pre><code># Service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mcp-viewer
+  namespace: my-mcp
+
+---
+# ClusterRoleBinding for cluster-wide read access
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: my-mcpviewer-read
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: mcp-viewer
+  namespace: my-mcp</code></pre>
+
+      <h3>MCP Server ConfigMap (OpenShift MCP Example)</h3>
+      <pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openshift-mcp-server-config
+  namespace: my-mcp
+data:
+  config.toml: |
+    log_level = 5
+    port = "8080"
+    read_only = true
+    toolsets = ["core", "config"]</code></pre>
+
+      <h3>MCPServer CRD</h3>
+      <p>Current schema (<code>mcp.x-k8s.io/v1alpha1</code>, verified against the upstream CRD 2026-07-10) nests config under <code>source</code>, <code>config</code>, and <code>runtime</code>. It is not a flat spec.</p>
+      <pre><code>apiVersion: mcp.x-k8s.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: ocp-mcp
+  namespace: my-mcp
+spec:
+  source:
+    type: ContainerImage
+    containerImage:
+      ref: registry.redhat.io/openshift-mcp-beta/openshift-mcp-server-rhel9:0.2
+  config:
+    port: 8080
+    path: /mcp
+    arguments:
+    - --config
+    - /etc/mcp-config/config.toml
+    storage:
+    - path: /etc/mcp-config
+      permissions: ReadOnly
+      source:
+        configMap:
+          name: openshift-mcp-server-config
+  runtime:
+    security:
+      serviceAccountName: mcp-viewer</code></pre>
+
+      <h3>MCPGatewayExtension CRD</h3>
+      <p>Current schema (<code>mcp.kuadrant.io/v1</code>, promoted from <code>kuadrant.io/v1alpha1</code> 2026-07-10). Full Gateway CRD reference lives in the <a href="../../../mcp-gateway/rhcl/build/crds.html">MCP Gateway Knowledge Hub</a>.</p>
+      <pre><code>apiVersion: mcp.kuadrant.io/v1
+kind: MCPGatewayExtension
+metadata:
+  name: mcp-gateway-config
+  namespace: mcp-gateway
+spec:
+  # targetRef.sectionName is required: names the Gateway listener to attach to
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: istio-gateway
+    namespace: gateway-system
+    sectionName: http
+
+  # Optional: broker-router log verbosity (debug, info, warn, error)
+  logLevel: info
+
+  # Optional: base CA trust pool for upstream MCP server TLS connections
+  # (Secret must carry the label mcp.kuadrant.io/secret: "true")
+  caCertBundleRef:
+    name: mcp-gateway-ca-bundle
+
+  # Optional: redis-based session storage; in-memory storage is used when omitted
+  sessionStore:
+    secretName: mcp-session-redis
+
+  # Optional: OAuth protected resource metadata (/.well-known/oauth-protected-resource)
+  oauthProtectedResource:
+    authorizationServers:
+    - https://keycloak.example.com/realms/mcp</code></pre>
+
+      <h3>AuthPolicy CRD (Gateway-Level)</h3>
+      <pre><code>apiVersion: kuadrant.io/v1beta2
+kind: AuthPolicy
+metadata:
+  name: mcp-gateway-auth
+  namespace: mcp-gateway
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: istio-gateway
+    namespace: gateway-system
+  rules:
+    authentication:
+      "keycloak-jwt":
+        jwt:
+          issuerUrl: https://keycloak.example.com/realms/mcp
+    response:
+      success:
+        headers:
+          "x-authorized-tools":
+            opa:
+              rego: |
+                package wristband
+                # Extract per-server tool roles from JWT resource_access claim
+                # Sign into ES256 wristband JWT
+                # (Full Rego policy omitted for brevity)
+          "x-mcp-virtualserver":
+            json:
+              properties:
+                "value":
+                  selector: auth.identity.groups</code></pre>
+
+      <h3>HTTPRoute for MCP Server (with Credential Injection)</h3>
+      <pre><code>apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: github-mcp-route
+  namespace: mcp-gateway
+spec:
+  parentRefs:
+  - name: istio-gateway
+    namespace: gateway-system
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /mcp/github
+    backendRefs:
+    - name: github-mcp
+      port: 8080</code></pre>
+
+      <h2>DataScienceCluster Configuration</h2>
+      <p>Ensure RHOAI has Llama Stack Operator managed:</p>
+      <pre><code>apiVersion: datasciencecluster.opendatahub.io/v1
+kind: DataScienceCluster
+metadata:
+  name: default
+spec:
+  components:
+    llamastackoperator:
+      managementState: Managed
+    dashboard:
+      managementState: Managed</code></pre>
+
+      <h2>Kuadrant Configuration</h2>
+      <pre><code>apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: gateway-system</code></pre>
+
+      <h2>ReferenceGrant (Cross-Namespace)</h2>
+      <p>Allow MCPGatewayExtension in <code>mcp-gateway</code> namespace to reference Gateway in <code>gateway-system</code>:</p>
+      <pre><code>apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allow-mcp-to-gateway
+  namespace: gateway-system
+spec:
+  from:
+  - group: kuadrant.io
+    kind: MCPGatewayExtension
+    namespace: mcp-gateway
+  to:
+  - group: gateway.networking.k8s.io
+    kind: Gateway</code></pre>
+
+      <h2>Bring Your Own MCP Server</h2>
+      <p>Packaging and publishing an MCP server that isn't Red Hat- or partner-provided. Today this is a manual workflow; it's tracked for future catalog automation under <a href="https://redhat.atlassian.net/browse/RHAIRFE-2081">RHAIRFE-2081</a> and <a href="https://redhat.atlassian.net/browse/RHAIRFE-2082">RHAIRFE-2082</a>.</p>
+
+      <h3>Container-Packaging Checklist</h3>
+      <ul>
+        <li><strong>Base image:</strong> build on a UBI (Universal Base Image) base.</li>
+        <li><strong>Transport:</strong> use explicit HTTP transport, not stdio. A stdio-only server run this way will start, produce no error output, and exit silently; the failure won't surface.</li>
+        <li><strong>Bind address:</strong> bind <code>0.0.0.0</code>, not <code>127.0.0.1</code>.</li>
+        <li><strong>Credentials:</strong> accept credentials via HTTP headers, not environment variables or baked-in config, so the Gateway/Vault credential-injection path works.</li>
+        <li><strong>MCP path:</strong> declare a stable, documented MCP path (e.g. <code>/mcp</code>).</li>
+        <li><strong>Health endpoint:</strong> expose a health endpoint for liveness/readiness probing.</li>
+      </ul>
+
+      <h3>Restricted-SCC Compliance</h3>
+      <p>OpenShift's <code>restricted</code> Security Context Constraint is the default for MCP server workloads:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Non-root</td>
+            <td>Container must not run as UID 0.</td>
+          </tr>
+          <tr>
+            <td>Drop all capabilities</td>
+            <td>No Linux capabilities beyond the restricted default set.</td>
+          </tr>
+          <tr>
+            <td>No privilege escalation</td>
+            <td><code>allowPrivilegeEscalation: false</code>.</td>
+          </tr>
+          <tr>
+            <td>Read-only root filesystem</td>
+            <td>Container filesystem is read-only; use storage mounts (ConfigMap/Secret/EmptyDir) for writable paths.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Catalog-YAML Metadata Spec</h3>
+      <ul>
+        <li>Top level: <code>name</code>, <code>provider</code>, <code>description</code>, <code>version</code>, <code>transports</code>, <code>artifacts</code>, <code>deploymentMode</code></li>
+        <li>Per-tool <code>accessType</code>: <code>read_only</code>, <code>read_write</code>, or <code>execute</code></li>
+        <li><code>runtimeMetadata</code>: drives the deployment modal's pre-filled prerequisites</li>
+        <li><code>securityIndicators</code>: mapped from the restricted-SCC validation checklist results above</li>
+      </ul>
+      <p>Schema reference: <a href="https://github.com/kubeflow/hub/blob/main/docs/catalog-yaml-reference.md">github.com/kubeflow/hub: catalog-yaml-reference.md</a>. Worked examples still live in <a href="https://github.com/opendatahub-io/model-metadata-collection/tree/main/input/mcp_servers">opendatahub-io/model-metadata-collection</a>: the schema reference and the worked examples currently live in two separate repos.</p>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y" class="page-footer__link">Jaideep Rao's MCP Ecosystem Best Practices</a></li>
+            <li><a href="https://docs.google.com/document/d/1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8" class="page-footer__link">Fernando Lozano's MCP Research Notes</a></li>
+            <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" class="page-footer__link">MCPLO GitHub</a></li>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">MCP Gateway GitHub</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./end-to-end-setup.html" class="page-footer__link">End-to-End Setup</a></li>
+            <li><a href="./operator-installation.html" class="page-footer__link">Operator Installation</a></li>
+            <li><a href="./troubleshooting.html" class="page-footer__link">Troubleshooting</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

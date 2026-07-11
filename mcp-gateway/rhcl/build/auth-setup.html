@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Auth Setup Guide — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Auth Setup Guide</h1>
+      <p class="lead">Step-by-step guide for configuring authentication and authorization for MCP Gateway using Keycloak and Authorino. This guide covers token exchange, on-behalf-of (OBO) delegation, and IdP federation.</p>
+
+      <h2>Prerequisites</h2>
+
+      <ul>
+        <li>MCP Gateway deployed (see <a href="../build/deployment.html">Deployment Guide</a>)</li>
+        <li>Red Hat Connectivity Link (RHCL) installed with Authorino and Limitador</li>
+        <li>Keycloak instance (can be in-cluster or external — no co-location requirement)</li>
+        <li>Basic understanding of OAuth 2.0 and OpenID Connect</li>
+      </ul>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">External Keycloak is Supported</div>
+        <p><strong>No co-location requirement</strong> — Keycloak can be hosted anywhere (different cluster, different cloud, on-premises) as long as it is network-accessible from the OpenShift cluster.</p>
+        <p><strong>Confirmed by the Kagenti engineering team (May 2026):</strong> "On the MCP Gateway side, Keycloak can be hosted anywhere. On the Kagenti side, tested with in-cluster Keycloak, but it should work with any external Keycloak as long as it is exposed."</p>
+        <p>No shared SPIFFE trust domain is needed — SPIFFE is used as a client ID, not a trust anchor.</p>
+      </div>
+
+      <h2>Step 1: Keycloak Setup</h2>
+
+      <h3>1.1 Create a Realm</h3>
+
+      <p>Create a dedicated realm for your MCP deployment (e.g., <code>mcp-realm</code>):</p>
+
+      <ol>
+        <li>Log in to Keycloak Admin Console</li>
+        <li>Hover over the realm dropdown (top left) and click <strong>Create Realm</strong></li>
+        <li>Enter <code>mcp-realm</code> as the realm name</li>
+        <li>Click <strong>Create</strong></li>
+      </ol>
+
+      <h3>1.2 Create Clients</h3>
+
+      <p>You need two clients: one for the MCP Gateway and one for the AuthProxy sidecar.</p>
+
+      <p><strong>Gateway Client:</strong></p>
+
+      <pre><code># In Keycloak Admin Console:
+# Clients → Create client
+
+Client ID: mcp-gateway
+Client type: OpenID Connect
+Client authentication: ON
+Authentication flow: Standard flow, Direct access grants
+
+# After creation, go to Credentials tab:
+# Copy the Client Secret — you'll need this for the gateway configuration</code></pre>
+
+      <p><strong>AuthProxy Client (for token exchange):</strong></p>
+
+      <pre><code># Clients → Create client
+
+Client ID: mcp-authproxy
+Client type: OpenID Connect
+Client authentication: ON
+Authentication flow: Standard flow, Direct access grants
+
+# After creation, go to Credentials tab:
+# Copy the Client Secret
+
+# Enable token exchange in Permissions tab:
+# Permissions → Token Exchange → Enable
+# Add policy: Allow token exchange from any authenticated client</code></pre>
+
+      <div class="callout callout--explanation">
+        <div class="callout__title">Explanation: Why Two Clients?</div>
+        <p><strong>mcp-gateway</strong>: Authenticates end-user agents. Agents present tokens from this client when calling <code>/mcp</code>.</p>
+        <p><strong>mcp-authproxy</strong>: Performs token exchange to get backend-scoped tokens. When the gateway needs to call a backend MCP server on behalf of a user, the AuthProxy exchanges the user's <code>mcp-gateway</code> token for a new token scoped to the backend.</p>
+        <p>This separation enables the delegation chain: user → agent → gateway → backend, with each hop having appropriately scoped credentials.</p>
+      </div>
+
+      <h3>1.3 Configure Token Exchange Policies</h3>
+
+      <p>Allow the <code>mcp-authproxy</code> client to exchange tokens from <code>mcp-gateway</code>:</p>
+
+      <pre><code># In Keycloak Admin Console:
+# Clients → mcp-authproxy → Permissions → Token Exchange
+
+# Add a permission:
+# Resource: mcp-gateway
+# Policy: Allow exchange from mcp-authproxy
+# Effect: Permit</code></pre>
+
+      <p>This tells Keycloak: "The <code>mcp-authproxy</code> client is allowed to exchange tokens issued to the <code>mcp-gateway</code> client for new tokens scoped to backend services."</p>
+
+      <h2>Step 2: Authorino AuthConfig</h2>
+
+      <p>Create an Authorino <code>AuthConfig</code> to enforce authentication at the MCP Gateway endpoint:</p>
+
+      <pre><code>apiVersion: authorino.kuadrant.io/v1beta2
+kind: AuthConfig
+metadata:
+  name: mcp-gateway-auth
+  namespace: mcp-system
+spec:
+  # Apply to all requests to the MCP Gateway HTTPRoute
+  hosts:
+  - "gateway.example.com"
+
+  # Authentication — validate JWT from Keycloak
+  authentication:
+    "keycloak-jwt":
+      jwt:
+        issuerUrl: https://keycloak.example.com/realms/mcp-realm
+        ttl: 300  # Cache validated tokens for 5 minutes
+
+  # Authorization — check user has required roles
+  authorization:
+    "user-role-check":
+      opa:
+        rego: |
+          default allow = false
+
+          # Allow if user has "mcp-user" role
+          allow {
+            input.auth.identity.realm_access.roles[_] == "mcp-user"
+          }
+
+  # Inject user identity into headers for downstream processing
+  response:
+    success:
+      headers:
+        "x-auth-user":
+          plain:
+            value: "{auth.identity.preferred_username}"
+        "x-auth-email":
+          plain:
+            value: "{auth.identity.email}"</code></pre>
+
+      <div class="callout callout--explanation">
+        <div class="callout__title">Explanation: What This Does</div>
+        <p><strong>Authentication</strong>: Validates that the incoming request has a valid JWT issued by Keycloak for the <code>mcp-realm</code> realm. Caches validation results for 5 minutes to reduce Keycloak load.</p>
+        <p><strong>Authorization</strong>: Uses Open Policy Agent (OPA) to check that the authenticated user has the <code>mcp-user</code> role. Requests from users without this role are rejected with 403 Forbidden.</p>
+        <p><strong>Response</strong>: Injects <code>x-auth-user</code> and <code>x-auth-email</code> headers into the request before forwarding to the MCP Gateway. Backend MCP servers can read these headers to know which user authorized the action.</p>
+      </div>
+
+      <h2>Step 3: Token Exchange Flow</h2>
+
+      <p>Configure the AuthProxy sidecar to perform token exchange when calling backend MCP servers:</p>
+
+      <h3>3.1 Deploy AuthProxy Sidecar</h3>
+
+      <p>Inject the Kagenti AuthProxy sidecar into your backend MCP server pods:</p>
+
+      <pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: jira-mcp-server
+  namespace: mcp-backends
+  annotations:
+    # Inject AuthProxy sidecar
+    kagenti.io/auth-inject: "true"
+spec:
+  containers:
+  - name: jira-mcp
+    image: example.com/jira-mcp-server:latest
+    ports:
+    - containerPort: 8080
+  # AuthProxy sidecar is automatically injected by Kagenti webhook</code></pre>
+
+      <h3>3.2 Configure Token Exchange</h3>
+
+      <p>Create a Kubernetes Secret with the AuthProxy configuration:</p>
+
+      <pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: authproxy-config
+  namespace: mcp-backends
+type: Opaque
+stringData:
+  config.yaml: |
+    # Keycloak endpoint for token exchange
+    tokenEndpoint: https://keycloak.example.com/realms/mcp-realm/protocol/openid-connect/token
+
+    # Client credentials for token exchange
+    clientID: mcp-authproxy
+    clientSecret: <your-authproxy-client-secret>
+
+    # Audience for exchanged tokens (backend MCP server)
+    audience: jira-mcp-backend
+
+    # Cache exchanged tokens for 5 minutes
+    cacheTTL: 300s</code></pre>
+
+      <p>Reference this secret in the pod annotation:</p>
+
+      <pre><code>metadata:
+  annotations:
+    kagenti.io/auth-inject: "true"
+    kagenti.io/auth-config: authproxy-config</code></pre>
+
+      <div class="callout callout--explanation">
+        <div class="callout__title">Explanation: Token Exchange in Action</div>
+        <p>When an agent calls a tool that routes to the Jira backend:</p>
+        <ol>
+          <li><strong>Agent → Gateway</strong>: Agent sends a request with a JWT from the <code>mcp-gateway</code> client.</li>
+          <li><strong>Gateway → Authorino</strong>: Authorino validates the JWT and injects user identity headers.</li>
+          <li><strong>Gateway → Router → Backend</strong>: Request is routed to the Jira MCP server pod.</li>
+          <li><strong>AuthProxy Intercepts</strong>: The AuthProxy sidecar intercepts the request before it reaches the Jira container.</li>
+          <li><strong>Token Exchange</strong>: AuthProxy exchanges the incoming JWT for a new token scoped to <code>audience: jira-mcp-backend</code>.</li>
+          <li><strong>Forward with New Token</strong>: AuthProxy forwards the request to the Jira container with the new token in the <code>Authorization</code> header.</li>
+          <li><strong>Jira MCP Server</strong>: Receives a validated, backend-scoped token. No auth logic needed in the application code.</li>
+        </ol>
+      </div>
+
+      <h2>Step 4: On-Behalf-Of (OBO) Configuration</h2>
+
+      <p>On-Behalf-Of (OBO) allows an agent to act on behalf of a user with reduced permissions. This is configured via token exchange with a dedicated client scoped for a specific domain.</p>
+
+      <h3>4.1 Create an OBO Client</h3>
+
+      <p>Create a Keycloak client for the agent with limited scopes:</p>
+
+      <pre><code># In Keycloak Admin Console:
+# Clients → Create client
+
+Client ID: agent-obo-jira
+Client type: OpenID Connect
+Client authentication: ON
+
+# Scopes tab:
+# Remove all default scopes
+# Add only: jira.read, jira.write
+
+# Service account roles tab:
+# Assign minimal roles needed for agent operations</code></pre>
+
+      <h3>4.2 Configure OBO Token Exchange</h3>
+
+      <p>Update the AuthProxy config to exchange for the OBO client when calling Jira tools:</p>
+
+      <pre><code>tokenEndpoint: https://keycloak.example.com/realms/mcp-realm/protocol/openid-connect/token
+clientID: mcp-authproxy
+clientSecret: <your-authproxy-client-secret>
+
+# Request a token for the OBO client instead of the full user token
+requestedTokenType: urn:ietf:params:oauth:token-type:access_token
+audience: agent-obo-jira
+
+# Include the original user's token as subject_token
+# This creates an "act" claim chain showing delegation
+subjectTokenType: urn:ietf:params:oauth:token-type:access_token</code></pre>
+
+      <div class="callout callout--explanation">
+        <div class="callout__title">Explanation: OBO vs Direct Token Exchange</div>
+        <p><strong>Direct Exchange</strong>: User token → backend token with same permissions. Backend sees user identity and full user permissions.</p>
+        <p><strong>OBO Exchange</strong>: User token → agent token (limited scopes) + "act" claim showing user delegation. Backend sees agent identity acting on behalf of user, with reduced permissions.</p>
+        <p>Use OBO when you want to enforce "least privilege" for agents — the agent can only perform actions explicitly allowed in the OBO client's scopes, even if the user has broader permissions.</p>
+      </div>
+
+      <h3>4.3 Audit Trail with OBO</h3>
+
+      <p>OBO creates a verifiable audit trail via the <code>act</code> claim in JWTs:</p>
+
+      <pre><code>{
+  "sub": "agent-obo-jira",         # Agent acting
+  "act": {
+    "sub": "user@example.com"      # On behalf of this user
+  },
+  "aud": "jira-mcp-backend",
+  "scope": "jira.read jira.write"
+}</code></pre>
+
+      <p>Keycloak emits events for every token exchange, including OBO flows. Combined with the <code>act</code> claim, you can trace the full delegation chain:</p>
+
+      <ul>
+        <li><strong>User authenticated</strong>: User logged in via Keycloak</li>
+        <li><strong>Token issued</strong>: User received <code>mcp-gateway</code> token</li>
+        <li><strong>Token exchanged (OBO)</strong>: AuthProxy exchanged user token for <code>agent-obo-jira</code> token</li>
+        <li><strong>Tool called</strong>: Agent called <code>jira/create_issue</code> using OBO token</li>
+      </ul>
+
+      <h2>Step 5: IdP Federation (Okta Example)</h2>
+
+      <p>For enterprises using an external IdP like Okta, configure Keycloak to federate identity via OIDC.</p>
+
+      <h3>5.1 Add Okta as an Identity Provider</h3>
+
+      <pre><code># In Keycloak Admin Console:
+# Identity Providers → Add provider → OpenID Connect v1.0
+
+Alias: okta
+Display name: Okta SSO
+Authorization URL: https://your-org.okta.com/oauth2/default/v1/authorize
+Token URL: https://your-org.okta.com/oauth2/default/v1/token
+Client ID: <your-okta-client-id>
+Client Secret: <your-okta-client-secret>
+
+# Sync Settings:
+Sync mode: force  # or "legacy" — determines when user data is refreshed
+First login flow: first broker login  # Auto-create users on first login</code></pre>
+
+      <h3>5.2 Map Okta Groups to Keycloak Roles</h3>
+
+      <p>Use protocol mappers to import group claims from Okta tokens:</p>
+
+      <pre><code># Identity Providers → okta → Mappers → Create
+
+Mapper type: Attribute Importer
+Name: import-okta-groups
+Claim: groups  # Okta sends groups in the "groups" claim
+User attribute: groups
+Sync mode override: force  # Update groups on every login</code></pre>
+
+      <p>Then map Okta groups to Keycloak roles:</p>
+
+      <pre><code># Client Scopes → roles → Mappers → Create
+
+Mapper type: User Attribute
+Name: map-groups-to-roles
+User attribute: groups
+Token claim name: realm_access.roles
+Claim JSON type: String
+Add to ID token: ON
+Add to access token: ON</code></pre>
+
+      <div class="callout callout--explanation">
+        <div class="callout__title">Explanation: Sync Timing and Nested Groups</div>
+        <p><strong>Sync timing</strong> is configurable per identity provider:</p>
+        <ul>
+          <li><strong>Sync at first login only</strong>: User attributes (including groups) are imported when the user first logs in via Okta. Subsequent logins do not update Keycloak's copy.</li>
+          <li><strong>Sync every time</strong>: User attributes are refreshed on every authentication. Use this to keep Keycloak in sync with Okta's group memberships.</li>
+        </ul>
+        <p><strong>Nested groups</strong> are traditionally flattened when presented (e.g., <code>Engineering/Infra/Platform</code> becomes <code>["Engineering", "Infra", "Platform"]</code>). Reconstructing a hierarchy is possible but requires custom work — treat as an edge case, not a default capability.</p>
+      </div>
+
+      <h2>Reference Documentation</h2>
+
+      <p>For additional examples and advanced token exchange patterns, see:</p>
+
+      <ul>
+        <li><a href="https://github.com/kagenti/kagenti/blob/main/kagenti/examples/identity/token_exchange.md">Kagenti Token Exchange Examples</a></li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Customer auth engagement questions, May 2026 (engagement Q&A — internal)</li>
+            <li>Customer auth engagement answers, Kagenti engineering team (engagement Q&A — internal)</li>
+            <li><a href="https://github.com/kagenti/kagenti/blob/main/kagenti/examples/identity/token_exchange.md" class="page-footer__link">Kagenti Token Exchange Doc</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/security.html" class="page-footer__link">Security & Auth Concepts</a></li>
+            <li><a href="../build/deployment.html" class="page-footer__link">Deployment Guide</a></li>
+            <li><a href="../build/features.html" class="page-footer__link">Features & Capabilities</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

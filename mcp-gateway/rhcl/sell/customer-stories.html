@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Customer Stories — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Customer Stories</h1>
+      <p class="lead">Real customer POCs and evaluations driving MCP Gateway development.</p>
+
+      <section class="card">
+        <h2>Large Enterprise OEM Customer — Security Deep-Dive</h2>
+        <p><strong>Meeting Date:</strong> May 2026<br>
+        <strong>Participants:</strong> Customer security and engineering leads (OEM customer); Red Hat account and engineering team</p>
+
+        <h3>Focus: Authentication Architecture</h3>
+        <p>
+          The customer's MCP security discussion centered on one critical question:
+          Can we build "dumb" MCP servers that offload all authentication and authorization to the gateway?
+        </p>
+        <p>
+          The customer uses Okta as their IdP and needs to federate identity into Keycloak for multi-tenant authorization.
+          Their MCP servers must receive validated tokens without implementing any auth logic themselves.
+        </p>
+
+        <h3>10 Security Questions Answered</h3>
+        <p>The customer asked 10 detailed security questions covering:</p>
+        <ul>
+          <li>Okta group mapping into Keycloak (OIDC federation + protocol mappers)</li>
+          <li>External Keycloak support (confirmed — no co-location requirement)</li>
+          <li>Token flow to backends like Jira and GitHub (OAuth2 token exchange)</li>
+          <li>Token caching implementation (in-process memory, 10K entries, SHA-256 keyed)</li>
+          <li>Consecutive call behavior (cached, no re-exchange on repeated calls to same audience)</li>
+          <li>On-Behalf-Of (OBO) configuration (token exchange with scoped clients)</li>
+          <li>Audit trail (Keycloak events + <code>act</code> claim chain)</li>
+        </ul>
+
+        <h3>Key Outcome: "Dumb MCP Server" Validated</h3>
+        <blockquote class="callout callout--quote">
+          <p><strong>Customer security lead</strong> (OEM customer, May 2026):<br>
+          "I just want it to get the access token in its header and not have to worry about anything else."</p>
+        </blockquote>
+        <blockquote class="callout callout--quote">
+          <p><strong>Red Hat Kagenti Team</strong> (2026-05-06):<br>
+          "AuthBridge is designed to transparently handle offloading the majority of the auth work so that the MCP
+          server can be quite dumb."</p>
+        </blockquote>
+        <p>
+          <strong>Result:</strong> The customer's requirement confirmed as supported. MCP servers receive validated tokens in
+          their <code>Authorization</code> headers. No token exchange, no credential management, and no auth code required
+          in the MCP server itself. The Envoy sidecar (injected by Kagenti) handles JWT validation transparently.
+        </p>
+
+        <h3>Okta Integration Confirmed</h3>
+        <p>
+          The customer's Okta integration uses <strong>OIDC federation</strong> (not LDAP sync). Keycloak identity-brokers with
+          Okta via OIDC, with protocol mappers to map group claims from the source Okta token to the Keycloak-minted token.
+          Nested groups are traditionally flattened when presented; reconstructing a hierarchy is possible but requires
+          custom work.
+        </p>
+
+        <h3>POC Status</h3>
+        <p>
+          <strong>Status:</strong> Pending customer internal approval (eval licenses being prepared as of May 2026)<br>
+          <strong>Timeline:</strong> ~2 weeks for approvals (target: week after Red Hat Summit 2026)
+        </p>
+
+        <h3>Key Takeaway</h3>
+        <div class="callout callout--insight">
+          <p>
+            The customer validated the "dumb MCP server" architecture end-to-end. AuthBridge offloads all auth work to the gateway,
+            enabling MCP servers to focus solely on tool logic. This is the reference architecture for enterprise MCP deployments
+            with external IdPs like Okta.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Major Telecommunications Provider — Platform APIs POC</h2>
+        <p><strong>Meeting Date:</strong> May 2026<br>
+        <strong>Participants:</strong> Customer network engineering and platform leads; Red Hat account and engineering team</p>
+
+        <h3>Focus: Multi-Team Internal MCP Platform</h3>
+        <p>
+          The customer's platform-APIs team is building an internal MCP platform for multiple teams within the organization. The goal:
+          stand up a centralized MCP Gateway that aggregates 20+ MCP servers and provides governed access to tools across
+          the organization.
+        </p>
+
+        <h3>Multiple Teams Interested</h3>
+        <ul>
+          <li><strong>Network Planning team</strong> — lead use case</li>
+          <li><strong>Their central IT organization</strong> — infrastructure platform for IT workloads</li>
+          <li><strong>Their external AI-monetization program</strong> — exploring MCP for customer-facing APIs</li>
+        </ul>
+
+        <blockquote class="callout callout--quote">
+          <p><strong>Customer lead</strong> (telecommunications provider, May 2026):<br>
+          "I am the MCP person in this company... I want to stand all this up and get some of these MCP things running."</p>
+        </blockquote>
+
+        <h3>Deployment in Real Environment</h3>
+        <p>
+          The customer wants to deploy the MCP Gateway in their own internal environment with real traffic — not a demo sandbox.
+          This validates the gateway's production readiness and provides Red Hat with real-world feedback.
+        </p>
+        <blockquote class="callout callout--quote">
+          <p><strong>Red Hat engineering</strong> (May 2026):<br>
+          "Gateway can be deployed anywhere and it is in a technical preview state. So it actually comes with support...
+          we're marching towards a GA later this year."</p>
+        </blockquote>
+        <blockquote class="callout callout--quote">
+          <p><strong>Red Hat engineering</strong> (May 2026):<br>
+          "From a gateway perspective, we actually want to be able to deploy it in your local environment because you get
+          a real feel for the product instead of doing it in some demo environment where everything's optimal anyways."</p>
+        </blockquote>
+
+        <h3>Use Cases</h3>
+        <p>The customer is evaluating two primary use cases:</p>
+        <ol>
+          <li><strong>External monetization</strong> — expose internal APIs via MCP for external partners</li>
+          <li><strong>Internal automation</strong> — reduce tickets, speed up triage, automate onboarding</li>
+        </ol>
+        <p>
+          Red Hat offered to collaborate on use case ideation — suggesting monitoring dashboards (Victoria Metrics MCP servers),
+          Ansible automation MCP servers, and root-cause analysis from logs.
+        </p>
+
+        <h3>POC Status</h3>
+        <p>
+          <strong>Timeline:</strong> 2-week POC (as of May 2026)<br>
+          <strong>Environment:</strong> OCP 4.20 upgrade pending; Red Hat providing AI clusters<br>
+          <strong>Support:</strong> Red Hat engineers available for troubleshooting (direct engineer access offered)
+        </p>
+
+        <h3>Key Takeaway</h3>
+        <div class="callout callout--insight">
+          <p>
+            The customer is building a multi-team MCP platform with 20+ MCP servers. This validates the virtual MCP server
+            architecture and confirms enterprise demand for centralized MCP governance across large organizations.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Strategic Hardware Partner — Gap Analysis</h2>
+        <p><strong>Context:</strong> A strategic hardware partner's joint-solution POC discussions — evaluating MCP Gateway & Tool Routing capabilities against partner success criteria.</p>
+
+        <p>
+          A joint POC readiness assessment found most criteria met or partially met, with a small number of gaps
+          under active development; the detailed gap analysis is maintained internally.
+        </p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Customer security discussion (engagement Q&A — internal)</li>
+            <li>Customer follow-up answers (engagement Q&A — internal)</li>
+            <li>Customer POC discussion (internal)</li>
+            <li>Partner gap analysis (POC gap analysis — internal)</li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../sell/value-prop.html">Value Proposition</a></li>
+            <li><a href="../sell/summit-feedback.html">Summit Feedback</a></li>
+            <li><a href="../plan/gaps.html">Known Gaps</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

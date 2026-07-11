@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitive Landscape — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Competitive Landscape</h1>
+      <p class="lead">How Red Hat MCP Gateway compares to alternative solutions for agent-to-tool traffic management.</p>
+
+      <section class="card">
+        <h2>Comparison Matrix</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Red Hat MCP Gateway</th>
+              <th>IBM API Connect</th>
+              <th>Google GKE Inference Gateway</th>
+              <th>Portkey / Bifrost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="status-met">
+              <td><strong>Tool-level auth</strong></td>
+              <td><strong>Yes</strong> (Authorino)</td>
+              <td>API-level only</td>
+              <td>No</td>
+              <td>No</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Policy routing</strong></td>
+              <td><strong>Yes</strong> (ext_proc)</td>
+              <td>Yes</td>
+              <td>Yes (GKE-only)</td>
+              <td>Yes</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Virtual servers</strong></td>
+              <td><strong>Yes</strong></td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Enterprise identity</strong></td>
+              <td><strong>Yes</strong> (Keycloak/SPIFFE)</td>
+              <td>Yes (API Connect)</td>
+              <td>IAM</td>
+              <td>No</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Multi-cluster</strong></td>
+              <td><strong>Yes</strong> (RHCL)</td>
+              <td>Yes</td>
+              <td>GKE only</td>
+              <td>SaaS</td>
+            </tr>
+            <tr class="status-met">
+              <td><strong>Open source</strong></td>
+              <td><strong>Yes</strong> (Kuadrant)</td>
+              <td>No</td>
+              <td>Partial</td>
+              <td>No</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>Competitor Profiles</h2>
+
+        <h3>IBM API Connect AI Gateway</h3>
+        <p>
+          <strong>Status:</strong> GA<br>
+          <strong>Positioning:</strong> Traditional API management extended to AI workloads
+        </p>
+        <p>
+          IBM API Connect is a mature API management platform that has added AI gateway capabilities. It provides strong
+          API governance, policy enforcement, and enterprise identity integration. However, it operates at the API level
+          rather than the tool level — it cannot enforce per-tool access control within an MCP server's tool catalog.
+        </p>
+        <p>
+          <strong>Key Differentiator:</strong> Red Hat MCP Gateway provides tool-level authorization (allow/deny per tool)
+          and credential brokering (per-tool OAuth 2.0), which IBM API Connect cannot.
+        </p>
+
+        <h3>Google GKE Inference Gateway</h3>
+        <p>
+          <strong>Status:</strong> Preview<br>
+          <strong>Positioning:</strong> Closest analog to Red Hat MCP Gateway
+        </p>
+        <p>
+          GKE Inference Gateway is Google's gateway for AI traffic on GKE. It provides policy-based routing and integration
+          with Google Cloud IAM for identity. However, it is GKE-only — it cannot be deployed on-prem, in other clouds, or
+          on OpenShift. It also does not support virtual MCP servers or tool-level authorization.
+        </p>
+        <p>
+          <strong>Key Differentiator:</strong> Red Hat MCP Gateway is portable (runs anywhere OpenShift runs), multi-cluster
+          via RHCL, and provides virtual MCP servers with tool aggregation.
+        </p>
+
+        <h3>Portkey / Bifrost</h3>
+        <p>
+          <strong>Status:</strong> SaaS<br>
+          <strong>Positioning:</strong> Multi-provider routing for LLMs and agents
+        </p>
+        <p>
+          Portkey and Bifrost are SaaS platforms for routing agent traffic across multiple LLM providers (OpenAI, Anthropic,
+          Bedrock, etc.). They provide policy-based routing, failover, and observability. However, they are SaaS-only — no
+          on-prem deployment, no enterprise identity integration, and no tool-level governance.
+        </p>
+        <p>
+          <strong>Key Differentiator:</strong> Red Hat MCP Gateway is self-hosted, integrates with enterprise identity
+          (Keycloak/SPIFFE), and provides tool-level governance that SaaS platforms cannot.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Catalog & Registry Landscape</h2>
+        <p>
+          A separate competitive layer sits above gateway-level competition: catalogs and registries that
+          discover, list, and vet MCP servers for consumption. Red Hat's <a href="../govern/catalog.html">MCP Catalog</a>
+          and <a href="../govern/registry.html">MCP Registry</a> compete here, distinct from the gateway comparison above.
+        </p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Catalog / Registry</th>
+              <th>Model</th>
+              <th>Submission</th>
+              <th>Verification</th>
+              <th>Install</th>
+              <th>Programmatic Access</th>
+              <th>Scale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Smithery</strong></td>
+              <td>Open, marketplace/catalog</td>
+              <td>Open publisher submissions</td>
+              <td>Community + site governance</td>
+              <td>Yes (installer CLI)</td>
+              <td>Yes (CLI/SDK)</td>
+              <td>Self-described largest marketplace; thousands of capabilities</td>
+            </tr>
+            <tr>
+              <td><strong>Docker MCP Catalog</strong></td>
+              <td>Mixed, curated (Docker Hub-integrated)</td>
+              <td>Curated/verified entries</td>
+              <td>Verified, versioned Docker images</td>
+              <td>Docker Desktop / MCP Toolkit</td>
+              <td>Yes (Docker tooling)</td>
+              <td>100+ verified tools at launch (Apr 2025)</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub MCP Registry</strong></td>
+              <td>Open, registry on GitHub</td>
+              <td>Community + vendor</td>
+              <td>GitHub identity &amp; curation</td>
+              <td>In-UI install flows (GitHub)</td>
+              <td>GitHub APIs</td>
+              <td>Announced as the official registry (Sep 2025)</td>
+            </tr>
+            <tr>
+              <td><strong>modelcontextprotocol.io registry</strong></td>
+              <td>Open, protocol-official registry</td>
+              <td>Open PR/publish workflow</td>
+              <td>OSS governance</td>
+              <td>Depends on clients</td>
+              <td>Live API docs</td>
+              <td>Positions itself as an app store for MCP servers</td>
+            </tr>
+            <tr>
+              <td><strong>Postman getmcp</strong></td>
+              <td>Open, hosted on Postman (curated catalog workspaces)</td>
+              <td>Curated by Postman + partners</td>
+              <td>Postman publisher verification</td>
+              <td>N/A (collections for testing)</td>
+              <td>Postman APIs/collections</td>
+              <td>Popular public workspace(s)</td>
+            </tr>
+            <tr>
+              <td><strong>MCPServers.org</strong></td>
+              <td>Open, community directory</td>
+              <td>Open submissions</td>
+              <td>Community moderation</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Broad community list</td>
+            </tr>
+            <tr>
+              <td><strong>MCP.so</strong></td>
+              <td>Open, third-party marketplace/directory</td>
+              <td>Open submissions</td>
+              <td>Site moderation</td>
+              <td>Some one-click install links</td>
+              <td>N/A</td>
+              <td>Claims 16k+ servers collected</td>
+            </tr>
+            <tr>
+              <td><strong>Pulse MCP</strong></td>
+              <td>Open, media-run directory</td>
+              <td>Curated</td>
+              <td>Media-run curation</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Reports 6k+ servers, updated daily</td>
+            </tr>
+            <tr>
+              <td><strong>mcpcatalog.io</strong></td>
+              <td>Open, public listing site</td>
+              <td>Unknown/open</td>
+              <td>Site governance</td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Category-browsable site</td>
+            </tr>
+            <tr>
+              <td><strong>ToolHive Registry</strong></td>
+              <td>Open, registry + secure runtime (Stacklok)</td>
+              <td>Curated + open</td>
+              <td>Security-focused (sandboxed containers)</td>
+              <td>Yes (thv run CLI)</td>
+              <td>Yes (CLI + API server)</td>
+              <td>Focus on secure execution</td>
+            </tr>
+            <tr>
+              <td><strong>Microsoft Copilot Studio connectors</strong></td>
+              <td>Closed, vendor in-product catalog</td>
+              <td>Vendor controlled</td>
+              <td>Microsoft certification</td>
+              <td>In-product add (Copilot Studio)</td>
+              <td>N/A</td>
+              <td>Catalog of certified connectors</td>
+            </tr>
+            <tr>
+              <td><strong>Databricks Unity Catalog</strong> &dagger;</td>
+              <td>Closed, enterprise-governed</td>
+              <td>Internal registration, not a public MCP marketplace</td>
+              <td>Enterprise governance/ACLs</td>
+              <td>Databricks-native registration</td>
+              <td>Platform API</td>
+              <td>Enterprise data + AI governance context, not MCP-specific</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          &dagger; Databricks Unity Catalog is not covered in the MCP Catalog source document's Competitor
+          Comparison section. It is referenced from RHAIRFE-1456 business-justification context as a
+          general-purpose data and AI governance catalog, not an MCP-specific registry, so treat the row
+          above as approximate.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Key Insight</h2>
+        <div class="callout callout--insight">
+          <p>
+            <strong>No single competitor solves the full enterprise ask:</strong> tool-level auth + policy routing +
+            governance + multi-cluster.
+          </p>
+        </div>
+        <p>
+          IBM API Connect and Google GKE Inference Gateway solve parts of the problem, but neither provides tool-level
+          authorization or virtual MCP servers. Portkey/Bifrost provide routing but lack enterprise identity integration
+          and on-prem deployment.
+        </p>
+        <p>
+          Red Hat MCP Gateway is the only solution that combines:
+        </p>
+        <ul>
+          <li>Tool-level authentication and authorization (not just API-level)</li>
+          <li>Virtual MCP servers with aggregated tool catalogs</li>
+          <li>Enterprise identity integration (Keycloak, SPIFFE, Okta federation)</li>
+          <li>Multi-cluster support via RHCL (HA/DR across data centers)</li>
+          <li>Open source upstream (Kuadrant) for no vendor lock-in</li>
+        </ul>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md">AI Gateway (Inference Gateway)</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md">MCP Gateway</a></li>
+            <li><a href="https://docs.google.com/document/d/1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE">MCP Catalog</a> (Competitor Comparison section)</li>
+            <li><a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a> (business-justification competitor references)</li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../sell/value-prop.html">Value Proposition</a></li>
+            <li><a href="../sell/summit-feedback.html">Summit Feedback</a></li>
+            <li><a href="../build/features.html">Features Deep Dive</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

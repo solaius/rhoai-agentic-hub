@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Is MCP Gateway? — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>What Is MCP Gateway?</h1>
+      <p class="lead">MCP Gateway is a purpose-built API gateway for AI tool calls, enabling enterprise-grade governance and security for agent-to-tool interactions at scale.</p>
+
+      <h2>The Problem: Agents Need Tools, Enterprises Need Governance</h2>
+
+      <p>Imagine you have 50 AI agents deployed across your organization. Each agent needs access to different tools — Jira for project tracking, GitHub for code management, databases for querying data, internal APIs for business logic. Without governance, you face:</p>
+
+      <div class="callout callout--gap">
+        <div class="callout__title">Before MCP Gateway</div>
+        <ul>
+          <li><strong>No visibility</strong> — You don't know which tools agents are calling or how often</li>
+          <li><strong>Security gaps</strong> — Agents share credentials or have overly broad access</li>
+          <li><strong>No control</strong> — No way to enforce "this agent can only call these tools"</li>
+          <li><strong>Manual wiring</strong> — Every agent-to-tool connection requires custom integration code</li>
+          <li><strong>Audit blindness</strong> — No trail of who did what on behalf of whom</li>
+        </ul>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">After MCP Gateway</div>
+        <ul>
+          <li><strong>Complete visibility</strong> — Every tool call logged, metered, and observable</li>
+          <li><strong>Fine-grained security</strong> — Per-tool authentication, On-Behalf-Of delegation, token exchange</li>
+          <li><strong>Policy enforcement</strong> — "Agent A can call Jira read-only, Agent B can create issues"</li>
+          <li><strong>Zero custom code</strong> — Agents discover tools via standard MCP protocol</li>
+          <li><strong>Full audit trail</strong> — Cryptographic delegation chains trace every action to its human initiator</li>
+        </ul>
+      </div>
+
+      <h2>What Is the Model Context Protocol (MCP)?</h2>
+
+      <p>The <strong>Model Context Protocol</strong> is an open standard for connecting AI agents to external tools and data sources. Think of it like "HTTP for AI tools."</p>
+
+      <p>MCP defines how agents discover available tools, understand what each tool does (via standardized schemas), and invoke those tools using a common JSON-RPC protocol. Before MCP, every tool integration was custom — you'd write different code for Jira vs GitHub vs internal APIs. With MCP, agents speak a universal language.</p>
+
+      <p>An <strong>MCP server</strong> is a service that exposes one or more tools via the MCP protocol. For example:</p>
+      <ul>
+        <li>A Jira MCP server exposes <code>create_issue</code>, <code>search_issues</code>, <code>update_issue</code> tools</li>
+        <li>A GitHub MCP server exposes <code>create_pr</code>, <code>list_repos</code>, <code>merge_pr</code> tools</li>
+        <li>A database MCP server exposes <code>query</code>, <code>execute</code> tools</li>
+      </ul>
+
+      <p>Agents query the MCP server's <code>tools/list</code> endpoint to discover these capabilities, then invoke them using the <code>tools/call</code> endpoint with structured JSON payloads.</p>
+
+      <h2>What Does MCP Gateway Do?</h2>
+
+      <p class="lead">MCP Gateway sits between AI agents and MCP servers, providing enterprise-grade governance, security, and observability for AI tool calls.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">AI Agent</div>
+          <div class="flow-step__subtitle">Claude, GPT, custom</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">MCP Gateway</div>
+          <div class="flow-step__subtitle">Auth, routing, audit</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCP Servers</div>
+          <div class="flow-step__subtitle">Jira, GitHub, internal tools</div>
+        </div>
+      </div>
+
+      <p>Key capabilities:</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Virtual MCP Servers</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Aggregate tools from multiple backend MCP servers into a single unified endpoint. Agents see one "virtual server" with 50 tools instead of connecting to 10 different backends.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Identity-Aware Tool Filtering</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Control which agents see which tools. Agent A only sees Jira read-only tools, Agent B sees Jira + GitHub admin tools. The gateway enforces these allow/deny rules based on agent identity.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Per-Tool Authentication & Authorization</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Each tool can have its own auth requirements. The gateway handles OAuth token exchange, On-Behalf-Of delegation, and credential injection so backend MCP servers can be "dumb" — they just receive validated tokens.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Per-Tool Metrics & Audit Logging</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Every tool call is metered (how many times, by whom, success/failure rates) and logged (full request/response audit trail with delegation chains for compliance).</p>
+        </div>
+      </div>
+
+      <h2>Why MCP Gateway Matters</h2>
+
+      <p>As AI agents move from prototypes to production, enterprises need the same level of control they have over traditional APIs:</p>
+
+      <ul>
+        <li><strong>Compliance</strong> — Audit trails for SOC 2, ISO 27001, financial regulations</li>
+        <li><strong>Security</strong> — Prevent agents from escalating privileges or accessing forbidden tools</li>
+        <li><strong>Cost control</strong> — Meter and rate-limit tool calls to prevent runaway costs</li>
+        <li><strong>Operational visibility</strong> — Understand which tools are being used, by whom, and how often</li>
+      </ul>
+
+      <div class="callout callout--quote">
+        <p><strong>Positioning Statement:</strong> MCP Gateway is an API gateway purpose-built for AI tool calls. It provides the same governance, security, and observability capabilities that enterprises expect from traditional API gateways (like 3scale or Kong) but designed specifically for the Model Context Protocol and agentic workflows.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-06-21">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">Kuadrant/mcp-gateway (GitHub)</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/architecture.html" class="page-footer__link">Architecture — How MCP Gateway works</a></li>
+            <li><a href="../understand/security.html" class="page-footer__link">Security — OAuth, tokens, delegation chains</a></li>
+            <li><a href="../understand/rhcl-context.html" class="page-footer__link">RHCL Context — The platform MCP Gateway runs on</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

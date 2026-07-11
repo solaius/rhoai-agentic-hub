@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Architecture</h1>
+      <p class="lead">MCP Gateway is built as a single binary with three core components — Broker, Router, and Controller — that work together to aggregate, route, and manage MCP tool traffic.</p>
+
+      <h2>The Three Components</h2>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">Broker</div>
+          <div class="flow-step__subtitle">Central MCP endpoint</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">Router</div>
+          <div class="flow-step__subtitle">Envoy ext_proc</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Controller</div>
+          <div class="flow-step__subtitle">K8s discovery</div>
+        </div>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Broker — The Aggregator</div>
+        <p><strong>What it does:</strong> Acts as the central MCP endpoint that agents call. It aggregates tools from multiple registered MCP servers and presents them as a unified "virtual MCP server."</p>
+        <p><strong>Think of it like:</strong> A library catalog system. Instead of walking to each bookshelf (backend MCP server) to see what's available, you query the catalog (Broker) once and it shows you everything across all shelves.</p>
+        <p><strong>How it works:</strong> When an agent calls <code>/mcp</code> with <code>tools/list</code>, the Broker aggregates tool lists from all configured backend MCP servers, applies identity-based filtering (hiding tools the agent isn't allowed to see), and returns the combined result.</p>
+        <p><strong>Paired component:</strong> Current architecture documentation groups a Cache alongside the Broker (Broker + Cache). Further functional detail on the Cache hasn't been published yet.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Router — The Traffic Director</div>
+        <p><strong>What it does:</strong> Parses incoming MCP requests, extracts the tool name from the JSON-RPC payload, and sets HTTP headers that force Envoy to route the request to the correct backend MCP server.</p>
+        <p><strong>Think of it like:</strong> A mail sorting facility. Letters (requests) arrive with addresses written inside the envelope (JSON payload). The Router reads the address and writes it on the outside of the envelope (HTTP headers) so the delivery system (Envoy) knows where to send it.</p>
+        <p><strong>How it works:</strong> Implemented as an Envoy <code>ext_proc</code> (external processing) filter. When a request arrives at <code>/mcp</code>, Envoy pauses and asks the Router: "Where should this go?" The Router parses the MCP protocol, identifies the target tool (e.g., <code>jira_create_issue</code>), looks up which backend serves that tool prefix, and sets headers like <code>X-MCP-Target-Server: jira-backend</code>. Envoy then routes accordingly.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Controller — The Discovery Engine</div>
+        <p><strong>What it does:</strong> Watches Kubernetes resources (specifically <code>HTTPRoute</code> and <code>MCPServerRegistration</code> CRDs) to discover new MCP servers and dynamically update the Broker and Router configurations.</p>
+        <p><strong>Think of it like:</strong> A real-time inventory manager. It watches the warehouse (Kubernetes cluster) for new shipments (MCP server deployments) and automatically updates the catalog (Broker config) and shipping routes (Router config) without manual intervention.</p>
+        <p><strong>How it works:</strong> Kubernetes-based controller that reconciles <code>MCPServerRegistration</code> custom resources. When you deploy a new MCP server and create an <code>MCPServerRegistration</code> object pointing to its <code>HTTPRoute</code>, the Controller picks it up, extracts the tool prefix (e.g., <code>jira_</code>) and target reference, and reconfigures the Broker and Router on the fly.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Implementation Update: Official MCP Go SDK (July 2026)</div>
+        <p>In July 2026, MCP Gateway migrated from the community <code>mark3labs/mcp-go</code> library to the official MCP Go SDK. The migration refactored the Broker and Router internals to a middleware-based integration model, replacing the prior hook-based approach to session and request handling.</p>
+      </div>
+
+      <h2>How They Work Together</h2>
+
+      <p>Let's walk through a single tool call from an AI agent:</p>
+
+      <ol>
+        <li><strong>Agent sends request</strong>: <code>POST /mcp</code> with JSON-RPC payload <code>{"method": "tools/call", "params": {"name": "jira_create_issue", ...}}</code></li>
+        <li><strong>Router intercepts (ext_proc)</strong>: Envoy pauses, calls the Router component via gRPC, passes the request body</li>
+        <li><strong>Router parses & sets headers</strong>: Extracts tool name <code>jira_create_issue</code>, looks up backend, sets <code>X-MCP-Target-Server: jira-backend</code></li>
+        <li><strong>Envoy routes to backend</strong>: Uses the header to match routing rules and forwards the request to the Jira MCP server pod</li>
+        <li><strong>Backend MCP server executes</strong>: Jira MCP server receives the validated request (after auth policies applied by RHCL/Authorino) and creates the issue</li>
+        <li><strong>Response flows back</strong>: Jira MCP server returns JSON-RPC response → Envoy → Router (optional response processing) → Agent</li>
+      </ol>
+
+      <p>Meanwhile, the <strong>Controller</strong> is running in the background, watching for new <code>MCPServerRegistration</code> resources. When you deploy a new GitHub MCP server, the Controller automatically adds it to the Broker's backend list and teaches the Router to recognize <code>github_*</code> tool prefixes.</p>
+
+      <h2>MCP Gateway in the RHCL Stack</h2>
+
+      <p>MCP Gateway doesn't run alone — it sits within the Red Hat Connectivity Link (RHCL) platform, which provides the underlying networking, auth, and rate limiting infrastructure.</p>
+
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">Gateway API</div>
+          <div class="flow-step__subtitle">K8s standard</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Ingress Gateway</div>
+          <div class="flow-step__subtitle">Envoy</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Limitador</div>
+          <div class="flow-step__subtitle">Rate limiting</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Authorino</div>
+          <div class="flow-step__subtitle">Auth engine</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">MCP Gateway</div>
+          <div class="flow-step__subtitle">Router + Broker</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCP Servers</div>
+          <div class="flow-step__subtitle">Backend services</div>
+        </div>
+      </div>
+
+      <p><strong>Traffic flow from top to bottom:</strong></p>
+      <ol>
+        <li><strong>Gateway API</strong>: Kubernetes standard for configuring ingress (replaces older Ingress API)</li>
+        <li><strong>Ingress Gateway (Envoy)</strong>: Entry point for external traffic into the cluster</li>
+        <li><strong>Limitador</strong>: Rate limiting enforcement (e.g., "100 requests/second per user")</li>
+        <li><strong>Authorino</strong>: Authentication engine (validates OAuth tokens, enforces AuthPolicy rules)</li>
+        <li><strong>MCP Gateway</strong>: Parses MCP protocol, routes to correct backend, aggregates tool lists</li>
+        <li><strong>MCP Servers</strong>: Backend services that expose tools (Jira, GitHub, internal APIs)</li>
+      </ol>
+
+      <p>Each layer adds a governance capability. By the time a request reaches the backend MCP server, it has already been:</p>
+      <ul>
+        <li>Rate-limited (Limitador)</li>
+        <li>Authenticated (Authorino)</li>
+        <li>Routed to the correct backend (MCP Gateway Router)</li>
+        <li>Logged and metered (throughout the stack)</li>
+      </ul>
+
+      <h2>Custom Resource Definitions (CRDs)</h2>
+
+      <p>MCP Gateway introduces two Kubernetes CRDs for declarative configuration:</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCPServerRegistration</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Registers an MCP server with the gateway (formerly the <code>MCPServer</code> Kind). Specifies:</p>
+          <ul>
+            <li><code>prefix</code>: The tool prefix this server owns (e.g., <code>jira_</code>)</li>
+            <li><code>targetRef</code>: Reference to the Kubernetes <code>HTTPRoute</code> that routes traffic to this backend</li>
+          </ul>
+          <p>Example: An <code>MCPServerRegistration</code> for Jira would have <code>prefix: jira_</code> and <code>targetRef</code> pointing to a route that sends traffic to the Jira MCP server pods.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCPGatewayExtension</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Configures gateway-level behavior. This is where you specify global settings like:</p>
+          <ul>
+            <li>Which <code>Gateway</code> resource to attach to</li>
+            <li>Broker configuration (aggregation rules, virtual server settings)</li>
+            <li>Router configuration (parsing rules, header mappings)</li>
+          </ul>
+          <p>Typically one per MCP Gateway deployment.</p>
+        </div>
+      </div>
+
+      <p>For detailed CRD schemas and configuration examples, see <a href="../build/crds.html">Build It &gt; CRDs & Configuration</a>.</p>
+
+      <h2>Key Architectural Insight</h2>
+
+      <div class="callout callout--insight">
+        <p><strong>MCP Gateway is a WASM plugin, not a standalone product.</strong></p>
+        <p>The gateway components (Broker, Router, Controller) run as a WASM (WebAssembly) plugin inside Envoy. This means:</p>
+        <ul>
+          <li><strong>Minimal disruption</strong>: Users already running Envoy for ingress (OpenShift Service Mesh, Istio, standalone Envoy) don't need to rip-and-replace infrastructure.</li>
+          <li><strong>Lightweight</strong>: WASM is compiled to near-native performance, hardware-independent, and universally supported.</li>
+          <li><strong>Portable</strong>: The same WASM binary runs across different Envoy-based environments without recompilation.</li>
+        </ul>
+        <p>This design choice makes MCP Gateway compatible with the broader Kubernetes ecosystem and easy to adopt incrementally.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">Kuadrant/mcp-gateway (GitHub)</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway (RHCL context)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/rhcl-context.html" class="page-footer__link">RHCL Context — The platform stack</a></li>
+            <li><a href="../build/crds.html" class="page-footer__link">CRDs & Configuration — Deep dive on MCPServerRegistration, MCPVirtualServer, and MCPGatewayExtension</a></li>
+            <li><a href="../understand/security.html" class="page-footer__link">Security — Auth and delegation chains</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

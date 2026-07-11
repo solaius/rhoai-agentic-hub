@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Open Questions — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+
+      <h1>Open Questions</h1>
+      <p class="lead">Follow-up items from customer discussions, upstream alignment, and platform integration.</p>
+
+      <section>
+        <h2>Outstanding Questions</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th style="width: 30%;">Question</th>
+              <th style="width: 15%;">Owner</th>
+              <th style="width: 10%;">Priority</th>
+              <th style="width: 15%;">Status</th>
+              <th style="width: 30%;">Context</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>OBO Configuration Patterns</strong> — What are the recommended Keycloak configuration patterns for on-behalf-of (OBO) token exchange? How should domain scoping be configured?</td>
+              <td>Gateway PM → Kagenti team</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Following up</td>
+              <td>Customer asked how to configure OBO in Keycloak — "OBO is basically token exchange with another client scoped for a particular domain." Need detailed configuration mechanics: client roles, audience restrictions, etc. (Customer Q9)</td>
+            </tr>
+            <tr>
+              <td><strong>Audit Log Aggregation Story</strong> — Is there a centralized view for the full audit trail (user → agent → tool), or does the customer need to reconstruct it from Keycloak events + gateway logs + MCP server logs?</td>
+              <td>Gateway PM → Gateway team</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Open</td>
+              <td>Customer requires full audit trail for compliance. Keycloak emits events for token exchange, and the <code>act</code> claim chain provides delegation traceability, but it's unclear whether there's a unified log aggregation solution or if customers must build one. (Customer Q10)</td>
+            </tr>
+            <tr>
+              <td><strong>SDK Migration</strong> — Should MCP Gateway, MCPLO, and OCP MCP Server migrate from mark3labs Go SDK to the official MCP SDK?</td>
+              <td>Gateway engineering</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Merged (week of 2026-07-07); performance regression under investigation</td>
+              <td>MCP Gateway's migration to the official MCP Go SDK merged to main the week of 2026-07-07. A post-migration performance run surfaced regressions under load (HTTP 500s, broker connection timeouts at high server counts); the team is triaging against upstream's passing perf workflow. MCPLO and OCP MCP Server migration timing is still open.</td>
+            </tr>
+            <tr>
+              <td><strong>MCP Spec RC Support</strong> — Should the gateway support the new MCP spec Release Candidate and the current spec version simultaneously during the transition period?</td>
+              <td>Gateway engineering</td>
+              <td><span class="badge badge--high">High</span></td>
+              <td>Under discussion</td>
+              <td>MCP spec Release Candidate published upstream. Dual-spec support would allow smoother customer migration but adds complexity. Decision needed before GA (Q4 2026).</td>
+            </tr>
+            <tr>
+              <td><strong>OCP 5.0 Early Access Test Scenarios</strong> — What MCP Gateway test scenarios should be included in OCP 5.0 early access testing?</td>
+              <td>julim (Slack)</td>
+              <td><span class="badge badge--low">Low</span></td>
+              <td>Requested</td>
+              <td>MCP Gateway will ship in OCP 5.0 catalog. OCP 5.0 early access program requested test scenarios. Need to define representative end-to-end flows for validation. Raised by julim in Slack.</td>
+            </tr>
+            <tr>
+              <td><strong>TrustyAI Red-Teaming Integration</strong> — How should TrustyAI's MCP tool-interception-based red-teaming prototype integrate with the gateway?</td>
+              <td>Diego (Slack)</td>
+              <td><span class="badge badge--low">Low</span></td>
+              <td>Prototype</td>
+              <td>Diego's team is building a red-teaming tool that intercepts MCP tool calls. They want gateway-level integration for adversarial testing. Open question: does this integrate as a guardrail, an ext_proc plugin, or a separate service? Raised by Diego in Slack.</td>
+            </tr>
+            <tr>
+              <td><strong>tool/list Auth Issue</strong> — Why does the OCP MCP server fail <code>tool/list</code> requests when OAuth is enabled, and which workaround should be recommended?</td>
+              <td>OCP MCP server team</td>
+              <td><span class="badge badge--high">High</span></td>
+              <td>Two workarounds proposed</td>
+              <td><code>tool/list</code> fails without long-running credentials when OAuth is enabled. Two workarounds: (1) use service account tokens with extended TTL, or (2) implement a token refresh mechanism. Need to align on recommended approach.</td>
+            </tr>
+            <tr>
+              <td><strong>MCP Gateway Operator / RHOAI 3.5 Validation:</strong> Which MCP Gateway Operator version(s) are validated with RHOAI 3.5?</td>
+              <td>OCP Networking</td>
+              <td><span class="badge badge--high">High</span></td>
+              <td>Open</td>
+              <td>Blocks publication of the RHOAI 3.5 version-compatibility matrix for the MCP Gateway Operator (RHAISTRAT-1937, In Progress, targets RHOAI 3.5 GA).</td>
+            </tr>
+            <tr>
+              <td><strong>Layered-Product MCP Entitlement:</strong> When a layered product bundles its own MCP server (for example, an automation-platform-style layered product), what entitlement covers gateway protection for that server: an RHOAI purchase, an RHCL purchase, or something else?</td>
+              <td>Gateway PM</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Open</td>
+              <td>Posed as an open "Deployment Scenario" question in the MCP Gateway Delivery doc, without an answer. Affects entitlement/SKU design for any layered product that ships a bundled MCP server.</td>
+            </tr>
+            <tr>
+              <td><strong>Entitlement Parity with MaaS:</strong> Will MCP Gateway share all MaaS entitlements following RHCL's move to the AI BU?</td>
+              <td>PM</td>
+              <td><span class="badge badge--medium">Medium</span></td>
+              <td>Direction expected, not fully confirmed</td>
+              <td>Current Support Agreement documentation excludes MCP and Agents from the unlimited-token / token-metrics MaaS entitlements (RHCL rate limiting and Authorino remain included). Direction is expected to change following RHCL's move to the AI BU, but is not yet confirmed.</td>
+            </tr>
+            <tr>
+              <td><strong>Kagenti Removal, OpenShell Coverage:</strong> Kagenti is being removed from the roadmap; which OpenShell capabilities replace the Kagenti-provided paths the gateway docs reference, and on what timeline?</td>
+              <td>Agentic platform PM</td>
+              <td><span class="badge badge--high">High</span></td>
+              <td>Open</td>
+              <td>Direction as of 2026-07-10: Kagenti is being removed from the roadmap, with OpenShell expected to expand to cover its capabilities. Multiple hub pages reference Kagenti-provided paths (AuthBridge caching, Helm install source, OBO configuration guidance) that need a confirmed OpenShell replacement and migration timeline.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Resolved Questions</h2>
+        <p>Questions that have been answered or closed. For reference only.</p>
+
+        <div class="callout callout--source">
+          <h3>Okta Group Mapping in Keycloak</h3>
+          <p><strong>Question:</strong> How do Okta groups map into Keycloak for authorization decisions? (Customer Q1)</p>
+          <p><strong>Answer:</strong> Use OIDC federation (not LDAP sync). Keycloak identity-brokers with Okta via OIDC. Use protocol mappers to map group claims from the source Okta token to the Keycloak-minted token. Nested groups are traditionally flattened; reconstructing a hierarchy is possible but requires custom work. Sync timing is configurable: sync at first login only, or sync every time the user authenticates.</p>
+          <p><strong>Status:</strong> Resolved (confirmed by the Kagenti engineering team, 2026-05-06)</p>
+        </div>
+
+        <div class="callout callout--source">
+          <h3>External Keycloak Support</h3>
+          <p><strong>Question:</strong> Can you use any Keycloak instance, or does it need to be on the same cluster/namespace? (Customer Q3)</p>
+          <p><strong>Answer:</strong> On the MCP Gateway side, Keycloak can be hosted anywhere — no co-location requirement. On the Kagenti side, tested with in-cluster Keycloak, but it should work with any external Keycloak as long as it is exposed. No shared SPIFFE trust domain is needed — SPIFFE is used as a client ID.</p>
+          <p><strong>Status:</strong> Resolved (confirmed and updated by the Kagenti engineering team, May 2026)</p>
+        </div>
+
+        <div class="callout callout--source">
+          <h3>Token Caching & Consecutive Calls</h3>
+          <p><strong>Question:</strong> How does AuthBridge handle consecutive calls? Does it re-exchange every time? (Customer Q6, Q7)</p>
+          <p><strong>Answer:</strong> No. AuthBridge's in-process cache stores exchanged tokens keyed by <code>(subjectToken, audience)</code> and serves them until TTL expiry (with a 30-second early-refresh buffer). Consecutive calls do not re-exchange. External cache (Redis) is not yet supported but Kagenti team is willing to add it.</p>
+          <p><strong>Status:</strong> Resolved (confirmed via code review + Kagenti engineering team, May 2026)</p>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Customer security discussion follow-ups, 2026-05-06 (engagement Q&A — internal)</li>
+            <li>Slack: #mcp-gateway, #mcp-gateway-dev</li>
+            <li>OCP MCP Server Team Discussions</li>
+            <li>Kagenti engineering discussions (May 2026)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../plan/gaps.html">Known Gaps</a></li>
+            <li><a href="../plan/roadmap.html">Roadmap</a></li>
+            <li><a href="../build/auth-setup.html">Authentication & Authorization</a></li>
+            <li><a href="../sell/customer-stories.html">Customer POC</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

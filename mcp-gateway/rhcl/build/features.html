@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Features & Capabilities — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Features & Capabilities</h1>
+      <p class="lead">MCP Gateway provides enterprise-grade governance, security, and operational features for Model Context Protocol servers. Features are delivered across four milestones: Shipped, Technical Preview, Planned for GA, and vNext.</p>
+
+      <h2>Shipped Features</h2>
+
+      <p>The following features are available in MCP Gateway v0.7.1 (June 2026) and RHCL 1.3.3+:</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Since v0.7.1: API and CRD Updates</div>
+        <p>Gateway APIs were promoted to v1 (GA) on 2026-07-10. The <code>MCPGatewayExtension</code> CRD gained <code>spec.logLevel</code> and <code>spec.caCertBundleRef</code> fields on 2026-07-03 (see <a href="crds.html">CRDs & Configuration</a>). Auth type was renamed from <code>simple</code> to <code>apikey</code> on 2026-07-01, a breaking change for any existing config using <code>authType: simple</code>.</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Virtual MCP Servers</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Aggregate tools from multiple backend MCP servers into a single unified view. Agents see one combined tool list instead of managing connections to multiple backends.</p>
+            <p class="feature-card__why">Why it matters: Reduces agent complexity, simplifies tool discovery, and enables centralized governance over distributed MCP backends.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Identity-Aware Tool Filtering</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Filter which tools are visible to which users or agents based on identity. Define allow/deny rules per tool, user, or group via Authorino AuthConfig.</p>
+            <p class="feature-card__why">Why it matters: Enforces least-privilege access — users only see tools they're authorized to use, preventing accidental or malicious misuse of sensitive capabilities.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Per-Tool Authentication</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Apply different authentication policies to different tools. Require OAuth for sensitive operations (e.g., Jira issue creation) while allowing anonymous access for read-only tools.</p>
+            <p class="feature-card__why">Why it matters: Fine-grained auth matches the security posture of each tool's risk profile, avoiding "all or nothing" access control.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Per-Tool Authorization</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Define authorization policies per tool using Authorino. Support for role-based access control (RBAC), attribute-based access control (ABAC), and custom policy expressions.</p>
+            <p class="feature-card__why">Why it matters: Enables "user X can call github/create_pr but not github/delete_repo" policies without backend changes.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Per-Tool Metrics</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Automatic Prometheus metrics for every tool invocation: latency, success/error rates, request counts by tool name and user. Integrated with OpenShift monitoring stack.</p>
+            <p class="feature-card__why">Why it matters: Visibility into which tools are used, by whom, and how often — critical for capacity planning, debugging, and compliance audits.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Streaming HTTP Proxy</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Support for Server-Sent Events (SSE) streaming of MCP responses. Long-running tool calls stream results incrementally rather than blocking until completion.</p>
+            <p class="feature-card__why">Why it matters: Enables real-time user feedback for slow operations (e.g., generating a report, searching large datasets) without timeouts.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">OAuth 2.0 Protected Resources</div>
+            <span class="badge badge--shipped">Shipped</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Full OAuth 2.0 authorization code flow and token exchange (RFC 8693) support. Integrate with Keycloak for identity-aware delegation chains (user → agent → tool).</p>
+            <p class="feature-card__why">Why it matters: Enterprise-grade security with audit trails showing who authorized what action, even when mediated through an AI agent.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2>Technical Preview Features</h2>
+
+      <p>The following features are available in Technical Preview as of RHCL 1.3.3 (April 2026) and are expected to reach GA in Q4 2026:</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Content Guardrails</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Integrate NeMo Guardrails or Red Hat TrustyAI via Envoy ext_proc adapter to scan and filter tool inputs/outputs. Detect PII, profanity, prompt injection, jailbreak attempts, and policy violations before they reach backends.</p>
+            <p class="feature-card__why">Why it matters: Centralized content safety without modifying every backend MCP server — enforce governance at the gateway layer.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">MCP Elicitation</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Support for the MCP elicitation protocol extension, allowing tools to request additional context or confirmation from the agent before execution.</p>
+            <p class="feature-card__why">Why it matters: Enables interactive workflows (e.g., "which Jira project?" when multiple match) without hardcoding assumptions in the tool.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Vault Integration</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Automatic injection of secrets from HashiCorp Vault or External Secrets Operator into tool call contexts. Backend MCP servers retrieve credentials via gateway-provided context instead of direct Vault access.</p>
+            <p class="feature-card__why">Why it matters: Simplifies secret management for MCP server developers — no need to bundle Vault SDKs or manage lease renewal logic.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Router OTEL Tracing</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>OpenTelemetry trace log emission for every MCP request. Distributed tracing shows the full path: agent → gateway → router → backend → response, with timing breakdowns.</p>
+            <p class="feature-card__why">Why it matters: Essential for debugging performance bottlenecks and understanding end-to-end latency in multi-hop agentic workflows.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Isolated Gateway Deployment</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Deploy multiple independent MCP Gateway instances in the same cluster, each with its own virtual MCP server configuration and auth policies. Enable multi-tenancy with hard namespace boundaries.</p>
+            <p class="feature-card__why">Why it matters: Critical for shared platforms serving multiple teams or customers with isolated tool sets and compliance requirements.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Hosts for Virtual MCP Servers</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Assign dedicated hostnames to virtual MCP servers (e.g., <code>internal-tools.mcp.example.com</code>, <code>customer-tools.mcp.example.com</code>). Simplifies routing and DNS management for multi-gateway deployments.</p>
+            <p class="feature-card__why">Why it matters: Makes it easier to present different tool catalogs to different agent populations without complex path-based routing rules.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2>Planned for GA (RHCL 1.5, Oct 2026)</h2>
+
+      <p>The following features are planned for General Availability in RHCL 1.5 (October 2026), the named GA vehicle for MCP Gateway:</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Deployment Operator</div>
+            <span class="badge badge--planned">Planned</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Kubernetes Operator for automated MCP Gateway lifecycle management. One-click installation, rolling upgrades, automated cert renewal, and configuration drift detection.</p>
+            <p class="feature-card__why">Why it matters: Eliminates manual Helm chart management and reduces operational overhead for platform teams.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Security Plugin</div>
+            <span class="badge badge--planned">Planned</span>
+          </div>
+          <div class="feature-card__description">
+            <p>DDoS protection, bot management, and anomaly detection plugin. Detect and block suspicious traffic patterns (e.g., rapid tool enumeration, credential stuffing) before they reach backends.</p>
+            <p class="feature-card__why">Why it matters: Protects against both malicious actors and misbehaving agents that could overwhelm backend services.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Session Management</div>
+            <span class="badge badge--planned">Planned</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Resumable MCP sessions with server-side state persistence. Agents can disconnect and reconnect without losing context (e.g., multi-step workflows spanning hours or days).</p>
+            <p class="feature-card__why">Why it matters: Enables long-running agentic workflows that survive network interruptions or agent restarts.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">High Availability</div>
+            <span class="badge badge--planned">Planned</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Active health checks for backend MCP servers, automatic failover to healthy replicas, and circuit breaker patterns to prevent cascading failures.</p>
+            <p class="feature-card__why">Why it matters: Production-grade reliability — agents continue working even when individual backend replicas fail.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Registry Integration</div>
+            <span class="badge badge--planned">Planned</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Automatic configuration from MCP Registry metadata. Register an MCP server in the registry → gateway discovers and configures it automatically without manual CRD creation.</p>
+            <p class="feature-card__why">Why it matters: Closes the governance loop — registry approval drives gateway configuration, eliminating manual sync between systems.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Extended MCP Capabilities</div>
+            <span class="badge badge--planned">Planned</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Full MCP protocol support beyond tools: prompts (retrieve prompt templates from backends), resources (attach context documents), sampling (LLM-backed tool execution with model orchestration).</p>
+            <p class="feature-card__why">Why it matters: Unlocks advanced agentic patterns — agents can not only call tools but also query for optimal prompts and retrieve relevant documents through the same gateway.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2>vNext (Future)</h2>
+
+      <p>Beyond RHCL 1.5 GA, the roadmap's next tier (vNext) adds:</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">MCP Gateway UI Plugin</div>
+            <span class="badge badge--tp">Tech Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>A dedicated OpenShift console plugin for visualizing and managing MCP Gateway configuration, virtual servers, and tool policies.</p>
+            <p class="feature-card__why">Why it matters: Gives platform teams a visual view into gateway state without requiring direct CRD inspection via CLI.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <div class="feature-card__title">Analytics/Policy Recommendation</div>
+            <span class="badge badge--planned">Dev Preview</span>
+          </div>
+          <div class="feature-card__description">
+            <p>Usage analytics and recommended policy adjustments based on observed tool traffic, auth patterns, and error rates.</p>
+            <p class="feature-card__why">Why it matters: Helps platform teams tune access and rate-limit policies from real usage data instead of guesswork.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2>Feature Timeline</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Date</th>
+            <th>Key Features</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Developer Preview</strong></td>
+            <td>Feb 2026</td>
+            <td>OAuth-Based Security, Fine-Grained Access Control, Virtual MCP Servers</td>
+          </tr>
+          <tr>
+            <td><strong>Technical Preview</strong></td>
+            <td>Apr 2026 (RHCL 1.3.3)</td>
+            <td>Content Guardrails, Vault Integration, MCP Elicitation, OTEL Tracing, Isolated Deployments, Virtual Server Hosts</td>
+          </tr>
+          <tr>
+            <td><strong>General Availability</strong></td>
+            <td>RHCL 1.5 (Oct 2026)</td>
+            <td>Deployment Operator, Security Plugin, Session Management, High Availability, Registry Integration, Extended MCP Capabilities</td>
+          </tr>
+          <tr>
+            <td><strong>vNext</strong></td>
+            <td>Future (after RHCL 1.5)</td>
+            <td>MCP Gateway UI Plugin, Analytics/Policy Recommendation</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway/releases/tag/v0.7.1" class="page-footer__link">MCP Gateway v0.7.1 Release Notes</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../plan/roadmap.html" class="page-footer__link">Roadmap — Timeline and version mapping</a></li>
+            <li><a href="../plan/gaps.html" class="page-footer__link">Known Gaps — What's missing</a></li>
+            <li><a href="../build/deployment.html" class="page-footer__link">Deployment Guide</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

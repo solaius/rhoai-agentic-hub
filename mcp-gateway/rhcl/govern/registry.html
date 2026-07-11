@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Registry — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>MCP Registry</h1>
+      <p class="lead">The authoritative governance layer for MCP servers in RHOAI. System of record that brings governance, lifecycle control, trust, and visibility so MCP assets can move cleanly from discovery through approval, deployment, runtime use, and consumption.</p>
+
+      <div class="callout callout--insight">
+        <strong>Target:</strong> Dev Preview planned; will not land in RHOAI 3.5 stable. Tech Preview targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026).
+      </div>
+
+      <h2>Purpose</h2>
+      <p>System of record for governed MCP servers (internal or external). Provides:</p>
+      <ul>
+        <li>Ingestion and lifecycle management</li>
+        <li>Security and certification context</li>
+        <li>Versioning and immutability</li>
+        <li>Policy-aware visibility</li>
+      </ul>
+
+      <h2>Data Model (Proposed)</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">MCPServer</div>
+          <div class="flow-box__desc">Logical governed asset<br>Scoped to workspace</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">MCPServerVersion</div>
+          <div class="flow-box__desc">Immutable payload<br>+ mutable governance metadata</div>
+        </div>
+      </div>
+
+      <p class="note">Source: <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8">MLflow MCP Registry Data Model Proposal</a> — this is a proposal/brain dump, not an approved design.</p>
+
+      <h2>Governance Model</h2>
+      <p>The current data model proposal has collapsed governance into two independent enums, not the four-track model described in earlier drafts:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Enum</th>
+            <th>Scope</th>
+            <th>States</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MCPServerStatus</strong></td>
+            <td>Asset-level (MCPServer)</td>
+            <td>Active → Deprecated → Retired</td>
+          </tr>
+          <tr>
+            <td><strong>MCPPublishState</strong></td>
+            <td>Version-level (MCPServerVersion)</td>
+            <td>Draft → Published → Deprecated → Retired</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--gap">
+        <strong>Not yet modeled:</strong> The current dataclass has no explicit Approval Status, Verification Status, or Certification Status fields. Certification tracking remains an open question, not a modeled track.
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Design Principle:</strong> Governance metadata is first-class and separate from tags. The <code>server_json</code> on MCPServerVersion stores the canonical MCP payload following the <a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON">upstream MCP registry schema</a>.
+      </div>
+
+      <h2>Observed Tool Metadata</h2>
+      <p>Two new entities separate cached, non-authoritative tool metadata from the canonical registry payload:</p>
+      <ul>
+        <li><strong>MCPObservedTool</strong>: a tool as observed from a live MCP endpoint, tracked independently of the server's canonical <code>server_json</code>.</li>
+        <li><strong>MCPObservedToolSnapshot</strong>: a point-in-time snapshot of observed tool metadata, intended for display and search UX.</li>
+      </ul>
+      <p>Populated either manually or by syncing the MCP client's <code>list_tools()</code> output.</p>
+
+      <h2>MLflow Integration</h2>
+      <p>Red Hat is collaborating upstream with MLflow/Databricks on MCP registry design. The data model proposal is undergoing RFC approval process. This collaboration informs the future generalized AI asset registry architecture.</p>
+
+      <h2>MVP Scope (Registry DP / TP 3.6 EA1)</h2>
+      <ul>
+        <li>Governed registration of MCP servers</li>
+        <li>Metadata-first MCP records</li>
+        <li>Lifecycle state tracking</li>
+        <li>Certification and approval visibility</li>
+        <li>RBAC-aware visibility and governance</li>
+        <li>Support for internal and external MCP representation</li>
+        <li>Conceptual integration with catalog, deployment, gateway, Studio</li>
+      </ul>
+
+      <h2>Open Questions (from Reviewers)</h2>
+      <ul>
+        <li><strong>Dan Kuc:</strong> MLflow lifecycle states (None/Staging/Production/Archived) may need expansion for MCP</li>
+        <li><strong>Jon Burdo:</strong> Certification allowlist question may connect to RHAIRFE-294</li>
+      </ul>
+
+      <div class="callout callout--insight">
+        <strong>Resolved (managed registry entries):</strong> Chris Hambridge's question ("should Lifecycle Operator create read-only 'managed' registry entries?") is answered. An <code>update_mode</code> field (<code>MANUAL</code> vs <code>SYSTEM_MANAGED</code>) governs whether a registry entry's mutable fields are user-edited or kept in sync by another system. This is the concrete mechanism behind Matt Prahl's "discovered" MCP server concept: system-populated entries where only description and tags remain user-editable.
+      </div>
+
+      <div class="callout callout--gap">
+        <strong>Integration Gap:</strong> Not yet integrated with Gateway — automated registry→gateway flow is GA target (Q4 2026). Today's manual gateway registration will be replaced by registry-driven configuration.
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y">MCP Registry MVP Requirements</a></li>
+            <li><a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8">MLflow MCP Registry Data Model Proposal</a></li>
+            <li><a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON">Upstream MCP Registry Schema</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../govern/ecosystem.html">Ecosystem Overview</a></li>
+            <li><a href="../govern/catalog.html">MCP Catalog</a></li>
+            <li><a href="../plan/roadmap.html">Roadmap & Versions</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/">Cross-component view: MCP Management Knowledge Hub</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

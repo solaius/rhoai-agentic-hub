@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lifecycle Flow — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Lifecycle Flow</h1>
+      <p class="lead">End-to-end lifecycle from discovery through deployment, registration, configuration, consumption, monitoring, and retirement. Comparing today's manual flow with the target automated registry-driven flow.</p>
+
+      <h2>Full Lifecycle Stages</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">Discover</div>
+          <div class="flow-box__desc">Catalog</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Deploy</div>
+          <div class="flow-box__desc">MCPLO</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Register</div>
+          <div class="flow-box__desc">Registry</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Configure</div>
+          <div class="flow-box__desc">Gateway</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Consume</div>
+          <div class="flow-box__desc">Studio</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Monitor</div>
+          <div class="flow-box__desc">Observability</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Retire</div>
+          <div class="flow-box__desc">Deprecation</div>
+        </div>
+      </div>
+
+      <h2>Today (3.4) vs Target (3.5+)</h2>
+      <div class="two-column" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin: var(--space-lg) 0;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: var(--space-lg);">
+          <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-md);">Today (3.4)</h3>
+          <table class="status-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Mechanism</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Discover</strong></td>
+                <td>MCP Catalog UI (manual browsing)</td>
+              </tr>
+              <tr>
+                <td><strong>Deploy</strong></td>
+                <td>MCPLO creates Deployment + Service from MCPServer CRD</td>
+              </tr>
+              <tr>
+                <td><strong>Register</strong></td>
+                <td><span class="badge badge--gap">Manual</span> — Admin registers server with Gateway via CRD</td>
+              </tr>
+              <tr>
+                <td><strong>Configure</strong></td>
+                <td><span class="badge badge--gap">Manual ConfigMap</span> — <code>gen-ai-aa-mcp-servers</code> in <code>redhat-ods-applications</code></td>
+              </tr>
+              <tr>
+                <td><strong>Consume</strong></td>
+                <td>Gen AI Studio reads ConfigMap, exposes tools to playground</td>
+              </tr>
+              <tr>
+                <td><strong>Monitor</strong></td>
+                <td>Per-server logs, no unified observability</td>
+              </tr>
+              <tr>
+                <td><strong>Retire</strong></td>
+                <td>Manual deletion of MCPServer CRD, manual ConfigMap cleanup</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: var(--space-lg);">
+          <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-md);">Target (3.5+)</h3>
+          <table class="status-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Mechanism</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Discover</strong></td>
+                <td>MCP Catalog UI (enhanced with trust tiers, verification status)</td>
+              </tr>
+              <tr>
+                <td><strong>Deploy</strong></td>
+                <td>MCPLO creates Deployment + Service + auto-registers in Registry</td>
+              </tr>
+              <tr>
+                <td><strong>Register</strong></td>
+                <td><span class="badge badge--tp">Auto</span> — Registry creates governed record with approval workflow</td>
+              </tr>
+              <tr>
+                <td><strong>Configure</strong></td>
+                <td><span class="badge badge--tp">Auto</span> — Registry approval flows into Gateway configuration</td>
+              </tr>
+              <tr>
+                <td><strong>Consume</strong></td>
+                <td>Gen AI Studio reads from Registry API, no ConfigMap needed</td>
+              </tr>
+              <tr>
+                <td><strong>Monitor</strong></td>
+                <td>Unified observability: per-tool metrics, health status, usage analytics</td>
+              </tr>
+              <tr>
+                <td><strong>Retire</strong></td>
+                <td>Registry lifecycle state → Deprecated → Retired (auto-revokes Gateway access)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Key Difference:</strong> Today, each handoff (Deploy → Register → Configure) requires manual admin intervention. Target state: Registry is the single source of truth that drives automation across the ecosystem.
+      </div>
+
+      <h2>Governance Tracks (Current Data Model)</h2>
+      <p>The MCP Registry's current data model uses two independent enums, not the four-track governance model described in early design proposals:</p>
+
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>Enum</th>
+            <th>States</th>
+            <th>Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MCPServerStatus</strong></td>
+            <td>ACTIVE, DEPRECATED, RETIRED</td>
+            <td>Server-level (3 states)</td>
+          </tr>
+          <tr>
+            <td><strong>MCPPublishState</strong></td>
+            <td>DRAFT, PUBLISHED, DEPRECATED, RETIRED</td>
+            <td>Version-level (4 states)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--source">
+        <strong>Post-MVP phasing:</strong> No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model. The four-track governance model (Lifecycle State: Draft/Candidate/Published/Deprecated/Retired; Approval Status: Draft/Pending/Approved/Rejected/Revoked; Verification Status: Unverified/Verified; Certification Status: None/Candidate/Certified/Expired/Revoked) is a proposal, deferred post-MVP, not abandoned: "For MVP/DP we should follow the same path as they are taking for the skills registry upstream to speed up approval/implementation... we should follow immediately after with the governance implementation as proposed here" (doc comment thread). See <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" style="color: var(--rh-blue-light);">MLflow MCP Registry Data Model Proposal</a> for the full four-track proposal.
+      </div>
+
+      <h2>Governance Invariants</h2>
+      <ul>
+        <li><code>MCPServerStatus</code> and <code>MCPPublishState</code> are independent enums; no approval, verification, or certification field exists in the current model to gate either transition</li>
+        <li><code>workspace</code> on a version resolves to the same value as the parent <code>MCPServer.workspace</code></li>
+        <li><code>update_mode</code> (<code>MANUAL</code> or <code>SYSTEM_MANAGED</code>) controls whether a controller such as MCPLO may write to the record; it does not itself change lifecycle or publish state</li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8">Fernando's MCP Research Notes</a></li>
+            <li><a href="https://docs.google.com/document/d/1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y">Jaideep's MCP Ecosystem Best Practices</a></li>
+            <li><a href="https://docs.google.com/document/d/11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y">MCP Registry MVP Requirements</a></li>
+            <li><a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8">MLflow MCP Registry Data Model Proposal</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./component-integration.html">Component Integration</a></li>
+            <li><a href="./security-model.html">Security Model</a></li>
+            <li><a href="../understand/ecosystem-architecture.html">Ecosystem Architecture</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

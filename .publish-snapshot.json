@@ -1,0 +1,14 @@
+{
+  "mcp-ecosystem/hub": {
+    "badge": "new",
+    "hash": "08ae6051811e350c7034c0b2c31701af59132e2950706403871e09ad64f3cd8c",
+    "published": "2026-07-11",
+    "source": "features/mcp-ecosystem/enablement/management-hub"
+  },
+  "mcp-gateway/rhcl": {
+    "badge": "new",
+    "hash": "37c9904edbbcd47094b121e731a53434a088e38db0e34aa153a4e6d488409bc2",
+    "published": "2026-07-11",
+    "source": "features/mcp-gateway/enablement/rhcl-hub"
+  }
+}

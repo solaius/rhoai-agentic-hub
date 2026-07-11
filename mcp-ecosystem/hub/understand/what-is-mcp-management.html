@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Is MCP Management? — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>What Is MCP Management?</h1>
+      <p class="lead">MCP Management is Red Hat's unified ecosystem for discovering, governing, deploying, and consuming Model Context Protocol servers at enterprise scale.</p>
+
+      <h2>The Problem: MCP Without Governance</h2>
+
+      <p>The <strong>Model Context Protocol (MCP)</strong> is an open standard for connecting AI agents to external tools and data sources. It defines how agents discover available tools, understand what each tool does, and invoke those tools using a common JSON-RPC protocol.</p>
+
+      <details style="margin: var(--space-lg) 0; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: var(--space-md) var(--space-lg);">
+        <summary style="cursor: pointer; font-weight: 600; color: var(--text-primary); font-size: var(--fs-body-lead);">What is MCP? — Protocol Basics</summary>
+        <div style="margin-top: var(--space-md);">
+          <p>An <strong>MCP server</strong> exposes one or more tools via the MCP protocol. For example, a Jira MCP server exposes <code>create_issue</code>, <code>search_issues</code>, <code>update_issue</code> tools. An OpenShift MCP server exposes tools for querying cluster state, managing workloads, and troubleshooting deployments.</p>
+          <p>Key MCP operations:</p>
+          <ul>
+            <li><code>tools/list</code> — Discover what tools a server offers</li>
+            <li><code>tools/call</code> — Invoke a specific tool with parameters</li>
+            <li><code>initialize</code> — Establish a connection to the server</li>
+          </ul>
+          <p><a href="https://modelcontextprotocol.io/specification" target="_blank" rel="noopener" style="color: var(--rh-blue-light);">Read the full MCP specification →</a></p>
+        </div>
+      </details>
+
+      <p>But MCP servers in production are not simple. They require:</p>
+      <ul>
+        <li><strong>Discovery</strong> — How do users find the right MCP server for their needs?</li>
+        <li><strong>Governance</strong> — Who approved this MCP server? Is it certified? Who owns it?</li>
+        <li><strong>Deployment</strong> — How do I deploy it to Kubernetes? What RBAC does it need?</li>
+        <li><strong>Security</strong> — How do I enforce "Agent A can only call these tools"?</li>
+        <li><strong>Integration</strong> — How does Gen AI Studio know this MCP server exists?</li>
+      </ul>
+
+      <h2>The MCP Management Journey</h2>
+
+      <p>RHOAI 3.4 marked the <strong>start of the MCP Management Ecosystem</strong> — the first release where MCP components shipped as integrated products. Each subsequent release builds out more of the end-to-end governed workflow.</p>
+
+      <div class="callout callout--gap">
+        <div class="callout__title">Pre-3.4: Fully Manual MCP</div>
+        <ol>
+          <li><strong>Find</strong> — Search GitHub for MCP servers, hope they're containerized</li>
+          <li><strong>Deploy</strong> — Write your own Deployment YAML, figure out RBAC, configure manually</li>
+          <li><strong>Register</strong> — No standard registration mechanism</li>
+          <li><strong>Secure</strong> — Roll your own auth, no per-tool policies</li>
+          <li><strong>Consume</strong> — Wire up manually to your agent framework</li>
+        </ol>
+        <p>No catalog, no operator, no governance, no gateway. Every step required deep Kubernetes expertise and custom scripting.</p>
+      </div>
+
+      <div class="callout callout--insight" style="border-left-color: var(--rh-green);">
+        <div class="callout__title">RHOAI 3.4: MCP Management Begins <span class="badge badge--shipped" style="margin-left: var(--space-sm);">DP</span></div>
+        <ol>
+          <li><strong>Discover</strong> — Browse the MCP Catalog in AI Hub (10 servers: 3 Red Hat [OpenShift, Ansible AAP, Red Hat Insights/Lightspeed], 5 partner, 2 community)</li>
+          <li><strong>Deploy</strong> — Deploy from catalog via MCP Lifecycle Operator <span class="badge badge--shipped" style="font-size: 0.6rem;">DP</span> (prerequisites still manual)</li>
+          <li><strong>Register</strong> — Manually edit <code>gen-ai-aa-mcp-servers</code> ConfigMap to make servers visible in Gen AI Studio</li>
+          <li><strong>Secure</strong> — MCP Gateway <span class="badge badge--tp" style="font-size: 0.6rem;">TP</span> via RHCL provides per-tool auth, identity-aware filtering</li>
+          <li><strong>Consume</strong> — Use MCP tools from Gen AI Studio playground</li>
+        </ol>
+        <p>First integrated experience. Catalog + Operator automate discovery and deployment. Gateway adds enterprise security. ConfigMap bridge is manual but functional.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">RHOAI 3.5+: Full End-to-End MCP Management <span class="badge badge--planned" style="font-size: 0.6rem;">Target</span></div>
+        <ol>
+          <li><strong>Discover</strong> — Catalog with trust tier labels (certified, community, unverified)</li>
+          <li><strong>Deploy</strong> — One-click deploy with automated prerequisite creation</li>
+          <li><strong>Register</strong> — MCP Registry <span class="badge badge--planned" style="font-size: 0.6rem;">DP</span> captures governance metadata, replaces ConfigMap bridge</li>
+          <li><strong>Secure</strong> — Gateway auto-discovers registered servers, enforces per-tool policies</li>
+          <li><strong>Consume</strong> — Gen AI Studio reads from Registry, showing only approved MCP servers</li>
+        </ol>
+        <p>Governed end-to-end. Full audit trail. RBAC-aware. Approval workflows for production deployments. Registry-to-Gateway automation.</p>
+      </div>
+
+      <h2>What Is the MCP Management Ecosystem?</h2>
+
+      <p>MCP Management is the end-to-end product experience for working with MCP servers in Red Hat OpenShift AI. It brings together four components:</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Catalog</div>
+          <span class="badge badge--shipped">DP</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Discovery layer.</strong> Browse partner, community, and Red Hat MCP servers. View tool lists, security indicators, and deployment requirements. Filter by trust tier and license.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Registry</div>
+          <span class="badge badge--planned">TP target 3.6 EA1</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Governance layer.</strong> Currently in design phase; Dev Preview (DP) planned but will not land in RHOAI 3.5 stable. Tech Preview (TP) targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026). System of record for MCP servers, tracking server status, version publish-state, ownership, and deployment visibility.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Lifecycle Operator</div>
+          <span class="badge badge--shipped">DP</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Deployment primitive.</strong> Kubernetes operator that deploys MCP server workloads. Creates Deployment, Service, prerequisites (ServiceAccount, ConfigMap) from MCPServer CRD.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Gateway</div>
+          <span class="badge badge--tp">TP</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Runtime enforcement.</strong> API gateway for AI tool calls. Provides identity-aware tool filtering, per-tool authentication, virtual MCP servers, metrics, and audit logging.</p>
+        </div>
+      </div>
+
+      <h2>Position Statement</h2>
+
+      <div class="callout callout--quote">
+        <p><strong>MCP Management</strong> is the enterprise governance layer for AI tool access. It brings the same rigor to MCP servers that Red Hat already provides for container images (Quay), models (Model Registry), and APIs (3scale) — with discovery catalogs, governed registries, automated deployment, and runtime policy enforcement.</p>
+        <p>This is not just tooling for MCP. It's the foundation for governing all AI assets (agents, skills, guardrails) in production.</p>
+      </div>
+
+      <h2>Related Concepts</h2>
+
+      <p><strong>MCP Protocol Recap:</strong> For a deeper explanation of the Model Context Protocol itself, see the <a href="../../../mcp-gateway/rhcl/understand/what-is-it.html">MCP Gateway — What Is It?</a> page, which covers JSON-RPC methods, tool schemas, and the agent-to-tool interaction model.</p>
+
+      <p><strong>Not Just MCP:</strong> The MCP ecosystem is the first instantiation of a broader <strong>AI Asset Registry</strong> vision. The same governance patterns (catalog for discovery, registry for lifecycle, operator for deployment) will extend to agents, skills, guardrails, and other AI assets in future releases.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/flows/mcp-implementation-end-to-end.md" class="page-footer__link">MCP Implementation End-to-End</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-catalog.md" class="page-footer__link">MCP Catalog Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-registry.md" class="page-footer__link">MCP Registry Component Doc</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./ecosystem-architecture.html" class="page-footer__link">Ecosystem Architecture — Full flow diagram</a></li>
+            <li><a href="./component-overview.html" class="page-footer__link">Component Overview — Deep dive into each component</a></li>
+            <li><a href="./personas.html" class="page-footer__link">Personas — Who uses what</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

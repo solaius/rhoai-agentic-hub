@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Gateway Relationship — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>AI Gateway: The Bigger Picture</h1>
+      <p class="lead">The MCP Gateway handles MCP protocol traffic. The AI Gateway covers <strong>ALL</strong> AI traffic.</p>
+
+      <div class="callout callout--insight">
+        <strong>Source:</strong> AI Gateway F2F (April 2026) — binding architectural decisions from 3-day engineering F2F.<br>
+        <strong>Status:</strong> Architecture decided (~60% detailed); follow-up design sessions needed before 3.5 scope is fully locked.
+      </div>
+
+      <h2>Four Traffic Types</h2>
+      <p>The AI Gateway must serve four distinct traffic types:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Type</th>
+            <th>Examples</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><strong>Model inference</strong></td>
+            <td>/v1/chat/completions, /v1/embeddings</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><strong>Tool calling / MCP</strong></td>
+            <td>MCP Gateway handles this</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><strong>Agent-to-Agent (A2A)</strong></td>
+            <td>AgentCard discovery, invocation, orchestration</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><strong>External provider egress</strong></td>
+            <td>Route to Azure OpenAI, Bedrock, Vertex with credential injection</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>IPP Framework</h2>
+      <p>The <strong>Inference Payload Processor (IPP)</strong> is the foundational plugin layer for ALL gateway processing — inference, egress, guardrails, metering, and the Responses API.</p>
+      <ul>
+        <li>Implemented as ext_proc plugin chain within Envoy</li>
+        <li>Current plugin pipeline: <code>body-field-to-header → model-provider-resolver → api-translation → apikey-injection</code></li>
+        <li>Policy flows currently in Authorino (separate ext_proc) will migrate into IPP plugins within a single ext_proc, reducing architectural complexity</li>
+        <li>Designed to be <strong>proxy-agnostic</strong> — architecture is sound regardless of underlying proxy (Envoy, Praxis, etc.)</li>
+      </ul>
+
+      <div class="callout callout--insight">
+        <strong>Relationship:</strong> MCP Gateway and AI Gateway are <strong>complementary, not competing</strong>. Both share Envoy, Gateway API, and RHCL infrastructure (Authorino, Limitador).
+      </div>
+
+      <h2>Recently Shipped</h2>
+      <ul>
+        <li><strong>Vertex Anthropic translator:</strong> Routes Claude on Vertex AI, translating Anthropic SDK requests to Vertex's messages API and stripping Anthropic-API-only fields (context_management, betas, mcp_servers, service_tier, container) that Vertex does not support.</li>
+        <li><strong>Provider-error metering:</strong> Provider error responses are now metered as a CloudEvent (<code>inference.request.error</code>) carrying status, error type, and message.</li>
+        <li><strong>GCP OAuth2 auth generator:</strong> Generates and automatically refreshes OAuth2 tokens for Vertex AI authentication.</li>
+      </ul>
+
+      <h2>Data-Plane Capabilities (vLLM)</h2>
+      <p>For self-hosted vLLM inference, the AI Gateway design covers a data-plane capability set distinct from the traffic-routing and IPP layers above:</p>
+      <ul>
+        <li>GPU planning</li>
+        <li>vLLM deployment and service creation, plus monitoring</li>
+        <li>Prefix-caching awareness</li>
+        <li>SLO- and load-aware routing</li>
+        <li>KV-cache awareness</li>
+        <li>Model versioning and deployments</li>
+        <li>Retry and fallback</li>
+      </ul>
+
+      <h2>Shared Infrastructure</h2>
+      <p>Both MCP Gateway and AI Gateway rely on:</p>
+      <ul>
+        <li><strong>Envoy Proxy:</strong> Underlying proxy infrastructure</li>
+        <li><strong>Gateway API:</strong> Kubernetes Gateway API for routing</li>
+        <li><strong>RHCL Platform:</strong> Red Hat Connectivity Link (Authorino, Limitador, DNS Operator)</li>
+        <li><strong>ext_proc Plugins:</strong> Extension processor plugin chains</li>
+      </ul>
+
+      <h2>Key F2F Decisions Affecting MCP Gateway</h2>
+
+      <h3>1. Group-Based Tenancy</h3>
+      <p>The existing group-based subscription model for models in MaaS is generalized to:</p>
+      <ul>
+        <li>Vector stores</li>
+        <li>File storage</li>
+        <li><strong>MCP tool catalogs</strong></li>
+        <li>Guardrails</li>
+        <li>Evaluations</li>
+      </ul>
+
+      <h3>2. Agent Identity Tiers</h3>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Mechanism</th>
+            <th>What It Provides</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tier 1</strong></td>
+            <td>OpenShell token masking</td>
+            <td>Prevents agents from seeing raw user credentials; simple to adopt</td>
+          </tr>
+          <tr>
+            <td><strong>Tier 2</strong></td>
+            <td>Spire/Authbridge integration</td>
+            <td>Full workload identity with actor-chain tracking; OPA policy enforcement</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><strong>Actor-chain tracking:</strong> When agent A calls agent B, all actors' SPIFFE IDs stored in the token's claims. OPA enforces the <strong>lowest permission level</strong> across the chain — prevents privilege escalation.</p>
+
+      <h3>3. Guardrails Convergence</h3>
+      <p>MCP Gateway already ships guardrails (NeMo/TrustyAI) via ext_proc adapter. Content Guardrails are owned by the TrustyAI operator team, not MCP Gateway, and are staged as RHOAI 3.4 Dev Preview (Summit) followed by RHOAI 3.5 Tech Preview. The same guardrails are needed for chat completions, Responses API, and external model egress. <strong>Convergence target:</strong> Extract guardrails into shared IPP plugin for both inference and MCP.</p>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/1-WGqvk5Ehn5ocyMON0QNkMDeQyiFzbsAMmIXuyzqrBU">AI Gateway F2F — Agenda & Outcomes</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/architecture.html">Architecture</a></li>
+            <li><a href="../build/features.html">Features Deep Dive</a></li>
+            <li><a href="../understand/rhcl-context.html">RHCL Context</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

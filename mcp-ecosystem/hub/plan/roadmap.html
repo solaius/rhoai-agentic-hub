@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Roadmap</h1>
+      <p class="lead">Cross-cutting roadmap for the MCP Ecosystem — tracking Catalog, Lifecycle Operator, Gateway, and Registry delivery across RHOAI releases.</p>
+
+      <section>
+        <h2>Release Timelines</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Release</th>
+              <th>Date</th>
+              <th>Catalog</th>
+              <th>MCPLO</th>
+              <th>Gateway</th>
+              <th>Registry</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>RHOAI 3.4 (Current)</strong></td>
+              <td>Apr 2026</td>
+              <td><span class="badge badge--shipped">DP Shipped</span> Partner & community MCPs</td>
+              <td><span class="badge badge--shipped">DP v0.2.0</span> Manual YAML install</td>
+              <td><span class="badge badge--shipped">TP in RHCL 1.4</span> Gateway API required</td>
+              <td><span class="badge badge--not-available">—</span></td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI 3.5</strong></td>
+              <td>Aug 2026</td>
+              <td><span class="badge badge--planned">Enhancements</span> Prerequisite automation (RHAIRFE-2434); Registry integration TP moved to 3.6 EA1</td>
+              <td><span class="badge badge--planned">TP (Jul 24, 2026 code freeze)</span> Bundled in RHOAI operator (on risk: bug week Jul 13)</td>
+              <td><span class="badge badge--planned">TP (RHOAI dep)</span> Registry auto-config (manual fallback)</td>
+              <td><span class="badge badge--not-available">Not in 3.5</span> DP planned but will not land in RHOAI 3.5 stable; TP retargeted to RHOAI 3.6 EA1 (PM direction, Jul 2026). Interactive prototype + demo circulated 2026-06-30</td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI 3.6 EA1</strong></td>
+              <td>2026 (date TBD)</td>
+              <td><span class="badge badge--planned">TP</span> Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
+              <td><span class="badge badge--not-available">—</span></td>
+              <td><span class="badge badge--not-available">—</span></td>
+              <td><span class="badge badge--planned">TP</span> Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
+            </tr>
+            <tr>
+              <td><strong>GA Target</strong></td>
+              <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
+              <td><span class="badge badge--planned">GA</span> Full federation (RHAISTRAT-1994)</td>
+              <td><span class="badge badge--planned">GA</span> Production hardening (RHAISTRAT-1995)</td>
+              <td><span class="badge badge--planned">GA</span> RHCL 1.5 (Oct 2026). Session mgmt, HA. See <a href="https://solaius.github.io/rhoai-agentic-hub-pages/narrative/mcp-spec-rc-impact/">MCP Spec RC Impact Analysis</a> (sessions eliminated by the RC; resumable-sessions needs redefinition)</td>
+              <td><span class="badge badge--planned">GA Target</span> Full lifecycle automation (RHAISTRAT-1993)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout--source">
+          <p><strong>Registry replan (PM direction, 2026-07-11):</strong> MCP Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is MCP Catalog TP and MCP Registry TP together in RHOAI 3.6 EA1, alongside the Catalog-Registry integration below. Jira fix versions for the Registry DP work still show RHOAI 3.5 in places; re-targeting to RHOAI 3.6 EA1 is in progress to match.</p>
+          <p><strong>Catalog↔Registry integration re-scoped (2026-07-10):</strong> RHAISTRAT-1938 ("[TP] MCP Catalog and Registry Integration - Unified Discovery and Governance for Tech Preview") is now <strong>Closed/Obsolete</strong>, superseded by <strong>RHAISTRAT-2027</strong> ("MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for Tech Preview," In Progress), which carries fix version <strong>3.6 EA1</strong> rather than 3.5. The table above reflects the updated timing.</p>
+          <p><strong>MCPLO track scoping note:</strong> per MCPLO weekly meeting notes, "Gateway integration → 3.6": Gateway integration work for the lifecycle/server track is scoped to RHOAI 3.6, not 3.5, distinct from the RHCL-side Gateway TP row above.</p>
+          <p><strong>MCPLO E2E release gate:</strong> finalized 2026-06-30. The primary release gate is RHOAI's internal Jenkins test matrix (multi-platform, FIPS, disconnected, upgrade scenarios), not Konflux ITS. Konflux ITS is kept only for lightweight PR-level smoke/e2e.</p>
+          <p><strong>OpenShift MCP server tracked separately:</strong> the OpenShift/Kubernetes MCP server itself has its own Jira tracking distinct from MCPLO: <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2739" target="_blank" rel="noopener">OCPSTRAT-2739</a> (GA) and <a href="https://redhat.atlassian.net/browse/OCPSTRAT-3337" target="_blank" rel="noopener">OCPSTRAT-3337</a> (TP2, targeted early Aug 2026).</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Component Version Timelines</h2>
+
+        <h3>MCP Catalog</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>3.4 DP</strong></td>
+              <td>Apr 2026</td>
+              <td>5 partners + 2 community MCPs, deploy wizard, manual prerequisites</td>
+            </tr>
+            <tr>
+              <td><strong>3.5 (DP continues)</strong></td>
+              <td>Aug 2026</td>
+              <td>Prerequisite automation, enhanced metadata (fix version RHOAI 3.5; Catalog stays DP stage). Registry integration TP moved to <strong>3.6 EA1</strong> (RHAISTRAT-2027 In Progress, supersedes obsoleted RHAISTRAT-1938)</td>
+            </tr>
+            <tr>
+              <td><strong>3.6 EA1 TP</strong></td>
+              <td>2026 (date TBD)</td>
+              <td>Catalog reaches Tech Preview alongside Registry TP and the Catalog-Registry integration (RHAISTRAT-2027, In Progress). TP timing retargeted from RHOAI 3.5 to RHOAI 3.6 EA1 (PM direction, Jul 2026)</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong></td>
+              <td>RHOAI 3.6 (Oct 23, 2026)</td>
+              <td>Multi-registry federation, partner pipeline scaling, tier labeling (RHAISTRAT-1994)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>MCP Lifecycle Operator</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>v0.2.0 DP</strong></td>
+              <td>Jun 17, 2026</td>
+              <td>MCPServer CRD, manual YAML install, catalog selection wizard</td>
+            </tr>
+            <tr>
+              <td><strong>TP</strong></td>
+              <td>Jul 24, 2026 (RHOAI 3.5 code freeze)</td>
+              <td>Bundled in RHOAI operator, RHOAI restricted use entitlement for OpenShift entitlement, Day 2 ops. <strong>On risk</strong>: team on bug week Jul 13; OCPMCP-298 needs to move TP→GA tracking. E2E release gate: RHOAI internal Jenkins matrix (Konflux ITS = PR-level smoke only)</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong></td>
+              <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
+              <td>Production hardening, disconnected support, registry sync (RHAISTRAT-1995); team aiming for earlier part of Oct if possible</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="source-ref">Note: the OpenShift/Kubernetes MCP server itself is tracked separately from MCPLO: <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2739" target="_blank" rel="noopener">OCPSTRAT-2739</a> (GA) and <a href="https://redhat.atlassian.net/browse/OCPSTRAT-3337" target="_blank" rel="noopener">OCPSTRAT-3337</a> (TP2, early Aug 2026).</p>
+
+        <h3>MCP Gateway</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>v0.6.0 TP</strong></td>
+              <td>Apr 30, 2026 (RHCL 1.3.3)</td>
+              <td>OAuth auth, virtual servers, isolated deployments, Vault integration</td>
+            </tr>
+            <tr>
+              <td><strong>v0.7.1 TP</strong></td>
+              <td>Jun 18, 2026 (RHCL 1.4)</td>
+              <td>8× performance gain, content guardrails, OTEL tracing</td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI 3.5 TP</strong></td>
+              <td>Aug 2026</td>
+              <td>RHOAI dependency, registry auto-config (manual fallback)</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong></td>
+              <td>RHCL 1.5 (Oct 2026)</td>
+              <td>Deployment operator, session mgmt, HA, registry integration</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>MCP Registry</h3>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>DP (planned)</strong></td>
+              <td>Not landing in RHOAI 3.5 stable</td>
+              <td>Metadata-first governance, lifecycle states, approval workflows, workspace scoping. Interactive prototype + demo circulated 2026-06-30. TP retargeted to RHOAI 3.6 EA1 (PM direction, Jul 2026)</td>
+            </tr>
+            <tr>
+              <td><strong>3.6 EA1 TP</strong></td>
+              <td>2026 (date TBD)</td>
+              <td>Registry reaches Tech Preview alongside Catalog TP and the Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
+            </tr>
+            <tr>
+              <td><strong>GA Target</strong></td>
+              <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
+              <td>Gateway auto-config, catalog sync, full lifecycle automation, multi-track governance (RHAISTRAT-1993)</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Strategic Outcome</h2>
+        <div class="callout callout--insight">
+          <h3>RHAISTRAT-1339: AI Hub AI Asset Delivery for Agentic Solutions</h3>
+          <p><strong>Umbrella outcome for the full MCP Ecosystem delivery.</strong></p>
+          <p>The roadmap above represents the unified delivery of all components required to achieve the strategic outcome: a governed, federated AI asset ecosystem for agentic solutions on Red Hat OpenShift AI.</p>
+          <p><strong>Key dependencies:</strong></p>
+          <ul>
+            <li>Catalog depends on Lifecycle Operator for deployment primitive</li>
+            <li>Gateway depends on RHCL for infrastructure</li>
+            <li>Registry depends on Catalog + Gateway + MCPLO for integration points</li>
+            <li>Gen AI Studio depends on Registry (ConfigMap bridge in 3.4; registry-backed once Registry TP lands in 3.6 EA1)</li>
+          </ul>
+          <p><strong>GA readiness criteria:</strong> All four components reach GA, registry→gateway auto-config works, end-to-end flow (Catalog → Deploy → Govern → Enforce → Consume) validated in production.</p>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/Kuadrant/mcp-gateway/releases">MCP Gateway Releases</a></li>
+            <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/releases">MCPLO Releases</a></li>
+            <li>Source Verification Report (2026-06-22); Jira sweep + MCPLO Weekly Meeting Notes (2026-07-10)</li>
+            <li>RHCL Overview Deck (RHCL Product Team)</li>
+            <li>Component Knowledge Docs (mcp-gateway.md, mcp-catalog.md, mcp-registry.md, mcp-lifecycle-operator.md)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="gaps.html">Gaps</a></li>
+            <li><a href="jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="open-questions.html">Open Questions</a></li>
+            <li><a href="../understand/ecosystem-architecture.html">Architecture</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

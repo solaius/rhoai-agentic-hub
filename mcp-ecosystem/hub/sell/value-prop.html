@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Value Proposition - MCP Management Knowledge Hub</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+    <h1>Value Proposition</h1>
+    <p class="lead">From MCP chaos to governed enterprise infrastructure — the only full-lifecycle AI tool management platform.</p>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">The Core Problem</h2>
+      <p>Enterprises adopting MCP face three critical gaps: discovery chaos (finding what exists), governance blind spots (who approved what, who can access it, what's certified), and runtime sprawl (no auth, no metrics, no control). Existing solutions address one layer — Red Hat solves all three.</p>
+    </div>
+
+    <h2>Three Pillars of MCP Management</h2>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">1. Discovery — MCP Catalog</h2>
+      <p><strong>Pain:</strong> "Where do I find MCP servers? Which ones are certified? Which can I actually use?"</p>
+      <p><strong>Solution:</strong> Partner-verified catalog with 10 servers shipped (5 partner, 2 community, 3 Red Hat); certification program in design. Partners: Confluent, Dynatrace, Azure, EDB, Terraform. Red Hat: OpenShift, Ansible, Insights. Plus community servers and BYO registration. Discovery layer with security indicators, deployment templates, and RBAC visibility (you only see what you can deploy).</p>
+      <p><strong>Proof:</strong> Shipped in RHOAI 3.4 (April 2026). 5 partners, 3 Red Hat, 2 community servers available day one. Consent-based partner pipeline scaled to 10+ organizations within 8 weeks.</p>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">2. Governance — MCP Registry</h2>
+      <p><strong>Pain:</strong> "Who approved this server? Is it safe? Can I trust it? What version am I running? Is this certified?"</p>
+      <p><strong>Solution:</strong> MLflow-backed registry with immutable versioning, approval workflows (Draft → Candidate → Published → Deprecated → Retired), verification status, certification tracking, and full audit trail. Governance metadata separated from MCP payload — upstream MCP schema preserved, Red Hat governance layered on top.</p>
+      <p><strong>Proof:</strong> DP planned; will not land in RHOAI 3.5 stable. TP targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026); GA Q4 2026. Red Hat driving skills registry design with MLflow upstream, submitting requirements/user stories to MLflow. Data model proposal under active review with Databricks/MLflow upstream (as of June 2026).</p>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">3. Runtime — MCP Gateway + Lifecycle Operator</h2>
+      <p><strong>Pain:</strong> "How do I control access? How do I monitor usage? How do I enforce policies? How do I deploy safely?"</p>
+      <p><strong>Solution:</strong> Envoy-based gateway with identity-aware tool routing (you only see tools you're authorized for), credential brokering (token exchange via Keycloak, OBO support, Vault integration for secrets), per-tool rate limiting (Limitador), and OpenTelemetry metrics/traces. Lifecycle Operator handles deployment, health checks, secrets injection, and Day 2 operations.</p>
+      <p><strong>Proof:</strong> MCP Gateway v0.7.1 (June 18, 2026), RHCL 1.4 GA (June 2026), MCPLO v0.2.0 (June 17, 2026). Validated on ROSA/OCP 4.21.6/RHOAI 3.4.0 with Keycloak, Vault, and full auth stack. POC engagements with a large enterprise OEM customer, a strategic hardware partner, and a major telecommunications provider prove production-grade architecture (May-July 2026).</p>
+    </div>
+
+    <h2>Key Differentiators</h2>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">What No Competitor Can Match</h2>
+      <ul>
+        <li><strong>Full lifecycle coverage:</strong> Discovery (Catalog) → Governance (Registry) → Runtime (Gateway + MCPLO) → Consumption (Gen AI Studio). No other platform spans all four.</li>
+        <li><strong>Governance-first design:</strong> Registry approval workflows enforce "no unapproved MCP server reaches production." Competitors stop at discovery.</li>
+        <li><strong>Identity-aware routing:</strong> MCP Gateway knows who you are, what you can access, and which tools you're allowed to invoke — all enforced at the gateway layer. Competitors require app-level enforcement.</li>
+        <li><strong>Enterprise auth:</strong> Keycloak OIDC federation, token exchange, OBO, Vault secrets injection, wristband signing. Competitors assume "MCP server handles auth" (it doesn't).</li>
+        <li><strong>Upstream collaboration:</strong> Red Hat driving MLflow skills registry design, contributing to Open Responses API, submitting MCP ecosystem feedback to Anthropic. Competitors consume, Red Hat shapes.</li>
+      </ul>
+    </div>
+
+    <div class="callout callout--source">
+      <p><strong>Competitive landscape:</strong> Docker MCP Catalog (discovery only), Smithery (discovery only), GitHub MCP Registry (discovery only, no governance), Official MCP Registry (spec reference, not a product). See <a href="competitive.html" class="page-footer__link">Competitive Landscape</a> for full comparison.</p>
+    </div>
+
+    <h2>Customer Value</h2>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Persona</th>
+          <th>Without Red Hat</th>
+          <th>With Red Hat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Data Scientist</strong></td>
+          <td>Hunt for MCP servers on GitHub, no idea if certified, deploy manually, hope it works</td>
+          <td>Browse catalog, one-click deploy, see only what you're authorized for, trust comes from approval workflow</td>
+        </tr>
+        <tr>
+          <td><strong>Security Lead</strong></td>
+          <td>No visibility into what's deployed, no approval gate, no audit trail, policy enforcement lives in apps (if at all)</td>
+          <td>Approval workflows block unapproved servers, audit trail for every version, policy enforcement at gateway (before apps see traffic)</td>
+        </tr>
+        <tr>
+          <td><strong>Platform Admin</strong></td>
+          <td>Manual YAML for every MCP server, ConfigMap wiring to Gen AI Studio, no health checks, credential sprawl</td>
+          <td>Lifecycle Operator automates deployment, registry-backed catalog auto-wires to Studio, health checks built-in, Vault secrets injection</td>
+        </tr>
+        <tr>
+          <td><strong>Developer</strong></td>
+          <td>Build auth into every MCP server, handle credential rotation, implement rate limiting, write observability from scratch</td>
+          <td>MCP server receives validated token in Authorization header, gateway handles auth/metrics/limits, developer writes business logic only</td>
+        </tr>
+      </tbody>
+    </table>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Source verification: internal</li>
+            <li>MCP Registry Data Model Proposal (Google Doc)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/ecosystem-architecture.html" class="page-footer__link">Architecture Overview</a></li>
+            <li><a href="customer-stories.html" class="page-footer__link">Customer Stories</a></li>
+            <li><a href="competitive.html" class="page-footer__link">Competitive Landscape</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

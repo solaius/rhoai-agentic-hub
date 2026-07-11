@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Operator Installation — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Operator Installation</h1>
+      <p class="lead">The MCP ecosystem on RHOAI involves a two-tier operator installation model. Installation order matters — Tier 1 must complete before Tier 2.</p>
+
+      <h2>Two-Tier Model</h2>
+      <p>The ecosystem is built on two layers of infrastructure:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Components</th>
+            <th>Installation Method</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Tier 1</strong><br>Platform Prerequisites</td>
+            <td>
+              • OpenShift Service Mesh<br>
+              • cert-manager<br>
+              • Red Hat Connectivity Link<br>
+              • RHOAI
+            </td>
+            <td>OperatorHub</td>
+            <td>Platform-level infrastructure for API management, TLS, and AI workloads</td>
+          </tr>
+          <tr>
+            <td><strong>Tier 2</strong><br>MCP Ecosystem</td>
+            <td>
+              • MCP Gateway Operator<br>
+              • MCP Lifecycle Operator<br>
+              • RHBK (Keycloak)<br>
+              • HashiCorp Vault
+            </td>
+            <td>OLM custom catalog, Manual YAML, Helm</td>
+            <td>MCP-specific management, auth, and credential injection</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Installation Order Matters</div>
+        <p>All Tier 1 operators must be installed and healthy before installing Tier 2 components. MCP Gateway requires Service Mesh and Kuadrant to be fully operational.</p>
+      </div>
+
+      <h2>Tier 1: Platform Prerequisites</h2>
+
+      <h3>1. OpenShift Service Mesh 3.x</h3>
+      <p>Provides Envoy-based ingress gateway and ext_proc support required by MCP Gateway Router.</p>
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: servicemeshoperator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  name: servicemeshoperator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <h3>2. cert-manager</h3>
+      <p>TLS certificate management and ClusterIssuers for Gateway TLS termination.</p>
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: openshift-cert-manager-operator
+  namespace: cert-manager-operator
+spec:
+  channel: stable-v1
+  name: openshift-cert-manager-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <h3>3. Red Hat Connectivity Link (RHCL)</h3>
+      <p>Kuadrant platform providing Authorino (auth), Limitador (rate limiting), and DNSPolicy/TLSPolicy CRDs.</p>
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: kuadrant-operator
+  namespace: openshift-operators
+spec:
+  channel: stable
+  name: kuadrant-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <p>After installation, apply a Kuadrant CR to activate the control plane:</p>
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: gateway-system
+EOF</code></pre>
+
+      <h3>4. Red Hat OpenShift AI (RHOAI)</h3>
+      <p>May require a custom CatalogSource for RHOAI 3.4.0+ (check with your Red Hat account team for access).</p>
+      <p>After installation, ensure the DataScienceCluster has <code>llamastackoperator: Managed</code>:</p>
+      <pre><code>oc patch datasciencecluster default \
+    --type=merge \
+    -p '{"spec":{"components":{"llamastackoperator":{"managementState":"Managed"}}}}'</code></pre>
+
+      <h2>Tier 2: MCP Ecosystem</h2>
+
+      <h3>1. MCP Lifecycle Operator</h3>
+      <p>Not available via OLM or Helm. Install manually from the GitHub release asset (repo is <code>kubernetes-sigs/mcp-lifecycle-operator</code>; <code>openshift/mcp-lifecycle-operator</code> is a fork with no releases of its own):</p>
+      <pre><code>oc apply -f https://github.com/kubernetes-sigs/mcp-lifecycle-operator/releases/download/v0.2.0/install.yaml
+
+# Wait for operator to be ready
+oc wait --for=condition=Ready pod -l control-plane=controller-manager \
+    -n mcp-lifecycle-operator-system --timeout=300s</code></pre>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Since v0.2.0 (upstream)</div>
+        <p>The operator now reconciles a <strong>NetworkPolicy per MCPServer operand</strong> automatically, so no manual NetworkPolicy prerequisite is needed. Its metrics/webhook server also supports TLS security-profile tuning via the <code>TLS_MIN_VERSION</code> and <code>TLS_CIPHER_SUITES</code> environment variables.</p>
+      </div>
+
+      <h3>2. MCP Gateway Operator (for full Gateway setup)</h3>
+      <p>Install via OLM using a custom CatalogSource:</p>
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: mcp-gateway-catalog
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: quay.io/kuadrant/mcp-gateway-operator-catalog:v0.7.1
+  displayName: MCP Gateway Catalog
+  publisher: Kuadrant
+EOF
+
+# Subscribe to the operator
+oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: mcp-gateway-operator
+  namespace: openshift-operators
+spec:
+  channel: alpha
+  name: mcp-gateway-operator
+  source: mcp-gateway-catalog
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <h3>3. Red Hat Build of Keycloak (RHBK)</h3>
+      <p>For identity management and OIDC authentication:</p>
+      <pre><code>oc apply -f - &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: rhbk-operator
+  namespace: openshift-operators
+spec:
+  channel: stable-v24
+  name: rhbk-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+
+      <h3>4. HashiCorp Vault (Optional)</h3>
+      <p>For dynamic credential injection. Install via Helm:</p>
+      <pre><code>helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo update
+
+helm install vault hashicorp/vault \
+  --namespace vault \
+  --create-namespace \
+  --set server.ha.enabled=true \
+  --set server.ha.replicas=3</code></pre>
+
+      <h2>Validated Component Versions</h2>
+      <p>These versions have been tested and validated together on ROSA/OpenShift 4.21.6 with RHOAI 3.4.0. <strong>Validated as of the RHOAI 3.4 validation run (2026-04-21)</strong>: this matrix reflects that run, not current-release validation; re-validate before relying on it against a newer RHOAI train.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Version</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Platform</td>
+            <td>ROSA, OpenShift 4.21.6, RHOAI 3.4.0</td>
+            <td>Baseline platform</td>
+          </tr>
+          <tr>
+            <td>OpenShift Service Mesh</td>
+            <td>3.3.2</td>
+            <td>Envoy gateway, mTLS</td>
+          </tr>
+          <tr>
+            <td>Red Hat Connectivity Link</td>
+            <td>1.3.2 (Authorino 1.3.0, Limitador 1.3.0)</td>
+            <td>Includes MCP Gateway 0.6.0 TP</td>
+          </tr>
+          <tr>
+            <td>MCP Gateway</td>
+            <td>v0.6.0</td>
+            <td>RHCL 1.3.3 bundle</td>
+          </tr>
+          <tr>
+            <td>MCP Lifecycle Operator</td>
+            <td>release-0.1</td>
+            <td>Manual install only</td>
+          </tr>
+          <tr>
+            <td>Keycloak</td>
+            <td>26.4.11-opr.1 (RHBK)</td>
+            <td>Identity management</td>
+          </tr>
+          <tr>
+            <td>Vault</td>
+            <td>1.21.2 (Helm 0.32.0)</td>
+            <td>Optional, credential injection</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Version Support Gap — August 2026</div>
+        <p>RHOAI 3.5 (Aug 2026) supports OCP 4.19, but RHCL 1.4+ will likely require OCP 4.20+. The configuration (RHOAI 3.5 + RHCL + OCP 4.19) is <strong>untested and best-effort support only</strong>.</p>
+        <p>OCP 4.19 maintenance support ends December 2026 (only 4 months overlap). Customers are advised to upgrade to OCP 4.20+ for full support.</p>
+      </div>
+
+      <h2>Post-Install Activation</h2>
+
+      <h3>Enable MCP Catalog in RHOAI</h3>
+      <pre><code>oc patch odhdashboardconfigs odh-dashboard-config \
+    -n redhat-ods-applications \
+    --type=merge \
+    -p '{"spec":{"dashboardConfig":{"mcpCatalog":true}}}'</code></pre>
+
+      <h3>Enable Gen AI Studio (if not already enabled)</h3>
+      <pre><code>oc patch odhdashboardconfigs odh-dashboard-config \
+    -n redhat-ods-applications \
+    --type=merge \
+    -p '{"spec":{"dashboardConfig":{"genAiStudio":true}}}'</code></pre>
+
+      <h2>Verification</h2>
+      <p>Verify all operators are healthy before proceeding:</p>
+      <pre><code># Tier 1
+oc get csv -n openshift-operators | grep -E "(servicemesh|cert-manager|kuadrant)"
+oc get kuadrant -n gateway-system
+
+# Tier 2
+oc get pods -n mcp-lifecycle-operator-system
+oc get csv -n openshift-operators | grep mcp-gateway
+oc get keycloak -A
+oc get pods -n vault  # if Vault installed</code></pre>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://docs.google.com/document/d/1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y" class="page-footer__link">Jaideep Rao's MCP Ecosystem Best Practices</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./end-to-end-setup.html" class="page-footer__link">End-to-End Setup</a></li>
+            <li><a href="./configuration-reference.html" class="page-footer__link">Configuration Reference</a></li>
+            <li><a href="./troubleshooting.html" class="page-footer__link">Troubleshooting</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

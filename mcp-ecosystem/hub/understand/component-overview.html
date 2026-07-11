@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Component Overview — MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Component Overview</h1>
+      <p class="lead">Deep dive into each component of the MCP Management ecosystem — status, versions, key CRDs, and upstream repos.</p>
+
+      <h2>MCP Gateway</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Gateway</div>
+          <span class="status-badge status-badge--tp">v0.7.1 TP</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Purpose:</strong> API gateway for AI tool calls. Provides virtual MCP servers, identity-aware tool filtering, per-tool authentication, metrics, and audit logging.</p>
+
+          <p><strong>Status:</strong> Technical Preview (TP) since RHCL 1.3.3 (April 30, 2026); current RHCL 1.4. Latest release v0.7.1 (June 18, 2026). GA targeted for RHCL 1.5 (October 2026) with MCP Registry integration.</p>
+
+          <p><strong>Key CRDs:</strong></p>
+          <ul>
+            <li><code>MCPServerRegistration</code> (<code>mcp.kuadrant.io/v1</code>): registers an MCP server with the gateway (<code>spec.prefix</code>, <code>targetRef</code> to HTTPRoute)</li>
+            <li><code>MCPVirtualServer</code> (<code>mcp.kuadrant.io/v1</code>): curated virtual server composed from one or more registered backends</li>
+            <li><code>MCPGatewayExtension</code> — Configures gateway-level behavior (trustedHeadersKey, broker settings)</li>
+          </ul>
+
+          <p><strong>Upstream Repo:</strong> <a href="https://github.com/Kuadrant/mcp-gateway" class="page-footer__link">Kuadrant/mcp-gateway</a></p>
+
+          <p><strong>Platform:</strong> Built on Red Hat Connectivity Link (RHCL). RHCL is a WASM plugin for Envoy (not a standalone gateway), meaning minimal disruption to existing infrastructure.</p>
+
+          <p><strong>RHOAI Integration:</strong> Ships as part of RHOAI subscription (auth via Authorino, rate limiting for AI workloads only). Full RHCL purchase required for DNS, HA/DR/GLB.</p>
+
+          <p><strong>Roadmap Highlights:</strong></p>
+          <ul>
+            <li><strong>TP (Apr 2026):</strong> Isolated Gateway Deployment, Vault Integration, MCP Elicitation, Content Guardrails, OTEL Tracing</li>
+            <li><strong>GA (RHCL 1.5, Oct 2026):</strong> Deployment Operator, Security Plugins (DDoS, Bot Management), Session Management, HA with health checks, <strong>MCP Registry integration</strong></li>
+          </ul>
+
+          <p><strong>Learn More:</strong> <a href="../../../mcp-gateway/rhcl/" class="page-footer__link">MCP Gateway Knowledge Hub</a></p>
+        </div>
+      </div>
+
+      <h2>MCP Catalog</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Catalog</div>
+          <span class="status-badge status-badge--dp">3.4 DP</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Purpose:</strong> Discovery layer for MCP servers. Browse partner, community, and Red Hat MCP servers with metadata (tool lists, security indicators, license, provider logo, README).</p>
+
+          <p><strong>Status:</strong> Developer Preview (DP) shipped in RHOAI 3.4 (code freeze April 10, 2026); DP continues through 3.5 with enhancements. TP in RHOAI 3.6 EA1 with Registry integration (PM direction, Jul 2026). GA targeted for Q4 2026.</p>
+
+          <p><strong>What Shipped (3.4 DP):</strong></p>
+          <ul>
+            <li><strong>5 Partners:</strong> Confluent, Dynatrace, Terraform (HashiCorp), Microsoft Azure, EnterpriseDB (EDB)</li>
+            <li><strong>2 Community:</strong> MariaDB, MongoDB</li>
+            <li><strong>3 Red Hat:</strong> OpenShift, Ansible AAP, Red Hat Insights/Lightspeed</li>
+            <li><strong>Quay org:</strong> <code>quay.io/rhoai-partner-mcp</code></li>
+            <li><strong>Upstream:</strong> <code>kubeflow/hub</code> (code upstream) and <code>opendatahub-io/model-metadata-collection</code> (content upstream, PR merged)</li>
+          </ul>
+
+          <p><strong>Technical Requirements for MCP Servers:</strong></p>
+          <ul>
+            <li>Streamable HTTP transport only today; STDIO support has approved RFEs in the pipeline (RHAIRFE-2514, RHAIRFE-2515, RHAIRFE-2516, filed 2026-06-26) with no committed date yet</li>
+            <li>On-cluster deployment, local hosting only today; remote-hosted support planned after DP (no date set)</li>
+            <li>UBI-based container image in Quay</li>
+            <li>Core metadata: name, description, provider, logo, license (SPDX), licenseLink, readme</li>
+            <li>MCP-specific: tools[] (each with <code>accessType</code>: read/write, <code>revoked</code>: boolean, <code>revokedReason</code>: string), transportType, deploymentMode, artifacts[], endpoints[]</li>
+            <li>Security indicators: verifiedSource, sast, secureEndpoint, readOnlyTools</li>
+          </ul>
+
+          <p><strong>Key Features:</strong></p>
+          <ul>
+            <li>Trust tier display (certified, community, unverified) — sourced from Registry in 3.5+</li>
+            <li>RBAC and approval workflow integration with Registry</li>
+            <li>Multi-registry federation support (Docker MCP Catalog, GitHub MCP Registry, partner catalogs)</li>
+            <li>Catalog Admin UI (Settings page, CRUD on Catalog source ConfigMaps): In Progress, targeted RHOAI 3.5 GA (RHAISTRAT-1859)</li>
+            <li>Health/status surfacing (uptime, latency, availability), with unhealthy servers deprioritized in search: planned</li>
+            <li>Version pinning with deprecation notices: planned</li>
+          </ul>
+
+          <p><strong>PM Vision (Planned, Beyond Current Scope):</strong></p>
+          <ul>
+            <li>Governs tools, prompts, resources, and workloads, not just MCP servers</li>
+            <li><strong>Tool Masking</strong>: expose only the tools a given workload needs</li>
+            <li><strong>Input Simplification</strong>: break multi-purpose tools into single-purpose variants</li>
+            <li><strong>Output Filtering</strong>: reduce responses to only the fields relevant to the calling LLM</li>
+          </ul>
+
+          <p><strong>Current Limitation:</strong> Catalog does NOT create prerequisites automatically (ServiceAccount, ConfigMap, ClusterRoleBinding must be created manually before deploying from catalog in 3.4).</p>
+
+          <p><strong>3.5+ Improvement:</strong> Registry integration enables automatic prerequisite creation via Lifecycle Operator.</p>
+
+          <p><strong>Learn More:</strong> <span class="badge badge--coming-soon">Dedicated hub planned</span></p>
+        </div>
+      </div>
+
+      <h2>MCP Lifecycle Operator</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Lifecycle Operator (MCPLO)</div>
+          <span class="status-badge status-badge--dp">v0.2.0 DP</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Purpose:</strong> Kubernetes operator for deploying and managing MCP server workloads. Creates Deployment + Service from <code>MCPServer</code> CRD definitions.</p>
+
+          <p><strong>Status:</strong> Developer Preview (DP) as of v0.2.0 (June 17, 2026). TP target July 24, 2026 (RHOAI 3.5 code freeze), flagged on-risk (engineering's bug week falls the week of July 13; tracked in OCPMCP-298). GA targeted for RHOAI 3.6 (code freeze October 23, 2026; team aiming for earlier in October if possible).</p>
+
+          <p><strong>Key CRD:</strong></p>
+          <ul>
+            <li><code>MCPServer</code> — Defines container image, ports, secrets, env vars, resource limits. Operator creates Deployment + Service + prerequisites.</li>
+          </ul>
+
+          <p><strong>Upstream Repo:</strong> <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" class="page-footer__link">kubernetes-sigs/mcp-lifecycle-operator</a></p>
+
+          <p><strong>Distribution & Entitlement:</strong></p>
+          <ul>
+            <li>Not available in OperatorHub or via OLM today; an OLM-independent installation path (with its own subscription, for OCP customers to install independently of the RHOAI operator) is under active discussion (as of June 2026)</li>
+            <li>Container image not in public OLM catalog</li>
+            <li>Requires <strong>RHOAI restricted use entitlement for OpenShift</strong> subscription minimum</li>
+            <li>Bundled within RHOAI operator releases</li>
+            <li>Disconnected installation only via RHOAI offline bundle</li>
+          </ul>
+
+          <p><strong>Installation Behavior:</strong></p>
+          <ul>
+            <li>Does <strong>NOT</strong> deploy any MCP servers by default upon installation</li>
+            <li>Presents catalog of available MCP servers during setup (e.g., OCP MCP, ACM MCP)</li>
+            <li>User selects which servers to deploy during initial wizard</li>
+            <li>Additional servers installable as Day 2 operations via catalog UI or CRDs</li>
+            <li>No dependency on MCP Gateway — lifecycle operator installs first; gateway is downstream</li>
+          </ul>
+
+          <p><strong>Supported MCP Servers:</strong></p>
+          <ul>
+            <li>OpenShift (Available), upstream: <a href="https://github.com/containers/kubernetes-mcp-server" class="page-footer__link">containers/kubernetes-mcp-server</a></li>
+            <li>Ansible AAP (Available)</li>
+            <li>Red Hat Satellite (WIP)</li>
+            <li>Red Hat Insights (Available)</li>
+            <li>Linux/RHEL (WIP)</li>
+          </ul>
+
+          <p><strong>Update Delivery:</strong></p>
+          <ul>
+            <li>Engineering builds new versions → hands off to RHOAI team</li>
+            <li>RHOAI bundles updates in RHOAI operator releases</li>
+            <li>Connected clusters: automatic via RHOAI operator updates</li>
+            <li>Disconnected clusters: via updated RHOAI offline bundles</li>
+          </ul>
+
+          <p><strong>Learn More:</strong> <span class="badge badge--coming-soon">Dedicated hub planned</span></p>
+        </div>
+      </div>
+
+      <h2>MCP Registry</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">MCP Registry</div>
+          <span class="status-badge status-badge--design">Design Phase</span>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Purpose:</strong> Authoritative governance layer for MCP servers. System of record that brings governance, lifecycle control, trust, and visibility so MCP assets can move cleanly from discovery through approval, deployment, runtime use, and consumption.</p>
+
+          <p><strong>Status:</strong> Design phase. Dev Preview (DP) planned but will not land in RHOAI 3.5 stable. Tech Preview (TP) targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026). GA targeted for Q4 2026.</p>
+
+          <p><strong>What It Solves:</strong></p>
+          <p>In 3.4, the MCP ecosystem is fragmented and manual. The Registry fills the governance gap in the asset flow: Catalog (discovery) → Deploy or Register (operationalize) → Registry (governance) → Gateway (enforcement). Draft and approval states are Catalog-side concerns, not Registry concerns: the Registry only governs assets that have already been deployed or registered, and it has no pre-registration phase (governance begins at "active," not "draft").</p>
+
+          <p><strong>Core Capabilities (MVP):</strong></p>
+          <ul>
+            <li>Governed registration of MCP servers</li>
+            <li>Metadata-first MCP records (follows <a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON" class="page-footer__link">upstream MCP registry schema</a>)</li>
+            <li>Server status and version publish-state tracking (see current data model below)</li>
+            <li>Support for internal and external MCP representation</li>
+            <li>RBAC-aware visibility and governance</li>
+            <li>Conceptual integration with catalog, deployment, gateway, AAA/Studio</li>
+          </ul>
+
+          <p><strong>Current Data Model (Registry DP/TP Scope):</strong></p>
+          <p><em>Source: <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" class="page-footer__link">MLflow MCP Registry Data Model Proposal</a> and the MCP Registry MVP Requirements doc. Earlier drafts of this page described four independent governance tracks (Lifecycle/Approval/Verification/Certification); the current model has two enums, not four (see the phasing note below).</em></p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Entity</th>
+                <th>Role</th>
+                <th>Key Properties</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>MCPServer</code></td>
+                <td>Logical governed asset</td>
+                <td>name, description, status, tags, aliases, workspace, <code>update_mode</code>, <code>last_registered_version</code></td>
+              </tr>
+              <tr>
+                <td><code>MCPServerVersion</code></td>
+                <td>Immutable MCP payload + mutable governance metadata</td>
+                <td>version, server_json (immutable), publish_state, tags, source, run_id, is_deployed</td>
+              </tr>
+              <tr>
+                <td><code>MCPObservedTool</code> / <code>MCPObservedToolSnapshot</code></td>
+                <td>Cached tool metadata observed from a running server</td>
+                <td>Populated from <code>tools/list</code> or gateway-sync; supports version pinning and change detection</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p><strong>Governance Enums (Current, Not the Four-Track Model):</strong></p>
+          <table>
+            <thead>
+              <tr>
+                <th>Enum</th>
+                <th>States</th>
+                <th>Scope</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>MCPServerStatus</code></td>
+                <td>active, deprecated, retired</td>
+                <td>Asset-level (server)</td>
+              </tr>
+              <tr>
+                <td><code>MCPPublishState</code></td>
+                <td>draft, published, deprecated, retired</td>
+                <td>Version-level</td>
+              </tr>
+              <tr>
+                <td><code>MCPUpdateMode</code></td>
+                <td>MANUAL, SYSTEM_MANAGED</td>
+                <td>Controls whether a controller (e.g., MCPLO) can system-manage the record</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p><em>Phasing note: approval, verification, and certification tracks are deferred post-MVP, not abandoned; the design doc's own comment thread explicitly scoped them out of the initial Registry release (the doc frames this as "3.5 Dev Preview"; DP is now not landing in RHOAI 3.5 stable, with TP targeted for RHOAI 3.6 EA1, PM direction Jul 2026). The initial Registry scope intentionally follows a lighter-weight path (matching the approach taken for the upstream skills registry) to speed initial delivery, with the fuller governance model planned as a follow-on. No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model.</em></p>
+
+          <p><strong>Integration Points:</strong></p>
+          <ul>
+            <li><strong>Catalog:</strong> Servers from the Catalog are registered INTO the Registry for governance tracking; Registry's status may inform trust tier labels displayed in the Catalog UI (certification and verification tracking are deferred beyond the Registry MVP; DP not landing in RHOAI 3.5 stable, TP targeted RHOAI 3.6 EA1, PM direction Jul 2026)</li>
+            <li><strong>MCPLO:</strong> Reports deployment state to Registry (<code>is_deployed</code> flag)</li>
+            <li><strong>Gateway:</strong> Polls Registry for active MCP servers; auto-creates <code>MCPServerRegistration</code> CRDs (<code>mcp.kuadrant.io/v1</code>) for runtime enforcement</li>
+            <li><strong>Gen AI Studio:</strong> Queries Registry API for active MCP servers (RBAC-aware, no manual ConfigMap)</li>
+          </ul>
+
+          <p><strong>Open Questions:</strong></p>
+          <ul>
+            <li>What exact MCP metadata should be mandatory?</li>
+            <li>Which runtime/deployment references must be represented?</li>
+            <li>Which lifecycle states required for 3.5 vs later?</li>
+            <li>How should registry state inform gateway behavior?</li>
+            <li>How should registry state influence catalog surfacing?</li>
+            <li>What belongs in MLflow upstream proposal now vs later?</li>
+          </ul>
+
+          <p><strong>Learn More:</strong> <span class="badge badge--coming-soon">Dedicated hub planned</span></p>
+        </div>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-catalog.md" class="page-footer__link">MCP Catalog Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-lifecycle-operator.md" class="page-footer__link">MCPLO Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-registry.md" class="page-footer__link">MCP Registry Component Doc</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./what-is-mcp-management.html" class="page-footer__link">What Is MCP Management? — Problem and positioning</a></li>
+            <li><a href="./ecosystem-architecture.html" class="page-footer__link">Ecosystem Architecture — How components connect</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/" class="page-footer__link">MCP Gateway Hub — Deep dive into Gateway component</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

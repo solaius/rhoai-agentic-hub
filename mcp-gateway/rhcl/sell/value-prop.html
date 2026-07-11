@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Value Proposition — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <h1>Value Proposition</h1>
+      <p class="lead">How Red Hat MCP Gateway solves the enterprise problems that the MCP protocol alone cannot.</p>
+
+      <section class="card">
+        <h2>The Enterprise Pitch</h2>
+        <blockquote class="callout callout--insight">
+          <p>"Your agents need governed access to tools, not a free-for-all."</p>
+        </blockquote>
+        <p>
+          The Model Context Protocol (MCP) is only 16 months old. It defines a clean interface for agent-to-tool communication,
+          but it deliberately leaves critical enterprise concerns unaddressed: authentication, authorization, multiplexing,
+          observability, and governance. MCP assumes these capabilities live in the platform layer.
+        </p>
+        <p>
+          Red Hat MCP Gateway is that platform layer. It extends MCP with production-grade infrastructure for enterprises
+          who need more than just a protocol — they need governed, observable, secure access at scale.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Three Core Problems We Solve</h2>
+
+        <div class="problem-solution-block">
+          <h3><span class="problem-label">Problem:</span> MCP has no authentication or authorization</h3>
+          <p class="problem-detail">
+            The MCP specification deliberately omits authentication and authorization. MCP servers run without identity
+            awareness, credential brokering, or per-tool access control. In practice, this means agents have unrestricted
+            access to every tool an MCP server exposes — no way to enforce "this agent can only invoke these three tools."
+          </p>
+
+          <h3><span class="solution-label">Solution:</span> Tool-level auth via Authorino + Keycloak + AuthBridge</h3>
+          <p class="solution-detail">
+            Red Hat MCP Gateway uses <strong>Authorino</strong> (policy-driven auth engine), <strong>Keycloak</strong>
+            (enterprise identity), and <strong>AuthBridge</strong> (token exchange) to provide:
+          </p>
+          <ul>
+            <li><strong>Identity-aware filtering</strong>: Agents see only the tools they're authorized to invoke</li>
+            <li><strong>Per-tool allowlisting</strong>: Deny all by default, grant per-agent, per-user, per-group</li>
+            <li><strong>OAuth 2.0 credential brokering</strong>: Token exchange for Jira, GitHub, Salesforce — backends receive valid tokens in their Authorization headers</li>
+            <li><strong>On-Behalf-Of (OBO) support</strong>: Full delegation chain tracking via <code>act</code> claim</li>
+          </ul>
+
+          <h3><span class="proof-label">Customer Proof:</span> A large enterprise OEM customer validated the "dumb MCP server" architecture</h3>
+          <p class="proof-detail">
+            The customer ran a 10-question security deep-dive (May 2026) to validate whether their MCP servers could offload
+            all auth to the gateway. Their requirement:
+            <em>"I just want it to get the access token in its header and not have to worry about anything else."</em>
+          </p>
+          <blockquote class="callout callout--quote">
+            <p><strong>Customer security lead</strong> (OEM customer, May 2026):<br>
+            "I just want it to get the access token in its header and not have to worry about anything else."</p>
+          </blockquote>
+          <blockquote class="callout callout--quote">
+            <p><strong>Red Hat Kagenti Team</strong> (2026-05-06):<br>
+            "AuthBridge is designed to transparently handle offloading the majority of the auth work."</p>
+          </blockquote>
+          <p>
+            Outcome: <strong>Confirmed</strong>. The customer's MCP servers can be "dumb" — the gateway handles token validation,
+            token exchange, and credential injection. Okta federation via OIDC identity brokers confirmed; no custom auth
+            code required in the MCP server.
+          </p>
+        </div>
+
+        <div class="problem-solution-block">
+          <h3><span class="problem-label">Problem:</span> MCP has no multiplexing or aggregation</h3>
+          <p class="problem-detail">
+            Each MCP server runs independently with its own endpoint and tool namespace. An enterprise with 20+ MCP servers
+            would need to configure 20+ separate connections in every agent. Tool name collisions are unmanaged — if two
+            servers both expose <code>search</code>, there's no way to distinguish them without manual namespacing.
+          </p>
+
+          <h3><span class="solution-label">Solution:</span> Virtual MCP servers + tool prefixing</h3>
+          <p class="solution-detail">
+            The MCP Gateway <strong>Broker</strong> aggregates multiple backend MCP servers into a single virtual MCP
+            endpoint at <code>/mcp</code>. Agents connect once and see all tools they're authorized for. Tool prefixing
+            prevents collisions — <code>jira_search</code> vs <code>github_search</code>.
+          </p>
+          <ul>
+            <li><strong>Single /mcp endpoint</strong> for agents — no multi-connection configuration</li>
+            <li><strong>Automatic tool prefixing</strong> based on the <code>MCPServerRegistration</code> CRD <code>prefix</code> field</li>
+            <li><strong>Hot-reload</strong> when new MCP servers register — no agent restart required</li>
+            <li><strong>Identity-scoped views</strong>: Different agents see different tool catalogs based on their permissions</li>
+          </ul>
+
+          <h3><span class="proof-label">Customer Proof:</span> A major telecommunications provider needs 20+ MCP servers behind one gateway</h3>
+          <p class="proof-detail">
+            The customer's platform-APIs team (May 2026) is building an internal MCP platform for multiple teams:
+          </p>
+          <ul>
+            <li>Network Planning team</li>
+            <li>Central IT organization</li>
+            <li>External AI-monetization program</li>
+          </ul>
+          <blockquote class="callout callout--quote">
+            <p><strong>Customer lead</strong> (telecommunications provider, May 2026):<br>
+            "I am the MCP person in this company... I want to stand all this up and get some of these MCP things running."</p>
+          </blockquote>
+          <blockquote class="callout callout--quote">
+            <p><strong>Red Hat engineering</strong> (May 2026):<br>
+            "Gateway can be deployed anywhere and it is in a technical preview state. So it actually comes with support...
+            we're marching towards a GA later this year."</p>
+          </blockquote>
+          <p>
+            Outcome: The customer is deploying the gateway in their own environment to aggregate internal MCP servers.
+            POC timeline: 2 weeks (as of May 2026).
+          </p>
+        </div>
+
+        <div class="problem-solution-block">
+          <h3><span class="problem-label">Problem:</span> MCP has no governance or observability</h3>
+          <p class="problem-detail">
+            MCP servers don't track which agent invoked which tool, don't meter token usage, and don't enforce rate limits.
+            There's no audit trail, no cost attribution, and no way to enforce quotas. In production, this means no compliance,
+            no accountability, and no cost control.
+          </p>
+
+          <h3><span class="solution-label">Solution:</span> Identity-aware filtering + per-tool metrics + policy-driven routing</h3>
+          <p class="solution-detail">
+            The gateway provides full observability and governance:
+          </p>
+          <ul>
+            <li><strong>Structured audit logging</strong>: Every tool invocation logged with agent ID, user ID, tool name, timestamp</li>
+            <li><strong>Per-tool invocation metrics</strong>: Prometheus metrics with tool-level granularity</li>
+            <li><strong>OpenTelemetry traces</strong>: Agent-to-tool correlation via trace spans</li>
+            <li><strong>Rate limiting via Limitador</strong>: Per-tool, per-agent, per-user rate limits</li>
+            <li><strong>Token metrics</strong>: Track tokens consumed per tool invocation (when MCP servers report usage)</li>
+          </ul>
+
+          <h3><span class="proof-label">Customer Proof:</span> Strategic hardware partner gap analysis shows 4/10 criteria fully met</h3>
+          <p class="proof-detail">
+            A strategic hardware partner's joint-solution POC evaluated the MCP Gateway against 10 success criteria.
+            Of the 10 criteria: <strong>4 fully met</strong>, <strong>4 partially met</strong>, <strong>2 gaps</strong>.
+          </p>
+          <p>The <strong>4 criteria fully met</strong> are all in the governance/auth domain:</p>
+          <ul>
+            <li><strong>Unified interface contract & schema</strong> (MCP JSON-RPC 2.0)</li>
+            <li><strong>Policy-driven routing</strong> (Envoy ext_proc + Gateway API)</li>
+            <li><strong>Tool access allowlisting</strong> (Authorino per-tool policies)</li>
+            <li><strong>Credential brokering</strong> (AuthBridge OBO + token exchange)</li>
+          </ul>
+          <p>
+            Positioning recommendation: Lead with auth (#7, #8) and policy routing (#4) — these are differentiated
+            capabilities that solve hard enterprise problems.
+          </p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Key Differentiators</h2>
+        <div class="callout callout--insight">
+          <ul>
+            <li><strong>Tool-level authentication and authorization</strong> — not just API-level like traditional gateways</li>
+            <li><strong>Credential brokering with token exchange</strong> — agents never see raw user credentials</li>
+            <li><strong>Per-tool metrics and audit logging</strong> — full observability with tool-level granularity</li>
+            <li><strong>Policy-driven routing</strong> — identity-aware filtering and dynamic backend selection</li>
+            <li><strong>Virtual MCP servers</strong> — single endpoint, aggregated tool catalogs</li>
+            <li><strong>Multi-cluster support via RHCL</strong> — HA/DR across data centers</li>
+            <li><strong>Open source upstream (Kuadrant)</strong> — no vendor lock-in</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>Customer security discussion (engagement Q&A — internal)</li>
+            <li>Customer follow-up answers (engagement Q&A — internal)</li>
+            <li>Customer POC discussion (internal)</li>
+            <li>Partner gap analysis (POC gap analysis — internal)</li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../sell/customer-stories.html">Customer Stories</a></li>
+            <li><a href="../build/features.html">Features Deep Dive</a></li>
+            <li><a href="../sell/competitive.html">Competitive Landscape</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lifecycle Operator — MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>MCP Lifecycle Operator</h1>
+      <p class="lead">The deployment primitive for MCP server workloads. Kubernetes operator that creates Deployment + Service from MCPServer CRD definitions.</p>
+
+      <div class="callout callout--insight">
+        <strong>Repository:</strong> <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator">kubernetes-sigs/mcp-lifecycle-operator</a><br>
+        <strong>Current Version:</strong> v0.2.0 (released June 17, 2026)
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Since v0.2.0:</strong> Upstream activity beyond the last tagged release includes NetworkPolicy reconciliation per MCPServer operand with ingress/egress controls (2026-07-03), a TLS security profile configurable via environment variables, added RBAC update/patch verbs, and a Go 1.26.5 security bump. No new tagged release yet; v0.2.0 remains current.
+      </div>
+
+      <h2>Purpose</h2>
+      <p>The Lifecycle Operator is the deployment layer — it deploys MCP services. The <a href="../govern/registry.html">Registry</a> represents the governed MCP and its deployment/runtime associations. The operator does <strong>NOT</strong> own governance or lifecycle state.</p>
+
+      <h2>Component Flow</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">MCPServer CRD</div>
+          <div class="flow-box__desc">Custom Resource Definition</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">Controller</div>
+          <div class="flow-box__desc">Watches CRDs</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">Deployment + Service</div>
+          <div class="flow-box__desc">Running MCP server</div>
+        </div>
+      </div>
+
+      <h2>Configuration</h2>
+      <p>The MCPServer CRD specifies:</p>
+      <ul>
+        <li>Container images for MCP servers</li>
+        <li>Port configuration</li>
+        <li>Secret references for credentials</li>
+        <li>Environment variables</li>
+        <li>Resource limits</li>
+      </ul>
+
+      <h2>Supported MCP Servers</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Server</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OpenShift</td>
+            <td><span class="badge badge--shipped">Available</span></td>
+          </tr>
+          <tr>
+            <td>Ansible AAP</td>
+            <td><span class="badge badge--shipped">Available</span></td>
+          </tr>
+          <tr>
+            <td>Red Hat Insights</td>
+            <td><span class="badge badge--shipped">Available</span></td>
+          </tr>
+          <tr>
+            <td>Red Hat Satellite</td>
+            <td><span class="badge badge--planned">WIP</span></td>
+          </tr>
+          <tr>
+            <td>Linux/RHEL</td>
+            <td><span class="badge badge--planned">WIP</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Distribution & Entitlement</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Available in OperatorHub?</td>
+            <td><strong>No</strong></td>
+          </tr>
+          <tr>
+            <td>Available via OLM?</td>
+            <td><strong>No</strong> — container image not in public OLM catalog</td>
+          </tr>
+          <tr>
+            <td>Non-RHOAI customers?</td>
+            <td><strong>No</strong> — requires RHOAI restricted use entitlement for OpenShift</td>
+          </tr>
+          <tr>
+            <td>Minimum subscription</td>
+            <td><strong>RHOAI restricted use entitlement</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--insight">
+        <strong>Installation Behavior:</strong> Does <strong>NOT</strong> deploy any servers by default. Presents a catalog during setup; user selects which to deploy. Additional servers installable as Day 2 operations via catalog UI or CRDs.
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Independence from Gateway:</strong> Standalone from MCP Gateway — lifecycle operator installs first, gateway is downstream. No dependency on MCP Gateway for deployment.
+      </div>
+
+      <h2>RHOAI Productization (Proposed)</h2>
+      <p><a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a> (status: Approved, not started in engineering) proposes productizing the Lifecycle Operator as an automatically-deployed RHOAI Tech Preview platform component via DataScienceCluster (DSC) during standard RHOAI installation, following the same pattern as FeastOperator and LlamaStackOperator. This is distinct from today's model above: a standalone operator, not in OperatorHub/OLM, requiring manual RHOAI restricted use entitlement-gated install.</p>
+
+      <h2>Update Delivery</h2>
+      <p>Lifecycle Operator updates are bundled within RHOAI operator releases:</p>
+      <ul>
+        <li><strong>Connected clusters:</strong> Automatic via RHOAI operator updates</li>
+        <li><strong>Disconnected clusters:</strong> Via updated RHOAI offline bundles</li>
+        <li>Engineering builds new versions → hands off to RHOAI team</li>
+      </ul>
+
+      <h2>Qualification Responsibilities</h2>
+      <ul>
+        <li><strong>OCP Team:</strong> Functional qualification (deploy, discover, manage MCP servers)</li>
+        <li><strong>RHOAI Team:</strong> Deployment and integration qualification (rollout via RHOAI operator, prerequisites)</li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-10">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator">kubernetes-sigs/mcp-lifecycle-operator</a></li>
+            <li><a href="https://docs.google.com/document/d/1qZ66JjL99KhV-OF67ArQjT-GNOGiHYCKdLZW9ptqtHQ">FAQ on RHOAI restricted use entitlement & MCP Lifecycle Operator</a></li>
+            <li><a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a> (MCP Lifecycle Operator in RHOAI)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../govern/ecosystem.html">Ecosystem Overview</a></li>
+            <li><a href="../govern/registry.html">MCP Registry</a></li>
+            <li><a href="../build/deployment.html">Deployment Guide</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/">Cross-component view: MCP Management Knowledge Hub</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
