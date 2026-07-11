@@ -266,6 +266,12 @@ async def scan(client, jql, today):
     return rows
 
 
+def _is_protected(value):
+    """True if this text would write a <release>-committed label. Case
+    insensitive: '3.6-COMMITTED' must not slip through."""
+    return (value or "").strip().lower().endswith(PROTECTED_LABEL_SUFFIX)
+
+
 def plan_decisions(decisions, rows):
     """Turn the browser's exported decisions into an explicit, inspectable
     plan. PURE: this is what the gate renders, and nothing here touches Jira.
@@ -297,9 +303,12 @@ def plan_decisions(decisions, rows):
                                     "detail": "skipped"})
             continue
 
-        # current_labels round-trips through the report so label writes stay
-        # read-modify-write. Fall back to the scanned row if it is absent.
-        current = list(decision.get("current_labels") or row.get("labels") or [])
+        # The freshly-scanned row wins: it is never the staler source. The
+        # decisions file's current_labels is only a fallback for the
+        # "already present, skip it" check. It NEVER builds a payload:
+        # label writes are atomic adds (JiraClient.add_label), so a stale
+        # current_labels can no longer destroy anything.
+        current = list(row.get("labels") or decision.get("current_labels") or [])
 
         if action in LABEL_ACTIONS:
             label = LABEL_ACTIONS[action]
@@ -310,14 +319,21 @@ def plan_decisions(decisions, rows):
                         "key": key, "action": action,
                         "detail": "roadmap needs a release (for example 3.6)"})
                     continue
-                if release.endswith(PROTECTED_LABEL_SUFFIX) \
-                        or PROTECTED_LABEL_SUFFIX in release:
+                if _is_protected(release):
                     plan["rejected"].append({
                         "key": key, "action": action,
                         "detail": f"'{release}' would write a committed label. "
                                   f"That is set on the STRAT side, never here."})
                     continue
                 label = f"{release}-candidate"
+            # Screen what is actually WRITTEN, not just the release input:
+            # nothing ending in the protected suffix ever reaches a payload.
+            if _is_protected(label):
+                plan["rejected"].append({
+                    "key": key, "action": action,
+                    "detail": f"'{label}' would write a committed label. "
+                              f"That is set on the STRAT side, never here."})
+                continue
             if label in current:
                 plan["skipped"].append({
                     "key": key, "action": action,
@@ -361,16 +377,20 @@ async def apply_decisions(client, plan):
     """Execute an approved plan. Labels, then comments, then transitions:
     a workflow surprise on the sharpest action cannot strand the cheap ones.
 
-    Per-item try/except. One failure never sinks the batch.
+    Per-item try/except. One failure never sinks the batch. ValueError is
+    caught alongside httpx.HTTPError because add_comment decodes JSON after
+    raise_for_status: a 200 with a junk body raises ValueError, and an
+    uncaught one would abort the batch mid-flight.
     """
     result = {"applied": [], "skipped": list(plan["skipped"]),
               "rejected": list(plan["rejected"]), "errors": []}
 
     for item in plan["labels"]:
-        labels = list(item["current_labels"]) + [item["label"]]
         try:
-            await client.update_issue(item["key"], {"labels": labels})
-        except httpx.HTTPError as exc:
+            # Atomic ADD. No read-modify-write: this cannot remove a label
+            # that was added to the issue after the scan.
+            await client.add_label(item["key"], item["label"])
+        except (httpx.HTTPError, ValueError) as exc:
             result["errors"].append({"key": item["key"], "action": item["action"],
                                      "detail": f"label write failed: {exc}"})
             continue
@@ -380,7 +400,7 @@ async def apply_decisions(client, plan):
     for item in plan["comments"]:
         try:
             await client.add_comment(item["key"], item["comment"])
-        except httpx.HTTPError as exc:
+        except (httpx.HTTPError, ValueError) as exc:
             result["errors"].append({"key": item["key"], "action": "comment",
                                      "detail": f"comment failed: {exc}"})
             continue
@@ -392,14 +412,14 @@ async def apply_decisions(client, plan):
         if item.get("comment"):
             try:
                 await client.add_comment(key, item["comment"])
-            except httpx.HTTPError as exc:
+            except (httpx.HTTPError, ValueError) as exc:
                 result["errors"].append({
                     "key": key, "action": action,
                     "detail": f"close comment failed, transition NOT attempted: {exc}"})
                 continue
         try:
             await client.transition_issue(key, transition["id"])
-        except httpx.HTTPError as exc:
+        except (httpx.HTTPError, ValueError) as exc:
             detail = f"transition to {transition['name']} failed: {exc}"
             if item.get("comment"):
                 detail += (" (the close comment HAS already posted; the issue "
@@ -422,10 +442,17 @@ def build_triage_log(feature, jql, rows, plan, result, today):
     outcome_by_key = {}
     labels_by_key = {}
     transition_by_key = {}
+    error_detail_by_key = {}
     for bucket, name in (("applied", "applied"), ("skipped", "skipped"),
                          ("rejected", "rejected"), ("errors", "error")):
         for item in result[bucket]:
             outcome_by_key.setdefault(item["key"], name)
+    for item in result["errors"]:
+        # apply_decisions composes these from key, action, transition names
+        # and an exception string. No summaries, no comment bodies: safe for
+        # a PUBLIC repo, and the only way the log can tell "nothing was
+        # written" from "the close comment posted but the transition failed".
+        error_detail_by_key.setdefault(item["key"], item.get("detail") or "")
     for item in plan["labels"]:
         labels_by_key.setdefault(item["key"], []).append(item["label"])
     for item in plan["transitions"]:
@@ -433,20 +460,40 @@ def build_triage_log(feature, jql, rows, plan, result, today):
         transition_by_key[item["key"]] = \
             f"{item['from']} -> {t.get('to') or t.get('name')}"
 
-    entries = []
-    for row in sorted(rows, key=lambda r: r["key"]):
-        key = row["key"]
-        if key not in outcome_by_key:
-            continue          # not decided this pass: not our business to log
-        entries.append({
+    def _entry(key, flags, suggestion, outcome):
+        entry = {
             "key": key,
-            "flags": list(row.get("flags") or []),
-            "suggestion": (row.get("suggestion") or {}).get("action") or "",
+            "flags": flags,
+            "suggestion": suggestion,
             "decision": _decision_of(key, plan),
-            "outcome": outcome_by_key[key],
+            "outcome": outcome,
             "labels_added": labels_by_key.get(key, []),
             "transition": transition_by_key.get(key),
-        })
+        }
+        if outcome == "error":
+            entry["detail"] = error_detail_by_key.get(key, "")
+        return entry
+
+    entries = []
+    scanned = set()
+    for row in sorted(rows, key=lambda r: r["key"]):
+        key = row["key"]
+        scanned.add(key)
+        if key not in outcome_by_key:
+            continue          # not decided this pass: not our business to log
+        entries.append(_entry(
+            key,
+            list(row.get("flags") or []),
+            (row.get("suggestion") or {}).get("action") or "",
+            outcome_by_key[key]))
+
+    # A rejected decision for a key that never made the scan (a stale
+    # decisions file naming a ghost) has no row to hang off. Log it anyway:
+    # a capability that can close tickets does not get to drop records.
+    for item in sorted(result["rejected"], key=lambda i: i["key"]):
+        if item["key"] in scanned:
+            continue
+        entries.append(_entry(item["key"], [], "", "rejected"))
 
     doc = {"feature": feature, "jql": jql, "triaged": today.isoformat(),
            "issues": entries}

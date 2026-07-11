@@ -446,6 +446,19 @@ class JiraClient:
         )
         resp.raise_for_status()
 
+    async def add_label(self, issue_key: str, label: str) -> None:
+        """Atomically ADD one label. Cannot remove existing labels.
+
+        Uses Jira's `update` verb rather than a `fields` replace: a
+        read-modify-write on `labels` would destroy any label added between
+        the scan and the write. Additive by construction.
+        """
+        resp = await self._request(
+            "PUT", f"/rest/api/3/issue/{issue_key}",
+            json={"update": {"labels": [{"add": label}]}},
+        )
+        resp.raise_for_status()
+
     # -- Create --
 
     async def create_issue(self, fields: dict) -> dict:

@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 import httpx
 import pytest
@@ -105,6 +106,27 @@ def test_adf_to_text_nested_doc():
     assert adf_to_text(doc) == "Title\nBody\n- item"
     assert adf_to_text("already plain") == "already plain"
     assert adf_to_text(None) == ""
+
+
+def test_add_label_is_an_atomic_add_never_a_field_replace():
+    seen = {}
+
+    def handler(request):
+        seen["method"] = request.method
+        seen["path"] = request.url.path
+        seen["body"] = json.loads(request.content or b"{}")
+        return httpx.Response(204)
+
+    async def case():
+        async with JiraClient("https://jira.example.com", personal_token="p",
+                              transport=httpx.MockTransport(handler)) as client:
+            await client.add_label("A-1", "x")
+
+    run(case())
+    assert seen["method"] == "PUT"
+    assert seen["path"] == "/rest/api/3/issue/A-1"
+    assert seen["body"] == {"update": {"labels": [{"add": "x"}]}}
+    assert "fields" not in seen["body"]      # a replace would delete labels
 
 
 def test_probe_public_fail_closed():

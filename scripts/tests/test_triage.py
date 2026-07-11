@@ -172,6 +172,7 @@ import asyncio
 import json
 
 import httpx
+import yaml
 
 from hublib import jira
 
@@ -353,11 +354,32 @@ def test_plan_rejects_unsupported_actions():
 
 
 def test_plan_rejects_a_close_with_no_matching_transition():
+    # The half-apply guard, for real: an unresolvable close must produce NO
+    # transition entry, and apply must then issue ZERO requests for that
+    # issue. The pm-toolkit bug posted the close comment first and only then
+    # discovered the workflow had no close, stranding an open issue under a
+    # "Closed during PM triage pass" comment.
     rows = [scan_row(key="A-1", transitions=[])]
-    plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "close", "comment": "please close"}}, rows)
     assert plan["transitions"] == []
-    assert plan["comments"] == []          # the half-apply guard
+    assert plan["comments"] == []
     assert "no matching transition" in plan["rejected"][0]["detail"]
+
+    seen = []
+
+    def handler(request):
+        seen.append((request.method, request.url.path))
+        return httpx.Response(200, json={})
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    assert seen == []                                    # zero HTTP requests
+    assert not any(p.endswith("/comment") for _, p in seen)
+    assert result["applied"] == []
 
 
 def test_plan_rejects_a_decision_for_an_issue_not_in_the_scan():
@@ -392,6 +414,14 @@ def test_plan_never_writes_a_committed_label():
     assert "committed" in plan["rejected"][0]["detail"]
 
 
+def test_plan_committed_guard_is_case_insensitive():
+    rows = [scan_row(key="A-1")]
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "roadmap", "release": "3.6-COMMITTED"}}, rows)
+    assert plan["labels"] == []
+    assert "committed" in plan["rejected"][0]["detail"].lower()
+
+
 def test_plan_close_carries_the_default_comment():
     rows = [scan_row(key="A-1", transitions=CLOSABLE)]
     plan = triage.plan_decisions({"A-1": {"action": "close"}}, rows)
@@ -423,9 +453,10 @@ def test_apply_writes_labels_comments_and_transitions_in_order():
     assert len(result["applied"]) == 2
     assert result["errors"] == []
 
-    # label write carries the FULL array, not just the new label
+    # the label write is an atomic ADD: no array, so nothing can be deleted
     put = [s for s in seen if s[0] == "PUT"][0]
-    assert put[2]["fields"]["labels"] == ["old", "pm-backlogged"]
+    assert put[2] == {"update": {"labels": [{"add": "pm-backlogged"}]}}
+    assert "fields" not in put[2]
 
     # transitions go last, and the close comment precedes its transition
     kinds = [(m, p.rsplit("/", 1)[-1]) for m, p, _ in seen]
@@ -496,3 +527,150 @@ def test_triage_log_is_yaml_and_carries_no_jira_prose():
     assert "feature: mcp-registry" in text
     assert "Secret internal roadmap detail" not in text   # NO Jira prose
     assert "transition: Open -> Closed" in text or "Closed" in text
+
+
+# -- the reviewer's attack: a stale decisions file must not delete labels --
+
+def test_a_stale_current_labels_cannot_delete_labels():
+    # The scanned row carries three labels. The decisions file, exported from
+    # a browser tab that has gone stale (or hand-edited), claims there is only
+    # one. Under the old read-modify-write this PUT replaced the whole array
+    # and destroyed customer-escalation and security. It must now be an
+    # atomic add that CANNOT remove anything.
+    seen = []
+
+    def handler(request):
+        seen.append((request.method, request.url.path,
+                     json.loads(request.content or b"{}")))
+        return httpx.Response(204)
+
+    rows = [scan_row(key="A-1",
+                     labels=["mcp", "customer-escalation", "security"])]
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "backlog", "current_labels": ["mcp"]}}, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    assert len(result["applied"]) == 1
+    assert len(seen) == 1
+
+    method, path, body = seen[0]
+    assert (method, path) == ("PUT", "/rest/api/3/issue/A-1")
+    # Structurally additive: no "fields", no labels array, one add op.
+    assert body == {"update": {"labels": [{"add": "pm-backlogged"}]}}
+    assert "fields" not in body
+    blob = json.dumps(body)
+    for survivor in ("customer-escalation", "security", "mcp"):
+        assert survivor not in blob        # the write cannot even name them
+    assert "remove" not in blob
+
+
+def test_plan_prefers_the_scanned_row_over_the_decisions_file():
+    # The row is never the staler source, so it wins.
+    rows = [scan_row(key="A-1", labels=["pm-backlogged"])]
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "backlog", "current_labels": []}}, rows)
+    assert plan["labels"] == []            # the row already has it: skip
+    assert plan["skipped"][0]["detail"] == "label pm-backlogged already present"
+
+
+# -- audit-trail completeness --
+
+def test_triage_log_records_a_rejected_key_that_was_never_scanned():
+    rows = [scan_row(key="A-1", labels=[])]
+    plan = triage.plan_decisions({
+        "A-1": {"action": "backlog"},
+        "GHOST-9": {"action": "close"},     # not in the scan
+    }, rows)
+
+    async def go():
+        async with client_with(
+                lambda r: httpx.Response(204)) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    text = triage.build_triage_log("f", "project = X", rows, plan, result, TODAY)
+    doc = yaml.safe_load(text)
+    by_key = {i["key"]: i for i in doc["issues"]}
+    assert set(by_key) == {"A-1", "GHOST-9"}
+    ghost = by_key["GHOST-9"]
+    assert ghost["outcome"] == "rejected"
+    assert ghost["decision"] == "close"
+    assert ghost["flags"] == []
+    assert ghost["labels_added"] == []
+    assert ghost["transition"] is None
+
+
+def test_triage_log_carries_error_detail_but_no_jira_prose():
+    def handler(request):
+        if request.url.path.endswith("/A-1/transitions") \
+                and request.method == "POST":
+            return httpx.Response(500, json={"errorMessages": ["boom"]})
+        return httpx.Response(200, json={})
+
+    rows = [scan_row(key="A-1", summary="Secret internal roadmap detail",
+                     transitions=CLOSABLE)]
+    plan = triage.plan_decisions(
+        {"A-1": {"action": "close",
+                 "comment": "Confidential customer name said close it"}}, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    text = triage.build_triage_log("f", "project = X", rows, plan, result, TODAY)
+    doc = yaml.safe_load(text)
+    entry = doc["issues"][0]
+    assert entry["outcome"] == "error"
+    # The distinction the audit trail exists for: the comment posted, the
+    # transition did not, the issue is still open.
+    assert "transition to Closed failed" in entry["detail"]
+    assert "still open" in entry["detail"]
+    # PUBLIC repo: no summary, no comment body, anywhere in the log.
+    assert "Secret internal roadmap detail" not in text
+    assert "Confidential customer name" not in text
+    assert triage.DEFAULT_CLOSE_COMMENT not in text
+
+
+def test_triage_log_omits_detail_when_there_is_no_error():
+    rows = [scan_row(key="A-1", labels=[])]
+    plan = triage.plan_decisions({"A-1": {"action": "backlog"}}, rows)
+
+    async def go():
+        async with client_with(lambda r: httpx.Response(204)) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    doc = yaml.safe_load(
+        triage.build_triage_log("f", "project = X", rows, plan, result, TODAY))
+    assert doc["issues"][0]["outcome"] == "applied"
+    assert "detail" not in doc["issues"][0]
+
+
+def test_apply_survives_a_200_with_a_non_json_body():
+    # add_comment decodes JSON after raise_for_status. A 200 carrying junk
+    # raises ValueError, which must be an item-level error, not a batch abort.
+    def handler(request):
+        if request.url.path.endswith("/comment"):
+            return httpx.Response(200, text="<html>not json</html>")
+        return httpx.Response(204)
+
+    rows = [scan_row(key="A-1", labels=[]),
+            scan_row(key="A-2", transitions=CLOSABLE)]
+    plan = triage.plan_decisions({
+        "A-1": {"action": "backlog"},
+        "A-2": {"action": "close"},
+    }, rows)
+
+    async def go():
+        async with client_with(handler) as c:
+            return await triage.apply_decisions(c, plan)
+
+    result = run(go())
+    assert [a["key"] for a in result["applied"]] == ["A-1"]   # label landed
+    assert result["errors"][0]["key"] == "A-2"
+    assert "close comment failed" in result["errors"][0]["detail"]
