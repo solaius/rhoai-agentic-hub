@@ -175,3 +175,14 @@ Restart Claude Code, run `/mcp` — `google-workspace` and `slack` (plus
 `rhai-tracker` if set up) should show connected — then try one tool from
 each (list calendar events; list joined Slack channels).
 `bash scripts/doctor.sh check` should report sections 8–9 green.
+
+## Cursor
+
+Cursor uses `.cursor/mcp.json` (project-scoped) with the same `mcpServers`
+format. `bash scripts/doctor.sh setup` writes it alongside the Claude config
+when `.cursor/` exists (section 8). Restart Cursor after setup.
+
+The config is gitignored (secrets in env values). If you need to recreate it
+manually, the server definitions are identical to the Claude config blocks
+shown above -- copy them into `.cursor/mcp.json` under a `"mcpServers"` root
+key.

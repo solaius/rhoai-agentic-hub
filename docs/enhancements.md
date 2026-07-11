@@ -18,10 +18,9 @@ including review. "When" is a best guess, not a schedule.
 |---|---|---|---|---|
 | 3 | Feature staleness sweep — per-feature "what's outdated?" | **Medium** — no way to ask "what changed since I last touched mcp-gateway?" without manually comparing sources | Medium | Next |
 | 6 | R5: cross-machine continuity runbook + fixes it surfaces | **High**. Steps 2 and 3 executed 2026-07-11 on machine B (round-trip passed both directions; #14 answered). Step 1 (cold path) deferred: B was warm. Step 4 (push race) NOT executed. See R5 outcome below | Small (run it) | Steps 2-3 done; 1 and 4 open |
-| 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Next |
+| 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | In progress |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
-| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | **Medium–High** — un-park condition met 2026-07-11: customer-feedback gathering ran on B, where the restricted tree doesn't exist, so the session bypassed the local-first ingest flow entirely. R5 had parked this on the evidence that B never touched those workflows; that no longer holds | Medium | Next (un-parked 2026-07-11; see R5 outcome addendum) |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
 | ~~19~~ | ~~Doctor: env wiring + Slack probe~~ | Done | Done | Done |
@@ -183,6 +182,26 @@ harness independence.
 6. Deliverables: a "Cursor notes" subsection in `docs/working-here.md` (or
    `docs/cursor.md` if it outgrows a subsection), doctor tweaks if any,
    `## R6 outcome` note here, log line.
+
+### R6 outcome (2026-07-11)
+
+**Status:** Code/config shipped. Validation runbook not yet executed.
+
+**Shipped:**
+- `.cursor/mcp.json` config (doctor-managed, section 8)
+- `docs/cursor.md` with setup, known differences, and gap table
+- Linter guards for git-crypt (Task 1, benefits both enhancements)
+- Doctor section 11 (git-crypt)
+
+**Validation runbook (execute in Cursor, record everything):**
+1. [ ] Open repo in Cursor, confirm AGENTS.md loads, verify session-start rule
+2. [ ] Test skill discovery -- `/hub.capture` or equivalent
+3. [ ] MCP servers -- test one tool from each
+4. [ ] Full gated capture -> reindex -> commit -> push
+5. [ ] Multi-step skill: `hub.file`
+6. [ ] Record gaps in `docs/cursor.md`
+
+<!-- Fill in after running the validation -->
 
 ---
 
@@ -377,6 +396,13 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#14 restricted/ cross-machine sync** -- shipped 2026-07-11: git-crypt
+  encrypts `restricted/` in-repo (`.gitattributes` patterns, `.env.example`
+  stays plaintext). Linter guards skip encrypted files gracefully on CI.
+  Doctor section 11 checks git-crypt install + lock state. Manual `.env` copy
+  replaced by one-time key file copy + `git pull`.
+  Spec: [/docs/specs/2026-07-11-restricted-sync-cursor-validation-design.md](/docs/specs/2026-07-11-restricted-sync-cursor-validation-design.md).
+  Plan: [/docs/plans/2026-07-11-restricted-sync-cursor-validation-plan.md](/docs/plans/2026-07-11-restricted-sync-cursor-validation-plan.md).
 - **#30 + #27(b) + #29 Jira operating batch** - shipped 2026-07-11: the three
   capabilities unblocked by #2's client. `hub.jira-hygiene` audits one issue
   against type checklists (read-only; pm-toolkit's Create mode ruled out).
