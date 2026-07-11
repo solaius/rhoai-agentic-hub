@@ -21,8 +21,9 @@ Input: none (runs against current day). Optional: a date override.
    **Jira (4 queries via hub_jira.py):**
    The "Product Manager" field is a custom field. On first run, confirm
    the exact JQL field name with the user (it may be `cf[NNNNN]` or the
-   display name "Product Manager" depending on the Jira instance). Cache
-   the confirmed name for future runs.
+   display name "Product Manager" depending on the Jira instance). If it
+   differs from the default, offer `hub.capture` to store the confirmed
+   name as a preference in `memory/profiles/preferences.md`.
 
    a. PM issues updated in last 24h:
       `"Product Manager" = currentUser() AND updated >= -1d`
