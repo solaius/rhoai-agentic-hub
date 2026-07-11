@@ -44,8 +44,11 @@ file) — then run the flow without further questions until the gate.
    figures and agreement language never go to tracked files.
 5. On OK: write the approved files, run `python scripts/hub_index.py`,
    then `python scripts/hub_lint.py` (0 errors — fix the written
-   content, not the scripts). Commit:
-   `git add -A && git commit -m "intake(<home>): <topic>"` && `git push`.
+   content, not the scripts). Commit: stage the approved files plus
+   regenerated indexes/views explicitly, NEVER `git add -A` (shared
+   checkout, see fact-concurrent-session-git-hygiene); check
+   `git diff --cached --stat`, then
+   `git commit -m "intake(<home>): <topic>"` && `git push`.
 6. OFFER RESEARCH: suggest `hub.research <home>` with a lens set fitted
    to what intake revealed (unknown competitive space → competitive;
    heavy technical sources → architecture + upstream; scoping gaps →

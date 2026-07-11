@@ -33,6 +33,9 @@ in features/features.yaml. Spec:
 4. GATE: one batch table — `path: description [new|update]`;
    approve/edit/reject per line; nothing touches the repo before OK.
 5. On OK: write, `python scripts/hub_index.py`, `python
-   scripts/hub_lint.py` (0 errors), commit
-   `git add -A && git commit -m "jira(sync): <features> — <summary>"` &&
+   scripts/hub_lint.py` (0 errors). Commit: stage this run's writes plus
+   regenerated indexes/views explicitly, NEVER `git add -A` (shared
+   checkout, see fact-concurrent-session-git-hygiene); check
+   `git diff --cached --stat`, then
+   `git commit -m "jira(sync): <features> - <summary>"` &&
    `git push`.

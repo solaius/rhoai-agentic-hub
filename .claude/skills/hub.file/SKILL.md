@@ -31,4 +31,8 @@ Input: the source (URL or file) + whatever context the user gave.
 6. DISCLOSURE CONFIRM: show one line — file → <path>: <description>
    [public|restricted] — and wait for OK (this repo is public).
 7. `python scripts/hub_index.py` && `python scripts/hub_lint.py` (0 errors).
-8. Commit: `git add -A && git commit -m "know(<f>): file <slug>"` && `git push`.
+8. Commit: stage the filed entry (+ features.yaml if a partition was
+   created) plus regenerated indexes/views explicitly, NEVER `git add -A`
+   (shared checkout, see fact-concurrent-session-git-hygiene); check
+   `git diff --cached --stat`, then
+   `git commit -m "know(<f>): file <slug>"` && `git push`.

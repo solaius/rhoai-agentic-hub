@@ -45,8 +45,10 @@ Jira — never comment, transition, or edit issues.
    repo before OK.
 6. On OK: write the approved files, `python scripts/hub_index.py`, then
    `python scripts/hub_lint.py` (0 errors — fix the written content,
-   never the scripts). Commit:
-   `git add -A && git commit -m "jira(<feature>): sweep — <n> issues, <m> refs"`
+   never the scripts). Commit: stage the sweep's writes plus regenerated
+   indexes/views explicitly, NEVER `git add -A` (shared checkout, see
+   fact-concurrent-session-git-hygiene); check `git diff --cached --stat`,
+   then `git commit -m "jira(<feature>): sweep - <n> issues, <m> refs"`
    && `git push`.
 7. Offer follow-ups, never auto-run: a `hub.jira-sync` cadence, or ref-
    entries for non-strategic issues the user names (hub.capture path).

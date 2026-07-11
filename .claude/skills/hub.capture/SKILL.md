@@ -42,7 +42,15 @@ Input: the item, from the user's words or session context.
    c. Run `python scripts/hub_index.py`.
    d. Run `python scripts/hub_lint.py` — 0 errors required; fix the captured
       file (not the scripts) if it reports errors.
-   e. Commit: `git add -A && git commit -m "mem: capture <slug>"`.
+   e. Commit with explicit paths, NEVER `git add -A` (the checkout is
+      shared across concurrent sessions; a sweep commits their in-flight
+      files, see memory/facts/fact-concurrent-session-git-hygiene.md):
+      `git add <files written/edited in 4a/4b> memory/index.md
+      features/index.md "features/*/index.md"
+      "features/*/knowledge/index.md" narrative/index.md
+      narrative/knowledge/index.md views/`, check
+      `git diff --cached --stat` for anything this capture did not write,
+      then `git commit -m "mem: capture <slug>"`.
       (Restricted files are gitignored and won't be staged — correct.)
 5. On reject: discard everything, no writes.
 
