@@ -47,7 +47,15 @@
               <td><span class="badge badge--planned">Enhancements</span> Prerequisite automation (RHAIRFE-2434); Registry integration TP moved to 3.6 EA1</td>
               <td><span class="badge badge--planned">TP (Jul 24, 2026 code freeze)</span> Bundled in RHOAI operator (on risk: bug week Jul 13)</td>
               <td><span class="badge badge--planned">TP (RHOAI dep)</span> Registry auto-config (manual fallback)</td>
-              <td><span class="badge badge--planned">DP</span> Metadata-first governance; interactive prototype + demo circulated 2026-06-30</td>
+              <td><span class="badge badge--not-available">Not in 3.5</span> DP planned but will not land in RHOAI 3.5 stable; TP retargeted to RHOAI 3.6 EA1 (PM direction, Jul 2026). Interactive prototype + demo circulated 2026-06-30</td>
+            </tr>
+            <tr>
+              <td><strong>RHOAI 3.6 EA1</strong></td>
+              <td>2026 (date TBD)</td>
+              <td><span class="badge badge--planned">TP</span> Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
+              <td><span class="badge badge--not-available">—</span></td>
+              <td><span class="badge badge--not-available">—</span></td>
+              <td><span class="badge badge--planned">TP</span> Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
             </tr>
             <tr>
               <td><strong>GA Target</strong></td>
@@ -61,6 +69,7 @@
         </table>
 
         <div class="callout callout--source">
+          <p><strong>Registry replan (PM direction, 2026-07-11):</strong> MCP Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is MCP Catalog TP and MCP Registry TP together in RHOAI 3.6 EA1, alongside the Catalog-Registry integration below. Jira fix versions for the Registry DP work still show RHOAI 3.5 in places; re-targeting to RHOAI 3.6 EA1 is in progress to match.</p>
           <p><strong>Catalog↔Registry integration re-scoped (2026-07-10):</strong> RHAISTRAT-1938 ("[TP] MCP Catalog and Registry Integration - Unified Discovery and Governance for Tech Preview") is now <strong>Closed/Obsolete</strong>, superseded by <strong>RHAISTRAT-2027</strong> ("MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for Tech Preview," In Progress), which carries fix version <strong>3.6 EA1</strong> rather than 3.5. The table above reflects the updated timing.</p>
           <p><strong>MCPLO track scoping note:</strong> per MCPLO weekly meeting notes, "Gateway integration → 3.6": Gateway integration work for the lifecycle/server track is scoped to RHOAI 3.6, not 3.5, distinct from the RHCL-side Gateway TP row above.</p>
           <p><strong>MCPLO E2E release gate:</strong> finalized 2026-06-30. The primary release gate is RHOAI's internal Jenkins test matrix (multi-platform, FIPS, disconnected, upgrade scenarios), not Konflux ITS. Konflux ITS is kept only for lightweight PR-level smoke/e2e.</p>
@@ -87,9 +96,14 @@
               <td>5 partners + 2 community MCPs, deploy wizard, manual prerequisites</td>
             </tr>
             <tr>
-              <td><strong>3.5 TP</strong></td>
+              <td><strong>3.5 (DP continues)</strong></td>
               <td>Aug 2026</td>
-              <td>Prerequisite automation, enhanced metadata. Registry integration TP moved to <strong>3.6 EA1</strong> (RHAISTRAT-2027 In Progress, supersedes obsoleted RHAISTRAT-1938)</td>
+              <td>Prerequisite automation, enhanced metadata (fix version RHOAI 3.5; Catalog stays DP stage). Registry integration TP moved to <strong>3.6 EA1</strong> (RHAISTRAT-2027 In Progress, supersedes obsoleted RHAISTRAT-1938)</td>
+            </tr>
+            <tr>
+              <td><strong>3.6 EA1 TP</strong></td>
+              <td>2026 (date TBD)</td>
+              <td>Catalog reaches Tech Preview alongside Registry TP and the Catalog-Registry integration (RHAISTRAT-2027, In Progress). TP timing retargeted from RHOAI 3.5 to RHOAI 3.6 EA1 (PM direction, Jul 2026)</td>
             </tr>
             <tr>
               <td><strong>GA</strong></td>
@@ -173,9 +187,14 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>3.5 DP</strong></td>
-              <td>Aug 2026</td>
-              <td>Metadata-first governance, lifecycle states, approval workflows, workspace scoping. Interactive prototype + demo circulated 2026-06-30</td>
+              <td><strong>DP (planned)</strong></td>
+              <td>Not landing in RHOAI 3.5 stable</td>
+              <td>Metadata-first governance, lifecycle states, approval workflows, workspace scoping. Interactive prototype + demo circulated 2026-06-30. TP retargeted to RHOAI 3.6 EA1 (PM direction, Jul 2026)</td>
+            </tr>
+            <tr>
+              <td><strong>3.6 EA1 TP</strong></td>
+              <td>2026 (date TBD)</td>
+              <td>Registry reaches Tech Preview alongside Catalog TP and the Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
             </tr>
             <tr>
               <td><strong>GA Target</strong></td>
@@ -203,7 +222,7 @@
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

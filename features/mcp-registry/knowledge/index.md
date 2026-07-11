@@ -5,7 +5,7 @@
 - [MCP flow — 3.4 (fragmented/manual) vs. 3.5 (registry-governed) target](/features/mcp-registry/knowledge/fact-mcp-flow-34-to-35.md) — How MCP server flow changes from RHOAI 3.4's manual, fragmented steps to the 3.5 registry-governed target.
 - [MCP Lifecycle Operator (kubernetes-sigs/mcp-lifecycle-operator)](/features/mcp-registry/knowledge/fact-mcp-lifecycle-operator.md) — Kubernetes operator that deploys MCP servers via the MCPServer CRD — bundled with the RHOAI operator, targeting RHOAI 3.5.
 - [MCP Registry proposed data model (MCPServer / MCPServerVersion)](/features/mcp-registry/knowledge/fact-mcp-registry-data-model-proposal.md) — Proposed entity model, the four independent governance status tracks (with their state enumerations), and governance invariants for the MCP Registry — not finalized, a brain-dump-stage proposal.
-- [MCP Registry (3.5 Dev Preview target)](/features/mcp-registry/knowledge/fact-mcp-registry.md) — The system-of-record / governance backbone for MCP servers — identity, version, lifecycle, certification, trust, auditability.
+- [MCP Registry (TP target RHOAI 3.6 EA1)](/features/mcp-registry/knowledge/fact-mcp-registry.md) — The system-of-record / governance backbone for MCP servers — identity, version, lifecycle, certification, trust, auditability.
 - [MCP server lifecycle — pipeline stages & status states (as documented)](/features/mcp-registry/knowledge/fact-mcp-server-lifecycle-stages.md) — The as-documented MCP server pipeline stages, the older linear 7-state governance model, and MLflow's native model-registry states — the baseline the proposed 4-track model (see fact-mcp-registry-data-model-proposal.md) supersedes.
 
 ## person

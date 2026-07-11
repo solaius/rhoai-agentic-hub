@@ -64,7 +64,7 @@
         <div class="feature-card__description">
           <p><strong>Purpose:</strong> Discovery layer for MCP servers. Browse partner, community, and Red Hat MCP servers with metadata (tool lists, security indicators, license, provider logo, README).</p>
 
-          <p><strong>Status:</strong> Developer Preview (DP) shipped in RHOAI 3.4 (code freeze April 10, 2026). TP in 3.5 (Aug 2026) with Registry integration. GA targeted for Q4 2026.</p>
+          <p><strong>Status:</strong> Developer Preview (DP) shipped in RHOAI 3.4 (code freeze April 10, 2026); DP continues through 3.5 with enhancements. TP in RHOAI 3.6 EA1 with Registry integration (PM direction, Jul 2026). GA targeted for Q4 2026.</p>
 
           <p><strong>What Shipped (3.4 DP):</strong></p>
           <ul>
@@ -179,7 +179,7 @@
         <div class="feature-card__description">
           <p><strong>Purpose:</strong> Authoritative governance layer for MCP servers. System of record that brings governance, lifecycle control, trust, and visibility so MCP assets can move cleanly from discovery through approval, deployment, runtime use, and consumption.</p>
 
-          <p><strong>Status:</strong> Design phase. Dev Preview (DP) targeted for RHOAI 3.5 (Aug 2026). GA targeted for Q4 2026.</p>
+          <p><strong>Status:</strong> Design phase. Dev Preview (DP) planned but will not land in RHOAI 3.5 stable. Tech Preview (TP) targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026). GA targeted for Q4 2026.</p>
 
           <p><strong>What It Solves:</strong></p>
           <p>In 3.4, the MCP ecosystem is fragmented and manual. The Registry fills the governance gap in the asset flow: Catalog (discovery) → Deploy or Register (operationalize) → Registry (governance) → Gateway (enforcement). Draft and approval states are Catalog-side concerns, not Registry concerns: the Registry only governs assets that have already been deployed or registered, and it has no pre-registration phase (governance begins at "active," not "draft").</p>
@@ -194,7 +194,7 @@
             <li>Conceptual integration with catalog, deployment, gateway, AAA/Studio</li>
           </ul>
 
-          <p><strong>Current Data Model (3.5 DP Scope):</strong></p>
+          <p><strong>Current Data Model (Registry DP/TP Scope):</strong></p>
           <p><em>Source: <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" class="page-footer__link">MLflow MCP Registry Data Model Proposal</a> and the MCP Registry MVP Requirements doc. Earlier drafts of this page described four independent governance tracks (Lifecycle/Approval/Verification/Certification); the current model has two enums, not four (see the phasing note below).</em></p>
 
           <table>
@@ -252,11 +252,11 @@
             </tbody>
           </table>
 
-          <p><em>Phasing note: approval, verification, and certification tracks are deferred post-MVP, not abandoned; they are explicitly out of scope for 3.5 Dev Preview per the design doc's own comment thread. The 3.5 DP scope intentionally follows a lighter-weight path (matching the approach taken for the upstream skills registry) to speed initial delivery, with the fuller governance model planned as a follow-on. No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model.</em></p>
+          <p><em>Phasing note: approval, verification, and certification tracks are deferred post-MVP, not abandoned; the design doc's own comment thread explicitly scoped them out of the initial Registry release (the doc frames this as "3.5 Dev Preview"; DP is now not landing in RHOAI 3.5 stable, with TP targeted for RHOAI 3.6 EA1, PM direction Jul 2026). The initial Registry scope intentionally follows a lighter-weight path (matching the approach taken for the upstream skills registry) to speed initial delivery, with the fuller governance model planned as a follow-on. No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model.</em></p>
 
           <p><strong>Integration Points:</strong></p>
           <ul>
-            <li><strong>Catalog:</strong> Servers from the Catalog are registered INTO the Registry for governance tracking; Registry's status may inform trust tier labels displayed in the Catalog UI (certification and verification tracking are deferred beyond 3.5 DP)</li>
+            <li><strong>Catalog:</strong> Servers from the Catalog are registered INTO the Registry for governance tracking; Registry's status may inform trust tier labels displayed in the Catalog UI (certification and verification tracking are deferred beyond the Registry MVP; DP not landing in RHOAI 3.5 stable, TP targeted RHOAI 3.6 EA1, PM direction Jul 2026)</li>
             <li><strong>MCPLO:</strong> Reports deployment state to Registry (<code>is_deployed</code> flag)</li>
             <li><strong>Gateway:</strong> Polls Registry for active MCP servers; auto-creates <code>MCPServerRegistration</code> CRDs (<code>mcp.kuadrant.io/v1</code>) for runtime enforcement</li>
             <li><strong>Gen AI Studio:</strong> Queries Registry API for active MCP servers (RBAC-aware, no manual ConfigMap)</li>
@@ -276,7 +276,7 @@
         </div>
       </div>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

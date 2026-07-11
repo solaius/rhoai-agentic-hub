@@ -18,7 +18,7 @@
       <div style="margin-bottom: var(--space-2xl);">
         <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); flex-wrap: wrap;">
           <span class="badge badge--shipped">RHOAI 3.4 DP</span>
-          <span class="badge badge--planned">RHOAI 3.5 DP (Aug 2026)</span>
+          <span class="badge badge--planned">RHOAI 3.6 EA1 TP target</span>
         </div>
         <h1 class="display-xl" style="margin-bottom: var(--space-md);">MCP Management Knowledge Hub</h1>
         <p class="lead" style="max-width: 800px; margin-bottom: var(--space-md);">
@@ -46,9 +46,18 @@
             <div class="timeline-band__column">
               <div class="timeline-band__column-title">RHOAI 3.5 (Aug 2026)</div>
               <div class="timeline-band__items">
-                <div class="timeline-band__item">MCP Registry <span class="badge badge--planned">DP</span></div>
+                <div class="timeline-band__item">MCP Registry <span class="badge badge--not-available">Not in 3.5</span></div>
                 <div class="timeline-band__item">MCP Lifecycle Operator <span class="badge badge--planned">TP</span></div>
                 <div class="timeline-band__item">MCP Gateway <span class="badge badge--planned">TP (integrated)</span></div>
+              </div>
+            </div>
+            <div class="timeline-arrow">→</div>
+            <div class="timeline-band__column">
+              <div class="timeline-band__column-title">RHOAI 3.6 EA1</div>
+              <div class="timeline-band__items">
+                <div class="timeline-band__item">MCP Catalog <span class="badge badge--planned">TP</span></div>
+                <div class="timeline-band__item">MCP Registry <span class="badge badge--planned">TP</span></div>
+                <div class="timeline-band__item">Catalog-Registry integration <span class="badge badge--planned">TP</span></div>
               </div>
             </div>
             <div class="timeline-arrow">→</div>
@@ -113,14 +122,14 @@
           <div class="section-card">
             <div class="component-card__header">
               <div class="section-card__title" style="margin: 0;">MCP Registry</div>
-              <span class="badge badge--planned">DP (3.5)</span>
+              <span class="badge badge--planned">TP target 3.6 EA1</span>
             </div>
             <div class="section-card__description" style="margin-bottom: var(--space-md);">
               Governed MCP server lifecycle on MLflow with approval workflows
             </div>
             <span class="badge badge--coming-soon">Dedicated hub planned</span>
             <div class="component-card__meta">
-              Target: RHOAI 3.5 (Aug 2026)
+              DP planned; not landing in RHOAI 3.5 stable. TP target: RHOAI 3.6 EA1 (PM direction, Jul 2026)
             </div>
           </div>
         </div>
@@ -173,7 +182,7 @@
             <strong style="color: var(--text-primary);">MCP Lifecycle Operator v0.2.0 released (June 17, 2026)</strong> — Improved stability and multi-namespace support. Bundled within RHOAI operator releases.
           </li>
           <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-blue);">
-            <strong style="color: var(--text-primary);">RHOAI 3.5 targeting August 2026</strong> — MCP Registry DP, Gateway integration TP, MCPLO promotion to TP. Full ecosystem DevPreview milestone.
+            <strong style="color: var(--text-primary);">RHOAI 3.5 targeting August 2026</strong> — Gateway integration TP and MCPLO promotion to TP on track. MCP Registry DP will not land in RHOAI 3.5 stable; Registry TP now targets RHOAI 3.6 EA1 alongside Catalog TP (PM direction, Jul 2026).
           </li>
           <li style="margin-bottom: var(--space-md); padding-left: var(--space-md); border-left: 3px solid var(--rh-teal);">
             <strong style="color: var(--text-primary);">End-to-end implementation guide published</strong> — Fernando Lozano's practical notes fill MCP deployment gaps: minimal path (playground without gateway) and full production setup.
@@ -209,7 +218,7 @@
       </section>
 
       <!-- Footer -->
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <p>
           Sources:
@@ -217,7 +226,7 @@
           <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" style="color: var(--rh-blue-light); text-decoration: none;">kubernetes-sigs/mcp-lifecycle-operator</a>,
           <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" style="color: var(--rh-blue-light); text-decoration: none;">RHAISTRAT-1339</a>
         </p>
-        <p>Last verified: July 10, 2026 | Source verification: internal</p>
+        <p>Last verified: July 11, 2026 | Source verification: internal</p>
       </footer>
     </main>
   </div>

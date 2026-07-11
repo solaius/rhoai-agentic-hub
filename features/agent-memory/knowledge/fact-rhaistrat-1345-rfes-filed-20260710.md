@@ -46,9 +46,11 @@ target version until the 3.7 versions exist in Jira; labels add
 
 2642/2643 are the review-driven split of the harness-integrations draft
 (right-sized 1/2: different segments, independently shippable). Reviewer
-flags carried to strategy: harness-tier work pulled forward from the old
-3.8+ directional slot to 3.7 (confirm with Sanjeev), and closed CLI
-harnesses may only support tool/MCP-level integration.
+flag on closed CLI harnesses stands: they may only support tool/MCP-level
+integration. Owner ruling 2026-07-10: the proposed landings are planning
+proposals, not commitments; there is no pull-forward concern on 2642/2643,
+the team plans around the filed RFEs and sees where they land (narrative
+page: /features/agent-memory/enablement/agent-memory-rfe-narrative/).
 
 The Outcome description was rewritten in Jira 2026-07-10 (standalone
 service, three layers, 3.6 DP / 3.7 TP / 3.8 GA) and lists both waves.

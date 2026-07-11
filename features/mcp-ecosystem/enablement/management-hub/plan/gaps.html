@@ -90,7 +90,7 @@
           <p><strong>Issue:</strong> Gen AI Studio discovers MCP servers via <code>gen-ai-aa-mcp-servers</code> ConfigMap in <code>redhat-ods-applications</code> namespace. This is a manual, single-tenant integration point with no governance.</p>
           <p><strong>Impact:</strong> MCP server registration is decoupled from Catalog and Lifecycle Operator. No RBAC, no approval workflow, no lifecycle state visibility in Studio.</p>
           <p><strong>Owner:</strong> RHOAI Registry Team (replacement), RHOAI Gen AI Studio Team (current bridge)</p>
-          <p><strong>Status:</strong> Will be replaced by MCP Registry in RHOAI 3.5 DP</p>
+          <p><strong>Status:</strong> Will be replaced by MCP Registry (DP planned; will not land in RHOAI 3.5 stable; TP targeted for RHOAI 3.6 EA1, PM direction Jul 2026)</p>
           <p><strong>Workaround:</strong> Manually update ConfigMap with MCP service URLs after deployment. Template: <code>{"url": "http://...", "description": "..."}</code>.</p>
           <p class="source-ref">Source: Source Verification Report, Knowledge Registry #27</p>
         </div>
@@ -116,7 +116,7 @@
           <p><strong>Issue:</strong> MCP Registry does not exist in RHOAI 3.4. The governance backbone connecting Catalog, Lifecycle Operator, Gateway, and Gen AI Studio is missing.</p>
           <p><strong>Impact:</strong> No system of record for MCP lifecycle, approval, certification, or trust. Each component operates in isolation with manual handoffs.</p>
           <p><strong>Owner:</strong> RHOAI Registry Team</p>
-          <p><strong>Status:</strong> RHOAI 3.5 Dev Preview target (RHAIRFE-294, RHAIRFE-2421). <strong>Review by Aug 2026</strong>: this gap's status flips once 3.5 DP lands.</p>
+          <p><strong>Status:</strong> DP planned but will not land in RHOAI 3.5 stable (RHAIRFE-294, RHAIRFE-2421); TP now targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026). <strong>Review by 3.6 EA1</strong>: this gap's status flips once Registry TP lands.</p>
           <p><strong>Workaround:</strong> Use manual workflows for governance; document MCP servers in spreadsheets or wikis; enforce approval via team processes.</p>
           <p class="source-ref">Source: MCP Registry Component Doc, Knowledge Registry #27</p>
         </div>
@@ -178,7 +178,7 @@
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

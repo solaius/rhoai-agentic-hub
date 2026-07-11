@@ -6,7 +6,7 @@
 ## Profiles (current state)
 - [now](/memory/profiles/now.md) — Now: DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash, no em dashes
-- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry targets RHOAI 3.5 Dev Preview; full RHOAI/MCP release train through GA
+- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCP Registry DP misses 3.5 stable; Catalog TP + Registry TP + integration push to RHOAI 3.6 EA1; full RHOAI/MCP release train through GA
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts
