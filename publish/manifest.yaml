@@ -68,12 +68,12 @@
   description: Scrolling deck with an inline Cytoscape.js diagram of the end-to-end MCP ingestion pipeline.
 - source: features/mcp-gateway/enablement/rhcl-hub/
   dest: mcp-gateway/rhcl/
-  audience: public
+  audience: internal
   title: MCP Gateway Knowledge Hub
   description: 23-page understand/sell/build/govern/plan enablement site for MCP Gateway on Red Hat Connectivity Link — architecture, auth setup, competitive positioning, roadmap. Customer-engagement detail anonymized for public publication.
 - source: features/mcp-ecosystem/enablement/management-hub/
   dest: mcp-ecosystem/hub/
-  audience: public
+  audience: internal
   title: MCP Management Knowledge Hub
   description: 22-page enablement site covering the full MCP ecosystem (Gateway, Registry, Catalog, Lifecycle Operator) across understand/sell/build/govern/plan. Customer-engagement detail anonymized for public publication.
 - source: features/agent-memory/enablement/agent-memory-rfe-narrative/

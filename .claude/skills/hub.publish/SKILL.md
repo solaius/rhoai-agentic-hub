@@ -9,15 +9,21 @@ description: Add or update an entry in publish/manifest.yaml to ship an artifact
    features/<f>/enablement/… (move it there first if not).
 2. Draft the manifest entry: source · dest (URL slug — a CONTRACT, never
    changed after shipping; short and stable, e.g. `mcp-gateway/rhcl/`) ·
-   audience (`public`; `internal` is schema-reserved and not published in v1)
-   · title · description.
+   audience (`public` ships to `rhoai-agentic-hub-pages`; `internal` ships to
+   this repo's own `gh-pages` branch, interim hosting until a protected
+   GitLab target exists; ASK which one, never assume) · title · description.
 3. DISCLOSURE GATE (before ANY manifest edit):
-   - Adding/updating: show the entry and state the resulting URL
-     `https://solaius.github.io/rhoai-agentic-hub-pages/<dest>` — this
-     becomes world-readable. Wait for explicit OK.
+   - Adding/updating: show the entry and state the resulting URL, either
+     `https://solaius.github.io/rhoai-agentic-hub-pages/<dest>` (public) or
+     `https://solaius.github.io/rhoai-agentic-hub/<dest>` (internal, interim,
+     still on a public repo). Wait for explicit OK.
    - REMOVING an entry: intentional link breakage — the published copy is
      deleted on the next publish run and old links 404. Confirm twice:
      first the intent, then re-confirm naming the exact dest. Only then edit.
+   - FLIPPING `audience` on an existing entry is gated in both directions:
+     public-to-internal is a retraction (the public URL 404s), internal-to-
+     public is a new disclosure decision. State the old and new URL and
+     confirm before editing.
 4. Append/update the entry in publish/manifest.yaml, then verify:
    `python scripts/hub_publish.py --check` (must print "manifest valid").
 5. Commit + push:

@@ -20,7 +20,8 @@ including review. "When" is a best guess, not a schedule.
 | 6 | R5: cross-machine continuity runbook + fixes it surfaces | **High**. Steps 2 and 3 executed 2026-07-11 on machine B (round-trip passed both directions; #14 answered). Step 1 (cold path) deferred: B was warm. Step 4 (push race) NOT executed. See R5 outcome below | Small (run it) | Steps 2-3 done; 1 and 4 open |
 | 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Done (follow-ups: project MCP enable + doctor rhai mirror) |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
-| 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Next/Later |
+| 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Shipped (interim) |
+| 14 | `restricted/` cross-machine sync (private mirror or git-crypt) | **Medium–High** — un-park condition met 2026-07-11: customer-feedback gathering ran on B, where the restricted tree doesn't exist, so the session bypassed the local-first ingest flow entirely. R5 had parked this on the evidence that B never touched those workflows; that no longer holds | Medium | Next (un-parked 2026-07-11; see R5 outcome addendum) |
 | 17 | Slack sweep assist for qa capture (spec Phase 2) | Medium, gated on evidence Slack dominates `asks:` | Medium | Later (data-driven) |
 | 18 | JTBD mining from qa/tracker (spec Phase 2) | Medium, needs qa volume first | Small–Medium | Later |
 | ~~19~~ | ~~Doctor: env wiring + Slack probe~~ | Done | Done | Done |
@@ -251,6 +252,13 @@ sections) in one pass. Full devolution map + sequenced plan:
 [/features/mcp-ecosystem/work/management-hub-umbrella-plan.md](/features/mcp-ecosystem/work/management-hub-umbrella-plan.md).
 Each new hub ships with a `work/refresh-<slug>.yaml` so hub.refresh-site
 covers it from day one.
+**Audience ruling, 2026-07-11:** all knowledge hubs, existing and
+prestaged, are `audience: internal` (GA-readout-class detail, not for the
+public site); the two live hubs (RHCL, Management) flipped from public to
+internal the same day #13 landed in interim form. The three new hubs
+(Catalog, MCPLO, Registry) enter the manifest as `audience: internal` from
+their first commit, never public first. Spec:
+[/docs/specs/2026-07-11-component-hub-buildout-design.md](/docs/specs/2026-07-11-component-hub-buildout-design.md).
 
 **12 · Curated FAQ / JTBD publishing.** Already specced (narrative spec §9):
 when qa volume justifies it, ship a curated FAQ page (per audience) and a
@@ -375,6 +383,14 @@ Pages or a private pages repo) would give internal-only artifacts — the
 GA-readout class — a real home with the same manifest discipline, instead
 of the current binary public-or-archived. Design questions: where it
 hosts, how links between public and internal artifacts behave.
+**Shipped in interim form, 2026-07-11:** the internal target is this
+repo's own `gh-pages` branch (`https://solaius.github.io/rhoai-agentic-hub/`),
+not the originally envisioned VPN'd GitLab Pages. Accepted caveat: this
+repo is public, so the interim internal target carries no real access
+control, it is simply unlisted and unlinked from the public site. The
+protected-GitLab tail stays open, still tracked as the remaining scope of
+this item. Spec:
+[/docs/specs/2026-07-11-component-hub-buildout-design.md](/docs/specs/2026-07-11-component-hub-buildout-design.md).
 
 **14 · `restricted/` sync.** Manual copy is the current contract and R5
 will measure its pain. Options in rough preference order: a private

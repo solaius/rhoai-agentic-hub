@@ -118,7 +118,7 @@
                 <ul>
                   <li>Deployment Operator (MCP Gateway Operator): ships as an external, customer-installed dependency, not bundled, auto-installed, or lifecycle-managed by RHOAI (platform policy: architecture overlay 0008 / ODH-ADR-0007). RHOAI documents it as a prerequisite, publishes a version-compatibility matrix, and surfaces a DSC/DSCI status condition when it's absent (RHAISTRAT-1937, In Progress, targets RHOAI 3.5 GA).</li>
                   <li>Security Plug-In (DDoS, Bot Management)</li>
-                  <li>Session Management (Resumable Sessions): needs redefinition, since the MCP spec RC (finalizing Jul 28, 2026) eliminates protocol-level sessions. See the <a href="../../../narrative/mcp-spec-rc-impact/">impact analysis</a>.</li>
+                  <li>Session Management (Resumable Sessions): needs redefinition, since the MCP spec RC (finalizing Jul 28, 2026) eliminates protocol-level sessions. See the <a href="https://solaius.github.io/rhoai-agentic-hub-pages/narrative/mcp-spec-rc-impact/">impact analysis</a>.</li>
                   <li>High Availability (Health Checks / Failover)</li>
                   <li><strong>MCP Registry Integration</strong></li>
                   <li>Extending Existing Capabilities (Prompts, Resources, Sampling)</li>
@@ -210,11 +210,11 @@
           <p>The Release Candidate has been live since May 21, 2026 and finalizes July 28, 2026. It carries several breaking changes: the streamable HTTP transport goes stateless (no <code>initialize</code> handshake, no <code>Mcp-Session-Id</code>), <code>server/discover</code> becomes mandatory, SSE resumability is removed, OAuth Dynamic Client Registration is deprecated in favor of Client ID Metadata Documents, and tool schemas move to full JSON Schema 2020-12.</p>
           <p>MCP Gateway is the most impacted RHOAI component: the GA-roadmap "Session Management (Resumable Sessions)" feature needs complete redefinition, since protocol-level sessions no longer exist.</p>
           <p><strong>Status:</strong> RC in its validation window; Gateway team assessing rework scope ahead of the July 28 finalization.</p>
-          <p>See the full <a href="../../../narrative/mcp-spec-rc-impact/">MCP Spec RC Impact Analysis</a> for component-by-component detail.</p>
+          <p>See the full <a href="https://solaius.github.io/rhoai-agentic-hub-pages/narrative/mcp-spec-rc-impact/">MCP Spec RC Impact Analysis</a> for component-by-component detail.</p>
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

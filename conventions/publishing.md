@@ -14,8 +14,19 @@ Rules:
 - `dest` slugs are contracts — never change one after it ships (the publish
   script warns via its snapshot diff). Removing a manifest entry removes the
   published copy on the next publish run — that is the explicit intent path.
-- `audience: internal` is schema-reserved for a future GitLab Pages target;
-  v1 publishes `public` only.
+- Two publish targets, one manifest: `audience: public` ships to the
+  `solaius/rhoai-agentic-hub-pages` repo (world-readable); `audience: internal`
+  ships to this repo's own `gh-pages` branch at
+  `https://solaius.github.io/rhoai-agentic-hub/` (interim hosting until a
+  protected GitLab Pages target exists; accepted caveat: this repo is public,
+  so the interim internal target is not access-controlled). Each target clone
+  keeps its own `.publish-snapshot.json`, badges, and generated landing page.
+  Public artifacts must never link into an internal dest, this is
+  lint-enforced (`hub_lint.py` fails the build on a public-to-internal link).
+  Internal artifacts that link to a public dest must use the absolute public
+  URL (`https://solaius.github.io/rhoai-agentic-hub-pages/<dest>/`), not a
+  relative path, since the two targets are different repos and different
+  sites. Internal-to-internal (hub-to-hub) links stay relative.
 - CI (`publish.yml`) pushes to `solaius/rhoai-agentic-hub-pages` and
   regenerates that repo's landing `index.html` from manifest titles and
   descriptions. The pages repo holds built artifacts only — no knowledge.
@@ -25,7 +36,8 @@ Rules:
   `features/<f>/enablement/<slug>/` with index.html as its entry point;
   assets live inside it.
 
-Live root: https://solaius.github.io/rhoai-agentic-hub-pages/
+Live root: https://solaius.github.io/rhoai-agentic-hub-pages/ (public) ·
+https://solaius.github.io/rhoai-agentic-hub/ (internal, interim)
 
 ## Landing page + snapshot (v2)
 
