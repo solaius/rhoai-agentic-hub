@@ -71,6 +71,10 @@ search_areas:
       - hardware vendor AI validated platforms
     sources: [press-releases, company-blogs]
 
-# jira-gap (future, backlog #27b): a jira: block here
-# (project/components/jql) will drive the gap-analysis lens — the Jira
-# client it needs landed with #2 (2026-07-10, scripts/hublib/jira.py).
+# Drives the jira-gap lens (#27b, shipped 2026-07-11). This is the
+# "what we are building" baseline that the landscape is crossed against.
+# jql wins if set; otherwise project + components compose one.
+jira:
+  project: RHAISTRAT
+  components: []
+  jql: 'project = RHAISTRAT AND status in ("In Progress", "New", "To Do") AND issuetype in (Feature, Outcome) ORDER BY updated DESC'

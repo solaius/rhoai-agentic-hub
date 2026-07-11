@@ -13,8 +13,28 @@ upstream (OSS projects, standards, protocols, repos) · architecture
 (patterns, reference architectures, build-vs-buy) · requirements
 (capability expectations, enterprise needs, persona demands) · competitive
 (competitor moves + analyst coverage, driven by domains/*.yaml) ·
-jira-gap (FUTURE — refuse politely; the Jira hub skills landed
-2026-07-10, the lens itself ships with backlog #27b).
+jira-gap (strategic alignment: cross active Jira work against the
+landscape, both directions, driven by the `jira:` block in
+`domains/*.yaml`).
+
+JIRA-GAP LENS. Needs the domain's `jira:` block. Two directions, and the
+second is the payload:
+
+1. BASELINE. `python scripts/hub_jira.py --try-jql '<the domain jql>'` gives
+   the active work. This is "what we are building". Read-only.
+2. DIRECTION A, active work vs landscape. For each active Feature or Outcome,
+   find the related industry developments from the other lenses' findings (or
+   search directly if run alone). Flag each as ahead / behind / different
+   approach, with the evidence.
+3. DIRECTION B, landscape vs active work. Significant developments with NO
+   corresponding Jira work. Categorize each gap: intentional omission (we
+   decided not to), blind spot (we did not see it), or emerging opportunity
+   (too new to have decided). This is the strategic early warning and it is
+   the reason the lens exists.
+4. Output a `| Area | Signal strength | Category | Notes |` table for
+   direction B. Never write a Jira summary verbatim into the research doc
+   (this repo is PUBLIC and Jira serves nothing anonymously): cite the key and
+   describe the work in your own words.
 
 1. RESOLVE HOME: feature id → features/<id>/research/; story-shaped →
    narrative/research/. Free topic with no home in
@@ -41,9 +61,9 @@ jira-gap (FUTURE — refuse politely; the Jira hub skills landed
    expansion. Wait for OK.
 4. FAN OUT: one research subagent per lens (Agent tool; no subagents
    available → run lenses sequentially inline). Each brief: the step-2
-   context summary + the lens definition + (competitive only) the domain
-   config from domains/*.yaml — pick by explicit ask, then by `features:`
-   match, then `default: true`. Sources: web search/fetch, GitHub, Google
+   context summary + the lens definition + (competitive and jira-gap only)
+   the domain config from domains/*.yaml — pick by explicit ask, then by
+   `features:` match, then `default: true`. Sources: web search/fetch, GitHub, Google
    Drive MCP, Slack MCP, context7. The customer tracker
    (rhai-tracker/restricted) MAY be read as input, but any finding citing
    it is restricted (step 6). A failed lens shrinks the run, never sinks

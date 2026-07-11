@@ -22,8 +22,9 @@ separately through the gate.
 
 `title` · `description` (one line, written for someone deciding whether
 to open it) · `timestamp` (ISO date) · `lens`
-(`landscape|upstream|architecture|requirements|competitive` — omit for
-pre-convention or migrated docs; `source:` marks migrated provenance) ·
+(`landscape|upstream|architecture|requirements|competitive|jira-gap` —
+omit for pre-convention or migrated docs; `source:` marks migrated
+provenance) ·
 `review_after` (ISO date). The linter checks `description` and
 `timestamp` as **warnings only** — research docs never fail the build.
 `index.md` and `REVIEW-NOTES.md` are exempt.
