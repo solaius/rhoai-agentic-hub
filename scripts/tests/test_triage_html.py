@@ -1,4 +1,7 @@
 import datetime
+import html
+import json
+import re
 
 from hublib import triage, triage_html
 
@@ -30,12 +33,28 @@ def test_report_is_self_contained():
 
 
 def test_feature_is_a_data_attribute_not_a_title_scrape():
-    html = triage_html.render("mcp-registry", "project = X", [scan_row()],
-                              TODAY, "https://jira.test")
-    assert 'data-feature="mcp-registry"' in html
+    html_out = triage_html.render("mcp-registry", "project = X", [scan_row()],
+                                  TODAY, "https://jira.test")
+    assert 'data-feature="mcp-registry"' in html_out
     # the em-dash title split that pm-toolkit used must not reappear
-    assert "document.title.split" not in html
-    assert "—" not in html          # no em dashes anywhere, ever
+    assert "document.title.split" not in html_out
+    # the no-em-dashes rule governs what WE author (chrome: CSS, JS, static
+    # labels/headers, option values) - not third-party Jira text we display.
+    # Pin the authored chrome directly, plus a full render whose row data
+    # contains no em dash (so the pinned string covers real markup too).
+    assert "—" not in triage_html.CSS
+    assert "—" not in triage_html.JS
+    assert "—" not in html_out
+
+
+def test_a_jira_summary_may_contain_an_em_dash_and_is_rendered_verbatim():
+    # Third-party Jira text is data, not agent-authored prose: it may
+    # legitimately contain an em dash, and we must display it verbatim.
+    summary = "Support A2A — agent to agent"
+    rows = [scan_row(summary=summary)]
+    html_out = triage_html.render("f", "jql", rows, TODAY, "https://jira.test")
+    assert html.escape(summary, quote=True) in html_out
+    assert "—" in html_out
 
 
 def test_rows_are_grouped_into_the_three_sections():
@@ -54,10 +73,24 @@ def test_rows_are_grouped_into_the_three_sections():
 
 
 def test_current_labels_round_trip_through_a_hidden_cell():
-    rows = [scan_row(labels=["mcp", "3.6-candidate"])]
-    html = triage_html.render("f", "jql", rows, TODAY, "https://jira.test")
-    assert "labels-data" in html
-    assert "3.6-candidate" in html
+    rows = [
+        scan_row(key="A-1", labels=["mcp", "3.6-candidate"]),
+        scan_row(key="A-2", labels=["other"]),
+    ]
+    html_out = triage_html.render("f", "jql", rows, TODAY, "https://jira.test")
+    assert "labels-data" in html_out
+    # Find the specific row by data-key and pull its labels-data span's text,
+    # rather than substring-checking the whole page (which would pass even if
+    # the cell were malformed or attached to the wrong row).
+    row_match = re.search(
+        r'<tr data-key="A-1"[^>]*>.*?</tr>', html_out, re.DOTALL)
+    assert row_match is not None
+    cell_match = re.search(
+        r'<span class="labels-data" hidden>(.*?)</span>', row_match.group(0))
+    assert cell_match is not None
+    # The cell content is html-escaped; a browser unescapes it via textContent.
+    labels = json.loads(html.unescape(cell_match.group(1)))
+    assert labels == ["mcp", "3.6-candidate"]
 
 
 def test_close_and_approve_are_offered_only_when_the_workflow_allows_it():
