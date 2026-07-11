@@ -309,6 +309,14 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   disclosure contract the old update skills lacked (#4). Spec:
   [/docs/specs/2026-07-10-published-site-trust-batch-design.md](/docs/specs/2026-07-10-published-site-trust-batch-design.md).
   Plan: [/docs/plans/2026-07-10-published-site-trust-batch-plan.md](/docs/plans/2026-07-10-published-site-trust-batch-plan.md).
+  **Both acceptance runs passed - fully accepted 2026-07-11**: RHCL hub
+  refresh (`03e3d04`, 20 pages, 5-source sweep, 2 owner rulings) and
+  Management hub refresh (`0e21278`, 22 pages + design pass, umbrella
+  devolution plan recorded, spawned #35), each ending in a green publish
+  run with the landing badges activating as designed. Owner Registry/
+  Catalog re-plan applied same day (`e7d8527`): Registry DP misses 3.5
+  stable, Catalog TP + Registry TP + integration to 3.6 EA1. Acceptance
+  outcomes + run-friction fixes recorded in the plan doc.
 - **#2 Jira hub skills** — shipped 2026-07-10 (`629cb3d`): `hublib/jira.py`
   (pm-toolkit client port, httpx), `hublib/jiramap.py` + `hub_jira.py`
   (check/try-jql/sweep/sync CLI), `hub.jira-sweep` + `hub.jira-sync`
