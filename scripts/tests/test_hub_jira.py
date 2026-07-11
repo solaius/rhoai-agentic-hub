@@ -49,3 +49,26 @@ def test_sync_with_no_scoped_features_is_quiet(tmp_path, capsys):
                         "--root", str(make_repo(tmp_path))])
     assert rc == 0
     assert "nothing to sync" in capsys.readouterr().out
+
+
+def test_audit_is_a_mode(tmp_path):
+    # --audit combined with another mode is rejected
+    with pytest.raises(SystemExit):
+        hub_jira.main(["--audit", "RHAIRFE-1", "--check"])
+
+
+def test_audit_needs_no_out_dir(tmp_path, monkeypatch):
+    # --audit is read-only and prints to stdout, so unlike --sweep/--sync
+    # it must NOT require --out. Argparse must not reject it.
+    calls = {}
+
+    def fake_run(coro):
+        coro.close()
+        calls["ran"] = True
+        return 0
+
+    monkeypatch.setattr(hub_jira.asyncio, "run", fake_run)
+    rc = hub_jira.main(["--audit", "RHAIRFE-1",
+                        "--root", str(make_repo(tmp_path))])
+    assert rc == 0
+    assert calls["ran"] is True

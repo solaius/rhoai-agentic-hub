@@ -4,6 +4,7 @@ docs/specs/2026-07-09-jira-hub-skills-design.md.
 
   --check                       connectivity/auth probe (doctor section 4)
   --try-jql '<jql>'             scope discovery: count + sample rows
+  --audit <KEY>                 read-only structured dump of one issue (hub.jira-hygiene)
   --sweep <feature> --out DIR   proposed snapshot + ref candidates -> DIR
   --sync [<feature>] --out DIR  diff stored snapshots + watched keys -> report + DIR
 """
@@ -67,6 +68,56 @@ async def _try_jql(jql, sample):
               f" · {(f.get('status') or {}).get('name', '')} · {f.get('summary', '')}")
     if len(issues) > sample:
         print(f"  … {len(issues) - sample} more")
+    return 0
+
+
+async def _audit(key):
+    """Read-only structured dump of one issue for hub.jira-hygiene to judge.
+
+    Prints YAML, not prose. The skill applies the checklists; this only
+    supplies the facts. Never writes anything, anywhere.
+    """
+    fields = [
+        "summary", "status", "assignee", "priority", "issuetype", "project",
+        "issuelinks", "components", "labels", "created", "updated",
+        "fixVersions", "parent", "description",
+    ]
+    async with client_from_env() as client:
+        issue = await client.get_issue_with_links(key, fields=fields)
+        base = client.base_url
+    f = issue.get("fields", {})
+    links = []
+    for link in f.get("issuelinks") or []:
+        ltype = (link.get("type") or {})
+        if link.get("outwardIssue"):
+            other, direction = link["outwardIssue"], ltype.get("outward", "")
+        elif link.get("inwardIssue"):
+            other, direction = link["inwardIssue"], ltype.get("inward", "")
+        else:
+            continue
+        of = other.get("fields", {})
+        links.append({
+            "direction": direction,
+            "key": other.get("key"),
+            "type": (of.get("issuetype") or {}).get("name"),
+            "status": (of.get("status") or {}).get("name"),
+        })
+    dump = {
+        "key": issue.get("key"),
+        "url": f"{base}/browse/{issue.get('key')}",
+        "type": (f.get("issuetype") or {}).get("name"),
+        "status": (f.get("status") or {}).get("name"),
+        "summary": f.get("summary", ""),
+        "assignee": (f.get("assignee") or {}).get("displayName"),
+        "priority": (f.get("priority") or {}).get("name"),
+        "components": [c.get("name") for c in f.get("components") or []],
+        "labels": list(f.get("labels") or []),
+        "fix_versions": [v.get("name") for v in f.get("fixVersions") or []],
+        "parent": (f.get("parent") or {}).get("key"),
+        "links": links,
+        "description": adf_to_text(f.get("description")),
+    }
+    print(yaml.safe_dump(dump, sort_keys=False, allow_unicode=True))
     return 0
 
 
@@ -206,16 +257,18 @@ def main(argv=None):
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--try-jql", metavar="JQL")
     ap.add_argument("--sample", type=int, default=15)
+    ap.add_argument("--audit", metavar="KEY")
     ap.add_argument("--sweep", metavar="FEATURE")
     ap.add_argument("--jql", metavar="JQL")
     ap.add_argument("--sync", nargs="?", const="", metavar="FEATURE")
     ap.add_argument("--out", metavar="DIR")
     ap.add_argument("--root", help=argparse.SUPPRESS)  # tests only
     args = ap.parse_args(argv)
-    modes = [bool(args.check), args.try_jql is not None,
+    modes = [bool(args.check), args.try_jql is not None, args.audit is not None,
              args.sweep is not None, args.sync is not None]
     if sum(modes) != 1:
-        ap.error("pick exactly one mode: --check | --try-jql | --sweep | --sync")
+        ap.error("pick exactly one mode: --check | --try-jql | --audit | "
+                 "--sweep | --sync")
     if (args.sweep is not None or args.sync is not None) and not args.out:
         ap.error("--out DIR is required with --sweep/--sync "
                  "(proposals are written there, never into the repo)")
@@ -227,6 +280,8 @@ def main(argv=None):
             return asyncio.run(_check())
         if args.try_jql is not None:
             return asyncio.run(_try_jql(args.try_jql, args.sample))
+        if args.audit is not None:
+            return asyncio.run(_audit(args.audit))
         out = Path(args.out)
         if args.sweep is not None:
             return asyncio.run(_sweep(root, args.sweep, args.jql, out, today))
