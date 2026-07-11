@@ -11,11 +11,13 @@ Validated 2026-07-11 (R6 runbook). See `## R6 validation outcome` below.
    reads `memory/index.md` on start (the session-start rule from AGENTS.md).
 2. Run `bash scripts/doctor.sh setup` -- section 8 writes `.cursor/mcp.json`
    alongside the Claude config when `.cursor/` exists. Restart Cursor after.
-3. **Approve project MCP servers** in Cursor Settings → MCP (required;
-   project servers are not auto-approved — see MCP section). Enable
-   `google-workspace`, `slack`, and `rhai-tracker` if present.
+3. Hub MCP servers that must work in Cursor belong in
+   `~/.cursor/mcp.json` (user-level) — that is what Settings → Tools & MCP
+   lists and auto-approves. Doctor still writes project `.cursor/mcp.json`,
+   but on this machine project servers did not appear in Settings.
 4. Verify MCP servers: list calendar events (google-workspace), list joined
    Slack channels (slack), query the tracker (rhai-tracker if configured).
+   After editing user mcp.json, restart Cursor or reload MCP.
 
 ## Skills
 
@@ -61,21 +63,26 @@ Cursor also supports `envFile` for `.env` loading, but the doctor writes
 secrets inline for consistency with the Claude path.
 
 **Critical Cursor behavior (April 2026+):** global servers in
-`~/.cursor/mcp.json` are auto-approved; **project-level servers still
-require a human to enable them** in Settings → MCP. Until approved, logs
-show `project-0-<repo>-<name>` transitioning `none → disconnected` and
-the agent never sees their tools.
+`~/.cursor/mcp.json` are auto-approved and appear in Settings → Tools &
+MCP. Project-level servers in `.cursor/mcp.json` are discovered by the
+runtime (logs show `project-0-<repo>-<name>`) but on this machine they
+stayed **disconnected** and **did not appear in the Settings UI** — so
+"enable in Settings" is not a workable path for project Slack.
 
 R6 evidence (this machine):
 - Doctor-written project servers: `google-workspace`, `slack` present in
-  `.cursor/mcp.json`. Cursor discovered them as
+  `.cursor/mcp.json`. Cursor log entries briefly listed
   `project-0-rhoai-agentic-hub-google-workspace` and
-  `project-0-rhoai-agentic-hub-slack`, both stayed **disconnected**.
+  `project-0-rhoai-agentic-hub-slack` as disconnected; neither showed up
+  as a toggleable row in Settings → MCP for the owner.
 - Working Google access came from the **user-level** server
   `google_workspace` in `~/.cursor/mcp.json` (`user-google_workspace`) —
-  list_calendars succeeded (11 calendars).
-- `slack`: configured + podman engine running + image present, but not
-  usable until the project server is approved (or copied into user MCP).
+  list_calendars succeeded (11 calendars). That is what Settings shows as
+  enabled "Google Workspace".
+- `slack`: config + podman engine + image OK in the project file, but
+  invisible from Settings. **Working fix:** mirror the same `slack` block
+  into `~/.cursor/mcp.json` (done 2026-07-11 during R6 follow-up) so it
+  follows the Google pattern. Restart Cursor / reload MCP after.
 - `rhai-tracker`: registered in Claude `.mcp.json` and `server.js` exists
   on disk, but **absent from `.cursor/mcp.json`**. Doctor section 7 is
   supposed to mirror it when `.cursor/` exists — gap to fix on next
@@ -83,13 +90,11 @@ R6 evidence (this machine):
   `restricted/.env` (`CTRACK_DIR`) may also be stale relative to the
   live `rhai-customer-tracker` checkout the Claude config points at.
 
-Workaround if you need Slack/tracker today without touching project
-approval: add the same server block to `~/.cursor/mcp.json` (user-level
-auto-approves). Prefer approving the project servers so doctor remains
-the source of truth.
-
-See [/docs/mcp-servers.md](/docs/mcp-servers.md) for server details and
-troubleshooting (server packages are interchangeable between harnesses).
+Recommended SoT for Cursor day-to-day: put hub MCP servers that must
+work in Cursor into `~/.cursor/mcp.json` (user-level), matching how
+Google already worked here. Keep doctor writing `.cursor/mcp.json` for
+parity/docs, but do not rely on the project file alone until Cursor
+surfaces project servers reliably in Settings.
 
 ## Known differences
 
@@ -104,8 +109,8 @@ troubleshooting (server packages are interchangeable between harnesses).
 
 | gap | severity | workaround |
 |---|---|---|
-| Project MCP servers stay disconnected until enabled in Settings → MCP | **Blocks** Slack (and project Google) from Cursor agents | Enable in Settings → MCP, or mirror into `~/.cursor/mcp.json` |
-| `rhai-tracker` missing from `.cursor/mcp.json` | **Blocks** tracker sync from Cursor | Re-run `doctor.sh setup` after confirming tracker path; approve the project server |
+| Project MCP from `.cursor/mcp.json` not listed in Settings → MCP (stays disconnected in logs) | **Blocks** Slack if only project-configured | Mirror into `~/.cursor/mcp.json` (same path Google already used) |
+| `rhai-tracker` missing from `.cursor/mcp.json` | **Blocks** tracker sync from Cursor | Re-run `doctor.sh setup` after confirming tracker path; also add to user mcp.json for Cursor |
 | ODH marketplace skill wrappers (`rfe-creator`, `assess-rfe`) | Nice-to-have | Run underlying `python scripts/hub_*.py` CLIs |
 | No scratch auto-memory | None (by design) | `hub.capture` for every durable item |
 | Superpowers / Claude hooks | Nice-to-have | Not required for hub daily loop |

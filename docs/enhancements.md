@@ -226,13 +226,16 @@ project MCP enable is the main friction. Full write-up:
   rhai-tracker missing from Cursor project config.
 
 **Follow-ups (not blocking daily hub.capture / reindex / commit):**
-- Owner: enable project `slack` (+ `google-workspace` if desired) in
-  Cursor Settings → MCP, then re-probe one Slack tool.
+- Owner observation mid-R6: Slack was **not listed** in Settings → MCP at
+  all (Google Workspace there is the user-level server). Project Slack
+  only appeared in logs as disconnected. Mirrored `slack` into
+  `~/.cursor/mcp.json` 2026-07-11 — restart Cursor, confirm it lists, then
+  re-probe one Slack tool.
 - Doctor tweak: ensure section 7 always mirrors `rhai-tracker` into
-  `.cursor/mcp.json` when the Claude registration exists; document the
-  project-MCP enable step in `docs/setup.md` / `docs/mcp-servers.md`.
-- Optional: mirror Slack into `~/.cursor/mcp.json` for auto-approve
-  (workaround only — prefer project enable so doctor stays SoT).
+  `.cursor/mcp.json` when the Claude registration exists; document that
+  Cursor day-to-day needs user-level `~/.cursor/mcp.json` for servers that
+  must appear in Settings (project file alone was insufficient here).
+- Update `docs/setup.md` / `docs/mcp-servers.md` Cursor appendix accordingly.
 
 ---
 
