@@ -5,7 +5,7 @@ from pathlib import Path
 
 import yaml
 
-from . import frontmatter, jiramap, refresh
+from . import frontmatter, jiramap, publisher, refresh
 
 KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question", "qa", "jtbd"}
 # pillar/story are narrative-layer-only (spec D12/D14) — invalid under features/.
@@ -361,4 +361,5 @@ def lint_repo(root):
     _lint_budgets(root, errors)
     _lint_links(root, warnings)
     errors.extend(validate_manifest(root))
+    errors.extend(publisher.check_audience_links(root))
     return errors, warnings

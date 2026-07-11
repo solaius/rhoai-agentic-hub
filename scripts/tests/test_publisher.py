@@ -2,7 +2,7 @@ import json
 import shutil
 from pathlib import Path
 
-from hublib.publisher import SNAPSHOT, apply, build_plan, check_links, generate_landing
+from hublib.publisher import SNAPSHOT, apply, build_plan, check_audience_links, check_links, generate_landing
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -369,3 +369,19 @@ def test_apply_internal_target(tmp_path):
     assert "Internal" in landing
     snap = json.loads((internal / SNAPSHOT).read_text())
     assert set(snap) == {"x/internal"}
+
+
+def test_check_audience_links_flags_public_to_internal(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/enablement/site/index.html",
+          '<a href="../internal/">peek</a>')
+    errors = check_audience_links(root)
+    assert len(errors) == 1
+    assert "x/internal" in errors[0]
+
+
+def test_check_audience_links_clean_and_internal_to_public_ok(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/x/enablement/internal/index.html",
+          '<a href="../site/">fine</a> <a href="https://example.com/x">ext</a>')
+    assert check_audience_links(root) == []

@@ -2,6 +2,7 @@
 import hashlib
 import html
 import json
+import posixpath
 import re
 import shutil
 from datetime import date
@@ -239,4 +240,46 @@ def check_links(pages_dir):
             if resolved.is_dir() and (resolved / "index.html").is_file():
                 continue
             errors.append(f"{rel}: broken link {raw}")
+    return errors
+
+
+def check_audience_links(root):
+    """Public artifacts must not link into internal dests (the #13
+    audience boundary): a public page linking to an internal artifact
+    would 404 or VPN-block once the internal target moves to GitLab."""
+    root = Path(root)
+    entries = load_manifest(root)
+    internal_dests = [str(e["dest"]).strip("/") for e in entries
+                      if e.get("audience") == "internal" and e.get("dest")]
+    errors = []
+    if not internal_dests:
+        return errors
+    for e in entries:
+        if e.get("audience") != "public" or not e.get("source") or not e.get("dest"):
+            continue
+        src = root / e["source"]
+        dest = str(e["dest"]).strip("/")
+        if src.is_dir():
+            files = sorted(p for p in src.rglob("*") if p.suffix.lower() in (".html", ".htm", ".js"))
+        elif src.suffix.lower() in (".html", ".htm"):
+            files = [src]
+        else:
+            continue
+        for f in files:
+            base = (posixpath.join(dest, f.relative_to(src).parent.as_posix())
+                    if src.is_dir() else posixpath.dirname(dest))
+            text = f.read_text(encoding="utf-8", errors="replace")
+            for m in LINK_ATTR_RE.finditer(text):
+                raw = m.group(1).strip()
+                if raw.lower().startswith(EXTERNAL_PREFIXES):
+                    continue
+                target = unquote(raw.split("#", 1)[0].split("?", 1)[0])
+                if not target:
+                    continue
+                norm = (posixpath.normpath(target.lstrip("/")) if target.startswith("/")
+                        else posixpath.normpath(posixpath.join(base, target)))
+                for idest in internal_dests:
+                    if norm == idest or norm.startswith(idest + "/"):
+                        errors.append(f"{f.relative_to(root).as_posix()}: public artifact "
+                                      f"links into internal dest '{idest}': {raw}")
     return errors
