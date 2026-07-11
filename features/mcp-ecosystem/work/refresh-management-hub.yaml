@@ -10,8 +10,8 @@ sources:
   - {id: 11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y, title: MCPLO Support Agreement}
   - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: Catalog Integration}
   - {id: 1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740, title: Partners MCP Catalog}
-  - {id: 1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8, title: Gateway Data Model}
-  - {id: 11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g, title: MCPLO Data Model}
+  - {id: 1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8, title: MCP Registry Data Model Proposal}
+  - {id: 11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g, title: RHOAI Support Agreement with RHCL}
   github:
   - Kuadrant/mcp-gateway
   - kubernetes-sigs/mcp-lifecycle-operator

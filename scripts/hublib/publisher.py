@@ -129,8 +129,10 @@ def generate_landing(root, plan, hub_sha=""):
     if not sections:
         sections.append('      <p class="empty">No published artifacts yet.</p>')
     meta = f' · hub commit {html.escape(hub_sha)}' if hub_sha else ""
+    count = len(plan)
+    count_text = f"{count} published artifact" + ("s" if count != 1 else "")
     return (template
-            .replace("{{COUNT}}", str(len(plan)))
+            .replace("{{COUNT}}", count_text)
             .replace("{{META}}", meta)
             .replace("{{SECTIONS}}", "\n".join(sections)))
 
@@ -153,7 +155,7 @@ def apply(root, pages_dir, hub_sha=""):
             published, badge = prev.get("published"), prev.get("badge")
         p["hash"], p["published"], p["badge"] = digest, published, badge
         active = (published is not None and
-                  (today - date.fromisoformat(published)).days <= BADGE_WINDOW_DAYS)
+                  (today - date.fromisoformat(published)).days < BADGE_WINDOW_DAYS)
         p["show_badge"] = badge if active else None
     new_dests = {p["dest"] for p in plan}
     pages_root = pages.resolve()

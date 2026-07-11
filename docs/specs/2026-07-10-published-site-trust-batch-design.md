@@ -115,8 +115,8 @@ refresh YAML with a pattern hit (error), generated index files scanned.
    **v1 migration rule:** a v1 snapshot (string values) carries sources
    forward with unknown hash and **no** `published` date, so the first run
    after this ships shows zero false badges; hashes populate on that run.
-5. `generate_landing(plan, hub_sha)` keeps its signature shape but `plan`
-   entries gain a `group` field (computed in `build_plan`, which reads
+5. `generate_landing(root, plan, hub_sha)` gains root (it loads the template) and
+   `plan` entries gain a `group` field (computed in `build_plan`, which reads
    features.yaml) and a `badge` field (computed in `apply`, which owns the
    snapshot). Escaping discipline unchanged (`html.escape` everywhere user
    data lands).

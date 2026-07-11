@@ -272,6 +272,9 @@ def test_apply_badge_lifecycle(tmp_path):
     snap3 = json.loads((pages / SNAPSHOT).read_text())
     assert snap3["x/site"]["badge"] == "updated"
     assert snap3["x/site"]["hash"] != snap1["x/site"]["hash"]
+    out = (pages / "index.html").read_text(encoding="utf-8")
+    assert "badge--updated" in out
+    assert ">Updated " in out
 
 
 def test_apply_migrates_v1_snapshot_without_false_badges(tmp_path):

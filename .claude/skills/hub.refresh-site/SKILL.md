@@ -48,8 +48,10 @@ keeps them OUT.
    - `python scripts/hub_lint.py` must report 0 errors before commit
      (restricted-pattern hits are hard blockers - fix content, never bypass).
 7. COMMIT + REPUBLISH. Commit `refresh(<slug>): <summary>` with a bulleted
-   body of applied changes; push;
-   `gh run watch --repo solaius/rhoai-agentic-hub --exit-status` (publish.yml
-   republishes and runs the link gate - CI is the link-check authority;
-   local checks false-positive on cross-hub links). Report the live URL.
+   body of applied changes; push; resolve the run id with
+   `gh run list --repo solaius/rhoai-agentic-hub --workflow publish.yml --limit 1 --json databaseId -q '.[0].databaseId'`
+   then `gh run watch <id> --repo solaius/rhoai-agentic-hub --exit-status`
+   (publish.yml republishes and runs the link gate - CI is the link-check
+   authority; local checks false-positive on cross-hub links). Report the
+   live URL.
 8. Offer hub.capture for a memory log line summarizing the refresh.
