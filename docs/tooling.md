@@ -21,6 +21,9 @@ takes.
 | `python scripts/hub_jira.py --try-jql '<jql>'` | scope discovery: result count + sample rows | hub.jira-sweep step 2 |
 | `python scripts/hub_jira.py --sweep <feature> --out <dir>` | proposed snapshot + ref candidates into `<dir>` (repo untouched) | driven by hub.jira-sweep |
 | `python scripts/hub_jira.py --sync --out <dir>` | diff stored scopes + watched keys against live Jira | driven by hub.jira-sync |
+| `python scripts/hub_env.py --check` | report whether `~/.bashrc` sources the hub's `restricted/.env` and whether `JIRA_*` actually reach this shell (doctor section 4 runs it) | "the `rfe.*` skills cannot see my Jira credentials" |
+| `python scripts/hub_env.py --setup` | back up `~/.bashrc`, remove the retired `ai-asset-registry` block, write or repair the hub block; idempotent, refuses to touch a profile whose markers are malformed | driven by `doctor.sh setup`; rarely by hand |
+| `python scripts/hub_slack.py --check` | probe the Slack xoxc/xoxd tokens against `auth.test` (doctor section 9 runs it) | Slack MCP tools misbehaving: registration is not validity, and the tokens expire |
 | `bash scripts/doctor.sh [check\|setup]` | machine health check (`check`, read-only, default) or fix mode (`setup`) | new machine; anything environmental feels off |
 | `python -m pytest scripts/tests -v` | the test suite for all of the above | when changing anything in `scripts/` |
 
@@ -42,6 +45,9 @@ that one file is not gated — reindex runs refresh it.)
 | `jiramap.py` | the snapshot contract: whitelisted `issue_row`, byte-stable `build_snapshot`, `validate` (lint), `diff` (sync), `watched_keys` (ref-/jtbd backlinks) |
 | `refresh.py` | refresh-site config find/load/validate (work/refresh-<slug>.yaml); findings fold into lint_repo |
 | `disclosure.py` | local-first disclosure lint (`scan_repo`) over enablement HTML, public knowledge entries, and generated views/indexes — see "The disclosure lint" below |
+| `shellenv.py` | the `~/.bashrc` contract: `load_env` (the shared `restricted/.env` reader `hub_jira.py` and `hub_slack.py` both use), plus pure transforms over profile text (`render_block`, `scan`, `apply`). `apply` raises `MalformedProfile` rather than guessing at a profile whose hub markers are unbalanced or out of order: an earlier version silently ate user lines on the next run |
+| `slack.py` | Slack `auth.test` probe: `(kind, message)`, always `ok` or `warn`, never `fail`, so an offline machine still reaches `0 fail`. Survives a non-JSON 200 response (a captive portal or corporate proxy) rather than crashing the doctor |
+| `doctorio.py` | the `kind<TAB>message` protocol `doctor.sh` parses with `IFS=$'\t'`: `one_line` (collapses TAB/CR/LF) and `say`. The single emit boundary for `hub_env.py` and `hub_slack.py`, so untrusted strings (Slack response fields, raw `~/.bashrc` lines) cannot corrupt the parser |
 | `status.py` | `build_brief` — assembles the morning-brief sections `hub_status.py` prints |
 | `logrotate.py` | `rotate_log` — moves previous-year `memory/log.md` sections into `memory/log-archive/<year>.md` |
 

@@ -69,7 +69,9 @@ becomes a doctor section, a setup.md fix, or a backlog item here.
    appended to this section (what broke, what was fixed, what's now
    parked); memory log line.
 
-**Known gaps to expect** (predicted, so the runbook checks them): podman
+**Known gaps to expect** (predicted BEFORE the run, kept here as the
+prediction record; see "Predictions vs reality" in the outcome below for what
+actually happened, including the Slack one, which was disproved): podman
 engine install needs the admin shell (doctor prints it, human must act);
 Slack xoxc/xoxd tokens are per-login session tokens — B needs its own
 extraction or fresh copies; `.mcp.json` is per-machine (doctor rewrites the
@@ -373,9 +375,16 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   shared restricted/.env reader), `hub_env.py` (--check/--setup CLI),
   `hublib/slack.py` (auth.test probe), `hub_slack.py` (--check CLI),
   `hublib/doctorio.py` (kind-TAB-message boundary). Doctor section 4
-  extended with shell wiring, section 9 extended with Slack auth probe.
-  Machine A repaired (retired ai-asset-registry block removed, hub block
-  written). R5 steps 2-4 executed on machine B 2026-07-11. Spec:
+  extended with shell wiring, section 9 extended with Slack auth probe;
+  sections were extended, not renumbered. Machine A repaired (retired
+  ai-asset-registry block removed, taking the banned LLM-credential `unset`
+  machinery with it; hub block written). Why it was needed: the marketplace
+  `rfe.*` scripts read `os.environ` with no `.env` fallback and the hub
+  cannot patch them, so they had been working on A only because the retired
+  clone still sat on disk, and were already broken on B. R5 steps 2 and 3
+  executed on machine B 2026-07-11 (step 4 was NOT); the run also forced the
+  section 7 severity ruling (a missing customer-tracker clone is a WARN, not
+  a FAIL). Both machines now reach `0 fail`. Spec:
   [/docs/specs/2026-07-11-r5-cross-machine-design.md](/docs/specs/2026-07-11-r5-cross-machine-design.md).
   Plan: [/docs/plans/2026-07-11-r5-cross-machine-plan.md](/docs/plans/2026-07-11-r5-cross-machine-plan.md).
 - **#34 + #8 + #4 published-site trust batch** - shipped 2026-07-10:

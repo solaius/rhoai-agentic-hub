@@ -21,11 +21,17 @@ and Slack MCP servers are covered by steps 6–7 below plus
    `.claude/settings.local.json` with the auto-memory redirect).
 5. **Restart Claude Code** so the auto-memory redirect takes effect.
 6. Copy restricted content from an existing machine (none of it is ever in
-   git): at minimum `restricted/.env` — keys: `JIRA_SERVER`, `JIRA_USER`,
-   `JIRA_TOKEN`, plus the Slack/Google MCP secrets listed in
-   [/docs/mcp-servers.md](/docs/mcp-servers.md); if the other machine has
-   `restricted/features/` or `restricted/memory/` content, copy the whole
-   `restricted/` tree.
+   git). For almost every machine, **`restricted/.env` alone is enough**:
+   keys `JIRA_SERVER`, `JIRA_USER`, `JIRA_TOKEN`, plus the Slack/Google MCP
+   secrets listed in [/docs/mcp-servers.md](/docs/mcp-servers.md). The Slack
+   `xoxc`/`xoxd` tokens travel with that file and authenticate on the new
+   machine (R5 verified this; they are session tokens, so when they do expire
+   the doctor's section 9 probe tells you).
+   Copy the rest of the `restricted/` tree (`restricted/features/`,
+   `restricted/memory/`) **only if you will run the customer-feedback
+   workflows on this machine**. R5 measured a second machine doing normal
+   hub work and it never needed them, so do not spread NDA content to a
+   machine with no use for it.
 7. Re-run `bash scripts/doctor.sh setup` - with `.env` in place it also
    writes the Slack + Google Workspace MCP servers into your Claude config,
    prepares the Slack podman runtime (traps and manual steps, e.g. the
