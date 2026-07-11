@@ -40,7 +40,7 @@ flowchart TD
     I --> G["generated: index.md files + views/"]
     F -->|"hub.publish (gated)"| P["publish/manifest.yaml"]
     P -->|"publish.yml on push to main"| X["pages repo - public site"]
-    R["restricted/ (gitignored mirror)"] -. "same shapes, local only" .- F
+    R["restricted/ (git-crypt encrypted)"] -. "same shapes, encrypted at rest" .- F
 ```
 
 Two gates stand between a session and the outside world: nothing enters the
@@ -136,11 +136,14 @@ layers keep that safe:
 1. **The capture gate** — no agent writes the tracked memory store or
    knowledge entries without an inline human approve, and every promotion
    gets an explicit public-vs-restricted call.
-2. **`restricted/`** — a gitignored local mirror (`restricted/features/…`,
-   `restricted/memory/…`) with the same shapes and conventions. The
-   restricted bar (what must go there) is codified in
-   [/conventions/memory.md](/conventions/memory.md). The linter also runs a
-   restricted-content heuristic over tracked files and warns on matches.
+2. **`restricted/`** — tracked but encrypted via git-crypt
+   (`restricted/features/…`, `restricted/memory/…`, `restricted/.env`) with
+   the same shapes and conventions. Files are plaintext locally when
+   unlocked, opaque blobs on GitHub and in CI. The restricted bar (what must
+   go there) is codified in [/conventions/memory.md](/conventions/memory.md).
+   The linter also runs a restricted-content heuristic over tracked files and
+   warns on matches; when git-crypt is locked (CI), the linter skips the
+   restricted tree gracefully.
 3. **The publish allowlist** — the public pages site only ever receives what
    `publish/manifest.yaml` names. The failure mode is *forgot to publish*,
    never *leaked by default*.

@@ -1,10 +1,13 @@
-# NDA / local-only content — never tracked
-restricted/*
-!restricted/.env.example
+# NDA content — tracked but encrypted via git-crypt (see docs/setup.md)
+# restricted/.env.example stays plaintext (.gitattributes exclusion)
 
 # Machine-specific MCP config (rhai-tracker path is per-machine; regenerated
 # by hub.doctor / scripts/doctor.sh)
 .mcp.json
+
+# Cursor MCP config (secrets in env values, same as .mcp.json; regenerated
+# by hub.doctor / scripts/doctor.sh)
+.cursor/mcp.json
 
 # memory scratch tier (Claude auto-memory redirect target)
 memory/.scratch/

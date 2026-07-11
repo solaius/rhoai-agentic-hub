@@ -17,8 +17,9 @@ by hand), and the traps.
 
 ## Secrets — `restricted/.env`
 
-All values live in `restricted/.env` (gitignored; copied between machines by
-hand, never generated — see [/docs/setup.md](/docs/setup.md)). Keys the two
+All values live in `restricted/.env` (tracked but encrypted via git-crypt;
+syncs automatically on `git pull` once the key is unlocked --
+see [/docs/setup.md](/docs/setup.md)). Keys the two
 servers use:
 
 | key | for | notes |

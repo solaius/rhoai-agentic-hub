@@ -4,3 +4,6 @@
 *.pdf binary
 *.pptx binary
 *.xlsx binary
+
+restricted/** filter=git-crypt diff=git-crypt
+restricted/.env.example !filter !diff !merge
