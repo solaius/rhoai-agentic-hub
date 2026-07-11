@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <!-- Hero Section -->
+      <div style="margin-bottom: var(--space-2xl);">
+        <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-md); flex-wrap: wrap;">
+          <span class="badge badge--shipped">RHOAI 3.4 DP</span>
+          <span class="badge badge--planned">RHOAI 3.6 EA1 TP target</span>
+        </div>
+        <h1 class="display-xl" style="margin-bottom: var(--space-md);">MCP Catalog Knowledge Hub</h1>
+        <p class="lead" style="max-width: 800px; margin-bottom: var(--space-md);">
+          The storefront of deployable MCP servers in Red Hat OpenShift AI (RHOAI)
+        </p>
+        <p style="font-size: var(--fs-body); color: var(--text-muted); max-width: 800px;">
+          The MCP Catalog is a curated catalog of MCP servers that you can discover, deploy, and manage directly on Red Hat OpenShift. Unlike discovery-only registries, the Catalog provides a governed path from discovery to consumption: discover in the catalog UI, deploy via the MCP Lifecycle Operator, connect through the MCP Gateway, and consume in Gen AI Studio.
+        </p>
+      </div>
+
+      <!-- Release Timeline Status Bar -->
+      <section style="margin-bottom: var(--space-2xl);">
+        <h3 style="margin-bottom: var(--space-md);">Release Timeline</h3>
+        <div class="timeline-band">
+          <div class="timeline-band__row">
+            <div class="timeline-band__column">
+              <div class="timeline-band__column-title">RHOAI 3.4 (Apr 2026)</div>
+              <div class="timeline-band__items">
+                <div class="timeline-band__item">MCP Catalog <span class="badge badge--shipped">DP</span></div>
+              </div>
+            </div>
+            <div class="timeline-arrow">→</div>
+            <div class="timeline-band__column">
+              <div class="timeline-band__column-title">RHOAI 3.5 (Aug 2026)</div>
+              <div class="timeline-band__items">
+                <div class="timeline-band__item">MCP Catalog <span class="badge badge--shipped">DP continues</span></div>
+              </div>
+            </div>
+            <div class="timeline-arrow">→</div>
+            <div class="timeline-band__column">
+              <div class="timeline-band__column-title">RHOAI 3.6 EA1</div>
+              <div class="timeline-band__items">
+                <div class="timeline-band__item">MCP Catalog <span class="badge badge--tp">TP</span></div>
+              </div>
+            </div>
+            <div class="timeline-arrow">→</div>
+            <div class="timeline-band__column">
+              <div class="timeline-band__column-title">RHOAI 3.6 Stable (GA)</div>
+              <div class="timeline-band__items">
+                <div class="timeline-band__item">MCP Catalog <span class="badge badge--planned">GA</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section Cards -->
+      <section style="margin-bottom: var(--space-2xl);">
+        <h2 style="margin-bottom: var(--space-md);">Knowledge Hub Sections</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-md);">
+          <a href="./understand/what-is-the-catalog.html" class="section-card">
+            <div class="section-card__title">Understand It</div>
+            <div class="section-card__description">What the Catalog is, the discover-deploy-connect-consume chain, and its place in the MCP ecosystem</div>
+            <div class="section-card__pages">3 pages</div>
+          </a>
+
+          <a href="./sell/positioning.html" class="section-card">
+            <div class="section-card__title">Sell It</div>
+            <div class="section-card__description">Positioning, trust tiers, and the competitive landscape</div>
+            <div class="section-card__pages">2 pages</div>
+          </a>
+
+          <a href="./build/byo-mcp-server.html" class="section-card">
+            <div class="section-card__title">Build It</div>
+            <div class="section-card__description">Bring your own MCP server, packaging, and troubleshooting</div>
+            <div class="section-card__pages">2 pages</div>
+          </a>
+
+          <a href="./govern/partner-pipeline.html" class="section-card">
+            <div class="section-card__title">Govern It</div>
+            <div class="section-card__description">Partner onboarding pipeline, trust, and policy</div>
+            <div class="section-card__pages">2 pages</div>
+          </a>
+
+          <a href="./plan/roadmap.html" class="section-card">
+            <div class="section-card__title">Plan It</div>
+            <div class="section-card__description">Roadmap, Jira tracker, gaps, and open questions</div>
+            <div class="section-card__pages">3 pages</div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Quick Links Section -->
+      <section style="margin-bottom: var(--space-2xl);">
+        <h2>Quick Links</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-md);">
+          <div class="quick-link-card">
+            <div class="quick-link-card__title">Code Upstream</div>
+            <a href="https://github.com/kubeflow/hub" class="quick-link-card__link" target="_blank" rel="noopener">kubeflow/hub</a>
+          </div>
+          <div class="quick-link-card">
+            <div class="quick-link-card__title">Content Upstream</div>
+            <a href="https://github.com/opendatahub-io/model-metadata-collection" class="quick-link-card__link" target="_blank" rel="noopener">model-metadata-collection</a>
+          </div>
+          <div class="quick-link-card">
+            <div class="quick-link-card__title">Jira Umbrella</div>
+            <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" class="quick-link-card__link" target="_blank" rel="noopener">RHAISTRAT-1339</a>
+          </div>
+          <div class="quick-link-card">
+            <div class="quick-link-card__title">Hub Network</div>
+            <a href="../../mcp-ecosystem/hub/" class="quick-link-card__link">MCP Ecosystem Hub</a> |
+            <a href="../../mcp-gateway/rhcl/" class="quick-link-card__link">MCP Gateway Hub</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <p>
+          Sources:
+          <a href="https://github.com/kubeflow/hub" style="color: var(--rh-blue-light); text-decoration: none;">kubeflow/hub</a>,
+          <a href="https://github.com/opendatahub-io/model-metadata-collection" style="color: var(--rh-blue-light); text-decoration: none;">opendatahub-io/model-metadata-collection</a>,
+          <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" style="color: var(--rh-blue-light); text-decoration: none;">RHAISTRAT-1339</a>
+        </p>
+        <p>Last verified: July 11, 2026 | Source verification: internal</p>
+      </footer>
+    </main>
+  </div>
+  <script src="./nav.js"></script>
+</body>
+</html>

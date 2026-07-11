@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quick Reference: MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Quick Reference</h1>
+      <p class="lead">
+        Essential facts for the MCP Catalog: upstream repositories, the release train, key Jiras, and the trust tier glossary.
+      </p>
+
+      <h2>Upstream Repositories</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Repo</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="https://github.com/kubeflow/hub" target="_blank" rel="noopener">kubeflow/hub</a></td>
+            <td>Code upstream (owner confirmed 2026-07-10)</td>
+          </tr>
+          <tr>
+            <td><a href="https://github.com/opendatahub-io/model-metadata-collection" target="_blank" rel="noopener">opendatahub-io/model-metadata-collection</a></td>
+            <td>Content upstream (Red Hat, partner, and community server metadata; PR merged)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Release Train</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>RHOAI Release</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DP</td>
+            <td>3.4 (code freeze Apr 10, 2026)</td>
+            <td><span class="badge badge--shipped">Shipped</span></td>
+          </tr>
+          <tr>
+            <td>DP continues</td>
+            <td>3.5</td>
+            <td><span class="badge badge--shipped">Shipped</span></td>
+          </tr>
+          <tr>
+            <td>TP</td>
+            <td>3.6 EA1</td>
+            <td><span class="badge badge--tp">Planned</span></td>
+          </tr>
+          <tr>
+            <td>GA</td>
+            <td>3.6 (code freeze Oct 23, 2026)</td>
+            <td><span class="badge badge--planned">Planned</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Key Jiras</h2>
+      <ul>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a>: MCP Ecosystem umbrella outcome; most Catalog strategy Jiras hang off this</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1084" target="_blank" rel="noopener">RHAISTRAT-1084</a>: 3.4 DP cycle</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1306" target="_blank" rel="noopener">RHAISTRAT-1306</a>: 3.4 DP cycle</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1149" target="_blank" rel="noopener">RHAISTRAT-1149</a>: 3.4 DP cycle; also produced the MCP ecosystem best-practices guide</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1859" target="_blank" rel="noopener">RHAISTRAT-1859</a>: 3.6 cycle</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1994" target="_blank" rel="noopener">RHAISTRAT-1994</a>: 3.6 cycle</li>
+      </ul>
+      <p class="source-ref">Full STRAT enumeration pending the Jira hub skills; see the Jira Tracker page for the current snapshot.</p>
+
+      <h2>Glossary: Trust Tiers</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Red Hat built and supported</strong></td>
+            <td>Authored and supported by Red Hat; the highest trust tier in the Catalog</td>
+          </tr>
+          <tr>
+            <td><strong>Partner built and certified</strong></td>
+            <td>Built by an ISV or technology partner; verified through the partner onboarding pipeline (consent, technical attestation, image build)</td>
+          </tr>
+          <tr>
+            <td><strong>Community curated</strong></td>
+            <td>Sourced from the open community; included based on curation criteria rather than a formal partner agreement</td>
+          </tr>
+          <tr>
+            <td><strong>Bring your own</strong></td>
+            <td>A customer-supplied MCP server deployed through the same Catalog to Lifecycle Operator to Gateway path, outside the curated tiers</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Hub Network</h2>
+      <ul>
+        <li><a href="../../mcp-ecosystem/hub/">MCP Ecosystem Hub</a>: cross-component view across Catalog, Registry, Operator, and Gateway</li>
+        <li><a href="../../mcp-gateway/rhcl/">MCP Gateway Hub</a>: runtime connectivity knowledge base</li>
+        <li>MCP Lifecycle Operator Hub: <span class="badge badge--coming-soon">Dedicated hub planned</span></li>
+        <li>MCP Registry Hub: <span class="badge badge--coming-soon">Dedicated hub planned</span></li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>This page is a curated link index; see the section links above for individual sources.</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./understand/what-is-the-catalog.html" class="page-footer__link">What Is the MCP Catalog? Problem and positioning</a></li>
+            <li><a href="./sell/positioning.html" class="page-footer__link">Positioning & Trust Tiers</a></li>
+            <li><a href="./index.html" class="page-footer__link">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="./nav.js"></script>
+</body>
+</html>
