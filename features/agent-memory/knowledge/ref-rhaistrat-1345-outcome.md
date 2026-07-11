@@ -11,7 +11,8 @@ review_after: 2026-08-05
 Owned by Peter Double (reporter Adel Zaalouk). Problem: every team reinvents conversation state, long-term knowledge, and context compaction independently. Scope: short-term state, long-term persistence, context compaction, framework-agnostic abstractions. Labels: `3.6-candidate`, `agentic-theme`. The umbrella ticket for everything else in this partition.
 
 Update 2026-07-10: six child RFEs filed, RHAIRFE-2630 through RHAIRFE-2635
-(see [fact-rhaistrat-1345-rfes-filed-20260710](/features/agent-memory/knowledge/fact-rhaistrat-1345-rfes-filed-20260710.md)).
-The Outcome description itself still predates the 2026-06-30 direction
-change (standalone service, 3.6 DP / 3.7 TP / 3.8 GA) and needs the rewrite
-in [rhaistrat-1345-outcome-update](/features/agent-memory/strategy/rhaistrat-1345-outcome-update.md), itself pending the same revision.
+(see [fact-rhaistrat-1345-rfes-filed-20260710](/features/agent-memory/knowledge/fact-rhaistrat-1345-rfes-filed-20260710.md)),
+and the Outcome description was rewritten in Jira the same day: standalone
+service direction, three-layer framing, multi-backend storage, 3.6 DP /
+3.7 TP (Feb 2027) / 3.8 GA (Summit 2027) phasing, child RFE list. Lineage
+in [rhaistrat-1345-outcome-update](/features/agent-memory/strategy/rhaistrat-1345-outcome-update.md); summary remains "Agent Memory Primitives" (product naming alignment still open).

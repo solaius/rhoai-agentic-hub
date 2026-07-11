@@ -1,8 +1,8 @@
 ---
 title: RHAISTRAT-1345 — Proposed Outcome Rewrite
-description: Proposed rewrite of the RHAISTRAT-1345 Outcome reflecting review-gate decisions, ready to paste into Jira once approved.
+description: Outcome rewrite lineage for RHAISTRAT-1345 - a revised version (standalone service, 3.6 DP / 3.7 TP / 3.8 GA, six child RFEs) was applied to Jira 2026-07-10; the section 2 draft below is the superseded June-9 version.
 source: ai-asset-registry/agent-memory/strategy/rhaistrat-1345-outcome-update.md (as of 2026-07-05)
-timestamp: 2026-07-06
+timestamp: 2026-07-10
 review_after: 2026-08-05
 ---
 
@@ -14,7 +14,7 @@ review_after: 2026-08-05
 
 **Author:** Peter Double (Principal PM — MCP & AI Asset Registries)
 
-**Status:** PROPOSED — a proposed Outcome rewrite for leadership review. **No Jira write has been made.** The current ticket text is in [agent-memory-knowledge.md](/features/agent-memory/research/agent-memory-landscape-research.md) §2. This rewrite reflects REVIEW-NOTES D1–D5. Updated 2026-06-09 to reflect the 3.6→3.7→3.8+ timeline shift and Phase 2 research-driven acceptance criteria.
+**Status:** APPLIED (superseded draft below). On 2026-07-10 a revised version of this rewrite was written to the RHAISTRAT-1345 Jira description, updated beyond the section 2 text to reflect the 2026-06-30 direction: standalone service decoupled from OGX and AI Gateway, three-layer framing (substrate / memory intelligence / governance and scope), multi-backend storage requirement, revised phasing (3.6 DP deliberately not TP, 3.7 TP Feb 2027 for Summit setup, 3.8 GA at the Summit drop), EU AI Act Annex III deferral nuance, and the six child RFEs RHAIRFE-2630..2635 (see [fact-rhaistrat-1345-rfes-filed-20260710](/features/agent-memory/knowledge/fact-rhaistrat-1345-rfes-filed-20260710.md)). The section 2 draft below is retained as lineage; the Jira description is now authoritative. Original 2026-06-09 rewrite reflected REVIEW-NOTES D1-D5.
 
 **Strategy series:** [README](strategy-overview.md) · [Strategy](agent-memory-strategy.md) · [Use Cases & Personas](use-cases-and-personas.md) · [Architecture](recommended-architecture.md) · Outcome Update (this doc) · [RFE Roadmap](rfe-roadmap.md)
 

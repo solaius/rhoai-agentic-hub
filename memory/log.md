@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-10
+- **Update** - RHAISTRAT-1345 Outcome description rewritten in Jira (backup of prior text kept locally): standalone-service direction, three-layer framing, multi-backend storage, 3.6 DP / 3.7 TP (Feb 2027) / 3.8 GA (Summit 2027) phasing, six child RFEs listed; summary "Agent Memory Primitives" kept pending naming alignment. outcome-update strategy doc marked APPLIED; ref entry refreshed.
 - **Creation** - six agent-memory RFEs filed as RHAISTRAT-1345 children via rfe-creator pipeline: RHAIRFE-2630 (memory service), 2631 (memory over MCP), 2632 (AI Hub interim DP), 2633 (scope isolation), 2634 (write-path screening), 2635 (write auditability); all 3.6 EA2 RHOAI RELEASE target, dependency-linked; fulfills the 06-30 1:1 "RFEs in by week of 07-07" commitment. ref-rhaistrat-1345-outcome updated (stale "no child Features" line); Outcome text rewrite still pending.
 - **Update** - disclosure net caught a customer account name (restricted pattern) plus engagement pricing in the power-90 session ref, in the frontmatter description and the generated knowledge index (the two surfaces #34 closes); owner-approved anonymization applied and pushed (b00c70f).
 - **Update** - published-site trust batch picked up: #34 disclosure net gaps, #8 branded landing page, #4 hub.refresh-site; design approved and committed (b86d871); acceptance includes gated refresh runs of both hub sites.
