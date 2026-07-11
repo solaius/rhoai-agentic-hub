@@ -30,7 +30,10 @@ keeps them OUT.
    - jira: stored `work/jira-snapshot.yaml` plus live check via
      `python scripts/hub_jira.py` / `hublib/jira.py` (keys and jql from the
      config).
-   - slack: channel history over `window_days` via the slack MCP.
+   - slack: channel history over `window_days` via the slack MCP. If the
+     channel-name cache is broken (`get_channel_id_by_name` empty), resolve
+     channel IDs via global `search_messages` metadata, then
+     `get_channel_history` by ID.
    - local: the hub knowledge/research paths listed in the config.
    Any unreachable source (Slack tokens expire; VPN) degrades to a "Fetch
    failures" report section - the run continues.

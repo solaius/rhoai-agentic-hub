@@ -1348,3 +1348,23 @@ Friction found and fixed before Task 10:
   field set changed): resolved by verify-then-apply against fetched CRD
   yamls; skill now states the verify-before-edit rule for version-sensitive
   claims.
+
+**Task 10 (Management hub) - 2026-07-10/11, commit 0e21278, publish run 29139337802 green.**
+6-agent sweep (5 sources + a design/content review framed on the hub's
+future umbrella role), 13 gated change-sets + 12 design apply-now items
+approved with 5 owner rulings (future hub slugs confirmed; individuals
+genericized; partner name anonymized; RHCL reverse links; structural
+B-items deferred to the recorded plan). 22 pages + nav.js + styles.css
+updated; RHCL hub gained reverse links; umbrella devolution plan recorded
+at features/mcp-ecosystem/work/management-hub-umbrella-plan.md; backlog #35
+filed. Both hub cards now carry UPDATED badges. Friction fixed in-run:
+gdocs token-limit overruns handled by forked persisted-file extraction; the
+Slack channel-cache workaround folded into the skill; 4 more inherited
+config mislabels corrected against live docs; the verify-before-edit rule
+caught a wrong repo attribution in a source doc (kuadrant/mcp-controller
+does not exist) and a source-doc CRD shape confirmed against upstream
+before rewrite. New CI-visible warning for owner triage:
+management-hub govern/entitlement.html:91 (heuristic matches the owner's
+own supersession caveat wording; benign by construction).
+BOTH ACCEPTANCE RUNS COMPLETE - the published-site trust batch (#34 #8 #4)
+is fully accepted.
