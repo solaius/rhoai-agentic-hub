@@ -3,7 +3,7 @@
 
 - [Skills Registry](/features/skills-registry/index.md) — RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketplace
 - [MCP Gateway](/features/mcp-gateway/index.md) — Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
-- [MCP Registry](/features/mcp-registry/index.md) — The governance/system-of-record layer for MCP servers — lifecycle, data model, and the deployment-time Lifecycle Operator.
+- [MCP Registry](/features/mcp-registry/index.md) — The governance/system-of-record layer for MCP servers — identity, version, lifecycle state, certification, trust, and auditability.
 - [MCP Ecosystem](/features/mcp-ecosystem/index.md) — MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.
 - [MCP Catalog](/features/mcp-catalog/index.md) — The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
 - [Agent Registry](/features/agent-registry/index.md) — Post-deployment agent registry, agent catalog/starter kits, agentic base images, and Kagenti lifecycle management.
@@ -11,4 +11,5 @@
 - [Agent Memory](/features/agent-memory/index.md) — Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.
 - [Agent Ops](/features/agent-ops/index.md) — Agent operations — observability, SDLC oversight, AgentOps positioning and talk tracks.
 - [Gen AI Studio](/features/gen-ai-studio/index.md) — Prompt/agent iteration studio — playground UX, usability research, studio integration.
+- [MCP Lifecycle Operator](/features/mcp-lifecycle-operator/index.md) — Kubernetes operator for declarative MCP server deployment and lifecycle management — upstream kubernetes-sigs project, productized in RHOAI operator for 3.5.
 - [Agent Interop](/features/agent-interop/index.md) — Agent interoperability — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A communication, agent cards, BYO agent onboarding, discovery, and declarative harness configuration.

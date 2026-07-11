@@ -34,7 +34,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1264 · Outcome · Refinement · —
 - RHAISTRAT-1269 · Outcome · New · — → [RHAISTRAT-1269: Platform-Level Safety Enforcement for Agent Tool Calls](/features/agent-interop/knowledge/ref-rhaistrat-1269-agent-safety-enforcement.md)
 - RHAISTRAT-1312 · Outcome · In Progress · —
-- RHAISTRAT-1339 · Outcome · In Progress · — → [MCP Catalog STRAT Jiras (umbrella RHAISTRAT-1339)](/features/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md)
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
 - RHAISTRAT-1344 · Outcome · In Progress · —
 - RHAISTRAT-1345 · Outcome · New · — → [Outcome: Agent Memory Primitives (RHAISTRAT-1345)](/features/agent-memory/knowledge/ref-rhaistrat-1345-outcome.md)
 - RHAISTRAT-1346 · Outcome · Closed · —
@@ -71,7 +71,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1752 · Feature · New · — → [RHAISTRAT-1752: Productize OpenShell Operator](/features/agent-interop/knowledge/ref-rhaistrat-1752-openshell-operator.md)
 - RHAISTRAT-1753 · Feature · New · — → [RHAISTRAT-1753: Kagenti and OpenShell Coexistence Spike](/features/agent-interop/knowledge/ref-rhaistrat-1753-kagenti-openshell-coexistence.md)
 - RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/features/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
-- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE
+- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
 - RHAISTRAT-1780 · Feature · New · —
 - RHAISTRAT-1791 · Outcome · New · —
 - RHAISTRAT-1859 · Feature · In Progress · 3.5 GA RHOAI RELEASE

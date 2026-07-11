@@ -11,3 +11,5 @@ Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, 
 
 ## Connections
 - reference · [Agentic AI FAQ (includes OpenShell/Kagenti positioning)](/features/agent-interop/knowledge/ref-kagenti-openshell-faq.md) — Comprehensive FAQ covering full agentic strategy, OpenShell positioning, Kagenti wind-down, ogx, MCP gateway, partners, field guidance. Maintained by Adel Zaalouk, last updated Jul 7 2026.
+- person · [Ju Lim](/features/mcp-lifecycle-operator/knowledge/person-ju-lim.md) — Sr. Manager, Product Management, Hybrid Platforms -- drives OCP5 Intelligent Platform / applied AI story, MCPLO productization, RHOAI Limited packaging.
+- question · [OLS transition to MCPLO-deployed OCP MCP server](/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md) — Open -- OLS currently uses its own internal OCP MCP server; when MCPLO is productized, OLS will ask users to install via MCPLO. Transition plan and subscription implications unclear.

@@ -30,6 +30,7 @@
 - mcp-gateway · [Christopher Ferreira](/features/mcp-gateway/knowledge/person-christopher-ferreira.md) — PM, RHCL — PM, RHCL — signatory of the RHOAI-RHCL internal support agreement.
 - mcp-gateway · [Jeff DeMoss](/features/mcp-gateway/knowledge/person-jeff-demoss.md) — PM, RHAI — PM, RHAI — signatory of the RHOAI-RHCL internal support agreement.
 - mcp-gateway · [John Graham](/features/mcp-gateway/knowledge/person-john-graham.md) — Engineering Director, RHAI — Engineering Director, RHAI — signatory of the RHOAI-RHCL internal support agreement.
+- mcp-lifecycle-operator · [Ju Lim](/features/mcp-lifecycle-operator/knowledge/person-ju-lim.md) — Sr. Manager, Product Management, Hybrid Platforms — Sr. Manager, Product Management, Hybrid Platforms -- drives OCP5 Intelligent Platform / applied AI story, MCPLO productization, RHOAI Limited packaging.
 - mcp-registry · [Gaurav Singh](/features/mcp-registry/knowledge/person-gaurav-singh.md) — Product/Engineering, MCP Lifecycle Operator — Product/Engineering — authored the RHOAI restricted use entitlement for OpenShift & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
 - platform · [Adel Zaalouk](/features/platform/knowledge/person-adel-zaalouk.md) — Agentic Strategy Maintainer, Strategy — Agentic Strategy maintainer — recurring voice across base-images scope, UBI version, and messaging-guide review.
 - platform · [Arjay Hinek](/features/platform/knowledge/person-arjay-hinek.md) — PM, Product Management — PM — authored the RICE scoring rubric used for RHAI prioritization.

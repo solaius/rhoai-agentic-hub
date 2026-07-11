@@ -10,4 +10,5 @@ RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketp
 - [work/](/features/skills-registry/work/)
 
 ## Connections
+- reference · [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md) — Unified registry and governance for agents, skills, and MCP servers -- discovery, versioning, promotion, supply chain scanning, Agent Hub UI.
 - jtbd · [Discover my skills, MCP servers, and agentic assets](/narrative/knowledge/jtbd-discover-agentic-assets.md) — When I'm building agents, I want to discover governed skills, MCP servers, and agentic assets, so I can compose capable agents from validated, approved components.
