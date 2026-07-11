@@ -1,0 +1,61 @@
+### RFE-008: Automatic memory creation and curation for agents
+
+**Feasibility**: feasible
+**Strategy considerations**: see list below (10 items for /strat.refine)
+**Blockers**: none
+**Scope assessment**: needs splitting (size L bundles six independently substantial capabilities; right-size the 3.7 Tech Preview slice during strategy)
+
+---
+
+## Feasibility
+
+**Feasible.** This is an extension of the platform's emerging agentic layer, not a rearchitecting of it. Nothing in RHOAI 3.5-ea.2's architecture fundamentally conflicts with a memory service that captures automatically, consolidates in the background, weights episodic memories by outcome, and accepts a pluggable curation approach. The RFE governs the *curation layer* that sits on top of the memory substrate delivered by its declared sibling RHAIRFE-2630 — and the platform already ships the building blocks that layer needs:
+
+- **A pluggable-provider substrate already exists and is the natural home for pluggable curation.** OGX (formerly Llama Stack, overlay 0003) is a running HTTP server built on the "pluggable providers activated by configuration" pattern, already exposing vector storage (`/v1/vector-io`, `/v1/vector-stores`) and an agentic Responses API with conversation/response state (`/v1/responses`). That pattern *is* the substitution model AC-5 asks for: a custom memory-creation/curation provider swapped in without the client changing. The framework-agnostic HTTP surface also means automatic capture and consolidation can be offered to any agent client that speaks HTTP.
+- **Background consolidation maps onto standard platform patterns.** Periodic merge/age-out/prune is a scheduled or reconciled workload — a Kubernetes CronJob or an operator reconcile loop, both of which the platform (rhods-operator, DSC-managed components) uses pervasively. "Without user action" is a control-plane responsibility, not a novel capability.
+- **Provenance and outcome signal are data-model additions, not architectural conflicts.** AC-4 (why a memory exists: explicit / auto-captured / consolidated) is a provenance field plus, ideally, an emitted event; the platform already has a structured agent-audit precedent (OpenShell OCSF v1.7 events, overlay 0015). AC-3 (episodic memories carry outcome signal) is a schema/weighting addition on top of the episodic store. Neither fights the architecture.
+
+**On the missing component:** "platform memory service" is not in the `rhoai-3.5-ea.2` architecture inventory — there is no memory-store component doc. This is expected and not a blocker: the RFE explicitly builds on the substrate delivered by RHAIRFE-2630 (itself a net-new, in-flight 3.6→3.8 capability per its own review) and scopes the substrate and storage backends OUT. A capability that does not exist yet is precisely what an RFE is for. The substrate is recorded below as a hard dependency/sequencing item (consideration #1), not a blocker.
+
+## Overlays applied
+
+```
+Overlays applied:
+- 0015: OpenShell is the agent security runtime replacing Kagenti — OPA policy engine + kernel sandboxing (the containment for customer-supplied curation code), OCSF v1.7 events (a precedent for memory provenance/audit), SPIFFE identity. Target agentic strategies at OpenShell, not Kagenti/AgentRuntime.
+- 0008: RHOAI does not auto-install/manage external operators — background-consolidation scheduling and any external vector-DB/backend dependency must be admin-owned and surfaced on DSC/DSCI, never auto-installed.
+- 0003: Llama Stack renamed to OGX, a pluggable-provider HTTP server — the substrate hosting vector storage + agentic APIs and the natural home for the pluggable-curation extension model.
+```
+
+(Overlay 0003's `release` list is 3.5-only and its `affects` names the llama-stack components rather than `platform`; it is applied here as substrate-identity grounding for a 3.7 capability that builds directly on that substrate, consistent with the RHAIRFE-2630 review. Other platform-scoped 3.5 overlays — 0009, 0012, 0013, 0017 — matched the mechanical filter but have no substantive bearing on memory curation and were not applied. Architecture context `rhoai-3.5-ea.2` read successfully.)
+
+## Strategy Considerations
+
+For engineering to resolve during /strat.refine. None blocks submission.
+
+1. **Hard dependency on the memory substrate (RHAIRFE-2630) — sequencing.** Every curation capability here (capture, consolidation, outcome weighting, provenance, pluggability, measurement) is downstream of the substrate's data model and write/read paths, which RHAIRFE-2630 delivers. That substrate is itself scoped as a multi-release 3.6→3.8 program. RFE-008 at 3.7 Tech Preview therefore depends on the substrate reaching sufficient maturity (episodic store + framework-neutral API + at least one backend) by 3.7. Surface this cross-RFE sequencing explicitly; the curation layer cannot be evaluated before the store exists.
+
+2. **Outcome-signal sourcing is the central under-specified design risk.** AC-3 requires episodic memories to carry outcome signal and retain unsuccessful outcomes "with appropriate weight" so agents avoid repeating failures — but the RFE never says *where* the success/failure signal comes from. The candidates (explicit user feedback, agent self-evaluation via an LLM-judge, task-completion signals from the agent framework / OGX Responses API, or tool-call error results) each imply a different integration point, reliability, and cost. This is the hardest modeling problem in the RFE and crosses the memory service and the agent runtime/framework. Define the outcome-signal contract before this AC is buildable.
+
+3. **Automatic capture is an inference-cost and latency dependency, not just a memory feature.** Capturing "relevant information automatically during interactions" almost certainly means an extraction/summarization model call (deciding what is worth remembering) plus an embedding call per interaction. That is a hard runtime dependency on a serving path (KServe/vLLM or MaaS) and an embedding model, adds per-turn latency and token cost at fleet scale, and needs a fail-open story (capture must never break the interaction). This cross-component coupling to model serving is unstated and materially affects both effort and per-request cost.
+
+4. **Pluggable curation runs customer logic inside the platform — a trust and multi-tenancy boundary.** AC-5 lets customers substitute their own memory-creation/curation approach. Where does that code execute? If it is an OGX provider (overlay 0003) it inherits OGX's process boundary; if it is arbitrary customer curation logic, it likely needs sandboxing — and OpenShell (overlay 0015) is the platform's sanctioned agent sandbox + OPA policy runtime, the natural containment for untrusted curation code. Strategy must define the extension contract (stable interface vs. webhook vs. sandboxed container), its trust model, and per-tenant isolation. This is a cross-component decision spanning the memory service, OGX, and OpenShell.
+
+5. **Auto-capture collides with the sensitive-data screening boundary (RHAIRFE-2634) on a shared write path.** User Scenario 1 has the agent "automatically remember a customer's environment details mentioned in passing" — by construction, auto-capture will write PII/regulated content. The RFE scopes screening OUT (2634 governs "what may be written"; this RFE governs "what is worth writing"), but both decisions fire at the *same* write moment on the *same* content. Designed independently they will fight. Surface the shared, enforced write-path interception point and the ordering (screen before persist), mirroring the same shared-write-path concern already raised in the RFE-007 (write-auditability) and RHAIRFE-2630 reviews.
+
+6. **Provenance (AC-4) should reuse the platform's audit precedent, not invent a parallel schema.** "See why a memory exists — explicit save / automatic capture / consolidation" is a provenance field plus, ideally, an emitted event. OpenShell already emits OCSF v1.7 events for agent activity (overlay 0015), and the sibling RFE-007 is designing a memory-write log. Provenance here, RFE-007's write log, and OCSF describe overlapping "who/what/why wrote this memory" facts. Align the three so customers do not get three incompatible views of the same memory-write history; deciding the schema alignment early avoids rework.
+
+7. **Background consolidation is a fleet-wide scheduled workload — infra cost plus the no-auto-install policy.** "Consolidated in the background without user action" implies a scheduler/controller running periodic merge/age-out/prune jobs across many stores and tenants. Two notes: (a) it is a standing background workload with real resource cost at fleet scale, and (b) per overlay 0008, if consolidation leans on any external operator (an external vector DB's compaction, an external scheduler), that dependency is admin-owned and must be surfaced on DSC/DSCI, not auto-installed. The zero-external-dependency path (platform-managed scheduling over pgvector/file backends) avoids this.
+
+8. **Capture-quality measurement (AC-6) and the Success Criteria require net-new evaluation methodology.** "The quality of automatic capture is measurable so operators can validate and tune what is kept vs. discarded," plus the Success Criteria's "measurably outperform explicit-only memory on multi-session tasks," both need a memory-quality metric and a multi-session benchmark that do not exist today. The platform's eval infrastructure (eval-hub, lm-evaluation-harness, TrustyAI) could host it, but a memory-curation-quality metric is novel methodology and an easily-underestimated sub-effort. The RFE's own Open Question (which built-in curation ships as default, and how the quality bar is validated before Tech Preview) is this same problem plus a product decision — feed both into strategy together.
+
+9. **Multi-tenancy / per-agent isolation must not be foreclosed.** A platform memory service auto-capturing per-agent, per-tenant, per-end-user content needs a tenancy model at the store and API layer even though record-level scope isolation is a deferred sibling concern. OGX's built-in access policy is owner-based without namespace isolation (per the RHAIRFE-2630 review). Critically, consolidation and pluggable curation operate *across* memories — a consolidation job must never merge tenant A's and tenant B's memories, and a curation plugin must not see across tenants. Design the base store and consolidation pass so per-tenant/per-agent isolation can be added without a data-model migration.
+
+10. **"Match and exceed the 3.6 Dev Preview implicit auto-remember" is a stated regression bar.** The Affected Customers note that implicit auto-remember is the most-used behavior in 3.6 demos, and pilots regress at Tech Preview if 3.7 does not at least match it. This is a continuity constraint: strategy should capture the 3.6 interim capture behavior as a baseline/acceptance gate so the "comprehensive" 3.7 service does not accidentally regress the interim capability on the same demo paths.
+
+## Scope assessment
+
+**Needs splitting.** Framed as a business need (WHAT/WHY) the RFE is coherent and its out-of-scope carve-outs (substrate/backends → RHAIRFE-2630, write-path screening → RHAIRFE-2634, context assembly → separate) are disciplined. The concern is delivery scope: a single size-L item bundles six independently substantial capabilities — (a) automatic capture (an extraction/embedding pipeline with provenance), (b) background consolidation (dedup / age-out / prune scheduling), (c) outcome-weighted episodic memory (gated on the unresolved outcome-signal contract, #2 — the hardest), (d) a pluggable curation extension API with a trust/sandbox model (#4), and (e) a capture-quality evaluation harness (#8). Each has its own hidden dependencies and cross-component coordination; together they are a program slice, not a single strategy feature. Recommend strategy right-size the 3.7 Tech Preview slice — plausibly auto-capture + basic consolidation + provenance as the core, with outcome-weighting, pluggability, and the measurement harness treated as adjacent/later-phase features. This is a phasing/splitting note, not a reason to hold the RFE.
+
+## Revision History
+
+none (first pass)

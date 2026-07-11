@@ -1,0 +1,4 @@
+status: completed
+action: split
+reason: "split into 2 children: ready-made harness/framework memory integrations (Infineon multi-framework persona) and memory effectiveness on smaller self-hosted models (ITZBund sovereign/on-prem persona); Right-sized scored 1/2 with two independently shippable deliverables serving different segments"
+children: [RFE-015, RFE-016]
