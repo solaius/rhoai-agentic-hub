@@ -259,6 +259,36 @@ PY
     fail)   fail "rhai-tracker not registered in .mcp.json — run: bash scripts/doctor.sh setup" ;;
     *)      warn "could not evaluate .mcp.json (python error?)" ;;
   esac
+  # Also register in Cursor's project-scoped config if .cursor/ exists
+  if [ -d "$ROOT/.cursor" ]; then
+    CURSOR_RESULT=$(python - "$ROOT/.cursor/mcp.json" "$SERVER_JS" "$MODE" <<'PY'
+import json, os, shutil, sys
+p, server, mode = sys.argv[1], sys.argv[2], sys.argv[3]
+try:
+    d = json.load(open(p))
+    if not isinstance(d, dict): d = {}
+except Exception:
+    d = {}
+srv = d.setdefault("mcpServers", {})
+cur = (srv.get("rhai-tracker", {}).get("args", [None]) or [None])[-1] or ""
+if cur.lower() == server.lower():
+    print("ok")
+elif mode == "setup":
+    if os.path.exists(p): shutil.copy(p, p + ".bak")
+    srv["rhai-tracker"] = {"command": "node", "args": [server]}
+    json.dump(d, open(p, "w"), indent=2)
+    open(p, "a").write("\n")
+    print("wrote")
+else:
+    print("skip")
+PY
+)
+    case "$CURSOR_RESULT" in
+      ok)    ok ".cursor/mcp.json rhai-tracker registered" ;;
+      wrote) ok ".cursor/mcp.json rhai-tracker registered (restart Cursor)" ;;
+      skip)  : ;;
+    esac
+  fi
 fi
 
 # 7c. node deps — the server won't start without them
@@ -311,7 +341,7 @@ while IFS=$'\t' read -r kind msg; do
     fail)  fail "$msg" ;;
     *)     [ -n "${kind:-}" ] && warn "could not evaluate Claude config (python error?)" ;;
   esac
-done < <(python - "$CFG" "$MODE" <<'PY'
+done < <(ROOT="$ROOT" python - "$CFG" "$MODE" <<'PY'
 import json, os, shutil, sys
 cfg, mode = sys.argv[1], sys.argv[2]
 try:
@@ -354,6 +384,28 @@ for name, builder, tok in (("slack", want_slack, "SLACK_XOXC_TOKEN"),
 if changed:
     if os.path.exists(cfg): shutil.copy(cfg, cfg + ".bak")
     json.dump(d, open(cfg, "w"), indent=2)
+# Cursor config: .cursor/mcp.json (project-scoped, same format)
+cursor_dir = os.path.join(os.environ.get("ROOT", "."), ".cursor")
+cursor_cfg = os.path.join(cursor_dir, "mcp.json")
+if os.path.isdir(cursor_dir):
+    try:
+        cd = json.load(open(cursor_cfg)) if os.path.exists(cursor_cfg) else {}
+    except Exception:
+        cd = {}
+    csrv = cd.setdefault("mcpServers", {})
+    cursor_changed = False
+    for name in ("slack", "google-workspace"):
+        if name in srv and name not in csrv:
+            csrv[name] = srv[name]; cursor_changed = True
+        elif name in srv and csrv.get(name) != srv[name]:
+            csrv[name] = srv[name]; cursor_changed = True
+    if cursor_changed:
+        if os.path.exists(cursor_cfg): shutil.copy(cursor_cfg, cursor_cfg + ".bak")
+        os.makedirs(cursor_dir, exist_ok=True)
+        json.dump(cd, open(cursor_cfg, "w"), indent=2)
+        report.append(("wrote", f"Cursor MCP config written to {cursor_cfg}"))
+    elif csrv:
+        report.append(("ok", f"Cursor MCP config present ({cursor_cfg})"))
 for kind, msg in report: print(f"{kind}\t{msg}")
 PY
 )
