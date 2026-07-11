@@ -149,3 +149,14 @@ def test_triage_log_is_in_the_scan_surface(tmp_path):
 
     scanned = [f.name for f, _ in disclosure._scan_files(tmp_path)]
     assert "triage-log.yaml" in scanned
+
+
+def test_encrypted_patterns_file_returns_empty(tmp_path):
+    """git-crypt locked lint-patterns.txt is a binary blob -- load_patterns
+    must return empty, not crash."""
+    p = tmp_path / "restricted" / "lint-patterns.txt"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(b"\x00GITCRYPT\x00\x00\x02\x00" + b"\xff" * 50)
+    patterns, warnings = load_patterns(tmp_path)
+    assert patterns == []
+    assert warnings == []

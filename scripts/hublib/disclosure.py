@@ -20,7 +20,11 @@ def load_patterns(root):
     patterns, warnings = [], []
     if not path.is_file():
         return patterns, warnings
-    for lineno, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (UnicodeDecodeError, ValueError):
+        return patterns, warnings
+    for lineno, raw in enumerate(lines, 1):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue

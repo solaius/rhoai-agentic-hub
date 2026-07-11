@@ -464,3 +464,15 @@ def test_restricted_hint_in_frontmatter_skipped_under_restricted(tmp_path):
           "timestamp: 2026-07-05\n---\nclean body\n")
     _, warnings = lint_repo(root)
     assert not any("restricted-content heuristic" in w for w in warnings)
+
+
+def test_restricted_tree_skipped_when_encrypted(tmp_path):
+    """git-crypt locked files start with \\x00GITCRYPT -- linter must skip."""
+    root = make_repo(tmp_path)
+    know = tmp_path / "restricted" / "features" / "x" / "knowledge"
+    know.mkdir(parents=True)
+    # Simulate a git-crypt encrypted blob: starts with \x00GITCRYPT header
+    (know / "fact-a.md").write_bytes(b"\x00GITCRYPT\x00\x00\x02\x00" + b"\xff" * 50)
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert not any("restricted" in w for w in warnings)

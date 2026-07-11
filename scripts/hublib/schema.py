@@ -333,13 +333,24 @@ def validate_manifest(root):
     return errors
 
 
+def _is_git_crypt_locked(restricted):
+    """Detect git-crypt locked state by reading the first .md file found."""
+    for md in restricted.rglob("*.md"):
+        try:
+            text = md.read_text(encoding="utf-8")
+            return text.startswith("\x00")
+        except (UnicodeDecodeError, ValueError):
+            return True
+    return False
+
+
 def lint_repo(root):
     root = Path(root)
     errors, warnings = [], []
     feature_ids = _feature_ids(root)
     _lint_tree(root, root, errors, warnings, feature_ids)
     restricted = root / "restricted"
-    if restricted.is_dir():
+    if restricted.is_dir() and not _is_git_crypt_locked(restricted):
         _lint_tree(root, restricted, errors, warnings, feature_ids)
     snap_errors, snap_warnings = jiramap.validate(root)
     errors.extend(snap_errors)
