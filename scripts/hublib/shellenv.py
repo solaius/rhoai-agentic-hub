@@ -65,21 +65,39 @@ class MalformedProfile(ValueError):
 
 def malformed_reason(text: str) -> str | None:
     """None if the profile is safe for apply() to edit, else a human-
-    readable reason it is not. Unsafe means the count of standalone
-    HUB_BEGIN lines does not equal the count of standalone HUB_END lines.
-    Two well-formed hub blocks (2 begin, 2 end) are balanced, not
-    malformed: _strip_block already removes both cleanly, and apply()
+    readable reason it is not. Unsafe means the hub markers are out of
+    sequence: an END before its BEGIN, a nested BEGIN, or an unterminated
+    BEGIN. Two well-formed hub blocks (BEGIN, END, BEGIN, END) are balanced,
+    not malformed: _strip_block already removes both cleanly, and apply()
     then writes back a single block, which is the desired repair."""
     lines = [line.strip() for line in text.splitlines()]
-    begins = lines.count(HUB_BEGIN)
-    ends = lines.count(HUB_END)
-    if begins != ends:
+    open_block = False
+
+    for line in lines:
+        if line == HUB_BEGIN:
+            if open_block:
+                return (
+                    f"malformed rhoai-agentic-hub markers in the shell profile: "
+                    f"nested or duplicate \"{HUB_BEGIN}\" line detected. "
+                    "Fix ~/.bashrc by hand before rerunning."
+                )
+            open_block = True
+        elif line == HUB_END:
+            if not open_block:
+                return (
+                    f"malformed rhoai-agentic-hub markers in the shell profile: "
+                    f"\"{HUB_END}\" appears before \"{HUB_BEGIN}\". "
+                    "Fix ~/.bashrc by hand before rerunning."
+                )
+            open_block = False
+
+    if open_block:
         return (
-            f"unbalanced rhoai-agentic-hub markers in the shell profile: "
-            f"{begins} \"{HUB_BEGIN}\" line(s) but {ends} \"{HUB_END}\" "
-            "line(s). Fix ~/.bashrc by hand (add or remove the stray "
-            "marker) before rerunning."
+            f"malformed rhoai-agentic-hub markers in the shell profile: "
+            f"unterminated \"{HUB_BEGIN}\" (no matching \"{HUB_END}\"). "
+            "Fix ~/.bashrc by hand before rerunning."
         )
+
     return None
 
 

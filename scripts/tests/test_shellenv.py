@@ -148,3 +148,39 @@ def test_load_env_populates_prefixed_keys_and_existing_env_wins(tmp_path, monkey
 
 def test_load_env_missing_file_is_a_noop(tmp_path):
     load_env(tmp_path, prefixes=("JIRA_",))  # must not raise
+
+
+def test_out_of_order_markers_end_before_begin_raises():
+    # The exact case from the task spec: END appears before BEGIN.
+    # Has 1 BEGIN and 1 END (balanced count), but out of sequence, which
+    # causes _strip_block to silently drop content after BEGIN.
+    text = f"{HUB_END}\nuser line one\n{HUB_BEGIN}\nuser line two\n"
+    reason = malformed_reason(text)
+    assert reason is not None
+    assert "before" in reason.lower()
+    with pytest.raises(MalformedProfile):
+        apply(text, ENV)
+
+
+def test_malformed_reason_detects_duplicate_begin():
+    # Nested or duplicate BEGIN without intervening END (BEGIN, BEGIN, END).
+    # Has 2 BEGINs and 1 END (unbalanced count), and also violates sequence.
+    text = f"{HUB_BEGIN}\nfirst\n{HUB_BEGIN}\nsecond\n{HUB_END}\n"
+    reason = malformed_reason(text)
+    assert reason is not None
+    assert "nested" in reason.lower() or "duplicate" in reason.lower()
+    with pytest.raises(MalformedProfile):
+        apply(text, ENV)
+
+
+def test_well_formed_double_blocks_remain_valid_and_collapse():
+    # Confirm that properly sequenced double blocks (BEGIN, END, BEGIN, END)
+    # are still considered well-formed and collapse to a single block.
+    # This is the regression test for the existing behavior that must not break.
+    one_block = apply("", ENV)
+    two_blocks = one_block + "\n" + one_block
+    reason = malformed_reason(two_blocks)
+    assert reason is None
+    out = apply(two_blocks, ENV)
+    assert out.count(HUB_BEGIN) == 1
+    assert out.count(HUB_END) == 1
