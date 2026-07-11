@@ -11,5 +11,7 @@ Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, 
 
 ## Connections
 - reference · [Agentic AI FAQ (includes OpenShell/Kagenti positioning)](/features/agent-interop/knowledge/ref-kagenti-openshell-faq.md) — Comprehensive FAQ covering full agentic strategy, OpenShell positioning, Kagenti wind-down, ogx, MCP gateway, partners, field guidance. Maintained by Adel Zaalouk, last updated Jul 7 2026.
+- fact · [MCPLO key decisions from Slack (Feb-Jul 2026)](/features/mcp-lifecycle-operator/knowledge/fact-mcplo-key-decisions-from-slack.md) — 10 major architecture and process decisions from
 - person · [Ju Lim](/features/mcp-lifecycle-operator/knowledge/person-ju-lim.md) — Sr. Manager, Product Management, Hybrid Platforms -- drives OCP5 Intelligent Platform / applied AI story, MCPLO productization, RHOAI Limited packaging.
 - question · [OLS transition to MCPLO-deployed OCP MCP server](/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md) — Open -- OLS currently uses its own internal OCP MCP server; when MCPLO is productized, OLS will ask users to install via MCPLO. Transition plan and subscription implications unclear.
+- reference · [Agentic AI Foundation (AAIF) -- MCP governance home](/features/mcp-lifecycle-operator/knowledge/ref-aaif-governance.md) — Linux Foundation body governing MCP, goose, AGENTS.md, and agentgateway. Platinum members include AWS, Anthropic, Google, Microsoft, OpenAI. SEP process, SDK tiers, working groups.
