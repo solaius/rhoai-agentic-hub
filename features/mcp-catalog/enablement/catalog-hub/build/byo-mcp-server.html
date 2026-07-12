@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bring Your Own MCP Server | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Bring Your Own MCP Server</h1>
+      <p class="lead">The MCP Catalog isn't limited to Red Hat and partner listings: a customer can package and publish their own MCP server so it deploys through the same catalog-to-Lifecycle-Operator-to-Gateway path as any curated entry. This tier is called <strong>Bring your own</strong> in the trust tier glossary; see <a href="../govern/trust-policy.html">Trust &amp; Policy</a> for how it sits relative to the Red Hat, Partner, and Community tiers.</p>
+
+      <h2>Status: Manual Today</h2>
+      <p>Packaging and publishing a Bring Your Own (BYO) server is a manual workflow in RHOAI 3.4 DP. It's tracked for future catalog automation under <a href="https://issues.redhat.com/browse/RHAIRFE-2081" target="_blank" rel="noopener">RHAIRFE-2081</a> and <a href="https://issues.redhat.com/browse/RHAIRFE-2082" target="_blank" rel="noopener">RHAIRFE-2082</a>: open asks, not shipped.</p>
+
+      <h2>Container-Packaging Checklist</h2>
+      <ul>
+        <li><strong>Base image:</strong> build on a UBI (Universal Base Image) base.</li>
+        <li><strong>Transport:</strong> use explicit HTTP transport, not stdio. A stdio-only server run this way will start, produce no error output, and exit silently; the failure won't surface.</li>
+        <li><strong>Bind address:</strong> bind <code>0.0.0.0</code>, not <code>127.0.0.1</code>.</li>
+        <li><strong>Credentials:</strong> accept credentials via HTTP headers, not environment variables or baked-in config, so the Gateway/Vault credential-injection path works.</li>
+        <li><strong>MCP path:</strong> declare a stable, documented MCP path (e.g. <code>/mcp</code>).</li>
+        <li><strong>Health endpoint:</strong> expose a health endpoint for liveness/readiness probing.</li>
+      </ul>
+      <div class="callout callout--gap">
+        <strong>Why this matters:</strong> the Catalog's stated technical bar for partner servers (Streamable HTTP only, no stdio) is the same bar a BYO server has to clear to work through the Gateway's credential-injection and routing path; see <a href="../govern/partner-pipeline.html">Partner Onboarding Pipeline</a> for the equivalent partner-side requirements.
+      </div>
+
+      <h2>Restricted-SCC Compliance</h2>
+      <p>OpenShift's <code>restricted</code> Security Context Constraint is the default for MCP server workloads:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Detail</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Non-root</td>
+            <td>Container must not run as UID 0.</td>
+          </tr>
+          <tr>
+            <td>Drop all capabilities</td>
+            <td>No Linux capabilities beyond the restricted default set.</td>
+          </tr>
+          <tr>
+            <td>No privilege escalation</td>
+            <td><code>allowPrivilegeEscalation: false</code>.</td>
+          </tr>
+          <tr>
+            <td>Read-only root filesystem</td>
+            <td>Container filesystem is read-only; use storage mounts (ConfigMap/Secret/EmptyDir) for writable paths.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Table carried verbatim from the management hub's Configuration Reference page.</p>
+
+      <h2>Catalog-YAML Metadata Spec</h2>
+      <ul>
+        <li>Top level: <code>name</code>, <code>provider</code>, <code>description</code>, <code>version</code>, <code>transports</code>, <code>artifacts</code>, <code>deploymentMode</code></li>
+        <li>Per-tool <code>accessType</code>: <code>read_only</code>, <code>read_write</code>, or <code>execute</code></li>
+        <li><code>runtimeMetadata</code>: drives the deployment modal's pre-filled prerequisites</li>
+        <li><code>securityIndicators</code>: mapped from the restricted-SCC validation checklist results above</li>
+      </ul>
+
+      <h3>Worked Example</h3>
+      <p>An illustrative <code>catalog-yaml</code> entry using the field names above (values are illustrative, not a live listing):</p>
+      <pre><code>name: example-mcp-server
+provider: Example Corp
+description: Illustrative BYO MCP server entry
+version: 1.0.0
+transports:
+  - streamable-http
+artifacts:
+  - image: quay.io/example/example-mcp-server:1.0.0
+deploymentMode: on-cluster
+tools:
+  - name: list_items
+    accessType: read_only
+  - name: create_item
+    accessType: execute
+  - name: update_item
+    accessType: read_write
+runtimeMetadata:
+  serviceAccount: mcp-viewer
+  configMap: example-mcp-server-config
+securityIndicators:
+  verifiedSource: true
+  sast: true
+  secureEndpoint: true
+  readOnlyTools: false</code></pre>
+
+      <p>Schema reference: <a href="https://github.com/kubeflow/hub/blob/main/docs/catalog-yaml-reference.md" target="_blank" rel="noopener">github.com/kubeflow/hub: catalog-yaml-reference.md</a>. Worked examples still live in <a href="https://github.com/opendatahub-io/model-metadata-collection/tree/main/input/mcp_servers" target="_blank" rel="noopener">opendatahub-io/model-metadata-collection</a>: the schema reference and the worked examples currently live in two separate repos.</p>
+
+      <div class="callout callout--insight">
+        <strong>Upstream:</strong> <code>kubeflow/hub</code> is the confirmed code upstream for the Catalog (owner ruling, 2026-07-10); <code>opendatahub-io/model-metadata-collection</code> is the content upstream carrying Red Hat, Partner, and Community source metadata. See <a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a> for the full picture.
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/configuration-reference.html">Management hub: Configuration Reference (Bring Your Own MCP Server section)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md">fact-partner-mcp-catalog.md</a></li>
+            <li><a href="https://github.com/kubeflow/hub/blob/main/docs/catalog-yaml-reference.md" target="_blank" rel="noopener">kubeflow/hub: catalog-yaml-reference.md</a></li>
+            <li><a href="https://github.com/opendatahub-io/model-metadata-collection">opendatahub-io/model-metadata-collection</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./enablement-troubleshooting.html">Enablement &amp; Troubleshooting</a></li>
+            <li><a href="../govern/trust-policy.html">Trust &amp; Policy</a></li>
+            <li><a href="../govern/partner-pipeline.html">Partner Onboarding Pipeline</a></li>
+            <li><a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

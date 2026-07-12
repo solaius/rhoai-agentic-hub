@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Partner Onboarding Pipeline | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Partner Onboarding Pipeline</h1>
+      <p class="lead">A partner MCP server doesn't reach the MCP Catalog by a technical merge alone: it moves through a six-step business-plus-technical pipeline from curation to catalog integration. This is the pipeline that put 5 partner servers into the RHOAI 3.4 DP catalog by the April 10, 2026 code freeze (see <a href="../understand/what-is-the-catalog.html">What Is the MCP Catalog?</a> for the full 10-server shipped list).</p>
+
+      <h2>The Six Steps</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">1. Curation</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Invitation-only selection across strategic categories (CI/CD, databases, hyperscalers, security). Partners aren't accepted on open submission; the catalog team selects who to approach.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">2. BDM Outreach</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Business Development Manager outreach to the selected partner, pairing the value proposition with the consent letter that starts the formal process.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">3. Consent Letter</div>
+        </div>
+        <div class="feature-card__description">
+          <p>The partner signs a consent form, the formal go-ahead to build and list their MCP server in the Catalog.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">4. Technical Attestation</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Ecosystem Engineering validates the server against the technical requirements below (transport, deployment, container image, metadata, and security indicators).</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">5. Image Build</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Build and push the container image to <code>quay.io/rhoai-partner-mcp</code>, the shared Quay org hosting shipped partner server images.</p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">6. Catalog Integration</div>
+        </div>
+        <div class="feature-card__description">
+          <p>Integration and testing by the RH AI team before the server appears in the live Catalog.</p>
+        </div>
+      </div>
+
+      <h2>Technical Requirements for Partner MCPs</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Requirement</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Transport</td>
+            <td>Streamable HTTP only (no stdio)</td>
+          </tr>
+          <tr>
+            <td>Deployment</td>
+            <td>On-cluster deployment, local hosting only for DP; remote-hosted MCP server support planned after the DP release</td>
+          </tr>
+          <tr>
+            <td>Container Image</td>
+            <td>UBI-based container image in Quay</td>
+          </tr>
+          <tr>
+            <td>Core Metadata</td>
+            <td>name, description, provider, logo, license (SPDX), licenseLink, readme</td>
+          </tr>
+          <tr>
+            <td>MCP-Specific Metadata</td>
+            <td>tools[], transportType, deploymentMode, artifacts[], endpoints[]</td>
+          </tr>
+          <tr>
+            <td>Security Indicators</td>
+            <td>verifiedSource, sast, secureEndpoint, readOnlyTools</td>
+          </tr>
+          <tr>
+            <td>Access &amp; Revocation Metadata</td>
+            <td>Each tool entry also carries an access-type (read/write) flag plus revoked (boolean) and revokedReason (string) fields</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Table carried verbatim from the RHCL hub's Catalog page (govern/catalog.html).</p>
+
+      <div class="callout callout--gap">
+        <strong>STDIO transport: open asks, not shipped.</strong> The Transport requirement above (Streamable HTTP only) rules out stdio-based servers today. Three RFEs filed 2026-06-26 target this gap: <a href="https://issues.redhat.com/browse/RHAIRFE-2514" target="_blank" rel="noopener">RHAIRFE-2514</a> (Catalog: list STDIO MCPs with local install info), <a href="https://issues.redhat.com/browse/RHAIRFE-2515" target="_blank" rel="noopener">RHAIRFE-2515</a> (Registry: allow registration/tracking of STDIO MCPs), and <a href="https://issues.redhat.com/browse/RHAIRFE-2516" target="_blank" rel="noopener">RHAIRFE-2516</a> (spec-compliant IDE-native registry API for Cursor/Windsurf/VS Code). None are committed to a fix version yet.
+      </div>
+
+      <h2>Disqualification Criteria</h2>
+      <p>A prospective partner server can be turned away on either technical or business grounds:</p>
+      <ul>
+        <li><strong>Technical:</strong> stdio-only transport, stale or unmaintained assets, remote-only servers (not eligible for DP's on-cluster-only requirement)</li>
+        <li><strong>Business:</strong> no signed consent, no ongoing maintenance commitment, no meaningful partner investment in the integration</li>
+      </ul>
+      <p class="source-ref">Source: fact-partner-mcp-catalog.md, the mcp-ecosystem knowledge partition.</p>
+
+      <h2>Consent and Attestation, in Practice</h2>
+      <p>Consent and technical attestation are two separate gates, run by two separate teams: the consent letter is a business commitment (a partner agreeing to be listed and to maintain their server), while technical attestation is Ecosystem Engineering independently verifying the server meets the requirements table above. A partner passing one gate doesn't waive the other. Post-DP, the pipeline is expected to scale with a lighter-weight maintenance and support model, distinct from Red Hat's standard operator support model, since AI assets age differently.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/catalog.html">RHCL hub: MCP Catalog (govern)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md">fact-partner-mcp-catalog.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/understand/component-overview.html">Management hub: Component Overview (Catalog card, STDIO RFEs)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./trust-policy.html">Trust &amp; Policy</a></li>
+            <li><a href="../build/byo-mcp-server.html">Bring Your Own MCP Server</a></li>
+            <li><a href="../understand/what-is-the-catalog.html">What Is the MCP Catalog?</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
