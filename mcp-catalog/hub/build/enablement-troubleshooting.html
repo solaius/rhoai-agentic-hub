@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enablement &amp; Troubleshooting | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Enablement &amp; Troubleshooting</h1>
+      <p class="lead">How to turn the MCP Catalog on in RHOAI, and the two most common failure points when deploying an MCP server from it. Organized as Symptom, Cause, Fix.</p>
+
+      <h2>Enable the Catalog</h2>
+      <p>The Catalog is enabled with a patch to the dashboard config, the same patch used to flip on the enablement flag documented in the management hub's Operator Installation and Configuration Reference pages:</p>
+      <pre><code>oc patch odhdashboardconfigs odh-dashboard-config \
+    -n redhat-ods-applications \
+    --type=merge \
+    -p '{"spec":{"dashboardConfig":{"mcpCatalog":true}}}'</code></pre>
+      <p class="source-ref"><code>mcpCatalog: true</code> patch carried verbatim from the management hub's Operator Installation and Configuration Reference pages.</p>
+
+      <h2>Deployment Issues</h2>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <span class="badge badge--gap">Known Issue</span>
+          <div class="feature-card__title">"failed to create Deployment: ConfigMap not found"</div>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Symptom:</strong> Deploying an MCP server from the catalog fails with an error like:</p>
+          <pre><code>failed to create Deployment: ConfigMap "openshift-mcp-server-config" not found</code></pre>
+          <p><strong>Cause:</strong> Prerequisites not created before deploying from catalog. The catalog does NOT automatically create ServiceAccounts, ConfigMaps, or RBAC resources (this would require privilege escalation).</p>
+          <p><strong>Fix:</strong> Create prerequisites BEFORE deploying the MCP server from the catalog:</p>
+          <pre><code>oc create serviceaccount mcp-viewer -n my-mcp
+oc create clusterrolebinding my-mcpviewer-read \
+    --clusterrole view \
+    --serviceaccount my-mcp:mcp-viewer
+
+oc apply -f - &lt;&lt;EOF
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openshift-mcp-server-config
+  namespace: my-mcp
+data:
+  config.toml: |
+    log_level = 5
+    port = "8080"
+    read_only = true
+    toolsets = ["core", "config"]
+EOF</code></pre>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <span class="badge badge--gap">Known Issue</span>
+          <div class="feature-card__title">MCP Server Not Appearing in Catalog Deployments</div>
+        </div>
+        <div class="feature-card__description">
+          <p><strong>Symptom:</strong> After deploying an MCP server from the catalog, it doesn't appear in <strong>AI Hub &rarr; MCP Servers &rarr; Deployments</strong>.</p>
+          <p><strong>Cause:</strong> One of the following:</p>
+          <ul>
+            <li>Namespace missing <code>opendatahub.io/dashboard: "true"</code> label</li>
+            <li>Server image not found or inaccessible</li>
+            <li>MCPServer CR not created successfully (check <code>oc get mcpserver -n my-mcp</code>)</li>
+          </ul>
+          <p><strong>Fix:</strong> Verify namespace label and MCPServer CR status:</p>
+          <pre><code>oc get namespace my-mcp --show-labels
+oc get mcpserver -n my-mcp
+oc describe mcpserver ocp-mcp -n my-mcp</code></pre>
+          <p>Check the MCPServer status for errors. If image pull fails, verify the image reference and registry access.</p>
+        </div>
+      </div>
+
+      <h2>Prerequisite Automation: RHAIRFE-2434</h2>
+      <div class="callout callout--gap">
+        <strong>Current limitation.</strong> Neither issue above has an automated fix today: the catalog does not create ServiceAccount, ConfigMap, or ClusterRoleBinding prerequisites for you, by design (auto-creating them would require the catalog controller to hold privilege-escalation rights). Prerequisite automation is tracked under <a href="https://issues.redhat.com/browse/RHAIRFE-2434" target="_blank" rel="noopener">RHAIRFE-2434</a> (Approved; delivery Feature RHAISTRAT-2027, In Progress; supersedes the obsoleted RHAISTRAT-1938), targeted for RHOAI 3.6 EA1 as part of Catalog/Registry Integration TP: an open ask, not shipped.
+      </div>
+      <p class="source-ref">Two management-hub pages date this differently: <code>plan/gaps.html</code> reads "planned for 3.5 TP," while the Jira-sourced <code>plan/open-questions.html</code> and <code>plan/jira-tracker.html</code> both tie RHAIRFE-2434 to RHOAI 3.6 EA1 with an explicit delivery Feature (RHAISTRAT-2027). This page follows the more specific, Jira-verified 3.6 EA1 dating.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/troubleshooting.html">Management hub: Troubleshooting (issues #2, #3)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/operator-installation.html">Management hub: Operator Installation (Post-Install Activation)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/configuration-reference.html">Management hub: Configuration Reference</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/open-questions.html">Management hub: Open Questions (Q7)</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAIRFE-2434" target="_blank" rel="noopener">RHAIRFE-2434</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./byo-mcp-server.html">Bring Your Own MCP Server</a></li>
+            <li><a href="../understand/what-is-the-catalog.html">What Is the MCP Catalog?</a></li>
+            <li><a href="../govern/trust-policy.html">Trust &amp; Policy</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

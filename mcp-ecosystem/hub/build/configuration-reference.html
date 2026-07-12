@@ -313,57 +313,9 @@ spec:
     kind: Gateway</code></pre>
 
       <h2>Bring Your Own MCP Server</h2>
-      <p>Packaging and publishing an MCP server that isn't Red Hat- or partner-provided. Today this is a manual workflow; it's tracked for future catalog automation under <a href="https://redhat.atlassian.net/browse/RHAIRFE-2081">RHAIRFE-2081</a> and <a href="https://redhat.atlassian.net/browse/RHAIRFE-2082">RHAIRFE-2082</a>.</p>
+      <p>Packaging and publishing an MCP server that isn't Red Hat- or partner-provided: container-packaging checklist, restricted-SCC compliance, and the Catalog-YAML metadata spec now live in the <a href="../../../mcp-catalog/hub/build/byo-mcp-server.html">MCP Catalog Knowledge Hub: Bring Your Own MCP Server</a>.</p>
 
-      <h3>Container-Packaging Checklist</h3>
-      <ul>
-        <li><strong>Base image:</strong> build on a UBI (Universal Base Image) base.</li>
-        <li><strong>Transport:</strong> use explicit HTTP transport, not stdio. A stdio-only server run this way will start, produce no error output, and exit silently; the failure won't surface.</li>
-        <li><strong>Bind address:</strong> bind <code>0.0.0.0</code>, not <code>127.0.0.1</code>.</li>
-        <li><strong>Credentials:</strong> accept credentials via HTTP headers, not environment variables or baked-in config, so the Gateway/Vault credential-injection path works.</li>
-        <li><strong>MCP path:</strong> declare a stable, documented MCP path (e.g. <code>/mcp</code>).</li>
-        <li><strong>Health endpoint:</strong> expose a health endpoint for liveness/readiness probing.</li>
-      </ul>
-
-      <h3>Restricted-SCC Compliance</h3>
-      <p>OpenShift's <code>restricted</code> Security Context Constraint is the default for MCP server workloads:</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Requirement</th>
-            <th>Detail</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Non-root</td>
-            <td>Container must not run as UID 0.</td>
-          </tr>
-          <tr>
-            <td>Drop all capabilities</td>
-            <td>No Linux capabilities beyond the restricted default set.</td>
-          </tr>
-          <tr>
-            <td>No privilege escalation</td>
-            <td><code>allowPrivilegeEscalation: false</code>.</td>
-          </tr>
-          <tr>
-            <td>Read-only root filesystem</td>
-            <td>Container filesystem is read-only; use storage mounts (ConfigMap/Secret/EmptyDir) for writable paths.</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3>Catalog-YAML Metadata Spec</h3>
-      <ul>
-        <li>Top level: <code>name</code>, <code>provider</code>, <code>description</code>, <code>version</code>, <code>transports</code>, <code>artifacts</code>, <code>deploymentMode</code></li>
-        <li>Per-tool <code>accessType</code>: <code>read_only</code>, <code>read_write</code>, or <code>execute</code></li>
-        <li><code>runtimeMetadata</code>: drives the deployment modal's pre-filled prerequisites</li>
-        <li><code>securityIndicators</code>: mapped from the restricted-SCC validation checklist results above</li>
-      </ul>
-      <p>Schema reference: <a href="https://github.com/kubeflow/hub/blob/main/docs/catalog-yaml-reference.md">github.com/kubeflow/hub: catalog-yaml-reference.md</a>. Worked examples still live in <a href="https://github.com/opendatahub-io/model-metadata-collection/tree/main/input/mcp_servers">opendatahub-io/model-metadata-collection</a>: the schema reference and the worked examples currently live in two separate repos.</p>
-
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

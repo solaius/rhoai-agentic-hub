@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trust &amp; Policy | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Trust &amp; Policy</h1>
+      <p class="lead">This page formalizes the MCP Catalog's trust tier wording (also used in the sell-side <a href="../sell/positioning.html">Positioning &amp; Trust Tiers</a> page), then covers the governance controls layered on top of it: RBAC and approval, federation, version pinning, and health surfacing.</p>
+
+      <h2>Trust Tiers</h2>
+      <p>The Catalog surfaces four tiers of provenance:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Meaning</th>
+            <th>What It Certifies</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Red Hat built and supported</strong></td>
+            <td>Authored and supported by Red Hat; the highest trust tier in the Catalog</td>
+            <td>Standard Red Hat product support commitment</td>
+          </tr>
+          <tr>
+            <td><strong>Partner built and certified</strong></td>
+            <td>Built by an ISV or technology partner; verified through the partner onboarding pipeline (consent, technical attestation, image build)</td>
+            <td>Passed the <a href="./partner-pipeline.html">Partner Onboarding Pipeline</a>'s consent and technical-attestation gates; ongoing maintenance commitment from the partner, not Red Hat support</td>
+          </tr>
+          <tr>
+            <td><strong>Community curated</strong></td>
+            <td>Sourced from the open community; included based on curation criteria rather than a formal partner agreement</td>
+            <td>Met the catalog team's curation bar; no formal maintenance or support commitment</td>
+          </tr>
+          <tr>
+            <td><strong>Bring your own</strong></td>
+            <td>A customer-supplied MCP server deployed through the same Catalog to Lifecycle Operator to Gateway path, outside the curated tiers</td>
+            <td>Nothing beyond what the customer's own packaging meets; see <a href="../build/byo-mcp-server.html">Bring Your Own MCP Server</a> for the packaging bar (restricted-SCC compliance, catalog-yaml metadata)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Trust tier meanings are the same wording used across the hub (Quick Reference glossary, Positioning &amp; Trust Tiers); trust tier display itself is sourced from the Registry starting in 3.5+.</p>
+
+      <h2>RBAC and Approval Workflow</h2>
+      <div class="callout callout--gap">
+        <strong>Roadmap, not shipped.</strong> "RBAC and approval workflow integration with Registry" is a stated Catalog key feature, but it depends on the Registry, which is still in Design phase: Dev Preview is not landing in RHOAI 3.5 stable, and Tech Preview is targeted for RHOAI 3.6 EA1. The Registry's current data model has exactly two governance enums (<code>MCPServerStatus</code>: active, deprecated, retired; <code>MCPPublishState</code>: draft, published, deprecated, retired) and no <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field. An earlier four-track governance model (Lifecycle, Approval, Verification, Certification) from early design drafts is a deferred proposal for a post-MVP follow-on, not a shipped capability.
+      </div>
+      <p>Until Registry-backed approval lands, trust tier assignment and access control are enforced by the same manual pipeline steps and Kubernetes RBAC (ServiceAccounts, ClusterRoleBindings) documented in <a href="../build/byo-mcp-server.html">Bring Your Own MCP Server</a> and the Partner Onboarding Pipeline above, not by an in-product approval workflow.</p>
+
+      <h2>Federation Posture</h2>
+      <p>The Catalog's stated long-term scope includes multi-registry federation (Docker MCP Catalog, GitHub MCP Registry, partner catalogs): planned, not shipped. Current scope is MCP server discovery, browsing, and selection against the Catalog's own curated set.</p>
+      <div class="callout callout--gap">
+        <strong>Open question:</strong> the Catalog has no stated federation posture toward the protocol-official MCP registry (<code>registry.modelcontextprotocol.io</code>): whether Red Hat aggregates from it, implements its subregistry spec, or does neither. This is a decision for the TP window (RHOAI 3.6 EA1); it shapes TP scope, the metadata schema, and whether Red Hat publishes its own servers to the official registry namespace (none found there today). See <a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a> and <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a>.
+      </div>
+
+      <h2>Version Pinning and Health Surfacing</h2>
+      <ul>
+        <li><strong>Version pinning with deprecation notices:</strong> planned, not shipped</li>
+        <li><strong>Health and status surfacing</strong> (uptime, latency, availability), with unhealthy servers deprioritized in search: planned, not shipped</li>
+      </ul>
+      <p>Neither control exists in the RHOAI 3.4 DP catalog today. Both depend on the same Registry-as-system-of-record work as RBAC and approval above; there is no interim manual substitute documented for either.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/enablement/catalog-hub/sell/positioning.html">Catalog hub: Positioning &amp; Trust Tiers</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/enablement/catalog-hub/reference.html">Catalog hub: Quick Reference (trust tier glossary)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/catalog.html">RHCL hub: MCP Catalog (govern)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./partner-pipeline.html">Partner Onboarding Pipeline</a></li>
+            <li><a href="../build/byo-mcp-server.html">Bring Your Own MCP Server</a></li>
+            <li><a href="../sell/positioning.html">Positioning &amp; Trust Tiers</a></li>
+            <li><a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

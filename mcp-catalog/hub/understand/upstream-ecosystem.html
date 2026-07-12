@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upstream &amp; Ecosystem | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Upstream &amp; Ecosystem</h1>
+      <p class="lead">The MCP Catalog draws on two separate upstreams, and sits inside a wider MCP registry ecosystem that is still finding its footing: a big but immature official registry, a foundation-level governance change, and a spec that is about to move under everyone's feet.</p>
+
+      <h2>Two Upstreams, Two Jobs</h2>
+      <p>The Catalog's code and its content come from different places, and it's easy to conflate them:</p>
+      <ul>
+        <li><strong>Code upstream:</strong> <a href="https://github.com/kubeflow/hub" target="_blank" rel="noopener">kubeflow/hub</a>, confirmed by owner ruling on 2026-07-10</li>
+        <li><strong>Content upstream:</strong> <a href="https://github.com/opendatahub-io/model-metadata-collection" target="_blank" rel="noopener">opendatahub-io/model-metadata-collection</a>, the merged pull request carrying Red Hat, Partner, and Community source metadata</li>
+      </ul>
+
+      <h3>Kubeflow Hub: Confirmed, and the Timing That Got Us There</h3>
+      <p>Kubeflow Hub (formerly kubeflow/model-registry; its README states Red Hat drives the project's development) shipped an MCP Catalog in February 2026:</p>
+      <ul>
+        <li>PR #2213, "feat(mcp): introduce mcp catalog openapi spec," merged 2026-02-16: <code>McpServer</code> and <code>McpTool</code> entities, <code>/api/mcp_catalog/v1alpha1/*</code> endpoints. The <code>v1alpha1</code> version is itself a signal of early maturity, not a stable v1 API.</li>
+        <li>PR #2269, source-label filtering, merged 2026-02-26, followed by catalog landing page and tools-section UI work in March 2026</li>
+        <li>The pattern mirrors Kubeflow Hub's Model Catalog (YAML and HuggingFace sources, federated discovery), and the timing (a February build ahead of the May RHOAI 3.4 DP announcement) plus Red Hat's stewardship of the project made the relationship clear enough that the owner formally confirmed it on 2026-07-10: kubeflow/hub is the RHOAI MCP Catalog's upstream implementation.</li>
+      </ul>
+      <p class="source-ref">A separate, unrelated repo intake once pointed to <code>kubeflow/mcp-server</code> (KEP-936) as "the upstream." That project wraps Kubeflow Trainer operations as MCP tools and has no releases; it is a catalog-entry candidate, not the Catalog's upstream. The correction is documented and closed.</p>
+
+      <h2>The Official MCP Registry: Scale Without Maturity</h2>
+      <p>The protocol-official registry (<code>registry.modelcontextprotocol.io</code>) is large and growing, but still explicitly a preview product:</p>
+      <ul>
+        <li><strong>Scale:</strong> at least 36,000 total server-version records and at least 10,000 latest-version servers, confirmed by live API pagination on 2026-07-09 (both are floors; the cursor was not exhausted, and no stats endpoint exists). Earlier snapshots (roughly 9,600 in May, roughly 2,000 in April) are stale and should not be cited going forward.</li>
+        <li><strong>Still preview:</strong> the site banner reads "currently in preview. Breaking changes or data resets may occur before general availability." The API contract has been frozen at v0.1 since 2025-10-24, and no GA date appears in the 2026 roadmap.</li>
+        <li><strong>Moderation is deliberately minimal:</strong> only illegal, malware, spam, or non-functioning servers are removed. Quality, vulnerabilities, and duplicates are explicitly not policed; the registry's own moderation policy describes this as pushing moderation to subregistries.</li>
+      </ul>
+
+      <h2>Governance: the Agentic AI Foundation</h2>
+      <p>MCP itself changed hands at the governance level on 2025-12-09: Anthropic donated the protocol to the <strong>Agentic AI Foundation (AAIF)</strong>, a Linux Foundation directed fund co-founded by Anthropic, Block, and OpenAI, with AWS, Google, Microsoft, Cloudflare, and Bloomberg as platinum backers. Day-to-day maintainer continuity was unchanged; a community Registry Working Group (with maintainers from PulseMCP, Stacklok, TeamSpark, and Ravenmail) still runs the registry itself. Notably, the 2026 roadmap post does not commit to a registry GA date or to any server-signing standard: both remain "on the horizon."</p>
+
+      <div class="callout callout--insight">
+        <strong>No protocol-level signing standard exists.</strong> Trust chains such as Docker's Cosign plus SBOM, or ToolHive's Sigstore plus attestations, live entirely at the tooling layer. The Catalog's enterprise-tier trust story has no upstream default to inherit and has to state its own chain.
+      </div>
+
+      <h2>Subregistry Federation: the Expected Shape</h2>
+      <p>Upstream's own layering model is: the official registry holds canonical metadata ("metaregistries host metadata, not code"), subregistries add curation and trust signals on top, and package registries (npm, PyPI, Docker Hub) hold the actual code. Downstream catalogs are expected to either poll the official registry as an aggregator, or implement its subregistry OpenAPI spec, adding namespaced <code>_meta</code> extensions for exactly the kind of metadata Red Hat already adds (scan results, certification, tiers). Host applications are explicitly told not to consume the official registry directly. GitHub's publish-once flow shows the pattern working in production, and ToolHive realigned onto the official <code>server.json</code> schema in April 2026.</p>
+
+      <div class="callout callout--gap">
+        <strong>Open question:</strong> the RHOAI Catalog has no stated federation posture toward the official registry (aggregator, subregistry-spec implementer, or neither). This is a decision for the TP window (RHOAI 3.6 EA1); it shapes TP scope, the metadata schema, and whether Red Hat publishes its own servers to the official registry namespace (none found there today). See <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a>.
+      </div>
+
+      <h2>Spec Version Churn in the TP to GA Window</h2>
+      <p>The largest MCP specification revision since launch finalizes on <strong>2026-07-28</strong> (a release candidate since 2026-05-21):</p>
+      <ul>
+        <li>Streamable HTTP becomes stateless: the <code>initialize</code> handshake and <code>Mcp-Session-Id</code> are removed, a new mandatory <code>server/discover</code> RPC is added, along with new <code>Mcp-Method</code> and <code>Mcp-Name</code> headers, and SSE resumability is removed</li>
+        <li>Tool schemas open up to full JSON Schema 2020-12, with <code>ttlMs</code> and <code>cacheScope</code> caching fields added</li>
+        <li>Auth tightens: RFC 9207 <code>iss</code> validation is required, and OAuth Dynamic Client Registration is deprecated in favor of Client ID Metadata Documents (a 12-month deprecation window applies)</li>
+        <li>No <code>server.json</code> or registry schema changes ride along with this spec release: the registry and spec release trains are decoupled</li>
+      </ul>
+      <p>The Catalog's own release train is DP 3.4 shipped, DP continues through 3.5, TP targeted for RHOAI 3.6 EA1, and GA targeted at RHOAI 3.6 (code freeze Oct 23, 2026). The spec finalizes roughly three months ahead of that code freeze, which means Catalog GA has to certify servers spanning both the pre- and post-2026-07-28 spec generations.</p>
+
+      <div class="callout callout--gap">
+        <strong>Open question:</strong> no compatibility-matrix policy is stated yet for which spec versions catalog entries declare, what the Gateway accepts, or what the Red Hat and Partner tiers require at GA. See <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a>.
+      </div>
+
+      <h2>Adjacent Coopetition</h2>
+      <p>ToolHive (Stacklok) is co-maintained by Red Hat, stated on both stacklok.com and developers.redhat.com (GitHub governance files lag the announcement). ToolHive's registry server federates Git, Kubernetes, upstream registries, and internal APIs into named catalogs, and its v1.2.0 release (around April 2026) dropped its native format in favor of the official <code>server.json</code> schema, extended via <code>_meta</code>. ToolHive is not the Catalog itself, and the full competitive read, including the coopetition reclassification, is on <a href="../sell/competitive.html">Competitive Landscape</a>.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/research/01-upstream-mcp-catalog-registry.md">Research: Upstream, MCP catalog/registry ecosystem (July 2026)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/fact-mcp-upstream-status.md">fact-mcp-upstream-status.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-kubeflow-hub-catalog-alignment.md">question-kubeflow-hub-catalog-alignment.md (answered)</a></li>
+            <li><a href="https://github.com/kubeflow/hub" target="_blank" rel="noopener">kubeflow/hub</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./what-is-the-catalog.html">What Is the MCP Catalog?</a></li>
+            <li><a href="../sell/competitive.html">Competitive Landscape</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/catalog.html">RHCL hub: MCP Catalog (govern)</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

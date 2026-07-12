@@ -64,50 +64,9 @@
         <div class="feature-card__description">
           <p><strong>Purpose:</strong> Discovery layer for MCP servers. Browse partner, community, and Red Hat MCP servers with metadata (tool lists, security indicators, license, provider logo, README).</p>
 
-          <p><strong>Status:</strong> Developer Preview (DP) shipped in RHOAI 3.4 (code freeze April 10, 2026); DP continues through 3.5 with enhancements. TP in RHOAI 3.6 EA1 with Registry integration (PM direction, Jul 2026). GA targeted for Q4 2026.</p>
+          <p><strong>Status:</strong> Developer Preview (DP) shipped in RHOAI 3.4 (code freeze April 10, 2026); DP continues through 3.5 with enhancements. Technical Preview (TP) targeted for RHOAI 3.6 EA1 with Registry integration (PM direction, Jul 2026). General Availability (GA) targeted for RHOAI 3.6 (code freeze Oct 23, 2026).</p>
 
-          <p><strong>What Shipped (3.4 DP):</strong></p>
-          <ul>
-            <li><strong>5 Partners:</strong> Confluent, Dynatrace, Terraform (HashiCorp), Microsoft Azure, EnterpriseDB (EDB)</li>
-            <li><strong>2 Community:</strong> MariaDB, MongoDB</li>
-            <li><strong>3 Red Hat:</strong> OpenShift, Ansible AAP, Red Hat Insights/Lightspeed</li>
-            <li><strong>Quay org:</strong> <code>quay.io/rhoai-partner-mcp</code></li>
-            <li><strong>Upstream:</strong> <code>kubeflow/hub</code> (code upstream) and <code>opendatahub-io/model-metadata-collection</code> (content upstream, PR merged)</li>
-          </ul>
-
-          <p><strong>Technical Requirements for MCP Servers:</strong></p>
-          <ul>
-            <li>Streamable HTTP transport only today; STDIO support has approved RFEs in the pipeline (RHAIRFE-2514, RHAIRFE-2515, RHAIRFE-2516, filed 2026-06-26) with no committed date yet</li>
-            <li>On-cluster deployment, local hosting only today; remote-hosted support planned after DP (no date set)</li>
-            <li>UBI-based container image in Quay</li>
-            <li>Core metadata: name, description, provider, logo, license (SPDX), licenseLink, readme</li>
-            <li>MCP-specific: tools[] (each with <code>accessType</code>: read/write, <code>revoked</code>: boolean, <code>revokedReason</code>: string), transportType, deploymentMode, artifacts[], endpoints[]</li>
-            <li>Security indicators: verifiedSource, sast, secureEndpoint, readOnlyTools</li>
-          </ul>
-
-          <p><strong>Key Features:</strong></p>
-          <ul>
-            <li>Trust tier display (certified, community, unverified) — sourced from Registry in 3.5+</li>
-            <li>RBAC and approval workflow integration with Registry</li>
-            <li>Multi-registry federation support (Docker MCP Catalog, GitHub MCP Registry, partner catalogs)</li>
-            <li>Catalog Admin UI (Settings page, CRUD on Catalog source ConfigMaps): In Progress, targeted RHOAI 3.5 GA (RHAISTRAT-1859)</li>
-            <li>Health/status surfacing (uptime, latency, availability), with unhealthy servers deprioritized in search: planned</li>
-            <li>Version pinning with deprecation notices: planned</li>
-          </ul>
-
-          <p><strong>PM Vision (Planned, Beyond Current Scope):</strong></p>
-          <ul>
-            <li>Governs tools, prompts, resources, and workloads, not just MCP servers</li>
-            <li><strong>Tool Masking</strong>: expose only the tools a given workload needs</li>
-            <li><strong>Input Simplification</strong>: break multi-purpose tools into single-purpose variants</li>
-            <li><strong>Output Filtering</strong>: reduce responses to only the fields relevant to the calling LLM</li>
-          </ul>
-
-          <p><strong>Current Limitation:</strong> Catalog does NOT create prerequisites automatically (ServiceAccount, ConfigMap, ClusterRoleBinding must be created manually before deploying from catalog in 3.4).</p>
-
-          <p><strong>3.5+ Improvement:</strong> Registry integration enables automatic prerequisite creation via Lifecycle Operator.</p>
-
-          <p><strong>Learn More:</strong> <span class="badge badge--coming-soon">Dedicated hub planned</span></p>
+          <p><a href="../../../mcp-catalog/hub/" class="component-card__cta">Full depth: MCP Catalog Knowledge Hub →</a></p>
         </div>
       </div>
 

@@ -57,12 +57,7 @@
             <span class="badge badge--gap">Gap</span>
             Catalog Does Not Create Prerequisites
           </h3>
-          <p><strong>Issue:</strong> Deploying an MCP server from the catalog requires manually creating ServiceAccount, RBAC (ClusterRoleBinding), and ConfigMap resources. Catalog UI "Deploy" button does not automate this.</p>
-          <p><strong>Impact:</strong> Users must prepare namespace with correct prerequisites before deployment succeeds. Failure mode is silent (deployment created but pods crash).</p>
-          <p><strong>Owner:</strong> RHOAI Catalog Team</p>
-          <p><strong>Status:</strong> Prerequisite automation planned for 3.5 TP (RHAIRFE-2434)</p>
-          <p><strong>Workaround:</strong> Follow manual setup steps from MCP server deployment guides (e.g., create ServiceAccount, ConfigMap, RBAC before deploying).</p>
-          <p class="source-ref">Source: Fernando Lozano's MCP Notes, Source Verification Report</p>
+          <p>Deploying an MCP server from the catalog requires manually creating ServiceAccount, RBAC, and ConfigMap resources; prerequisite automation is targeted for RHOAI 3.6 EA1 (RHAIRFE-2434). Full detail: <a href="../../../mcp-catalog/hub/plan/gaps-open-questions.html">MCP Catalog Knowledge Hub: Gaps &amp; Open Questions</a>.</p>
         </div>
 
         <div class="feature-card">

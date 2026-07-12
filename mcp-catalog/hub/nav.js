@@ -3,34 +3,26 @@
 
 const SITE_MAP = [
   { section: 'Understand It', id: 'understand', pages: [
-    { title: 'What Is MCP Management?', path: 'understand/what-is-mcp-management.html' },
-    { title: 'Ecosystem Architecture', path: 'understand/ecosystem-architecture.html' },
-    { title: 'Component Overview', path: 'understand/component-overview.html' },
-    { title: 'Personas', path: 'understand/personas.html' },
+    { title: 'What Is the MCP Catalog?', path: 'understand/what-is-the-catalog.html' },
+    { title: 'Jobs to be Done', path: 'understand/jobs-to-be-done.html' },
+    { title: 'Upstream & Ecosystem', path: 'understand/upstream-ecosystem.html' },
   ]},
   { section: 'Sell It', id: 'sell', pages: [
-    { title: 'Value Proposition', path: 'sell/value-prop.html' },
-    { title: 'Customer Stories', path: 'sell/customer-stories.html' },
+    { title: 'Positioning & Trust Tiers', path: 'sell/positioning.html' },
     { title: 'Competitive Landscape', path: 'sell/competitive.html' },
-    { title: 'Summit & Field Feedback', path: 'sell/summit-feedback.html' },
   ]},
   { section: 'Build It', id: 'build', pages: [
-    { title: 'End-to-End Setup', path: 'build/end-to-end-setup.html' },
-    { title: 'Operator Installation', path: 'build/operator-installation.html' },
-    { title: 'Configuration Reference', path: 'build/configuration-reference.html' },
-    { title: 'Troubleshooting', path: 'build/troubleshooting.html' },
+    { title: 'Bring Your Own MCP Server', path: 'build/byo-mcp-server.html' },
+    { title: 'Enablement & Troubleshooting', path: 'build/enablement-troubleshooting.html' },
   ]},
   { section: 'Govern It', id: 'govern', pages: [
-    { title: 'Lifecycle Flow', path: 'govern/lifecycle-flow.html' },
-    { title: 'Component Integration', path: 'govern/component-integration.html' },
-    { title: 'Security Model', path: 'govern/security-model.html' },
-    { title: 'Entitlement', path: 'govern/entitlement.html' },
+    { title: 'Partner Onboarding Pipeline', path: 'govern/partner-pipeline.html' },
+    { title: 'Trust & Policy', path: 'govern/trust-policy.html' },
   ]},
   { section: 'Plan It', id: 'plan', pages: [
     { title: 'Roadmap', path: 'plan/roadmap.html' },
-    { title: 'Known Gaps', path: 'plan/gaps.html' },
-    { title: 'Jira Tracker', path: 'plan/jira-tracker.html' },
-    { title: 'Open Questions', path: 'plan/open-questions.html' },
+    { title: 'Jira Tracker (Strats)', path: 'plan/jira-tracker.html' },
+    { title: 'Gaps & Open Questions', path: 'plan/gaps-open-questions.html' },
   ]},
 ];
 
@@ -41,9 +33,9 @@ const SPECIAL_PAGES = [
 ];
 
 const HUB_NETWORK = [
-  { title: '🏠 MCP Ecosystem Hub', path: '../../mcp-ecosystem/hub/', self: true },
+  { title: '🏠 MCP Ecosystem Hub', path: '../../mcp-ecosystem/hub/' },
   { title: '🔌 MCP Gateway Hub', path: '../../mcp-gateway/rhcl/' },
-  { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/' },
+  { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/', self: true },
   { title: '⚙️ MCP Lifecycle Operator Hub', path: '../../mcp-lifecycle-operator/hub/', comingSoon: true },
   { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/', comingSoon: true },
 ];
@@ -52,7 +44,7 @@ const HUB_NETWORK = [
  * Sidebar section collapse state, persisted per browser tab via sessionStorage
  * so expand/collapse choices survive navigation between pages.
  */
-const SIDEBAR_STATE_KEY = 'mgmt-hub-sidebar-state';
+const SIDEBAR_STATE_KEY = 'catalog-hub-sidebar-state';
 
 function getSidebarState() {
   try {
@@ -224,7 +216,7 @@ function buildHeader() {
   // Site title
   html += `<div class="hub-header__title">`;
   html += `<a href="${basePath}index.html" style="text-decoration: none; color: inherit;">`;
-  html += `<span class="hub-header__logo">MCP</span> Management`;
+  html += `<span class="hub-header__logo">MCP</span> Catalog`;
   html += `</a>`;
   html += `</div>`;
 
