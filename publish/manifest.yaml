@@ -81,3 +81,8 @@
   audience: public
   title: Agent Memory RFE Narrative
   description: Scrolling narrative of the agent-memory RFE program - the end goal, the fourteen filed RFEs, the dependency-driven order across three proposed waves (3.6 DP, 3.7 TP, 3.8 GA directional), and the story you can tell at each stage.
+- source: features/mcp-catalog/enablement/catalog-hub/
+  dest: mcp-catalog/hub/
+  audience: internal
+  title: MCP Catalog Knowledge Hub
+  description: 14-page enablement site for the MCP Catalog (discovery/storefront) across understand/sell/build/govern/plan.

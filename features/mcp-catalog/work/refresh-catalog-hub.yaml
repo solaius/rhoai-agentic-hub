@@ -1,0 +1,20 @@
+# Source list for hub.refresh-site. Tracked and PUBLIC.
+site: features/mcp-catalog/enablement/catalog-hub/
+sources:
+  gdocs:
+  - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: MCP Catalog}
+  - {id: 1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740, title: Partners MCP Catalog}
+  github:
+  - kubeflow/hub
+  - opendatahub-io/model-metadata-collection
+  jira:
+    jql: project = RHAISTRAT AND summary ~ "\"MCP Catalog\""
+  slack:
+    channels: [forum-ai-asset-management]
+    window_days: 14
+  local:
+  - features/mcp-catalog/knowledge/
+  - features/mcp-catalog/research/
+sections:
+  jtbd: true
+  jira_tracker: {project: RHAISTRAT}

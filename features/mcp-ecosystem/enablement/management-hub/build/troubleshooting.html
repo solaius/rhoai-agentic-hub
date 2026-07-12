@@ -78,62 +78,12 @@ EOF</code></pre>
 
       <div class="issue">
         <h3>2. "failed to create Deployment: ConfigMap not found"</h3>
-        <div class="issue__section">
-          <h4>Symptom</h4>
-          <p>Deploying an MCP server from the catalog fails with an error like:</p>
-          <pre><code>failed to create Deployment: ConfigMap "openshift-mcp-server-config" not found</code></pre>
-        </div>
-        <div class="issue__section">
-          <h4>Cause</h4>
-          <p>Prerequisites not created before deploying from catalog. The catalog does NOT automatically create ServiceAccounts, ConfigMaps, or RBAC resources (this would require privilege escalation).</p>
-        </div>
-        <div class="issue__section">
-          <h4>Fix</h4>
-          <p>Create prerequisites BEFORE deploying the MCP server from the catalog:</p>
-          <pre><code>oc create serviceaccount mcp-viewer -n my-mcp
-oc create clusterrolebinding my-mcpviewer-read \
-    --clusterrole view \
-    --serviceaccount my-mcp:mcp-viewer
-
-oc apply -f - &lt;&lt;EOF
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: openshift-mcp-server-config
-  namespace: my-mcp
-data:
-  config.toml: |
-    log_level = 5
-    port = "8080"
-    read_only = true
-    toolsets = ["core", "config"]
-EOF</code></pre>
-        </div>
+        <p>Deploying an MCP server from the catalog without pre-creating prerequisites (ServiceAccount, ConfigMap, RBAC). Full symptom/cause/fix now lives in the <a href="../../../mcp-catalog/hub/build/enablement-troubleshooting.html">MCP Catalog Knowledge Hub: Enablement &amp; Troubleshooting</a>.</p>
       </div>
 
       <div class="issue">
         <h3>3. MCP Server Not Appearing in Catalog Deployments</h3>
-        <div class="issue__section">
-          <h4>Symptom</h4>
-          <p>After deploying an MCP server from the catalog, it doesn't appear in <strong>AI Hub → MCP Servers → Deployments</strong>.</p>
-        </div>
-        <div class="issue__section">
-          <h4>Cause</h4>
-          <p>One of the following:</p>
-          <ul>
-            <li>Namespace missing <code>opendatahub.io/dashboard: "true"</code> label</li>
-            <li>Server image not found or inaccessible</li>
-            <li>MCPServer CR not created successfully (check <code>oc get mcpserver -n my-mcp</code>)</li>
-          </ul>
-        </div>
-        <div class="issue__section">
-          <h4>Fix</h4>
-          <p>Verify namespace label and MCPServer CR status:</p>
-          <pre><code>oc get namespace my-mcp --show-labels
-oc get mcpserver -n my-mcp
-oc describe mcpserver ocp-mcp -n my-mcp</code></pre>
-          <p>Check the MCPServer status for errors. If image pull fails, verify the image reference and registry access.</p>
-        </div>
+        <p>Usually a missing namespace label or a failed MCPServer CR. Full symptom/cause/fix now lives in the <a href="../../../mcp-catalog/hub/build/enablement-troubleshooting.html">MCP Catalog Knowledge Hub: Enablement &amp; Troubleshooting</a>.</p>
       </div>
 
       <h2>Playground Integration Issues</h2>
@@ -331,7 +281,7 @@ oc get kuadrant -n gateway-system
         </ul>
       </div>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

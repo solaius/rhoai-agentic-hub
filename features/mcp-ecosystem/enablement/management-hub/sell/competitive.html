@@ -117,138 +117,7 @@
 
     <h2>Catalog &amp; Registry Landscape</h2>
 
-    <p>A separate competitive layer sits above the ecosystem-level comparison above: catalogs and registries that discover, list, and vet MCP servers for consumption. This table covers the discovery-layer landscape specifically, using the source doc's own comparison categories.</p>
-
-    <table class="status-table">
-      <thead>
-        <tr>
-          <th>Catalog</th>
-          <th>Open/Closed</th>
-          <th>Primary Form</th>
-          <th>Submission</th>
-          <th>Verification/Trust</th>
-          <th>Install</th>
-          <th>Programmatic</th>
-          <th>Scope</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Smithery</strong></td>
-          <td>Open</td>
-          <td>Marketplace/catalog</td>
-          <td>Open publisher submissions</td>
-          <td>Community + site governance</td>
-          <td>Yes (installer CLI)</td>
-          <td>Yes (CLI/SDK)</td>
-          <td>"Largest" marketplace; thousands of capabilities</td>
-        </tr>
-        <tr>
-          <td><strong>Docker MCP Catalog</strong></td>
-          <td>Mixed (curated)</td>
-          <td>Catalog integrated with Docker Hub</td>
-          <td>Curated/verified entries</td>
-          <td>Verified, versioned Docker images</td>
-          <td>Yes (Docker Desktop/Toolkit)</td>
-          <td>Yes (Docker tooling)</td>
-          <td>"100+ verified tools" at launch (Apr 2025)</td>
-        </tr>
-        <tr>
-          <td><strong>GitHub MCP Registry</strong></td>
-          <td>Open</td>
-          <td>Registry on GitHub</td>
-          <td>Community + vendor</td>
-          <td>GitHub identity &amp; curation</td>
-          <td>"Install" flows in GitHub UI</td>
-          <td>GitHub APIs</td>
-          <td>Official registry announcement (Sep 2025)</td>
-        </tr>
-        <tr>
-          <td><strong>Official MCP Registry</strong></td>
-          <td>Open</td>
-          <td>Protocol-official registry</td>
-          <td>Open PR/publish</td>
-          <td>OSS governance</td>
-          <td>Depends on clients</td>
-          <td>Live API docs</td>
-          <td>"App store for MCP servers"</td>
-        </tr>
-        <tr>
-          <td><strong>Postman getmcp</strong></td>
-          <td>Open (hosted on Postman)</td>
-          <td>Curated catalog workspaces</td>
-          <td>Curated by Postman + partners</td>
-          <td>Postman publisher verification</td>
-          <td>N/A</td>
-          <td>Postman APIs/collections</td>
-          <td>Popular public workspace(s)</td>
-        </tr>
-        <tr>
-          <td><strong>MCPServers.org</strong> (Awesome MCP Servers)</td>
-          <td>Open</td>
-          <td>Community directory</td>
-          <td>Open submissions</td>
-          <td>Community moderation</td>
-          <td>N/A</td>
-          <td>N/A</td>
-          <td>Broad community list</td>
-        </tr>
-        <tr>
-          <td><strong>MCP.so</strong></td>
-          <td>Open (3rd-party)</td>
-          <td>Marketplace/directory</td>
-          <td>Open submissions</td>
-          <td>Site moderation</td>
-          <td>Some one-click links</td>
-          <td>N/A</td>
-          <td>Claims 16k+ servers collected</td>
-        </tr>
-        <tr>
-          <td><strong>Pulse MCP</strong></td>
-          <td>Open (media/directory)</td>
-          <td>Directory with counts &amp; updates</td>
-          <td>Curated</td>
-          <td>Media-run curation</td>
-          <td>N/A</td>
-          <td>N/A</td>
-          <td>Reports 6k+ servers (updated daily)</td>
-        </tr>
-        <tr>
-          <td><strong>MCP Catalog</strong> (mcpcatalog.io)</td>
-          <td>Open</td>
-          <td>Public listing site</td>
-          <td>Unknown/open</td>
-          <td>Site governance</td>
-          <td>N/A</td>
-          <td>N/A</td>
-          <td>Category-browsable site</td>
-        </tr>
-        <tr>
-          <td><strong>ToolHive Registry</strong> (Stacklok)</td>
-          <td>Open</td>
-          <td>Registry + secure runtime</td>
-          <td>Curated + open</td>
-          <td>Security-focused (sandboxed containers)</td>
-          <td>Yes (<code>thv run</code>)</td>
-          <td>Yes (CLI + API server)</td>
-          <td>Focus on secure execution</td>
-        </tr>
-        <tr>
-          <td><strong>Microsoft Copilot Studio</strong></td>
-          <td>Closed (vendor)</td>
-          <td>In-product catalog</td>
-          <td>Vendor controlled</td>
-          <td>Microsoft certification</td>
-          <td>In-product add</td>
-          <td>N/A</td>
-          <td>Catalog of certified connectors</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="callout callout--source">
-      <p><strong>Richer landscape:</strong> the RHCL hub carries a more complete Gateway-vantage version of this table (12 entries, including Databricks Unity Catalog, plus its own gateway-competitor profiles for IBM API Connect, Google GKE Inference Gateway, and Portkey/Bifrost). See the <a href="../../../mcp-gateway/rhcl/sell/competitive.html">RHCL hub's Competitive Landscape</a>.</p>
-    </div>
+    <p>A separate competitive layer sits above the ecosystem-level comparison above: catalogs and registries that discover, list, and vet MCP servers for consumption (Docker MCP Catalog, Smithery, GitHub MCP Registry, the official MCP Registry, and a growing set of enterprise entrants). The full landscape table, the July 2026 refresh, and the gap list now live in the <a href="../../../mcp-catalog/hub/sell/competitive.html">MCP Catalog Knowledge Hub: Competitive Landscape</a>.</p>
 
     <h2>Competitive Positioning by Use Case</h2>
 
@@ -296,7 +165,7 @@
       <p>MCP Gateway and AI Gateway are complementary, not competing. MCP Gateway handles MCP protocol specifically; AI Gateway handles all AI traffic including inference, egress, Responses API, and A2A. Both share Envoy, Gateway API, and RHCL infrastructure. See <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway</a> for full context.</p>
     </div>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
