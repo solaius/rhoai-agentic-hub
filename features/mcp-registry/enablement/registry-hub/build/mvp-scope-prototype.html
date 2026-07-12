@@ -120,17 +120,17 @@ MCPObservedTool / MCPObservedToolSnapshot {
         </p>
       </div>
 
-      <h2>Still Undecided for the MVP</h2>
-      <p>The data model proposal describes the four-track governance model, but these specifics remain open for the initial release cut:</p>
+      <h2>MVP Data-Model Decisions: Resolved and Open</h2>
+      <p>The data model proposal describes the four-track governance model. Of the six decisions originally flagged to finalize it, three are now resolved and three remain open for the initial release cut. Full detail and sourcing live on <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</p>
       <ol>
-        <li>What exact metadata should be mandatory on a registry record?</li>
-        <li>Which of the four proposed tracks' lifecycle states are actually required for the initial cut, versus deferred to a later release?</li>
-        <li>Should certification programs be backed by an admin-managed allowlist?</li>
-        <li>Should lifecycle history (an audit trail of state transitions) ship in the MVP or be deferred?</li>
-        <li>Do approval, verification, and certification transitions need distinct permissions beyond general update permissions?</li>
-        <li>Do Registry entities need <code>EntityAssociationType</code> support in the MVP, or can it wait?</li>
+        <li><span class="badge badge--accepted">Resolved</span> What exact metadata should be mandatory on a registry record? Mandatory fields: name, version, description, hosting model, lifecycle state; readme, tools list, parameters, and runtime prerequisites are optional. See <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</li>
+        <li><span class="badge badge--accepted">Resolved</span> Which of the four proposed tracks' lifecycle states are actually required for the initial cut, versus deferred to a later release? Four lifecycle states ship in the MVP cut: active, deprecated, disabled, retired. See <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</li>
+        <li><span class="badge badge--open">Open</span> Should certification programs be backed by an admin-managed allowlist? Deferred beyond 3.6 EA1; certification tracking is out of scope for the Registry MVP. See <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</li>
+        <li><span class="badge badge--accepted">Resolved</span> Should lifecycle history (an audit trail of state transitions) ship in the MVP or be deferred? In MVP scope (Story 10): each version has an independent lifecycle state and older versions remain queryable. See <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</li>
+        <li><span class="badge badge--open">Open</span> Do approval, verification, and certification transitions need distinct permissions beyond general update permissions? Deferred beyond 3.6 EA1; verification and certification tracking are out of scope for the Registry MVP. See <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</li>
+        <li><span class="badge badge--open">Open</span> Do Registry entities need <code>EntityAssociationType</code> support in the MVP, or can it wait? Still open. See <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a>.</li>
       </ol>
-      <p class="source-ref">Six open decisions per question-mcp-registry-mvp-data-model-gaps.md. Originally scoped against a "3.5 Dev Preview" cut; the underlying decisions are unchanged, but that release label is superseded by the 2026-07-11 owner ruling (Dev Preview will not land in RHOAI 3.5 stable; Tech Preview is targeted for RHOAI 3.6 EA1) and is not repeated here.</p>
+      <p class="source-ref">Six decisions per question-mcp-registry-mvp-data-model-gaps.md; resolved/open status and resolution detail per <a href="../plan/gaps-open-questions.html">Gaps &amp; Open Questions</a> ("MVP Data-Model Gaps: Six Decisions"). Originally scoped against a "3.5 Dev Preview" cut; the underlying decisions are unchanged, but that release label is superseded by the 2026-07-11 owner ruling (Dev Preview will not land in RHOAI 3.5 stable; Tech Preview is targeted for RHOAI 3.6 EA1) and is not repeated here.</p>
 
       <h2>Requirements Source</h2>
       <p>
