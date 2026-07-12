@@ -34,7 +34,7 @@ including review. "When" is a best guess, not a schedule.
 | 31 | Red Hat Support case search/analysis (pm-toolkit port) | **Medium** — post-sales signal from 1M+ support cases across full AI portfolio; complements the pre-sales customer tracker | Medium | Later |
 | 32 | Prototyping skills — setup + delegate to RHOAI prototype repo (pm-toolkit port) | **Low–Medium** — convenience wrapper for PatternFly prototyping via internal GitLab; VPN-dependent | Small | Later |
 | 33 | PostToolUse usage logging + report (pm-toolkit port) | **Low** — meta-tooling: JSONL log of every tool invocation + usage summary report | Small | Whenever |
-| 35 | Component hub build-out (Catalog, MCPLO, Registry) + Management-hub umbrella devolution | **High** - owner-committed content project; slugs pre-staged, sequenced plan recorded | Large (3 hubs + devolution) | Next |
+| ~~35~~ | ~~Component hub build-out (Catalog, MCPLO, Registry) + Management-hub umbrella devolution~~ | Done | Done | Done |
 
 ---
 
@@ -234,23 +234,8 @@ project MCP enable is the main friction. Full write-up:
 
 ## Human-usage enhancements
 
-**35 · Component hub build-out + umbrella devolution.** Owner ruling
-2026-07-10: dedicated hubs for MCP Catalog, MCP Lifecycle Operator, and MCP
-Registry (slugs `mcp-catalog/hub/`, `mcp-lifecycle-operator/hub/`,
-`mcp-registry/hub/`, pre-staged in the Management hub's nav); the Management
-hub thins to the umbrella. Build order Catalog then MCPLO then Registry;
-seed each from BOTH parents (RHCL govern pages + Management component
-sections) in one pass. Full devolution map + sequenced plan:
-[/features/mcp-ecosystem/work/management-hub-umbrella-plan.md](/features/mcp-ecosystem/work/management-hub-umbrella-plan.md).
-Each new hub ships with a `work/refresh-<slug>.yaml` so hub.refresh-site
-covers it from day one.
-**Audience ruling, 2026-07-11:** all knowledge hubs, existing and
-prestaged, are `audience: internal` (GA-readout-class detail, not for the
-public site); the two live hubs (RHCL, Management) flipped from public to
-internal the same day #13 landed in interim form. The three new hubs
-(Catalog, MCPLO, Registry) enter the manifest as `audience: internal` from
-their first commit, never public first. Spec:
-[/docs/specs/2026-07-11-component-hub-buildout-design.md](/docs/specs/2026-07-11-component-hub-buildout-design.md).
+**35 · Component hub build-out + umbrella devolution.** Shipped
+2026-07-12. See Done section below.
 
 **12 · Curated FAQ / JTBD publishing.** Already specced (narrative spec §9):
 when qa volume justifies it, ship a curated FAQ page (per audience) and a
@@ -414,6 +399,36 @@ Meta-tooling for understanding how the hub is actually used. Fits the
 
 ## Done
 
+- **#35 Component hub build-out + Management umbrella devolution** -- shipped
+  2026-07-12: three new knowledge hubs built and published internal -- MCP
+  Catalog (14 pages), MCP Lifecycle Operator (16 pages), MCP Registry (12
+  pages) -- each seeded from both parent hubs (RHCL govern pages + Management
+  component sections) in one pass, launched with its own
+  `work/refresh-<slug>.yaml` so `hub.refresh-site` covers it from day one.
+  The Management hub devolved from 22 pages to an 18-page cross-component
+  umbrella (component-overview replaced by a Component Directory page plus a
+  new "which component do I need?" decision guide; ecosystem-architecture
+  absorbed component-integration; several thinned pages folded together).
+  The RHCL hub thinned its three govern pages (catalog, lifecycle-operator,
+  registry) to gateway-vantage summaries and joined the hub network (nav.js
+  HUB_NETWORK plus the sidebar-rendering code ported over). Backlog #13
+  (`audience: internal` publish target) shipped in interim form as part of
+  this effort: all five hubs now publish to this repo's own `gh-pages`
+  (`https://solaius.github.io/rhoai-agentic-hub/`) instead of the public
+  pages site, and `hub_lint.py` gained a check that blocks public artifacts
+  from linking into internal dests. `hub.refresh-site` gained standing Jobs
+  to be Done (Understand) and Jira Tracker/Strats (Plan) section contracts
+  (a `sections:` config block); all five hubs carry both standard pages now,
+  including retrofits onto the two pre-existing hubs (RHCL, Management).
+  Spec:
+  [/docs/specs/2026-07-11-component-hub-buildout-design.md](/docs/specs/2026-07-11-component-hub-buildout-design.md).
+  Plan:
+  [/docs/plans/2026-07-11-component-hub-buildout-plan.md](/docs/plans/2026-07-11-component-hub-buildout-plan.md).
+  **Note for owner review:** the mcp-gateway Jira scope added to
+  `features.yaml` is provisional -- a summary-match JQL
+  (`project = RHAISTRAT AND summary ~ "MCP Gateway"`) with no key allowlist,
+  unlike the other four features' scopes, which anchor on specific keys.
+  Refine when there is time to curate it properly.
 - **#28 PM standup brief + weekly plan** -- shipped 2026-07-11: `hub.standup`
   (daily brief from Jira/Slack/Gemini Notes/AI News using the "Product
   Manager" JQL field) and `hub.weekly-plan` (weekly superset with Google

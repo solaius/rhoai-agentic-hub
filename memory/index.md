@@ -4,12 +4,14 @@
 > Always read this first. Regenerate with `python scripts/hub_index.py`.
 
 ## Profiles (current state)
-- [now](/memory/profiles/now.md) — Now: 12 partitions (added mcp-lifecycle-operator + agent-interop), deep research complete on both — daily PM work running on the hub
+- [now](/memory/profiles/now.md) — Now: 12 partitions (added mcp-lifecycle-operator + agent-interop), deep research complete on both — daily PM work running on the hub; five-hub internal knowledge network live
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash, no em dashes
 - [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCPLO TP + OpenShell DP in 3.5; OpenShell TP in 3.6 EA; Catalog TP + Registry TP to 3.6 EA1; MCPLO/Registry/Catalog GAs in 3.6; OpenShell GA in 3.7; OCP5 includes MCPLO via RHOAI Limited
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts
+- [fact-hub-network-standard-sections](/memory/facts/fact-hub-network-standard-sections.md) — every knowledge hub carries Jobs to be Done (Understand) + Jira Tracker Strats (Plan), maintained by hub.refresh-site via the sections: block in refresh configs; tracker rows follow the unauthenticated-probe rule; the mcp-gateway stored Jira scope is provisional pending owner refinement
+- [fact-internal-publish-target](/memory/facts/fact-internal-publish-target.md) — audience: internal in publish/manifest.yaml deploys to this repo's gh-pages (solaius.github.io/rhoai-agentic-hub) via publish.yml; interim until protected GitLab Pages; public artifacts must not link into internal dests (lint-enforced); knowledge hubs are internal-audience by owner ruling 2026-07-11
 - [fact-disclosure-remediation](/memory/facts/fact-disclosure-remediation.md) — Removing leaked content from this repo takes TWO filter-repo passes (a path purge misses the entry description, which hub_index propagates into tracked generated views), and a force-push does NOT purge the blob from GitHub
 - [fact-disclosure-warning-triage-2026-07-10](/memory/facts/fact-disclosure-warning-triage-2026-07-10.md) — The 21 heuristic warnings introduced by the enhancement + trust batches were owner-triaged (18 on 2026-07-10, 3 on 2026-07-11): all benign — don't re-triage unless the flagged lines change
 - [fact-doctor-owns-shell-env-wiring](/memory/facts/fact-doctor-owns-shell-env-wiring.md) — The rfe.* marketplace skills silently depended on the retired ai-asset-registry clone; hub.doctor now owns the ~/.bashrc wiring and probes Slack auth
@@ -18,8 +20,6 @@
 - [fact-r5-machine-b-baseline](/memory/facts/fact-r5-machine-b-baseline.md) — R5 cross-machine test: machine B doctor check yielded 18 ok / 1 warn / 5 fail. Slack xoxc/xoxd tokens traveled between machines (disproved the R5 prediction). Fails: plugin installs (no github ssh key), customer tracker clone, pre-commit hook.
 - [fact-r6-cursor-validation](/memory/facts/fact-r6-cursor-validation.md) — R6 Cursor e2e: AGENTS.md + .claude/skills discovery PASS; scratch empty; project MCP servers stay disconnected until enabled in Settings; Google worked via user-level mcp.json; rhai-tracker missing from .cursor/mcp.json
 - [fact-concurrent-session-git-hygiene](/memory/facts/fact-concurrent-session-git-hygiene.md) — Concurrent agent sessions in one clone contaminate each other two ways — shared main-checkout index (plain git commit sweeps another session's pre-staged files) and nested-worktree visibility; guards: per-session worktrees, clean-tree check before work, git diff --cached --stat before every commit
-- [fact-rfe-creator-windows-quirks](/memory/facts/fact-rfe-creator-windows-quirks.md) — Windows quirks for the rfe-creator/assess-rfe plugin pipeline - python vs python3, fcntl-blocked ID allocation, /tmp mapping to C:\tmp, explicit --schema-type, and plugin-cache script paths.
-- [fact-hub-build-operational-gotchas](/memory/facts/fact-hub-build-operational-gotchas.md) — Operational gotchas hit while building this hub — gh secret set silent-empty-secret, GitHub Pages first-build wedge, PAT-in-argv leak
 
 ## Recent log
 - 2026-07-11 — **Update** -- sweep(mcp-registry): 1 entry refreshed (ref-mcp-lifecycle-operator-repo timestamp bumped, active upstream repo)

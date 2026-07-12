@@ -1,5 +1,13 @@
 # Management hub umbrella plan (component-hub build-out)
 
+> **Status, 2026-07-12: executed.** This plan ran to completion via
+> [/docs/specs/2026-07-11-component-hub-buildout-design.md](/docs/specs/2026-07-11-component-hub-buildout-design.md)
+> and
+> [/docs/plans/2026-07-11-component-hub-buildout-plan.md](/docs/plans/2026-07-11-component-hub-buildout-plan.md).
+> The devolution map and sequenced build plan below are retained as the
+> historical record of what was decided going in; see the spec/plan and
+> `docs/enhancements.md` #35 for what actually shipped.
+
 - **Owner ruling 2026-07-10:** dedicated hubs will be built for the MCP
   Catalog, MCP Lifecycle Operator, and MCP Registry; the Management hub
   becomes the umbrella (cross-component story, referencing them). Slugs
