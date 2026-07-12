@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jobs to Be Done | MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jobs to Be Done</h1>
+      <p class="lead">The real jobs MCP Gateway serves, sourced from the hub's narrative layer: the cross-feature jobs-to-be-done inventory that ties product surfaces back to what a persona is actually trying to accomplish.</p>
+
+      <p>As of this writing, one narrative job-to-be-done names <code>mcp-gateway</code> in its <code>features</code> list (confirmed by <code>grep -l "mcp-gateway" narrative/knowledge/jtbd-*.md</code> on 2026-07-12). More jobs may attach to the Gateway over time as the narrative layer grows; this page reflects the current set.</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Govern agent tool and model access</div>
+        </div>
+        <div class="feature-card__description">
+          <p>
+            <span class="badge badge--coming-soon">Persona: agentops-admin</span>
+            &nbsp;
+            <span class="badge badge--open">Status: candidate</span>
+          </p>
+
+          <p><strong>When</strong> I manage a fleet of agents,<br>
+          <strong>I want to</strong> govern which tools and models each agent can access,<br>
+          <strong>so I can</strong> enforce least-privilege, rate-limit token usage per team, and audit every agent action.</p>
+
+          <p><strong>How MCP Gateway addresses it:</strong></p>
+          <ul>
+            <li>The job names MCP Gateway specifically as the tool-access layer of a three-layer governance model (model access, tool access, identity), distinct from AI Gateway (model routing) and SPIFFE/SPIRE (workload identity)</li>
+            <li>Tool-level access control is enforced through OAuth 2.0 token exchange: a per-tool, per-agent scoped token (Token 3 in the gateway's three-tier flow) is issued for each backend MCP server call, not a single broad credential</li>
+            <li>On-Behalf-Of (OBO) delegation gives an agent only the intersection of what the human user is allowed and what the agent is configured to use, which is the least-privilege enforcement this job asks for</li>
+            <li>The cryptographic <code>act</code> claim chain (RFC 8693 §4.1) plus Keycloak and gateway logging give a full audit trail: who authenticated, which agent acted on their behalf, which tool was called, and when</li>
+            <li>Session management and URL whitelisting at the gateway layer are the enforcement points; the "dumb MCP server" pattern means individual servers don't need their own auth logic for this to hold</li>
+          </ul>
+
+          <p class="source-ref">Pillar: Agents (Agent Ops theme + MCP Ecosystem theme). Evidence status: not yet backed by direct customer evidence (tracked as "candidate" in the narrative inventory).</p>
+
+          <p><strong>Source:</strong> <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-govern-agent-tool-access.md">jtbd-govern-agent-tool-access.md</a></p>
+        </div>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-govern-agent-tool-access.md">jtbd-govern-agent-tool-access.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/views/jtbd.md">views/jtbd.md (generated index)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./security.html">Security &amp; Auth</a></li>
+            <li><a href="./architecture.html">Architecture</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/understand/jobs-to-be-done.html">MCP Ecosystem Hub: Jobs to Be Done</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

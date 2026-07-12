@@ -7,6 +7,7 @@ const SITE_MAP = [
     { title: 'Architecture', path: 'understand/architecture.html' },
     { title: 'Security & Auth', path: 'understand/security.html' },
     { title: 'RHCL Platform Context', path: 'understand/rhcl-context.html' },
+    { title: 'Jobs to Be Done', path: 'understand/jobs-to-be-done.html' },
   ]},
   { section: 'Sell It', id: 'sell', pages: [
     { title: 'Value Proposition', path: 'sell/value-prop.html' },
@@ -32,6 +33,7 @@ const SITE_MAP = [
     { title: 'Known Gaps', path: 'plan/gaps.html' },
     { title: 'Open Questions', path: 'plan/open-questions.html' },
     { title: 'SKUs & Entitlement', path: 'plan/skus.html' },
+    { title: 'Jira Tracker', path: 'plan/jira-tracker.html' },
   ]},
 ];
 
@@ -39,6 +41,14 @@ const SITE_MAP = [
 const SPECIAL_PAGES = [
   { title: 'Home', path: 'index.html' },
   { title: 'Quick Reference', path: 'reference.html' },
+];
+
+const HUB_NETWORK = [
+  { title: '🏠 MCP Ecosystem Hub', path: '../../mcp-ecosystem/hub/' },
+  { title: '🔌 MCP Gateway Hub', path: '../../mcp-gateway/rhcl/', self: true },
+  { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/' },
+  { title: '⚙️ MCP Lifecycle Operator Hub', path: '../../mcp-lifecycle-operator/hub/' },
+  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/' },
 ];
 
 /**
@@ -130,6 +140,21 @@ function buildSidebar() {
   html += `<li class="hub-sidebar__section">`;
   html += `<a href="${basePath}reference.html" class="hub-sidebar__link ${current?.page?.path === 'reference.html' ? 'active' : ''}">📚 Quick Reference</a>`;
   html += `</li>`;
+
+  // Add Hub Network section
+  html += `<li class="hub-sidebar__section" style="margin-top: var(--space-xl); border-top: 1px solid var(--border-subtle); padding-top: var(--space-lg);">`;
+  html += `<div class="hub-sidebar__section-title">Hub Network</div>`;
+  html += `<ul style="list-style: none; margin: 0; padding: 0;">`;
+  for (const hub of HUB_NETWORK) {
+    if (hub.self) {
+      html += `<li><span class="hub-sidebar__link active" style="opacity: 0.5; cursor: default;">${hub.title} (current)</span></li>`;
+    } else if (hub.comingSoon) {
+      html += `<li><span class="hub-sidebar__link" style="opacity: 0.4; cursor: default;">${hub.title} (coming soon)</span></li>`;
+    } else {
+      html += `<li><a href="${basePath}${hub.path}" class="hub-sidebar__link">${hub.title}</a></li>`;
+    }
+  }
+  html += `</ul></li>`;
 
   html += '</ul></nav>';
 

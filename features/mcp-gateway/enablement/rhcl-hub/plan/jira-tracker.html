@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jira Tracker | MCP Gateway Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jira Tracker</h1>
+      <p class="lead">MCP Gateway's Jira sweep tracks 10 RHAISTRAT strategy tickets. Stored scope (<code>features/mcp-gateway/work/jira-snapshot.yaml</code>): <code>project = RHAISTRAT AND summary ~ "\"MCP Gateway\""</code>. Swept 2026-07-12.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">This scope is provisional</div>
+        <p style="margin-bottom: 0;">Unlike the other three MCP ecosystem components, Gateway's stored scope has no explicit key list, only the summary-text match above. It was validated against Jira (10 issues, all Feature type, no Outcome) but has not been reviewed by the feature owner for completeness - RHAISTRAT-1937 is the only key with an existing hub-cited description at sweep time. Treat this table as a starting point pending owner refinement.</p>
+      </div>
+
+      <section>
+        <h2>RHAISTRAT Tickets</h2>
+        <p>Every Key, Type, Status, Fix Versions, and Updated value below is sourced directly from <code>jira-snapshot.yaml</code>. The Summary field in the snapshot is null for all 10 rows (the sweep's unauthenticated-probe rule), rendered as "(summary withheld)" below. The "Known As" column is a supplementary descriptor, not a Jira summary: populated only where an existing hub source names and describes the key, cited per row.</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1233" target="_blank" rel="noopener">RHAISTRAT-1233</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--accepted">Closed</span></td>
+              <td>rhoai-3.4</td>
+              <td>2026-06-12</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1440" target="_blank" rel="noopener">RHAISTRAT-1440</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-06</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1572" target="_blank" rel="noopener">RHAISTRAT-1572</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1721" target="_blank" rel="noopener">RHAISTRAT-1721</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--accepted">Release Pending</span></td>
+              <td>3.5 EA2 RHOAI RELEASE</td>
+              <td>2026-06-24</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1772" target="_blank" rel="noopener">RHAISTRAT-1772</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>-</td>
+              <td>2026-05-18</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1937" target="_blank" rel="noopener">RHAISTRAT-1937</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Gateway Operator RHOAI dependency documentation (TP); tracked as an external-dependency requirement across this hub - version-compatibility matrix, install prerequisite, DSC/DSCI status condition</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2085" target="_blank" rel="noopener">RHAISTRAT-2085</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2086" target="_blank" rel="noopener">RHAISTRAT-2086</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2087" target="_blank" rel="noopener">RHAISTRAT-2087</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2089" target="_blank" rel="noopener">RHAISTRAT-2089</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">10 RHAISTRAT rows, no Outcome type. "Known As" for RHAISTRAT-1937 sourced from: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/ecosystem.html">this hub's Ecosystem page</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/reference.html">Quick Reference</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/plan/open-questions.html">Open Questions</a>. The same 10-row table also rolls up into the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/jira-tracker.html">MCP Management Knowledge Hub's cross-component Jira Tracker</a>, one section per component.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1937" target="_blank" rel="noopener">RHAISTRAT-1937</a> (Gateway's only cited row)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./roadmap.html">Roadmap</a></li>
+            <li><a href="./gaps.html">Known Gaps</a></li>
+            <li><a href="../reference.html">Quick Reference</a></li>
+            <li><a href="../index.html">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

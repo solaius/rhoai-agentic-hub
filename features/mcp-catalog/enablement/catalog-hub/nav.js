@@ -168,7 +168,7 @@ function buildSidebar() {
     } else if (hub.comingSoon) {
       html += `<li><span class="hub-sidebar__link" style="opacity: 0.4; cursor: default;">${hub.title} (coming soon)</span></li>`;
     } else {
-      html += `<li><a href="${hub.path}" class="hub-sidebar__link">${hub.title}</a></li>`;
+      html += `<li><a href="${basePath}${hub.path}" class="hub-sidebar__link">${hub.title}</a></li>`;
     }
   }
   html += `</ul></li>`;

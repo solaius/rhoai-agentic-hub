@@ -24,3 +24,6 @@ sources:
   local:
   - features/mcp-gateway/knowledge/
   - features/mcp-gateway/research/
+sections:
+  jtbd: true
+  jira_tracker: {project: RHAISTRAT}

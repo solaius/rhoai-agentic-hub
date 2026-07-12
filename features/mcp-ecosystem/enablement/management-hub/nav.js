@@ -6,6 +6,7 @@ const SITE_MAP = [
     { title: 'What Is MCP Management?', path: 'understand/what-is-mcp-management.html' },
     { title: 'Umbrella Architecture', path: 'understand/ecosystem-architecture.html' },
     { title: 'Personas', path: 'understand/personas.html' },
+    { title: 'Jobs to Be Done', path: 'understand/jobs-to-be-done.html' },
   ]},
   { section: 'Components', id: 'components', pages: [
     { title: 'Component Directory', path: 'understand/component-directory.html' },
@@ -171,7 +172,7 @@ function buildSidebar() {
     } else if (hub.comingSoon) {
       html += `<li><span class="hub-sidebar__link" style="opacity: 0.4; cursor: default;">${hub.title} (coming soon)</span></li>`;
     } else {
-      html += `<li><a href="${hub.path}" class="hub-sidebar__link">${hub.title}</a></li>`;
+      html += `<li><a href="${basePath}${hub.path}" class="hub-sidebar__link">${hub.title}</a></li>`;
     }
   }
   html += `</ul></li>`;
