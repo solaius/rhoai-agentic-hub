@@ -17,7 +17,7 @@
       <div class="breadcrumb"></div>
 
       <h1>Gateway Integration</h1>
-      <p class="lead">MCPLO-deployed servers register with the MCP Gateway manually today. Automating that handoff is explicitly scoped to GA, not Technology Preview, tracked as <a href="https://issues.redhat.com/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>.</p>
+      <p class="lead">MCP Lifecycle Operator (MCPLO)-deployed servers register with the MCP Gateway manually today. Automating that handoff is explicitly scoped to GA, not Technology Preview, tracked as <a href="https://issues.redhat.com/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>.</p>
 
       <h2>Today: Manual Registration</h2>
       <p>MCPLO has no install-time dependency on the MCP Gateway: it installs first (or alongside RHOAI) to manage server deployment, while the Gateway is downstream for routing traffic to already-deployed servers. That independence is deliberate, but it means the handoff between the two is currently manual:</p>
@@ -87,7 +87,7 @@
       <h2><code>update_mode: SYSTEM_MANAGED</code>, the Registry Handoff Mechanism</h2>
       <p>The MCP Registry's current data model already has the field that would carry this handoff, even though nothing writes to it automatically yet. Two independent enums govern a registered server: <code>MCPServerStatus</code> (ACTIVE, DEPRECATED, RETIRED) at the server level, and <code>MCPPublishState</code> (DRAFT, PUBLISHED, DEPRECATED, RETIRED) at the version level. Alongside them, <code>update_mode</code> (<code>MANUAL</code> or <code>SYSTEM_MANAGED</code>) controls whether a controller such as MCPLO may write to the record; it does not itself change lifecycle or publish state.</p>
       <div class="callout callout--source">
-        <p style="margin-bottom: 0;">Connecting the two facts on this page: once OCPMCP-347's HTTPRoute-based registration and the Registry both exist, <code>update_mode: SYSTEM_MANAGED</code> is the mechanism by which a controller (MCPLO itself, or a Registry-side controller reacting to MCPLO's deploy events) could write deployment status back to the governed Registry record automatically, replacing today's manual ConfigMap step. This is an inference drawn from reading OCPMCP-347 and the Registry's data model together; it is not a confirmed integration decision, and no source describes this pairing explicitly yet.</p>
+        <p style="margin-bottom: 0;">Once OCPMCP-347's HTTPRoute-based registration and the Registry both exist, <code>update_mode: SYSTEM_MANAGED</code> is the mechanism by which a controller (MCPLO itself, or a Registry-side controller) could write deployment status back to the governed Registry record automatically, replacing today's manual ConfigMap step. This is documented, design-resolved integration behavior: the MCP Management Knowledge Hub's <a href="../../../mcp-ecosystem/hub/govern/component-integration.html">Component Integration</a> page details this pairing in its Integration Map (MCPLO → Registry row), linked to the resolved "discovered entries" question.</p>
       </div>
 
       <footer class="page-footer" data-verified="2026-07-11">
