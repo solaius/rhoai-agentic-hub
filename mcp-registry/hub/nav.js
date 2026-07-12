@@ -3,34 +3,24 @@
 
 const SITE_MAP = [
   { section: 'Understand It', id: 'understand', pages: [
-    { title: 'What Is MCP Management?', path: 'understand/what-is-mcp-management.html' },
-    { title: 'Ecosystem Architecture', path: 'understand/ecosystem-architecture.html' },
-    { title: 'Component Overview', path: 'understand/component-overview.html' },
-    { title: 'Personas', path: 'understand/personas.html' },
+    { title: 'What Is the MCP Registry?', path: 'understand/what-is-the-registry.html' },
+    { title: 'Data Model', path: 'understand/data-model.html' },
+    { title: 'Jobs to be Done', path: 'understand/jobs-to-be-done.html' },
   ]},
   { section: 'Sell It', id: 'sell', pages: [
-    { title: 'Value Proposition', path: 'sell/value-prop.html' },
-    { title: 'Customer Stories', path: 'sell/customer-stories.html' },
-    { title: 'Competitive Landscape', path: 'sell/competitive.html' },
-    { title: 'Summit & Field Feedback', path: 'sell/summit-feedback.html' },
+    { title: 'The Governance Story', path: 'sell/governance-story.html' },
   ]},
   { section: 'Build It', id: 'build', pages: [
-    { title: 'End-to-End Setup', path: 'build/end-to-end-setup.html' },
-    { title: 'Operator Installation', path: 'build/operator-installation.html' },
-    { title: 'Configuration Reference', path: 'build/configuration-reference.html' },
-    { title: 'Troubleshooting', path: 'build/troubleshooting.html' },
+    { title: 'MVP Scope & Prototype', path: 'build/mvp-scope-prototype.html' },
   ]},
   { section: 'Govern It', id: 'govern', pages: [
-    { title: 'Lifecycle Flow', path: 'govern/lifecycle-flow.html' },
-    { title: 'Component Integration', path: 'govern/component-integration.html' },
-    { title: 'Security Model', path: 'govern/security-model.html' },
-    { title: 'Entitlement', path: 'govern/entitlement.html' },
+    { title: 'Lifecycle & Governance', path: 'govern/lifecycle-governance.html' },
+    { title: 'Integrations', path: 'govern/integrations.html' },
   ]},
   { section: 'Plan It', id: 'plan', pages: [
     { title: 'Roadmap', path: 'plan/roadmap.html' },
-    { title: 'Known Gaps', path: 'plan/gaps.html' },
-    { title: 'Jira Tracker', path: 'plan/jira-tracker.html' },
-    { title: 'Open Questions', path: 'plan/open-questions.html' },
+    { title: 'Jira Tracker (Strats)', path: 'plan/jira-tracker.html' },
+    { title: 'Gaps & Open Questions', path: 'plan/gaps-open-questions.html' },
   ]},
 ];
 
@@ -41,18 +31,18 @@ const SPECIAL_PAGES = [
 ];
 
 const HUB_NETWORK = [
-  { title: '🏠 MCP Ecosystem Hub', path: '../../mcp-ecosystem/hub/', self: true },
+  { title: '🏠 MCP Ecosystem Hub', path: '../../mcp-ecosystem/hub/' },
   { title: '🔌 MCP Gateway Hub', path: '../../mcp-gateway/rhcl/' },
   { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/' },
   { title: '⚙️ MCP Lifecycle Operator Hub', path: '../../mcp-lifecycle-operator/hub/' },
-  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/' },
+  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/', self: true },
 ];
 
 /**
  * Sidebar section collapse state, persisted per browser tab via sessionStorage
  * so expand/collapse choices survive navigation between pages.
  */
-const SIDEBAR_STATE_KEY = 'mgmt-hub-sidebar-state';
+const SIDEBAR_STATE_KEY = 'registry-hub-sidebar-state';
 
 function getSidebarState() {
   try {
@@ -224,7 +214,7 @@ function buildHeader() {
   // Site title
   html += `<div class="hub-header__title">`;
   html += `<a href="${basePath}index.html" style="text-decoration: none; color: inherit;">`;
-  html += `<span class="hub-header__logo">MCP</span> Management`;
+  html += `<span class="hub-header__logo">MCP</span> Registry`;
   html += `</a>`;
   html += `</div>`;
 

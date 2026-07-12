@@ -94,102 +94,11 @@
           <span class="status-badge status-badge--design">Design Phase</span>
         </div>
         <div class="feature-card__description">
-          <p><strong>Purpose:</strong> Authoritative governance layer for MCP servers. System of record that brings governance, lifecycle control, trust, and visibility so MCP assets can move cleanly from discovery through approval, deployment, runtime use, and consumption.</p>
+          <p><strong>Purpose:</strong> Authoritative governance layer and system of record for MCP servers, from discovery through approval, deployment, and consumption. Current data model: two enums (<code>MCPServerStatus</code>, <code>MCPPublishState</code>) plus an update mode, not the four-track model from earlier drafts, which remains a deferred proposal.</p>
 
-          <p><strong>Status:</strong> Design phase. Dev Preview (DP) planned but will not land in RHOAI 3.5 stable. Tech Preview (TP) targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026). GA targeted for Q4 2026.</p>
+          <p><strong>Status:</strong> Design phase, no code shipped. Dev Preview will not land in RHOAI 3.5 stable. Tech Preview targeted for RHOAI 3.6 EA1 (owner ruling, 2026-07-11), alongside Catalog TP. GA targeted for RHOAI 3.6 (RHAISTRAT-1993, code freeze Oct 23, 2026).</p>
 
-          <p><strong>What It Solves:</strong></p>
-          <p>In 3.4, the MCP ecosystem is fragmented and manual. The Registry fills the governance gap in the asset flow: Catalog (discovery) → Deploy or Register (operationalize) → Registry (governance) → Gateway (enforcement). Draft and approval states are Catalog-side concerns, not Registry concerns: the Registry only governs assets that have already been deployed or registered, and it has no pre-registration phase (governance begins at "active," not "draft").</p>
-
-          <p><strong>Core Capabilities (MVP):</strong></p>
-          <ul>
-            <li>Governed registration of MCP servers</li>
-            <li>Metadata-first MCP records (follows <a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON" class="page-footer__link">upstream MCP registry schema</a>)</li>
-            <li>Server status and version publish-state tracking (see current data model below)</li>
-            <li>Support for internal and external MCP representation</li>
-            <li>RBAC-aware visibility and governance</li>
-            <li>Conceptual integration with catalog, deployment, gateway, AAA/Studio</li>
-          </ul>
-
-          <p><strong>Current Data Model (Registry DP/TP Scope):</strong></p>
-          <p><em>Source: <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" class="page-footer__link">MLflow MCP Registry Data Model Proposal</a> and the MCP Registry MVP Requirements doc. Earlier drafts of this page described four independent governance tracks (Lifecycle/Approval/Verification/Certification); the current model has two enums, not four (see the phasing note below).</em></p>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Entity</th>
-                <th>Role</th>
-                <th>Key Properties</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>MCPServer</code></td>
-                <td>Logical governed asset</td>
-                <td>name, description, status, tags, aliases, workspace, <code>update_mode</code>, <code>last_registered_version</code></td>
-              </tr>
-              <tr>
-                <td><code>MCPServerVersion</code></td>
-                <td>Immutable MCP payload + mutable governance metadata</td>
-                <td>version, server_json (immutable), publish_state, tags, source, run_id, is_deployed</td>
-              </tr>
-              <tr>
-                <td><code>MCPObservedTool</code> / <code>MCPObservedToolSnapshot</code></td>
-                <td>Cached tool metadata observed from a running server</td>
-                <td>Populated from <code>tools/list</code> or gateway-sync; supports version pinning and change detection</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <p><strong>Governance Enums (Current, Not the Four-Track Model):</strong></p>
-          <table>
-            <thead>
-              <tr>
-                <th>Enum</th>
-                <th>States</th>
-                <th>Scope</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>MCPServerStatus</code></td>
-                <td>active, deprecated, retired</td>
-                <td>Asset-level (server)</td>
-              </tr>
-              <tr>
-                <td><code>MCPPublishState</code></td>
-                <td>draft, published, deprecated, retired</td>
-                <td>Version-level</td>
-              </tr>
-              <tr>
-                <td><code>MCPUpdateMode</code></td>
-                <td>MANUAL, SYSTEM_MANAGED</td>
-                <td>Controls whether a controller (e.g., MCPLO) can system-manage the record</td>
-              </tr>
-            </tbody>
-          </table>
-
-          <p><em>Phasing note: approval, verification, and certification tracks are deferred post-MVP, not abandoned; the design doc's own comment thread explicitly scoped them out of the initial Registry release (the doc frames this as "3.5 Dev Preview"; DP is now not landing in RHOAI 3.5 stable, with TP targeted for RHOAI 3.6 EA1, PM direction Jul 2026). The initial Registry scope intentionally follows a lighter-weight path (matching the approach taken for the upstream skills registry) to speed initial delivery, with the fuller governance model planned as a follow-on. No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model.</em></p>
-
-          <p><strong>Integration Points:</strong></p>
-          <ul>
-            <li><strong>Catalog:</strong> Servers from the Catalog are registered INTO the Registry for governance tracking; Registry's status may inform trust tier labels displayed in the Catalog UI (certification and verification tracking are deferred beyond the Registry MVP; DP not landing in RHOAI 3.5 stable, TP targeted RHOAI 3.6 EA1, PM direction Jul 2026)</li>
-            <li><strong>MCPLO:</strong> Reports deployment state to Registry (<code>is_deployed</code> flag)</li>
-            <li><strong>Gateway:</strong> Polls Registry for active MCP servers; auto-creates <code>MCPServerRegistration</code> CRDs (<code>mcp.kuadrant.io/v1</code>) for runtime enforcement</li>
-            <li><strong>Gen AI Studio:</strong> Queries Registry API for active MCP servers (RBAC-aware, no manual ConfigMap)</li>
-          </ul>
-
-          <p><strong>Open Questions:</strong></p>
-          <ul>
-            <li>What exact MCP metadata should be mandatory?</li>
-            <li>Which runtime/deployment references must be represented?</li>
-            <li>Which lifecycle states required for 3.5 vs later?</li>
-            <li>How should registry state inform gateway behavior?</li>
-            <li>How should registry state influence catalog surfacing?</li>
-            <li>What belongs in MLflow upstream proposal now vs later?</li>
-          </ul>
-
-          <p><strong>Learn More:</strong> <span class="badge badge--coming-soon">Dedicated hub planned</span></p>
+          <p><a href="../../../mcp-registry/hub/" class="component-card__cta">Full depth: MCP Registry Knowledge Hub →</a></p>
         </div>
       </div>
 

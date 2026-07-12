@@ -39,7 +39,7 @@ const HUB_NETWORK = [
   { title: '🔌 MCP Gateway Hub', path: '../../mcp-gateway/rhcl/' },
   { title: '📦 MCP Catalog Hub', path: '../../mcp-catalog/hub/' },
   { title: '⚙️ MCP Lifecycle Operator Hub', path: '../../mcp-lifecycle-operator/hub/', self: true },
-  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/', comingSoon: true },
+  { title: '📋 MCP Registry Hub', path: '../../mcp-registry/hub/' },
 ];
 
 /**

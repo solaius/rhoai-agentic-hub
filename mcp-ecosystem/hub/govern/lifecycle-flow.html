@@ -148,43 +148,10 @@
         <strong>Key Difference:</strong> Today, each handoff (Deploy → Register → Configure) requires manual admin intervention. Target state: Registry is the single source of truth that drives automation across the ecosystem.
       </div>
 
-      <h2>Governance Tracks (Current Data Model)</h2>
-      <p>The MCP Registry's current data model uses two independent enums, not the four-track governance model described in early design proposals:</p>
+      <h2>Governance Model (Current Data Model)</h2>
+      <p>The MCP Registry's current data model uses two independent enums plus an update mode, not the four-track governance model described in early design proposals. The full enum tables, the governance invariants, and the bounded, clearly-deferred four-track proposal now live on the <a href="../../../mcp-registry/hub/govern/lifecycle-governance.html">MCP Registry Knowledge Hub: Lifecycle &amp; Governance</a>.</p>
 
-      <table class="status-table" style="margin-top: var(--space-lg);">
-        <thead>
-          <tr>
-            <th>Enum</th>
-            <th>States</th>
-            <th>Scope</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>MCPServerStatus</strong></td>
-            <td>ACTIVE, DEPRECATED, RETIRED</td>
-            <td>Server-level (3 states)</td>
-          </tr>
-          <tr>
-            <td><strong>MCPPublishState</strong></td>
-            <td>DRAFT, PUBLISHED, DEPRECATED, RETIRED</td>
-            <td>Version-level (4 states)</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="callout callout--source">
-        <strong>Post-MVP phasing:</strong> No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model. The four-track governance model (Lifecycle State: Draft/Candidate/Published/Deprecated/Retired; Approval Status: Draft/Pending/Approved/Rejected/Revoked; Verification Status: Unverified/Verified; Certification Status: None/Candidate/Certified/Expired/Revoked) is a proposal, deferred post-MVP, not abandoned: "For MVP/DP we should follow the same path as they are taking for the skills registry upstream to speed up approval/implementation... we should follow immediately after with the governance implementation as proposed here" (doc comment thread). See <a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" style="color: var(--rh-blue-light);">MLflow MCP Registry Data Model Proposal</a> for the full four-track proposal.
-      </div>
-
-      <h2>Governance Invariants</h2>
-      <ul>
-        <li><code>MCPServerStatus</code> and <code>MCPPublishState</code> are independent enums; no approval, verification, or certification field exists in the current model to gate either transition</li>
-        <li><code>workspace</code> on a version resolves to the same value as the parent <code>MCPServer.workspace</code></li>
-        <li><code>update_mode</code> (<code>MANUAL</code> or <code>SYSTEM_MANAGED</code>) controls whether a controller such as MCPLO may write to the record; it does not itself change lifecycle or publish state</li>
-      </ul>
-
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
@@ -201,6 +168,7 @@
             <li><a href="./component-integration.html">Component Integration</a></li>
             <li><a href="./security-model.html">Security Model</a></li>
             <li><a href="../understand/ecosystem-architecture.html">Ecosystem Architecture</a></li>
+            <li><a href="../../../mcp-registry/hub/govern/lifecycle-governance.html">MCP Registry Hub: Lifecycle &amp; Governance</a></li>
           </ul>
         </div>
       </footer>

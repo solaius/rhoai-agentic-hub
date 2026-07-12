@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MVP Scope &amp; Prototype | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>MVP Scope &amp; Prototype</h1>
+      <p class="lead">What the MCP Registry's initial scope is meant to cover, a sketch of the data model as an API surface, and the interactive UI prototype that shows what a Registry list/detail/version experience could look like. Everything on this page is design work, not shipped software.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Scope, not delivery</div>
+        <p style="margin-bottom: 0;">
+          The bullets and sketches below describe what the initial Registry release is scoped to cover on the way to
+          Tech Preview (targeted RHOAI 3.6 EA1). No Dev Preview has shipped and none is landing in RHOAI 3.5 stable.
+        </p>
+      </div>
+
+      <h2>MVP Scope</h2>
+      <ul>
+        <li>Governed registration of MCP servers</li>
+        <li>Metadata-first MCP records</li>
+        <li>Lifecycle state tracking</li>
+        <li>Certification and approval visibility</li>
+        <li>RBAC-aware visibility and governance</li>
+        <li>Support for internal and external MCP representation</li>
+        <li>Conceptual integration with catalog, deployment, gateway, Studio</li>
+      </ul>
+      <div class="callout callout--gap">
+        <p style="margin-bottom: 0;">
+          <strong>Read "certification and approval visibility" carefully.</strong> This scope bullet names an intent,
+          not a data-model field. The current two-enum data model (<code>MCPServerStatus</code>,
+          <code>MCPPublishState</code>) has no <code>approval_status</code> or <code>certification_status</code>
+          field. Approval and certification as independently-tracked states belong to the deferred four-track
+          proposal; see <a href="../understand/data-model.html">Data Model</a> for the bounded proposal section. This
+          scope bullet is the stated goal the design is working toward, not a claim that the field exists today.
+        </p>
+      </div>
+      <p class="source-ref">Source: RHCL hub, govern/registry.html, "MVP Scope (Registry DP / TP 3.6 EA1)" (data-verified 2026-07-11).</p>
+
+      <h2>Data Model as an API/Entity Sketch</h2>
+      <p>The current data model, restated as a rough record shape rather than a table. This is illustrative, not a published schema; the canonical field list lives on <a href="../understand/data-model.html">Data Model</a>.</p>
+      <pre><code>MCPServer {
+  name: string
+  description: string
+  status: MCPServerStatus            // active | deprecated | retired
+  tags: string[]
+  aliases: string[]
+  workspace: string                  // MVP visibility boundary
+  update_mode: MCPUpdateMode         // MANUAL | SYSTEM_MANAGED
+  last_registered_version: string
+}
+
+MCPServerVersion {
+  version: string
+  server_json: object                // immutable canonical MCP payload
+                                      // (upstream ServerJSON schema)
+  publish_state: MCPPublishState     // draft | published | deprecated | retired
+  tags: string[]
+  source: string
+  run_id: string
+  is_deployed: boolean               // reported by the Lifecycle Operator
+}
+
+MCPObservedTool / MCPObservedToolSnapshot {
+  // cached, non-authoritative tool metadata observed from a live endpoint
+  // populated from tools/list or gateway sync
+  // supports version pinning and change detection
+}</code></pre>
+      <p class="source-ref">Field list per <a href="../understand/data-model.html">Data Model</a>, sourced from the MLflow MCP Registry Data Model Proposal and the MCP Registry MVP Requirements doc. No API endpoints have been designed publicly yet; this is an entity sketch, not an interface contract.</p>
+
+      <h2>UI Prototype</h2>
+      <p>
+        An interactive, client-rendered UI prototype (MLflow-style, using the browser tab title "MLflow" paired with "MCP Servers" in the
+        mockup itself) shows what a Registry list/detail/version experience could look like. It is a design
+        artifact, not a working product; there is no backend behind it.
+      </p>
+      <div class="callout callout--insight">
+        <div class="callout__title">What the prototype shows</div>
+        <ul style="margin-bottom: 0;">
+          <li>A server list view with search/filter, mirroring MLflow's model registry UX pattern</li>
+          <li>A server detail view showing an individual <code>MCPServer</code> record</li>
+          <li>A version detail view showing an individual <code>MCPServerVersion</code>, including its publish state</li>
+          <li>Create/edit modals for both servers and versions</li>
+          <li>A lifecycle-state transition modal, illustrating how a governance state change could be surfaced in the UI</li>
+          <li>Two iterations: an earlier v0.1 mockup and the more developed v0.2 mockup (the prototype's default entry point)</li>
+        </ul>
+      </div>
+      <p>
+        <strong>Live prototype:</strong>
+        <a href="https://solaius.github.io/rhoai-agentic-hub-pages/mcp-registry/ui-prototype/" target="_blank" rel="noopener">solaius.github.io/rhoai-agentic-hub-pages/mcp-registry/ui-prototype/</a>
+      </p>
+      <p class="source-ref">Source: registry-ui-prototype artifact, migrated from the prior ai-asset-registry prototype (clean batch). Published publicly via publish/manifest.yaml.</p>
+
+      <h2>MLflow Upstream Collaboration Status</h2>
+      <div class="callout callout--insight">
+        <div class="callout__title">Upstream design partnership, still in progress</div>
+        <p>
+          Red Hat is collaborating upstream with MLflow and Databricks on MCP registry design. The data model
+          proposal (including the four-track governance model) is going through MLflow's RFC approval process; it is
+          a brain-dump-stage document, not a finalized or merged design. This collaboration also informs the future
+          generalized AI asset registry architecture, beyond just MCP.
+        </p>
+        <p style="margin-bottom: 0;">
+          Databricks' review process favors small, focused PRs, which is in tension with proposing a full four-track
+          governance model in one step. That tension is an open scoping question (what belongs in the initial
+          MLflow upstream proposal now versus later), and is one reason the current design scope collapsed to
+          two enums plus an update mode rather than proposing all four tracks at once.
+        </p>
+      </div>
+
+      <h2>Still Undecided for the MVP</h2>
+      <p>The data model proposal describes the four-track governance model, but these specifics remain open for the initial release cut:</p>
+      <ol>
+        <li>What exact metadata should be mandatory on a registry record?</li>
+        <li>Which of the four proposed tracks' lifecycle states are actually required for the initial cut, versus deferred to a later release?</li>
+        <li>Should certification programs be backed by an admin-managed allowlist?</li>
+        <li>Should lifecycle history (an audit trail of state transitions) ship in the MVP or be deferred?</li>
+        <li>Do approval, verification, and certification transitions need distinct permissions beyond general update permissions?</li>
+        <li>Do Registry entities need <code>EntityAssociationType</code> support in the MVP, or can it wait?</li>
+      </ol>
+      <p class="source-ref">Six open decisions per question-mcp-registry-mvp-data-model-gaps.md. Originally scoped against a "3.5 Dev Preview" cut; the underlying decisions are unchanged, but that release label is superseded by the 2026-07-11 owner ruling (Dev Preview will not land in RHOAI 3.5 stable; Tech Preview is targeted for RHOAI 3.6 EA1) and is not repeated here.</p>
+
+      <h2>Requirements Source</h2>
+      <p>
+        The MVP scope above traces back to an MCP Registry MVP requirements document covering scope and integration
+        expectations against the Catalog, Gateway, and Lifecycle Operator. That document's own title still reads
+        "3.5 Dev Preview requirements"; treat that label as historical framing, not a current delivery commitment.
+        The requirements it captures have not been re-litigated; only the release vehicle has changed.
+      </p>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/registry.html">RHCL hub: govern/registry.html (data-verified 2026-07-11)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/ref-mcp-registry-mvp-requirements.md">ref-mcp-registry-mvp-requirements.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/ref-mlflow-mcp-registry-data-model-proposal.md">ref-mlflow-mcp-registry-data-model-proposal.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mcp-registry-mvp-data-model-gaps.md">question-mcp-registry-mvp-data-model-gaps.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mlflow-upstream-registry-scope.md">question-mlflow-upstream-registry-scope.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/enablement/registry-ui-prototype/artifact.md">registry-ui-prototype/artifact.md</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a> (Operational Governance) and <a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a> (General Availability)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/data-model.html">Data Model</a></li>
+            <li><a href="../understand/what-is-the-registry.html">What Is the MCP Registry?</a></li>
+            <li><a href="../sell/governance-story.html">The Governance Story</a></li>
+            <li><a href="https://solaius.github.io/rhoai-agentic-hub-pages/mcp-registry/overview/" target="_blank" rel="noopener">MCP Registry: Targeted User Stories (public deck)</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

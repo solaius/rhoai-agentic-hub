@@ -69,7 +69,7 @@
         </table>
 
         <div class="callout callout--source">
-          <p><strong>Registry replan (PM direction, 2026-07-11):</strong> MCP Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is MCP Catalog TP and MCP Registry TP together in RHOAI 3.6 EA1, alongside the Catalog-Registry integration below. Jira fix versions for the Registry DP work still show RHOAI 3.5 in places; re-targeting to RHOAI 3.6 EA1 is in progress to match.</p>
+          <p><strong>Registry replan (owner ruling, 2026-07-11):</strong> MCP Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is MCP Catalog TP and MCP Registry TP together in RHOAI 3.6 EA1, alongside the Catalog-Registry integration below. Full detail, including Jira fix-version verification, now lives in the <a href="../../../mcp-registry/hub/plan/roadmap.html">MCP Registry Knowledge Hub: Roadmap</a>.</p>
           <p><strong>Catalog↔Registry integration re-scoped (2026-07-10):</strong> RHAISTRAT-1938 ("[TP] MCP Catalog and Registry Integration - Unified Discovery and Governance for Tech Preview") is now <strong>Closed/Obsolete</strong>, superseded by <strong>RHAISTRAT-2027</strong> ("MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for Tech Preview," In Progress), which carries fix version <strong>3.6 EA1</strong> rather than 3.5. The table above reflects the updated timing.</p>
           <p><strong>MCPLO track scoping note:</strong> per MCPLO weekly meeting notes, "Gateway integration → 3.6": Gateway integration work for the lifecycle/server track is scoped to RHOAI 3.6, not 3.5, distinct from the RHCL-side Gateway TP row above.</p>
           <p><strong>MCPLO E2E release gate:</strong> finalized 2026-06-30. The primary release gate is RHOAI's internal Jenkins test matrix (multi-platform, FIPS, disconnected, upgrade scenarios), not Konflux ITS. Konflux ITS is kept only for lightweight PR-level smoke/e2e.</p>
@@ -162,19 +162,9 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>DP (planned)</strong></td>
-              <td>Not landing in RHOAI 3.5 stable</td>
-              <td>Metadata-first governance, lifecycle states, approval workflows, workspace scoping. Interactive prototype + demo circulated 2026-06-30. TP retargeted to RHOAI 3.6 EA1 (PM direction, Jul 2026)</td>
-            </tr>
-            <tr>
-              <td><strong>3.6 EA1 TP</strong></td>
-              <td>2026 (date TBD)</td>
-              <td>Registry reaches Tech Preview alongside Catalog TP and the Catalog-Registry integration (RHAISTRAT-2027, In Progress)</td>
-            </tr>
-            <tr>
-              <td><strong>GA Target</strong></td>
-              <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
-              <td>Gateway auto-config, catalog sync, full lifecycle automation, multi-track governance (RHAISTRAT-1993)</td>
+              <td><strong>DP &rarr; TP &rarr; GA</strong></td>
+              <td>DP not landing in RHOAI 3.5 stable &rarr; 3.6 EA1 TP (with Catalog TP + RHAISTRAT-2027) &rarr; RHOAI 3.6 GA (code freeze Oct 23, 2026)</td>
+              <td>Full version-by-version breakdown, including the fix-version retarget verification and the dependency chain across Catalog, MCPLO, and Gateway, now lives in the <a href="../../../mcp-registry/hub/plan/roadmap.html">MCP Registry Knowledge Hub: Roadmap</a>.</td>
             </tr>
           </tbody>
         </table>
@@ -216,6 +206,7 @@
             <li><a href="jira-tracker.html">Jira Tracker</a></li>
             <li><a href="open-questions.html">Open Questions</a></li>
             <li><a href="../understand/ecosystem-architecture.html">Architecture</a></li>
+            <li><a href="../../../mcp-registry/hub/plan/roadmap.html">MCP Registry Hub: Roadmap</a></li>
           </ul>
         </div>
       </footer>

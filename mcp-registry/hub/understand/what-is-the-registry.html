@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Is the MCP Registry? | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>What Is the MCP Registry?</h1>
+      <p class="lead">The MCP Registry is the system of record for governed MCP servers on Red Hat OpenShift AI (RHOAI): identity, version, lifecycle state, certification context, and policy-aware visibility, kept separate from discovery, deployment, and runtime enforcement. It is currently in design phase, not a shipped product.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">This component is not built</div>
+        <p style="margin-bottom: 0;">
+          There is no shipped Dev Preview and no code today. The Registry's Dev Preview will not land in RHOAI 3.5
+          stable; the current push (owner ruling, 2026-07-11) is Tech Preview at RHOAI 3.6 EA1 alongside the MCP
+          Catalog's Tech Preview, with GA targeted for RHOAI 3.6 (code freeze October 23, 2026). Everything on this
+          page describes intent and design, not delivered capability.
+        </p>
+      </div>
+
+      <h2>Purpose</h2>
+      <p>The Registry is the system of record for governed MCP servers, internal or external. It provides:</p>
+      <ul>
+        <li>Ingestion and lifecycle management</li>
+        <li>Security and certification context</li>
+        <li>Versioning and immutability</li>
+        <li>Policy-aware visibility</li>
+      </ul>
+      <p class="source-ref">Source: RHCL hub, govern/registry.html (data-verified 2026-07-11).</p>
+
+      <h2>What It Solves</h2>
+      <p>
+        Today's MCP ecosystem on RHOAI is fragmented and manual. The Registry fills the governance gap in the asset
+        flow: Catalog (discovery) &rarr; deploy or register (operationalize) &rarr; Registry (governance) &rarr;
+        Gateway (enforcement). Draft and approval states ahead of that point are Catalog-side concerns, not Registry
+        concerns; the Registry only governs assets that have already been deployed or registered, and it has no
+        pre-registration phase. Governance begins once an asset is active, not while it is still a draft.
+      </p>
+      <p>
+        It fills the gap between the MCP Catalog (discovery), the MCP Lifecycle Operator (deployment), and the MCP
+        Gateway (runtime enforcement) by governing what is approved rather than deploying or enforcing anything
+        itself. It is explicitly not a replacement for any of those components; it is the governance layer underneath
+        them. The Registry's own governance model keeps approval workflows separate from runtime enforcement by
+        design: the Registry governs what's approved, the Gateway enforces at request time. Those are two distinct
+        concerns, not one blended step.
+      </p>
+
+      <h2>Current Flow vs. Target Flow</h2>
+      <p>The clearest way to see what the Registry changes is to compare how an MCP server moves through the platform today against the registry-governed target.</p>
+
+      <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-family: var(--font-sans); font-size: 1.1rem;">Current (fragmented, manual)</h3>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">Discover</div>
+          <div class="flow-step__subtitle">In the Catalog</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Deploy</div>
+          <div class="flow-step__subtitle">Through the Lifecycle Operator</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Register</div>
+          <div class="flow-step__subtitle">Manually, in the MCP Gateway</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Update</div>
+          <div class="flow-step__subtitle">ConfigMap, by hand</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Consume</div>
+          <div class="flow-step__subtitle">Through Gen AI Studio</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: var(--space-lg); margin-bottom: var(--space-sm); font-family: var(--font-sans); font-size: 1.1rem;">Target (registry-governed)</h3>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">Discover &amp; Evaluate</div>
+          <div class="flow-step__subtitle">MCPs found and assessed</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">Govern</div>
+          <div class="flow-step__subtitle">In the Registry (system of record)</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Surface</div>
+          <div class="flow-step__subtitle">Through the Catalog, once approved</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Associate</div>
+          <div class="flow-step__subtitle">With deployment/runtime state</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Consume</div>
+          <div class="flow-step__subtitle">Through registry-governed platform paths</div>
+        </div>
+      </div>
+      <p>
+        The target flow replaces the manual middle steps of today's flow (hand-registering in the Gateway, hand-editing
+        a ConfigMap) with registry governance as the source of truth. No release number is attached to this target
+        flow here on purpose: the design intent is settled, the shipping vehicle (Tech Preview at RHOAI 3.6 EA1) is
+        covered on the <a href="../index.html">hub home</a> release timeline, not repeated on every page.
+      </p>
+
+      <h2>What It Is NOT</h2>
+      <ul>
+        <li><strong>Not a discovery surface.</strong> That is the MCP Catalog's job; the Registry does not present a browsable storefront.</li>
+        <li><strong>Not a deployment mechanism.</strong> That is the MCP Lifecycle Operator's job; the Registry tracks an <code>is_deployed</code> flag, it does not create workloads.</li>
+        <li><strong>Not a runtime enforcement point.</strong> That is the MCP Gateway's job; the Registry governs what is approved, the Gateway enforces at request time.</li>
+        <li><strong>Not the four-track governance model some earlier drafts described.</strong> See <a href="./data-model.html">Data Model</a> for the current two-enum model and the bounded, deferred four-track proposal.</li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/registry.html">RHCL hub: govern/registry.html (data-verified 2026-07-11)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/fact-mcp-registry.md">fact-mcp-registry.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/fact-mcp-flow-34-to-35.md">fact-mcp-flow-34-to-35.md</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./data-model.html">Data Model</a></li>
+            <li><a href="./jobs-to-be-done.html">Jobs to Be Done</a></li>
+            <li><a href="../sell/governance-story.html">The Governance Story</a></li>
+            <li><a href="../index.html">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

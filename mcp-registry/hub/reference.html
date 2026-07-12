@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quick Reference: MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Quick Reference</h1>
+      <p class="lead">
+        Essential facts for the MCP Registry: the current data model, the two governance enums, the release train,
+        key Jiras, and the upstream MLflow collaboration. The Registry is in design phase; nothing below is shipped.
+      </p>
+
+      <h2>Data Model (Current)</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Entity</th>
+            <th>Role</th>
+            <th>Key Properties</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">MCPServer</td>
+            <td>Logical governed asset, scoped to a workspace</td>
+            <td>name, description, status, tags, aliases, workspace, <code>update_mode</code>, <code>last_registered_version</code></td>
+          </tr>
+          <tr>
+            <td class="mono">MCPServerVersion</td>
+            <td>Immutable MCP payload plus mutable governance metadata</td>
+            <td>version, <code>server_json</code> (immutable), <code>publish_state</code>, tags, source, run_id, <code>is_deployed</code></td>
+          </tr>
+          <tr>
+            <td class="mono">MCPObservedTool / MCPObservedToolSnapshot</td>
+            <td>Cached tool metadata observed from a running server, tracked independently of the canonical payload</td>
+            <td>Populated from <code>tools/list</code> or gateway sync; supports version pinning and change detection</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Source: the MLflow MCP Registry Data Model Proposal and the MCP Registry MVP Requirements doc. <code>server_json</code> is the canonical immutable payload following the <a href="https://registry.modelcontextprotocol.io/docs#/schemas/ServerJSON" target="_blank" rel="noopener">upstream MCP registry schema</a>.</p>
+
+      <div class="callout callout--gap">
+        <div class="callout__title">Not the four-track model</div>
+        <p style="margin-bottom: 0;">
+          Earlier design drafts described four independent governance tracks (lifecycle, approval, verification, and
+          certification, each with its own state enum). That is a proposal, not the current model. Today's data
+          model has two enums plus an update mode; no <code>approval_status</code>, <code>verification_status</code>,
+          or <code>certification_status</code> field exists yet. Those tracks are deferred post-MVP, not abandoned.
+        </p>
+      </div>
+
+      <h2>Governance Enums (Current)</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Enum</th>
+            <th>States</th>
+            <th>Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">MCPServerStatus</td>
+            <td>active, deprecated, retired</td>
+            <td>Asset-level (server)</td>
+          </tr>
+          <tr>
+            <td class="mono">MCPPublishState</td>
+            <td>draft, published, deprecated, retired</td>
+            <td>Version-level</td>
+          </tr>
+          <tr>
+            <td class="mono">MCPUpdateMode</td>
+            <td>MANUAL, SYSTEM_MANAGED</td>
+            <td>Controls whether a controller (for example, the MCP Lifecycle Operator) can system-manage the record</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Governance metadata is first-class and kept separate from tags; workspace is the MVP visibility boundary; deployment visibility is minimal (<code>is_deployed</code> boolean only).</p>
+
+      <h2>Release Train</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Target</th>
+            <th>Jira</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Design &amp; Dev Preview</td>
+            <td>Not landing in RHOAI 3.5 stable</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a></td>
+            <td><span class="badge badge--in-progress">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>Tech Preview</td>
+            <td>RHOAI 3.6 EA1, alongside Catalog TP</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a> (Catalog-Registry integration)</td>
+            <td><span class="badge badge--in-progress">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>GA</td>
+            <td>RHOAI 3.6, code freeze Oct 23, 2026</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a></td>
+            <td><span class="badge badge--new">New</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Owner ruling (2026-07-11): the Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is Catalog TP and Registry TP together in RHOAI 3.6 EA1. RHAISTRAT-1762's Jira fix version still shows 3.5 in places; re-targeting to 3.6 EA1 is in progress to match the owner ruling.</p>
+
+      <h2>Key Jiras</h2>
+      <ul>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-138" target="_blank" rel="noopener">RHAISTRAT-138</a>: Centralized Governance. Closed/Obsolete; the original strategy feature that seeded the governance core (gated import, certification, scoped visibility, audit trail).</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a>: Operational Governance. In Progress; the main in-flight feature, extending governance so the Registry becomes the operational source of truth for every MCP server in use.</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a>: General Availability. New; the graduation feature, stable APIs and production support.</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>: Catalog and Registry Integration for Tech Preview (3.6 EA1). In Progress; supersedes the closed/obsolete RHAISTRAT-1938.</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1677" target="_blank" rel="noopener">RHAISTRAT-1677</a>: OGX MCP Registry Integration. New; registry awareness for OGX (formerly Llama Stack) agent workloads.</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-2132" target="_blank" rel="noopener">RHAISTRAT-2132</a>: STDIO MCP Server Registration. New; transport-aware registration for servers with no endpoint URL.</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-2133" target="_blank" rel="noopener">RHAISTRAT-2133</a>: IDE-Native MCP Registry API. New; an upstream-spec-compliant registry API so IDE tools can discover and install governed servers.</li>
+      </ul>
+      <p class="source-ref">Jira sweep 2026-07-10; full snapshot in the Jira Tracker page.</p>
+
+      <h2>MLflow / Databricks Collaboration</h2>
+      <div class="callout callout--insight">
+        <div class="callout__title">Upstream design partnership</div>
+        <p>
+          Red Hat is collaborating upstream with MLflow and Databricks on MCP registry design. The data model
+          proposal is going through MLflow's RFC approval process, and this collaboration informs the future
+          generalized AI asset registry architecture.
+        </p>
+        <p style="margin-bottom: 0;">
+          Databricks' review process favors small, focused PRs, which is in tension with a full four-track
+          governance model. That tension is one reason the current scope collapsed to two enums plus an update
+          mode rather than shipping all four tracks at once.
+        </p>
+      </div>
+
+      <h2>Hub Network</h2>
+      <ul>
+        <li><a href="../../mcp-ecosystem/hub/">MCP Ecosystem Hub</a>: cross-component view across Catalog, Registry, Lifecycle Operator, and Gateway</li>
+        <li><a href="../../mcp-gateway/rhcl/">MCP Gateway Hub</a>: runtime connectivity knowledge base</li>
+        <li><a href="../../mcp-catalog/hub/">MCP Catalog Hub</a>: discovery/storefront knowledge base</li>
+        <li><a href="../../mcp-lifecycle-operator/hub/">MCP Lifecycle Operator Hub</a>: deployment primitive knowledge base</li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>This page is a curated link index; see the section links above for individual sources.</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./understand/what-is-the-registry.html" class="page-footer__link">What Is the MCP Registry? Problem and positioning</a></li>
+            <li><a href="./understand/data-model.html" class="page-footer__link">Data Model</a></li>
+            <li><a href="./index.html" class="page-footer__link">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="./nav.js"></script>
+</body>
+</html>
