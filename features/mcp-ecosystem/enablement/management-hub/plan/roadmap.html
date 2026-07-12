@@ -109,19 +109,9 @@
           </thead>
           <tbody>
             <tr>
-              <td><strong>v0.2.0 DP</strong></td>
-              <td>Jun 17, 2026</td>
-              <td>MCPServer CRD, manual YAML install, catalog selection wizard</td>
-            </tr>
-            <tr>
-              <td><strong>TP</strong></td>
-              <td>Jul 24, 2026 (RHOAI 3.5 code freeze)</td>
-              <td>Bundled in RHOAI operator, RHOAI restricted use entitlement for OpenShift entitlement, Day 2 ops. <strong>On risk</strong>: team on bug week Jul 13; OCPMCP-298 needs to move TP→GA tracking. E2E release gate: RHOAI internal Jenkins matrix (Konflux ITS = PR-level smoke only)</td>
-            </tr>
-            <tr>
-              <td><strong>GA</strong></td>
-              <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
-              <td>Production hardening, disconnected support, registry sync (RHAISTRAT-1995); team aiming for earlier part of Oct if possible</td>
+              <td><strong>DP &rarr; TP &rarr; GA</strong></td>
+              <td>v0.2.0 DP (Jun 17, 2026) &rarr; <strong>TP: OCP mid-Jul / RHOAI mid-Aug 2026</strong> &rarr; RHOAI 3.6 GA (code freeze Oct 23, 2026)</td>
+              <td>Full version-by-version breakdown, including the OCP-vs-RHOAI qualification split (OCPSTRAT-3263 functional / RHAISTRAT-1773 deployment, on-risk OCPMCP-298), ships under the standard OpenShift entitlement (not RHOAI-restricted), and the OCP 5.0 forward look, now lives in the <a href="../../../mcp-lifecycle-operator/hub/plan/roadmap.html">MCP Lifecycle Operator Knowledge Hub: Roadmap</a>.</td>
             </tr>
           </tbody>
         </table>
@@ -207,7 +197,7 @@
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-07-11">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

@@ -86,3 +86,8 @@
   audience: internal
   title: MCP Catalog Knowledge Hub
   description: 14-page enablement site for the MCP Catalog (discovery/storefront) across understand/sell/build/govern/plan.
+- source: features/mcp-lifecycle-operator/enablement/mcplo-hub/
+  dest: mcp-lifecycle-operator/hub/
+  audience: internal
+  title: MCP Lifecycle Operator Knowledge Hub
+  description: 16-page enablement site for the MCP Lifecycle Operator (declarative MCP server deployment) across understand/sell/build/govern/plan.

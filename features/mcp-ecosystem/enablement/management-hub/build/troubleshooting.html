@@ -219,34 +219,7 @@ oc create secret generic wristband-public-key \
 
       <div class="issue">
         <h3>9. Operator Pods Crashlooping</h3>
-        <div class="issue__section">
-          <h4>Symptom</h4>
-          <p>MCP Lifecycle Operator or MCP Gateway Operator pods crashloop with CRD-related errors.</p>
-        </div>
-        <div class="issue__section">
-          <h4>Cause</h4>
-          <p>Missing CRD dependency. For example, deploying MCPServer CRs before MCPLO is installed, or deploying MCPGatewayExtension before Gateway API CRDs are present.</p>
-        </div>
-        <div class="issue__section">
-          <h4>Fix</h4>
-          <p>Verify installation order. Ensure all Tier 1 operators are healthy before installing Tier 2:</p>
-          <pre><code># Check Gateway API CRDs
-oc get crd gateways.gateway.networking.k8s.io
-
-# Check MCPLO installation
-oc get pods -n mcp-lifecycle-operator-system
-
-# Check Kuadrant
-oc get kuadrant -n gateway-system
-
-# If CRDs are missing, install in the correct order:
-# 1. Service Mesh
-# 2. cert-manager
-# 3. RHCL (Kuadrant)
-# 4. RHOAI
-# 5. MCPLO
-# 6. MCP Gateway Operator</code></pre>
-        </div>
+        <p>Usually a missing CRD dependency: MCPServer CRs deployed before MCPLO is installed, or MCPGatewayExtension deployed before Gateway API CRDs are present. Full symptom/cause/fix now lives in the <a href="../../../mcp-lifecycle-operator/hub/build/supported-servers-troubleshooting.html">MCP Lifecycle Operator Knowledge Hub: Supported Servers &amp; Troubleshooting</a>.</p>
       </div>
 
       <div class="issue">
@@ -281,7 +254,7 @@ oc get kuadrant -n gateway-system
         </ul>
       </div>
 
-      <footer class="page-footer" data-verified="2026-07-11">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

@@ -263,7 +263,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75485 · Task · Closed · —
 
 ## mcp-lifecycle-operator
-_swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")`_
+_swept 2026-07-12 · `(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")`_
 _summaries withheld — the source Jira is not anonymously readable_
 
 - OCPSTRAT-2879 · Feature · In Progress · — — MCP lifecycle operator : GA   → [OCPSTRAT-2879: MCP lifecycle operator GA (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-2879-mcplo-ga.md)

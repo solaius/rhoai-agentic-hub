@@ -4,7 +4,7 @@ jql: (project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary
   "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle
   operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT
   AND summary ~ "\"MCP lifecycle operator\"")
-swept: '2026-07-11'
+swept: '2026-07-12'
 issues:
 - key: OCPSTRAT-2879
   type: Feature

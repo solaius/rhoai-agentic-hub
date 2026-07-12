@@ -1,0 +1,20 @@
+# Source list for hub.refresh-site. Tracked and PUBLIC.
+site: features/mcp-lifecycle-operator/enablement/mcplo-hub/
+sources:
+  gdocs:
+  - {id: 1vRu8pSLi6VMrX1Cdn64RdQTOhjQZG97BIxTRZadtjVY, title: MCPLO Weekly Meeting Notes}
+  github:
+  - kubernetes-sigs/mcp-lifecycle-operator
+  - opendatahub-io/mcp-lifecycle-module-operator
+  jira:
+    keys: [RHAISTRAT-1339]
+    jql: project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO")
+  slack:
+    channels: [forum-mcp-lifecycle-operator]
+    window_days: 14
+  local:
+  - features/mcp-lifecycle-operator/knowledge/
+  - features/mcp-lifecycle-operator/research/
+sections:
+  jtbd: true
+  jira_tracker: {project: RHAISTRAT}

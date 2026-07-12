@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gaps &amp; Open Questions | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Gaps &amp; Open Questions</h1>
+      <p class="lead">MCPLO's five known gaps, four of them P0 for GA readiness per this feature's own requirements research, plus three open questions carried from the management hub's cross-cutting log, numbering preserved for traceability.</p>
+
+      <section>
+        <h2>Known Gaps</h2>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">Operator Maturity Gap (Level 1-2, GA Needs 3-4)</div>
+          </div>
+          <div class="feature-card__description">
+            <p><strong>Issue:</strong> MCPLO sits at Operator Capability Level 1-2 today (Basic Install, plus partial Seamless Upgrades). GA (<a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a>, <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a>) requires Level 3-4 (Full Lifecycle, Deep Insights).</p>
+            <p><strong>Impact:</strong> No ServiceMonitor or alerting rules, unclear errors when the Gateway is absent, no production deployment patterns or upgrade runbooks, and only TP/DP-level support commitment today.</p>
+            <p><strong>Owner:</strong> OCP + RHOAI teams (joint GA)</p>
+            <p><strong>Status:</strong> P0 for GA. Recommendations: a Prometheus ServiceMonitor auto-created per <code>MCPServer</code>, a PrometheusRule for alerting (server down more than 5 minutes, handshake failures), a <code>GatewayAvailable</code> condition with actionable messages, an operator-level <code>/metrics</code> endpoint, and an admission webhook for CRD validation.</p>
+            <p><strong>Workaround:</strong> Treat TP-era deployments as non-production; monitor via generic pod-health checks until ServiceMonitor support lands.</p>
+            <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a> §1, citing the <a href="https://sdk.operatorframework.io/docs/overview/operator-capabilities/" target="_blank" rel="noopener">Operator SDK Capability Levels</a> model.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">Disconnected Catalog Delivery</div>
+          </div>
+          <div class="feature-card__description">
+            <p><strong>Issue:</strong> No <code>oc-mirror</code> equivalent exists for delivering the MCP server catalog to disconnected or air-gapped customers.</p>
+            <p><strong>Impact:</strong> Affects both MCPLO, which deploys from the catalog, and the MCP Catalog surface itself: no offline browse-and-deploy experience exists today.</p>
+            <p><strong>Owner:</strong> RHOAI Catalog Team, MCPLO Team</p>
+            <p><strong>Status:</strong> Open question, raised in the RHOAI Limited FAQ with no answer provided yet. P0 recommendation: package the MCP server catalog as an OCI artifact (following the OLM File-Based Catalog pattern) with <code>oc-mirror</code> support via <code>ImageSetConfiguration</code> additional images, plus an offline catalog UI reading from a local or mirrored source. None of this exists today.</p>
+            <p><strong>Workaround:</strong> None today.</p>
+            <p class="source-ref">Full detail: <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement: Disconnected Catalog Delivery</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a>.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">OLS Transition (Subscription Cliff Risk)</div>
+          </div>
+          <div class="feature-card__description">
+            <p><strong>Issue:</strong> OpenShift Lightspeed (OLS) uses its own internal OCP MCP server today. Once MCPLO is productized, OLS plans to remove that internal server and ask users to install the OCP MCP server via MCPLO instead.</p>
+            <p><strong>Impact:</strong> A subscription cliff (today's OCP-only users would need at least an RHOAI Limited entitlement), install complexity rising from zero steps to three, version coupling between OLS releases and the RHOAI operator, and no rollback path if the MCPLO-deployed server has issues.</p>
+            <p><strong>Owner:</strong> OLS Team, MCPLO Team</p>
+            <p><strong>Status:</strong> Open question, transition timeline and subscription implications unresolved. P0 recommendations: a transparent fallback (OLS detects an MCPLO-managed server and uses it if available, continuing with its internal implementation if not) and a zero-config path for OCP users (a single-click "Enable MCP servers" in console, not a multi-step RHOAI operator install).</p>
+            <p><strong>Workaround:</strong> None today; OLS continues on its internal MCP server until a transition decision is made.</p>
+            <p class="source-ref">Full detail: <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement: OLS Transition</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a>.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">Helm Deprecation Path</div>
+          </div>
+          <div class="feature-card__description">
+            <p><strong>Issue:</strong> The standalone Helm chart is slated for deprecation once MCPLO reaches TP, but no migration guide, migration tooling, deprecation notice, or resource-adoption mechanism exists yet.</p>
+            <p><strong>Impact:</strong> Customers who deployed MCP servers via the Helm chart have no supported path to the CRD-based <code>MCPServer</code> model.</p>
+            <p><strong>Owner:</strong> MCPLO Team</p>
+            <p><strong>Status:</strong> P0 for TP: a configuration-mapping document (Helm values to <code>MCPServer</code> spec) and a deprecation notice in <code>Chart.yaml</code>. P1 for GA: a migration script that reads a Helm release and generates <code>MCPServer</code> YAML, resource adoption (MCPLO adopting existing Helm-created resources), and coexistence documentation.</p>
+            <p><strong>Workaround:</strong> None today.</p>
+            <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a> §5.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">Cluster-Admin Requirement (Temporary)</div>
+          </div>
+          <div class="feature-card__description">
+            <p>MCPLO installation currently requires cluster-admin privileges; no namespace-scoped installation path exists yet. Full issue detail, the Platform-Engineer-deploys/AI-Engineer-consumes workaround, and the Registry-dependent path to lifting it now live on <a href="../build/installation.html">Build: Installation</a>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Open Questions</h2>
+        <p>Three questions carried from the management hub's cross-cutting open-questions log, numbering preserved for traceability: cluster-admin requirement (shared with Registry), OLM 1.0 dependency removal in OCP 5.0, and whether MCPLO stays RHOAI-exclusive.</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>8</td>
+              <td>Cluster-admin requirement for MCP: currently needed for configmap patches and MCPLO installation. Prevents self-service in multi-tenant clusters.</td>
+              <td>MCPLO + Registry</td>
+              <td>MCPLO Team + Registry Team</td>
+              <td>High</td>
+              <td><span class="badge badge--planned">Planned</span> Will be resolved when Registry replaces the configmap bridge with tenant-scoped visibility and approval workflows.</td>
+            </tr>
+            <tr>
+              <td>17</td>
+              <td>How to handle OLM 1.0 dependency removal in OCP 5.0?</td>
+              <td>MCPLO + Gateway (OCP 5.0)</td>
+              <td>OCP Integration Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> OCP 5.0 removes dependency declarations; no MCPLO-specific mitigation stated yet.</td>
+            </tr>
+            <tr>
+              <td>21</td>
+              <td>Will MCP Lifecycle Operator remain RHOAI-exclusive, or will layers be installable without a full RHOAI subscription?</td>
+              <td>MCPLO Entitlement</td>
+              <td>MCPLO Team (Matthias Weßendorf)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> MCPLO already ships under the standard OpenShift entitlement (not RHOAI-restricted), per <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement</a>; the open part is whether individual RHOAI-added layers (Registry, Authorino, Limitador) will ever be separately installable without a full RHOAI subscription. Raised in MCPLO weekly meeting notes; related to the OLM-independent install path under discussion.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">Rows carried verbatim (question text unchanged) from the management hub's <code>plan/open-questions.html</code>, numbering preserved, filtered to the MCPLO-tagged rows (Q8, Q17, Q21). Q21's status cell is expanded here with the current entitlement correction from this hub's own <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement</a> page.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps (Cluster-Admin card)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/open-questions.html">Management hub: Open Questions (Q8, Q17, Q21)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./roadmap.html">Roadmap</a></li>
+            <li><a href="./jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="../build/installation.html">Build: Installation</a></li>
+            <li><a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

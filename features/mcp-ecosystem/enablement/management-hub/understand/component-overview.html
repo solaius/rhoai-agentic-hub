@@ -78,53 +78,11 @@
           <span class="status-badge status-badge--dp">v0.2.0 DP</span>
         </div>
         <div class="feature-card__description">
-          <p><strong>Purpose:</strong> Kubernetes operator for deploying and managing MCP server workloads. Creates Deployment + Service from <code>MCPServer</code> CRD definitions.</p>
+          <p><strong>Purpose:</strong> Kubernetes-native operator providing the <code>MCPServer</code> CRD, the deployment primitive underneath the rest of the MCP ecosystem, creating Deployment, Service, and NetworkPolicy from a declarative spec.</p>
 
-          <p><strong>Status:</strong> Developer Preview (DP) as of v0.2.0 (June 17, 2026). TP target July 24, 2026 (RHOAI 3.5 code freeze), flagged on-risk (engineering's bug week falls the week of July 13; tracked in OCPMCP-298). GA targeted for RHOAI 3.6 (code freeze October 23, 2026; team aiming for earlier in October if possible).</p>
+          <p><strong>Status:</strong> DP shipped as v0.2.0 (June 17, 2026). Two qualification tracks converge at GA: OCP-side functional TP targets mid-July 2026 (OCPSTRAT-3263), RHOAI-side deployment TP targets mid-August 2026 (RHAISTRAT-1773, on-risk: engineering's bug week falls Jul 13, tracked in OCPMCP-298). GA targeted for RHOAI 3.6 (code freeze Oct 23, 2026; RHAISTRAT-1995, OCPSTRAT-2879). Ships under the standard OpenShift entitlement, not an RHOAI-restricted one.</p>
 
-          <p><strong>Key CRD:</strong></p>
-          <ul>
-            <li><code>MCPServer</code> — Defines container image, ports, secrets, env vars, resource limits. Operator creates Deployment + Service + prerequisites.</li>
-          </ul>
-
-          <p><strong>Upstream Repo:</strong> <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" class="page-footer__link">kubernetes-sigs/mcp-lifecycle-operator</a></p>
-
-          <p><strong>Distribution & Entitlement:</strong></p>
-          <ul>
-            <li>Not available in OperatorHub or via OLM today; an OLM-independent installation path (with its own subscription, for OCP customers to install independently of the RHOAI operator) is under active discussion (as of June 2026)</li>
-            <li>Container image not in public OLM catalog</li>
-            <li>Requires <strong>RHOAI restricted use entitlement for OpenShift</strong> subscription minimum</li>
-            <li>Bundled within RHOAI operator releases</li>
-            <li>Disconnected installation only via RHOAI offline bundle</li>
-          </ul>
-
-          <p><strong>Installation Behavior:</strong></p>
-          <ul>
-            <li>Does <strong>NOT</strong> deploy any MCP servers by default upon installation</li>
-            <li>Presents catalog of available MCP servers during setup (e.g., OCP MCP, ACM MCP)</li>
-            <li>User selects which servers to deploy during initial wizard</li>
-            <li>Additional servers installable as Day 2 operations via catalog UI or CRDs</li>
-            <li>No dependency on MCP Gateway — lifecycle operator installs first; gateway is downstream</li>
-          </ul>
-
-          <p><strong>Supported MCP Servers:</strong></p>
-          <ul>
-            <li>OpenShift (Available), upstream: <a href="https://github.com/containers/kubernetes-mcp-server" class="page-footer__link">containers/kubernetes-mcp-server</a></li>
-            <li>Ansible AAP (Available)</li>
-            <li>Red Hat Satellite (WIP)</li>
-            <li>Red Hat Insights (Available)</li>
-            <li>Linux/RHEL (WIP)</li>
-          </ul>
-
-          <p><strong>Update Delivery:</strong></p>
-          <ul>
-            <li>Engineering builds new versions → hands off to RHOAI team</li>
-            <li>RHOAI bundles updates in RHOAI operator releases</li>
-            <li>Connected clusters: automatic via RHOAI operator updates</li>
-            <li>Disconnected clusters: via updated RHOAI offline bundles</li>
-          </ul>
-
-          <p><strong>Learn More:</strong> <span class="badge badge--coming-soon">Dedicated hub planned</span></p>
+          <p><a href="../../../mcp-lifecycle-operator/hub/" class="component-card__cta">Full depth: MCP Lifecycle Operator Knowledge Hub →</a></p>
         </div>
       </div>
 
@@ -235,7 +193,7 @@
         </div>
       </div>
 
-      <footer class="page-footer" data-verified="2026-07-11">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
