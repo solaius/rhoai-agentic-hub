@@ -7,7 +7,7 @@
   },
   "mcp-ecosystem/hub": {
     "badge": "updated",
-    "hash": "49aba1f04b2b7377dda36f4b8690e382fda3db19e177fddaa17f379d41cdab4d",
+    "hash": "d2f670db9ce12f277011abcf15ed71e700a3a7dc8be2845b8710f4f8e2894b61",
     "published": "2026-07-12",
     "source": "features/mcp-ecosystem/enablement/management-hub"
   },
@@ -24,8 +24,8 @@
     "source": "features/mcp-lifecycle-operator/enablement/mcplo-hub"
   },
   "mcp-registry/hub": {
-    "badge": "new",
-    "hash": "7e9ac7ae2612dc0f81624e046614c451fb012da1e5c9925eca9efd8d59ef9d8d",
+    "badge": "updated",
+    "hash": "ffd57df11453346be5065b488365a47d2d105df14b523fab685686b030c0d733",
     "published": "2026-07-12",
     "source": "features/mcp-registry/enablement/registry-hub"
   }
