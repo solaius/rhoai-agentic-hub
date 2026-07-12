@@ -178,11 +178,19 @@ each (list calendar events; list joined Slack channels).
 
 ## Cursor
 
-Cursor uses `.cursor/mcp.json` (project-scoped) with the same `mcpServers`
-format. `bash scripts/doctor.sh setup` writes it alongside the Claude config
-when `.cursor/` exists (section 8). Restart Cursor after setup.
+Cursor uses two config locations:
 
-The config is gitignored (secrets in env values). If you need to recreate it
-manually, the server definitions are identical to the Claude config blocks
-shown above -- copy them into `.cursor/mcp.json` under a `"mcpServers"` root
-key.
+- **`~/.cursor/mcp.json`** (user-level) -- servers here are auto-approved and
+  appear in Settings > Tools & MCP. **This is the recommended location** for
+  servers that must work reliably in Cursor.
+- **`.cursor/mcp.json`** (project-level) -- `bash scripts/doctor.sh setup`
+  writes this alongside the Claude config when `.cursor/` exists. However,
+  project servers may stay disconnected and not appear in Settings (R6
+  validated 2026-07-11). Keep as a parity record; do not rely on it alone.
+
+**Setup:** after running `doctor.sh setup`, copy the server blocks from
+`.cursor/mcp.json` into `~/.cursor/mcp.json` (create it if it does not
+exist). The format is identical -- a `"mcpServers"` root key with the same
+server definitions shown above. Restart Cursor after editing.
+
+The project config is gitignored (secrets in env values).

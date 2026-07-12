@@ -41,7 +41,11 @@ and Slack MCP servers are covered by steps 6–7 below plus
    `restricted/.env` into `~/.bashrc` so `JIRA_*` reaches every shell (the
    marketplace `rfe.*` skills read the environment directly and have no
    fallback). Then **open a new shell** and restart Claude Code once more.
-8. Verify: `bash scripts/doctor.sh check` -> `0 fail`. You're done.
+8. **Cursor users only:** copy the MCP server blocks from `.cursor/mcp.json`
+   into `~/.cursor/mcp.json` (user-level). Project-level servers may not
+   appear in Cursor's Settings -- user-level is reliable. See
+   [/docs/mcp-servers.md](/docs/mcp-servers.md) Cursor section for details.
+9. Verify: `bash scripts/doctor.sh check` -> `0 fail`. You're done.
 
 Note: the `~/.bashrc` wiring reaches Claude Code's Bash tool, not its
 PowerShell tool. If a skill runs Jira scripts through PowerShell it will not
