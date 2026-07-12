@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Positioning &amp; Trust Tiers | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Positioning &amp; Trust Tiers</h1>
+      <p class="lead">The MCP Catalog is the storefront for MCP discovery, not a discovery-only list. It's the governance and management entry point of the MCP ecosystem within RHOAI.</p>
+
+      <h2>The Storefront Story</h2>
+      <p>The Catalog is "a curated catalog of MCP servers that you can discover, deploy, and manage directly on Red Hat OpenShift." Where discovery-only registries stop at "here's a list," the Catalog provides a governed path all the way to consumption: discover in the catalog UI, deploy via the MCP Lifecycle Operator, connect through the MCP Gateway, consume in Gen AI Studio. AI Hub treats MCP servers as first-class citizens alongside models, not a bolt-on category.</p>
+
+      <h2>Trust Tiers</h2>
+      <p>The Catalog surfaces four tiers of provenance:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Red Hat built and supported</strong></td>
+            <td>Authored and supported by Red Hat; the highest trust tier in the Catalog</td>
+          </tr>
+          <tr>
+            <td><strong>Partner built and certified</strong></td>
+            <td>Built by an ISV or technology partner; verified through the partner onboarding pipeline (consent, technical attestation, image build)</td>
+          </tr>
+          <tr>
+            <td><strong>Community curated</strong></td>
+            <td>Sourced from the open community; included based on curation criteria rather than a formal partner agreement</td>
+          </tr>
+          <tr>
+            <td><strong>Bring your own</strong></td>
+            <td>A customer-supplied MCP server deployed through the same Catalog to Lifecycle Operator to Gateway path, outside the curated tiers</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The 3.4 DP catalog shipped 10 servers across the Red Hat, Partner, and Community tiers (see <a href="../understand/what-is-the-catalog.html">What Is the MCP Catalog?</a>); trust tier display itself is sourced from the Registry starting in 3.5+.</p>
+
+      <h2>RBAC and Approval Workflow</h2>
+      <div class="callout callout--gap">
+        <strong>Roadmap, not shipped.</strong> "RBAC and approval workflow integration with Registry" is listed as a Catalog key feature, but it depends on the Registry, which is still in Design phase: Dev Preview is not landing in RHOAI 3.5 stable, and Tech Preview is targeted for RHOAI 3.6 EA1. The Registry's current data model has exactly two governance enums (<code>MCPServerStatus</code>: active, deprecated, retired; <code>MCPPublishState</code>: draft, published, deprecated, retired) and no <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field. The earlier four-track governance model (Lifecycle, Approval, Verification, Certification) described in early design drafts is a deferred proposal for a post-MVP follow-on, not a shipped capability.
+      </div>
+
+      <h2>Admin UI: RHAISTRAT-1859</h2>
+      <p>The Catalog Admin UI (a Settings page with CRUD on Catalog source ConfigMaps) is <strong>in progress</strong>, targeted for the RHOAI 3.5 release, tracked as RHAISTRAT-1859. This is a feature landing within a specific RHOAI release, which is a separate axis from the Catalog's own DP/TP/GA maturity ladder: the Catalog itself remains DP through 3.5, with TP targeted for RHOAI 3.6 EA1 and GA targeted at RHOAI 3.6 (code freeze Oct 23, 2026).</p>
+
+      <h2>PM Vision: Not Shipped</h2>
+      <div class="callout callout--gap">
+        <strong>PM vision, not shipped.</strong> The Catalog's long-term vision extends beyond MCP servers to manage Tools, Resources, Prompts, and Workloads as first-class catalog entities, including workload-to-tool mappings. Planned capabilities:
+        <ul>
+          <li><strong>Tool Masking:</strong> expose only the tools a given workload actually needs</li>
+          <li><strong>Input Simplification:</strong> split multi-purpose tools into single-purpose variants</li>
+          <li><strong>Output Filtering:</strong> trim tool responses to only the fields relevant to the calling LLM</li>
+        </ul>
+        None of this is shipped. Current scope is MCP server discovery, browsing, and selection. Federation with external registries (Docker MCP Catalog, GitHub MCP Registry, Smithery, Microsoft Copilot Catalog, Databricks Unity Catalog) is part of the same planned scope; Red Hat's own federation posture toward the official MCP registry is a separate, still-open question (see <a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a>).
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/fact-mcp-catalog-overview.md">MCP Catalog: overview</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/understand/component-overview.html">MCP Ecosystem Hub: Component Overview (Catalog + Registry cards)</a></li>
+            <li><a href="https://docs.google.com/document/d/1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE">MCP Catalog (GDoc)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./competitive.html">Competitive Landscape</a></li>
+            <li><a href="../understand/what-is-the-catalog.html">What Is the MCP Catalog?</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/catalog.html">RHCL hub: MCP Catalog (govern)</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

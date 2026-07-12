@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitive Landscape | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Competitive Landscape</h1>
+      <p class="lead">Catalogs and registries that discover, list, and vet MCP servers for consumption: where the MCP Catalog sits, and what changed in the July 2026 refresh.</p>
+
+      <h2>Catalog &amp; Registry Landscape</h2>
+      <p>This table is carried verbatim from the RHCL hub's gateway-vantage competitive analysis, the richer of the two variants in the hub (12 entries, including Databricks Unity Catalog).</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Catalog / Registry</th>
+            <th>Model</th>
+            <th>Submission</th>
+            <th>Verification</th>
+            <th>Install</th>
+            <th>Programmatic Access</th>
+            <th>Scale</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Smithery</strong></td>
+            <td>Open, marketplace/catalog</td>
+            <td>Open publisher submissions</td>
+            <td>Community + site governance</td>
+            <td>Yes (installer CLI)</td>
+            <td>Yes (CLI/SDK)</td>
+            <td>Self-described largest marketplace; thousands of capabilities</td>
+          </tr>
+          <tr>
+            <td><strong>Docker MCP Catalog</strong></td>
+            <td>Mixed, curated (Docker Hub-integrated)</td>
+            <td>Curated/verified entries</td>
+            <td>Verified, versioned Docker images</td>
+            <td>Docker Desktop / MCP Toolkit</td>
+            <td>Yes (Docker tooling)</td>
+            <td>100+ verified tools at launch (Apr 2025)</td>
+          </tr>
+          <tr>
+            <td><strong>GitHub MCP Registry</strong></td>
+            <td>Open, registry on GitHub</td>
+            <td>Community + vendor</td>
+            <td>GitHub identity &amp; curation</td>
+            <td>In-UI install flows (GitHub)</td>
+            <td>GitHub APIs</td>
+            <td>Announced as the official registry (Sep 2025)</td>
+          </tr>
+          <tr>
+            <td><strong>modelcontextprotocol.io registry</strong></td>
+            <td>Open, protocol-official registry</td>
+            <td>Open PR/publish workflow</td>
+            <td>OSS governance</td>
+            <td>Depends on clients</td>
+            <td>Live API docs</td>
+            <td>Positions itself as an app store for MCP servers</td>
+          </tr>
+          <tr>
+            <td><strong>Postman getmcp</strong></td>
+            <td>Open, hosted on Postman (curated catalog workspaces)</td>
+            <td>Curated by Postman + partners</td>
+            <td>Postman publisher verification</td>
+            <td>N/A (collections for testing)</td>
+            <td>Postman APIs/collections</td>
+            <td>Popular public workspace(s)</td>
+          </tr>
+          <tr>
+            <td><strong>MCPServers.org</strong></td>
+            <td>Open, community directory</td>
+            <td>Open submissions</td>
+            <td>Community moderation</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Broad community list</td>
+          </tr>
+          <tr>
+            <td><strong>MCP.so</strong></td>
+            <td>Open, third-party marketplace/directory</td>
+            <td>Open submissions</td>
+            <td>Site moderation</td>
+            <td>Some one-click install links</td>
+            <td>N/A</td>
+            <td>Claims 16k+ servers collected</td>
+          </tr>
+          <tr>
+            <td><strong>Pulse MCP</strong></td>
+            <td>Open, media-run directory</td>
+            <td>Curated</td>
+            <td>Media-run curation</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Reports 6k+ servers, updated daily</td>
+          </tr>
+          <tr>
+            <td><strong>mcpcatalog.io</strong></td>
+            <td>Open, public listing site</td>
+            <td>Unknown/open</td>
+            <td>Site governance</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>Category-browsable site</td>
+          </tr>
+          <tr>
+            <td><strong>ToolHive Registry</strong></td>
+            <td>Open, registry + secure runtime (Stacklok)</td>
+            <td>Curated + open</td>
+            <td>Security-focused (sandboxed containers)</td>
+            <td>Yes (thv run CLI)</td>
+            <td>Yes (CLI + API server)</td>
+            <td>Focus on secure execution</td>
+          </tr>
+          <tr>
+            <td><strong>Microsoft Copilot Studio connectors</strong></td>
+            <td>Closed, vendor in-product catalog</td>
+            <td>Vendor controlled</td>
+            <td>Microsoft certification</td>
+            <td>In-product add (Copilot Studio)</td>
+            <td>N/A</td>
+            <td>Catalog of certified connectors</td>
+          </tr>
+          <tr>
+            <td><strong>Databricks Unity Catalog</strong> &dagger;</td>
+            <td>Closed, enterprise-governed</td>
+            <td>Internal registration, not a public MCP marketplace</td>
+            <td>Enterprise governance/ACLs</td>
+            <td>Databricks-native registration</td>
+            <td>Platform API</td>
+            <td>Enterprise data + AI governance context, not MCP-specific</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">
+        &dagger; Databricks Unity Catalog is not covered in the MCP Catalog source document's Competitor Comparison section. It is referenced from RHAIRFE-1456 business-justification context as a general-purpose data and AI governance catalog, not an MCP-specific registry, so treat the row above as approximate. It has since moved fast; see the refresh below.
+      </p>
+
+      <h2>July 2026 Refresh: What Changed</h2>
+      <p>Supersedes an earlier 2026-07-06 seven-competitor snapshot. Verified against primary sources on 2026-07-09.</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Position (July 2026)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Docker MCP Catalog</strong></td>
+            <td>Signed composable OCI catalog artifacts, private catalogs anywhere; AI Governance product (May 2026) blocks unapproved servers by default</td>
+          </tr>
+          <tr>
+            <td><strong>Databricks Unity AI Gateway</strong></td>
+            <td>Unity governance extended to MCP; content-aware per-action policies (beta); managed MCP servers</td>
+          </tr>
+          <tr>
+            <td><strong>ToolHive (Stacklok)</strong></td>
+            <td>Coopetition: co-maintained by Red Hat. Multi-source federation into named catalogs; Sigstore trust chain; runs on OpenShift</td>
+          </tr>
+          <tr>
+            <td><strong>Microsoft Copilot Studio</strong></td>
+            <td>MCP GA since 2025-05-29; agent-workflow MCP tools GA 2026-07-15</td>
+          </tr>
+          <tr>
+            <td><strong>GitHub MCP Registry</strong></td>
+            <td>Publish-once flow with official registry; org/enterprise config; auth-centric roadmap</td>
+          </tr>
+          <tr>
+            <td><strong>Official MCP Registry</strong></td>
+            <td>At least 36K total / 10K latest records (live pull 2026-07-09), yet still preview/v0.1; minimal moderation by design</td>
+          </tr>
+          <tr>
+            <td><strong>AWS Agent Registry</strong></td>
+            <td>New (preview 2026-04-09): private governed catalog, approval workflow, semantic search, CloudTrail audit</td>
+          </tr>
+          <tr>
+            <td><strong>Google Cloud API Registry</strong></td>
+            <td>New (preview): curated MCP tool registry for Vertex Agent Builder; Apigee API-to-MCP conversion</td>
+          </tr>
+          <tr>
+            <td><strong>IBM watsonx Orchestrate</strong></td>
+            <td>New: Agent Catalog plus Agentic Control Plane (June 2026)</td>
+          </tr>
+          <tr>
+            <td><strong>Salesforce/MuleSoft</strong></td>
+            <td>New: Agent Registry of SaaS-provider-hosted MCP servers; AgentExchange listings</td>
+          </tr>
+          <tr>
+            <td><strong>Kong MCP Registry</strong></td>
+            <td>New: Konnect tech preview (since 2026-02), API-dependency linkage, OAuth 2.1 RS posture</td>
+          </tr>
+          <tr>
+            <td><strong>Directories</strong></td>
+            <td>PulseMCP (21.5K, verified) and MCP.so (roughly 21K) lead; Smithery (roughly 7K) no longer "largest"</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>New Entrants Since the July 6 Snapshot</h2>
+      <p>Five enterprise players entered the field between the previous snapshot and this refresh, all confirmed against primary sources on 2026-07-09:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Entrant</th>
+            <th>What It Is</th>
+            <th>Status / Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>AWS Agent Registry</strong> (Bedrock AgentCore)</td>
+            <td>Private governed catalog and discovery across agents, tools, skills, and MCP servers; approval workflow, semantic and keyword search, IAM/OAuth/JWT, CloudTrail audit</td>
+            <td>Preview 2026-04-09; namespace migration 2026-08-06</td>
+          </tr>
+          <tr>
+            <td><strong>Google Cloud API Registry</strong> (Gemini Enterprise Agent Platform / Vertex Agent Builder)</td>
+            <td>Private curated registry of approved MCP tools; Apigee converts managed APIs to MCP servers</td>
+            <td>Preview (reported)</td>
+          </tr>
+          <tr>
+            <td><strong>IBM watsonx Orchestrate</strong></td>
+            <td>Agent Catalog lists MCP servers; Agentic Control Plane (June 2026) adds a shared catalog and cross-agent governance</td>
+            <td>Shipping (reported)</td>
+          </tr>
+          <tr>
+            <td><strong>Salesforce / MuleSoft</strong></td>
+            <td>Hosted MCP Servers GA (around Apr 2026); Agent Fabric / Agent Registry: a curated catalog of enterprise MCP servers hosted by their providers (a SaaS-hosted supply model); AgentExchange listings</td>
+            <td>GA/rolling (reported)</td>
+          </tr>
+          <tr>
+            <td><strong>Kong MCP Registry</strong> (Konnect)</td>
+            <td>Extends the Konnect API Catalog; links MCP servers to underlying API dependencies; OAuth 2.1 Resource Server alignment in Kong AI Gateway 3.12</td>
+            <td>Still tech preview as of 2026-07-09; Kong's FAQ declines to give a GA timeline</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Differentiation Read</h2>
+      <p>The claim that "nobody owns enterprise governance end-to-end" is eroding: AWS, Databricks, Docker, and Kong are all building discovery, governance, and runtime together. Red Hat's still-unmatched cards are the shipped single-platform discover-deploy-connect-consume chain, and hybrid/multi-cloud open-source positioning against single-cloud lock-in. UBI-plus-scanning trust is now table stakes, not a differentiator. The three-way Directory/Registry/Enterprise-Platform framing survives as internal analysis, but it is not market vocabulary.</p>
+
+      <div class="callout callout--gap">
+        <strong>Registry governance is roadmap, not shipped.</strong> Where competitors' governance moves (Docker AI Governance, Databricks Contextual Service Policies, AWS approval workflow) invite a comparison to Red Hat's MCP Registry, the honest comparison point is a design-phase product: Registry Dev Preview is not landing in RHOAI 3.5 stable, Tech Preview is targeted for RHOAI 3.6 EA1, and its current data model has no approval, verification, or certification status fields. The four-track governance model (Lifecycle, Approval, Verification, Certification) is a deferred proposal for a post-MVP follow-on. Competing today on governance would overstate what has shipped.
+      </div>
+
+      <h2>Gap List</h2>
+      <h3>They have, we lack (stated publicly)</h3>
+      <ul>
+        <li>Composable signed catalog artifacts plus team profile remixing (Docker)</li>
+        <li>Content-aware per-action policy: blocking a tool call by request content pending approval (Databricks Contextual Service Policies)</li>
+        <li>Natural-language/semantic search over a private org catalog plus an audit-backed approval workflow (AWS)</li>
+        <li>Spec-aligned OAuth 2.1 Resource Server posture, stated loudly (Kong)</li>
+        <li>Multi-source federation into named catalogs with per-catalog JWT visibility (ToolHive, Red-Hat-co-maintained, already running on OpenShift; a channel-conflict risk with MCPLO/Catalog that needs a stated story)</li>
+        <li>SaaS-provider-hosted remote MCP servers as a supply tier (Salesforce/MuleSoft); Red Hat's tiers currently assume deployable images</li>
+      </ul>
+
+      <h3>We have, they lack</h3>
+      <ul>
+        <li>A shipped, single-platform discover-deploy-connect-consume chain</li>
+        <li>Hybrid/multi-cloud, open-source positioning against single-cloud lock-in (AWS, Google, Databricks, Salesforce)</li>
+        <li>Full AI-platform bundling (inference, llm-d, NVIDIA) under the same subscription as the catalog</li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/fact-mcp-catalog-competitive-landscape.md">fact-mcp-catalog-competitive-landscape.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/research/02-competitive-mcp-catalogs.md">Research: Competitive, enterprise MCP catalogs (July 2026)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/research/01-upstream-mcp-catalog-registry.md">Research: Upstream, MCP catalog/registry ecosystem (July 2026)</a></li>
+            <li>MCP Catalog doc (competitor table), source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./positioning.html">Positioning &amp; Trust Tiers</a></li>
+            <li><a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/sell/competitive.html">RHCL hub: Competitive Landscape</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/sell/competitive.html">MCP Ecosystem Hub: Competitive Landscape</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
