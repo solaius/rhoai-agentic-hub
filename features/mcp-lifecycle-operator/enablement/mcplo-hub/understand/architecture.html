@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Architecture | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Architecture</h1>
+      <p class="lead">The MCP Lifecycle Operator (MCPLO) reaches RHOAI through a three-repo integration pattern, sits inside the DataScienceCluster (DSC) component model, and reconciles the <code>MCPServer</code> CRD into a running, security-hardened MCP server.</p>
+
+      <h2>The Three-Repo Model</h2>
+      <p>RHOAI's integration of MCPLO spans three repositories, each with a distinct job:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Repository</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>kubernetes-sigs/mcp-lifecycle-operator</code></td>
+            <td>Upstream SIG Apps operator. Reconciles <code>MCPServer</code> custom resources, the deployment primitive itself.</td>
+          </tr>
+          <tr>
+            <td><code>opendatahub-io/mcp-lifecycle-module-operator</code></td>
+            <td>ODH module wrapper. Reconciles <code>MCPLifecycleOperator</code> CRs and deploys the upstream controller as an operand.</td>
+          </tr>
+          <tr>
+            <td><code>opendatahub-io/opendatahub-operator</code></td>
+            <td>Parent operator. Embeds the module handler in the DataScienceCluster (DSC) CR as the <code>mcplifecycleoperator</code> component.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The downstream fork <code>openshift/mcp-lifecycle-operator</code> (264 commits) adds CI/build infrastructure (Dockerfile.ocp, .ci-operator.yaml, .tekton/ pipelines) on top of the upstream repo; core operator code tracks upstream. That midstream repo moved from the <code>openshift/</code> org to the <code>opendatahub-io/</code> org in June 2026.</p>
+
+      <h2>Two-Tier Image Pattern</h2>
+      <p>Two separate container images are involved, matching the module-operator/operand split:</p>
+      <ul>
+        <li><strong>Module operator image</strong> (<span class="mono">RELATED_IMAGE_ODH_MCP_LIFECYCLE_MODULE_OPERATOR_IMAGE</span>): runs in the RHOAI namespace, reconciles <code>MCPLifecycleOperator</code> CRs</li>
+        <li><strong>Lifecycle operator image</strong> (<span class="mono">RELATED_IMAGE_ODH_MCP_LIFECYCLE_OPERATOR_IMAGE</span>): the actual MCPLO controller, deployed by the module operator as the operand that watches <code>MCPServer</code> CRs</li>
+      </ul>
+      <p class="source-ref">Manifest sources are pinned to commit SHAs in <span class="mono">get_all_manifests.sh</span> (ODH branch: main, RHOAI branch: rhoai-3.5).</p>
+
+      <h2>DSC Integration</h2>
+      <p>MCPLO integrates via the DataScienceCluster (DSC) CR as the component <code>mcplifecycleoperator</code>. The DSC API defines <code>DSCMCPLifecycleOperator</code> with a standard <code>ManagementSpec</code> (Managed/Removed toggle per component) plus <code>MCPLifecycleOperatorCommonSpec</code>, currently an empty placeholder for future configuration (the likely vehicle for TLS profile settings; see below). MCPLO is a standalone DSC component, not bundled inside AI Hub, following the same pattern as FeastOperator and LlamaStackOperator.</p>
+
+      <div class="flow-diagram" style="flex-direction: column; align-items: flex-start;">
+        <div class="mono" style="color: var(--text-secondary); line-height: 1.8;">
+          DataScienceCluster CR<br>
+          &nbsp;&nbsp;&rarr; DSC Reconciler (opendatahub-operator)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&rarr; MCPLifecycleOperator module handler<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; checks ManagementState (Managed/Removed)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; deploys kustomize manifests, creates MCPLifecycleOperator CR<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; module operator reconciles, deploys the MCPLO controller<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr; MCPLO watches <code>MCPServer</code> CRs, creates Deployment + Service + NetworkPolicy
+        </div>
+      </div>
+
+      <h2>CRD to Controller to Workload</h2>
+      <p>The <code>MCPServer</code> CRD (<span class="mono">mcp.x-k8s.io/v1alpha1</span>) is the deployment primitive. Its reconciliation loop:</p>
+      <ol>
+        <li><strong>Validate config</strong>: check storage mounts and env references for ConfigMap/Secret existence. Missing references produce a permanent <code>Accepted=False</code> validation error (no requeue); transient errors get exponential backoff.</li>
+        <li><strong>Reconcile Deployment</strong>: build the pod template with security defaults, apply a config-hash annotation that drives rolling updates on Secret/ConfigMap changes, create or update via server-side apply.</li>
+        <li><strong>Reconcile Service</strong>: ClusterIP, port <span class="mono">mcp</span>, session affinity governed by the stateless flag.</li>
+        <li><strong>Reconcile NetworkPolicy</strong>: ingress-only on the configured TCP port.</li>
+        <li><strong>MCP protocol handshake</strong>: once the Deployment is available, connect via StreamableClientTransport (10s timeout), send an Initialize request, extract server info and capabilities. Auth errors (401/403) count as reachable. Failure backs off from 10s to a 2-minute cap, up to 10 retries.</li>
+      </ol>
+      <p>Auto-created resources share the <code>MCPServer</code>'s name: a Deployment (non-root, read-only rootfs, all capabilities dropped, seccomp RuntimeDefault), a Service, a NetworkPolicy, and pods labeled <span class="mono">mcp-server=&lt;name&gt;</span>. Status surfaces <code>Accepted</code> (reason: Valid) and <code>Ready</code> (reason: Available) conditions, plus <span class="mono">status.address.url</span> (pattern <span class="mono">http://&lt;name&gt;.&lt;namespace&gt;.svc.cluster.local:&lt;port&gt;/mcp</span>).</p>
+
+      <h2>Catalog to MCPLO to Gateway to Studio</h2>
+      <div class="flow-diagram">
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">Discover</div>
+          <div class="flow-step__subtitle">MCP Catalog</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Deploy</div>
+          <div class="flow-step__subtitle">MCPLO</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Connect</div>
+          <div class="flow-step__subtitle">MCP Gateway (Connectivity Link)</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Consume</div>
+          <div class="flow-step__subtitle">Gen AI Studio</div>
+        </div>
+      </div>
+      <p>Deploy button click creates an <code>MCPServer</code> CR; MCPLO validates, sets Accepted, creates the workload, waits for readiness, performs the handshake, then sets Ready and populates <span class="mono">status.address.url</span>. The Gateway then federates deployed servers behind a single endpoint (per-server <code>MCPServerRegistration</code> targeting an HTTPRoute, tool-level access control, JWT auth via Keycloak). Deployed servers then appear in Gen AI Studio, where users combine models and MCP tools, with Llama Stack handling tool invocation during inference.</p>
+
+      <h2>Security Architecture</h2>
+      <p>Pod Security Standards default to Restricted: <span class="mono">AllowPrivilegeEscalation: false</span>, <span class="mono">ReadOnlyRootFilesystem: true</span>, <span class="mono">RunAsNonRoot: true</span>, all capabilities dropped, <span class="mono">SeccompProfile: RuntimeDefault</span>. Users can override via <span class="mono">spec.runtime.security.securityContext</span>. RBAC scoping is per-server ServiceAccount via <span class="mono">spec.runtime.security.serviceAccountName</span>, defaulting to the namespace's default SA; the operator itself cannot auto-create ServiceAccounts, a deliberate security decision. NetworkPolicy today is ingress-only on the configured port with no source restrictions and no egress restrictions, a known gap for production environments that need source-scoped policy.</p>
+
+      <h2>The TLS Gap</h2>
+      <div class="callout callout--gap">
+        <strong>Current status:</strong> <span class="mono">status.address.url</span> shows <span class="mono">http://</span>, not <span class="mono">https://</span>. MCP server traffic is unencrypted within the cluster today; the MCP Gateway handles TLS termination at ingress. RHOAIENG-72309 ("Central TLS Profile consistency") addresses this in-cluster gap: the module operator passes TLS config to MCPLO and MCPLO handles TLS from environment variables. The currently-empty <code>MCPLifecycleOperatorCommonSpec</code> is the likely vehicle for that TLS profile configuration, and upstream PR #257 adds TLS environment propagation.
+      </div>
+
+      <h2>Stateless Spec Shift: Impact on Scaling</h2>
+      <p>The MCP 2026-07-28 spec, a Release Candidate locked May 21, 2026, makes MCP stateless at the protocol layer: the initialize/initialized handshake is removed, the session header is removed, and every request becomes self-contained (protocol version, client info, and capabilities travel in <span class="mono">_meta</span> on each call). A new <span class="mono">server/discover</span> method lets clients fetch capabilities on demand. New <span class="mono">Mcp-Method</span> and <span class="mono">Mcp-Name</span> routing headers let gateways route without body parsing, and caching (<span class="mono">ttlMs</span>, <span class="mono">cacheScope</span>) and W3C Trace Context propagation land as protocol-level hooks.</p>
+      <p>For MCPLO, this is a tailwind:</p>
+      <ul>
+        <li>No session stickiness needed. MCP servers become standard HTTP microservices, exactly what Kubernetes operators are built to manage.</li>
+        <li>The <span class="mono">MCPConfig.Stateless</span> field (added in v0.1.0 to v0.2.0 for session affinity control) may need revisiting now that the protocol itself is stateless.</li>
+        <li>Standard RollingUpdate with maxSurge/maxUnavailable works without sticky-session concerns; progressive delivery tooling like Flagger applies cleanly.</li>
+        <li>Routing headers enable gateway-level policy without body inspection; caching and tracing standards give the operator hooks for managed observability.</li>
+      </ul>
+      <p>A cross-cutting analysis of the full breaking-change set (Gateway, Registry, Catalog/MCPLO/Studio) is published as a standalone artifact: <a href="https://solaius.github.io/rhoai-agentic-hub-pages/narrative/mcp-spec-rc-impact/" target="_blank" rel="noopener">MCP 2026-07-28 RC: RHOAI Impact Analysis</a>.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcplo-three-repo-architecture.md">fact-mcplo-three-repo-architecture.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcpserver-crd.md">fact-mcpserver-crd.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcp-spec-stateless-shift.md">fact-mcp-spec-stateless-shift.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/02-architecture.md">Research: Architecture</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./what-is-mcplo.html">What Is the MCP Lifecycle Operator?</a></li>
+            <li><a href="./upstream.html">Upstream</a></li>
+            <li><a href="https://solaius.github.io/rhoai-agentic-hub-pages/narrative/mcp-spec-rc-impact/" target="_blank" rel="noopener">MCP 2026-07-28 RC: RHOAI Impact Analysis (public)</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
