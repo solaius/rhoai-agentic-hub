@@ -140,7 +140,7 @@
             <td><strong>Studio</strong></td>
             <td><strong>Gateway/Servers</strong></td>
             <td><code>gen-ai-aa-mcp-servers</code> ConfigMap in <code>redhat-ods-applications</code></td>
-            <td><span class="badge badge--gap">Manual bridge</span><br><small>Target: Registry API (3.5)</small></td>
+            <td><span class="badge badge--gap">Manual bridge</span><br><small>Target: Registry API (3.6 EA1)</small></td>
           </tr>
           <tr>
             <td><strong>MCPLO</strong></td>
@@ -224,7 +224,7 @@ data:
           <tr>
             <td><code>gen-ai-aa-mcp-servers</code></td>
             <td>Gen AI Studio (3.4)</td>
-            <td>Manual bridge to Studio; replaced by Registry in 3.5</td>
+            <td>Manual bridge to Studio; Registry replacement targeted for RHOAI 3.6 EA1</td>
           </tr>
           <tr>
             <td>MLflow Registry API</td>
@@ -248,7 +248,7 @@ data:
       </div>
 
       <div class="callout callout--insight">
-        <div class="callout__title">RHOAI 3.5+ (Target — Automated Governed Flow)</div>
+        <div class="callout__title">RHOAI 3.6 EA1+ (Target: Automated Governed Flow)</div>
         <ol>
           <li><strong>Catalog</strong> — Browse MCP servers with trust tier labels (certified, community, unverified)</li>
           <li><strong>Deploy</strong> — Click "Deploy" → Catalog creates MCPServer CR → MCPLO creates all prerequisites automatically</li>
