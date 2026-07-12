@@ -8,6 +8,9 @@ features:
 - id: mcp-gateway
   title: MCP Gateway
   description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
+  jira:
+    jql: 'project = RHAISTRAT AND summary ~ "\"MCP Gateway\""'
+    ref_types: [Outcome, Feature]
 - id: mcp-registry
   title: MCP Registry
   description: The governance/system-of-record layer for MCP servers — identity, version, lifecycle state, certification, trust, and auditability.

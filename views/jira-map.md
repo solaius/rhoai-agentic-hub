@@ -262,6 +262,21 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75484 · Task · New · —
 - RHOAIENG-75485 · Task · Closed · —
 
+## mcp-gateway
+_swept 2026-07-12 · `project = RHAISTRAT AND summary ~ "\"MCP Gateway\""`_
+_summaries withheld — the source Jira is not anonymously readable_
+
+- RHAISTRAT-1233 · Feature · Closed · rhoai-3.4
+- RHAISTRAT-1440 · Feature · New · —
+- RHAISTRAT-1572 · Feature · Closed · —
+- RHAISTRAT-1721 · Feature · Release Pending · 3.5 EA2 RHOAI RELEASE
+- RHAISTRAT-1772 · Feature · Closed · —
+- RHAISTRAT-1937 · Feature · In Progress · 3.5 GA RHOAI RELEASE
+- RHAISTRAT-2085 · Feature · New · —
+- RHAISTRAT-2086 · Feature · New · —
+- RHAISTRAT-2087 · Feature · New · —
+- RHAISTRAT-2089 · Feature · New · —
+
 ## mcp-lifecycle-operator
 _swept 2026-07-12 · `(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")`_
 _summaries withheld — the source Jira is not anonymously readable_

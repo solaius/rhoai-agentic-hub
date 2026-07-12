@@ -152,7 +152,7 @@
       </table>
 
       <div class="callout callout--gap">
-        <strong>Current Governance Gap:</strong> The manual ConfigMap bridge (<code>gen-ai-aa-mcp-servers</code>) is the only integration point between deployed MCP servers and Gen AI Studio. This will be replaced by Registry API in RHOAI 3.5.
+        <strong>Current Governance Gap:</strong> The manual ConfigMap bridge (<code>gen-ai-aa-mcp-servers</code>) is the only integration point between deployed MCP servers and Gen AI Studio. This will be replaced by Registry API once Registry TP lands, targeted for RHOAI 3.6 EA1 (retargeted from the original 3.5 plan, PM direction Jul 2026).
       </div>
 
       <h2>Integration Flows (Summary)</h2>
@@ -163,7 +163,7 @@
         <li><strong>Flow 2 - MCPLO → Gateway (manual today, auto target):</strong> Today an admin manually registers the server with the Gateway (<code>MCPServerRegistration</code> CRD) and updates the <code>gen-ai-aa-mcp-servers</code> ConfigMap, which needs cluster-admin. At GA (Q4 2026), MCPLO auto-registers the deployed server in the Registry, an approver reviews it, and the Registry auto-configures Gateway routing and auth - no manual ConfigMap, no cluster-admin.</li>
         <li><strong>Flow 3 - Registry → Gateway (planned GA Q4 2026):</strong> A registered server passes an approval workflow, the Registry updates the Gateway (auto-config via <code>MCPGatewayExtension</code>), and the Gateway routes traffic so tools become visible to Studio. See <a href="../../../mcp-registry/hub/govern/integrations.html" class="page-footer__link">MCP Registry Hub: Integrations</a>.</li>
         <li><strong>Flow 4 - Catalog → Registry (planned 3.6 EA1):</strong> Catalog-discovered servers are submitted to the Registry for governance tracking. RHAISTRAT-2027 (superseding the closed/obsolete RHAISTRAT-1938) carries this as fix version 3.6 EA1, not 3.5. Current scope delivers lifecycle-status enrichment (active/deprecated) via <code>MCPServerStatus</code> / <code>MCPPublishState</code>; approval, verification, and certification tracks are proposed but not yet modeled. See <a href="../govern/lifecycle-flow.html" class="page-footer__link">Lifecycle Flow</a>.</li>
-        <li><strong>Flow 5 - Studio → Gateway/Servers (manual bridge today):</strong> The <code>gen-ai-aa-mcp-servers</code> ConfigMap is the current integration point; in 3.5 it is replaced by direct Registry API consumption, where Studio queries the Registry for approved MCP servers and their endpoints.</li>
+        <li><strong>Flow 5 - Studio → Gateway/Servers (manual bridge today):</strong> The <code>gen-ai-aa-mcp-servers</code> ConfigMap is the current integration point; once Registry TP lands (targeted RHOAI 3.6 EA1, PM direction Jul 2026) it is replaced by direct Registry API consumption, where Studio queries the Registry for approved MCP servers and their endpoints.</li>
       </ul>
 
       <div class="callout callout--insight">
@@ -188,7 +188,7 @@ data:
 
       <p><strong>Current State (3.4):</strong> Cluster admins manually edit this ConfigMap after deploying MCP servers. No validation. No approval workflow. No audit trail.</p>
 
-      <p><strong>Target State (3.5+):</strong> Registry replaces this ConfigMap. Gen AI Studio queries the Registry API for approved MCP servers. ConfigMap becomes read-only (generated from Registry state).</p>
+      <p><strong>Target State (Registry TP, targeted RHOAI 3.6 EA1):</strong> Registry replaces this ConfigMap. Gen AI Studio queries the Registry API for approved MCP servers. ConfigMap becomes read-only (generated from Registry state).</p>
 
       <h2>CRDs, ConfigMaps, and APIs</h2>
 
@@ -228,7 +228,7 @@ data:
           </tr>
           <tr>
             <td>MLflow Registry API</td>
-            <td>MCP Registry (3.5+)</td>
+            <td>MCP Registry (targeted RHOAI 3.6 EA1 TP)</td>
             <td>Governed MCP server metadata, lifecycle, approval</td>
           </tr>
         </tbody>

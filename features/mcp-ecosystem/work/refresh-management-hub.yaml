@@ -25,5 +25,6 @@ sources:
   local:
   - features/mcp-ecosystem/knowledge/
   - features/mcp-ecosystem/research/
-  - features/mcp-registry/knowledge/
-  - features/mcp-catalog/knowledge/
+sections:
+  jtbd: true
+  jira_tracker: {project: RHAISTRAT}

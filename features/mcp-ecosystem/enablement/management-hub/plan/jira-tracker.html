@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Jira Tracker — MCP Management Knowledge Hub</title>
+  <title>Jira Tracker (Strats Rollup) | MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,409 +16,391 @@
     <main class="hub-main">
       <div class="breadcrumb"></div>
 
-      <h1>Jira Tracker</h1>
-      <p class="lead">Tracking all tickets under RHAISTRAT-1339 — AI Hub AI Asset Delivery for Agentic Solutions.</p>
+      <h1>Jira Tracker (Strats Rollup)</h1>
+      <p class="lead">Cross-component RHAISTRAT rollup for the MCP ecosystem. Each component hub sweeps and stores its own Jira scope (<code>features/&lt;component&gt;/work/jira-snapshot.yaml</code>, scope defined in that feature's <code>features.yaml</code> <code>jira:</code> block); this page unions the RHAISTRAT-prefixed rows from all four into one table per component, so the strategy-level picture reads in one place without visiting every hub.</p>
 
       <section>
-        <h2>Umbrella Outcome</h2>
-        <div class="callout callout--insight">
-          <h3>RHAISTRAT-1339: AI Hub AI Asset Delivery for Agentic Solutions</h3>
-          <p><strong>Status:</strong> <span class="badge badge--in-progress">In Progress</span></p>
-          <p>Unified delivery of AI asset registries and catalogs (MCP, Agent, Skills, Model) to enable governed, federated AI asset ecosystems on Red Hat OpenShift AI.</p>
-          <p><strong>Components tracked:</strong> MCP, Agent, Skills, Model Catalog, Cross-cutting infrastructure</p>
-          <p><strong>Total issues:</strong> 56 (22 Approved RFEs, 4 In Stakeholder Review, 2 New RFEs, 9 In-Progress Features, 19 other) as of 2026-07-10</p>
-        </div>
-      </section>
-
-      <section>
-        <h2>MCP Asset Delivery <span class="source-ref">(curated selection)</span></h2>
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Summary</th>
-              <th>Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-294">RHAIRFE-294</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Registry – Operational Governance</td>
-              <td>Peter Double</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1456">RHAIRFE-1456</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>[TP] Productize MCP Lifecycle Operator for RHOAI</td>
-              <td>Lindani Phiri</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1457">RHAIRFE-1457</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Gateway in RHOAI</td>
-              <td>Lindani Phiri</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2421">RHAIRFE-2421</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Registry GA</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2422">RHAIRFE-2422</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Catalog GA</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2423">RHAIRFE-2423</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Lifecycle Operator GA</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2434">RHAIRFE-2434</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Catalog/Registry Integration TP</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2435">RHAIRFE-2435</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>MCP Catalog Support Tier Labeling</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1643">RHAIRFE-1643</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--stakeholder-review">In Stakeholder Review</span></td>
-              <td>MCP Server Registration and Management UI</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1645">RHAIRFE-1645</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--stakeholder-review">In Stakeholder Review</span></td>
-              <td>Promote MCP Endpoints to Gen AI Studio from Console</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1719">RHAIRFE-1719</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--stakeholder-review">In Stakeholder Review</span></td>
-              <td>MCP Server Security Vulnerability Scanner</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1768">RHAIRFE-1768</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--stakeholder-review">In Stakeholder Review</span></td>
-              <td>MCP Server Partner Certification Program</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1458">RHAIRFE-1458</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>MCP Tool Search — Dynamic Tool Loading</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1767">RHAIRFE-1767</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>BYO MCP Server Validation</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1762">RHAISTRAT-1762</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>MCP Registry</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1773">RHAISTRAT-1773</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>MCP Lifecycle Operator TP</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2514">RHAIRFE-2514</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Catalog: list STDIO MCPs with local install info</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2515">RHAIRFE-2515</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Registry: allow registration/tracking of STDIO MCPs</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2516">RHAIRFE-2516</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>IDE registry access: install STDIO MCPs / configure remote HTTP-SSE MCPs from IDEs</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2131">RHAISTRAT-2131</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>STDIO listings in Catalog</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2132">RHAISTRAT-2132</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>STDIO registration in Registry</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2133">RHAISTRAT-2133</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>Spec-compliant IDE-native registry API</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1859">RHAISTRAT-1859</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>MCP Catalog Admin UI for Managing Catalog Entries (3.5 GA)</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2027">RHAISTRAT-2027</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for TP (3.6 EA1; supersedes obsoleted RHAISTRAT-1938)</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2028">RHAISTRAT-2028</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>MCP Catalog Support Tier Labeling (3.5 GA)</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1993">RHAISTRAT-1993</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>MCP Registry GA (RHOAI 3.6)</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1994">RHAISTRAT-1994</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>MCP Catalog GA (RHOAI 3.6)</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1995">RHAISTRAT-1995</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--new">New</span></td>
-              <td>MCP Lifecycle Operator GA (RHOAI 3.6)</td>
-              <td>-</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h2>Agent Asset Delivery <span class="source-ref">(curated selection)</span></h2>
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Summary</th>
-              <th>Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1484">RHAIRFE-1484</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Agent Registry Phase 1</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2206">RHAIRFE-2206</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Agent Catalog</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2220">RHAIRFE-2220</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Deploy agent images from AI Hub Agents Deployments</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h2>Skills Asset Delivery <span class="source-ref">(curated selection)</span></h2>
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Summary</th>
-              <th>Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1713">RHAIRFE-1713</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Skills Registry: Self-Hosted AI Skills Management</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2207">RHAIRFE-2207</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Skills Catalog</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2382">RHAIRFE-2382</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Pre-loaded skills in registry/catalog</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h2>Model Catalog <span class="source-ref">(curated selection)</span></h2>
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Summary</th>
-              <th>Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1927">RHAIRFE-1927</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>AI Security Insights for Red Hat AI Model Catalog</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1931">RHAIRFE-1931</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Surface tool-calling support in model cards</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-1970">RHAIRFE-1970</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Surface cold-start and vRAM metrics in Model Catalog</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1526">RHAISTRAT-1526</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>AI Security Insights Tab</td>
-              <td>—</td>
-            </tr>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1698">RHAISTRAT-1698</a></td>
-              <td>Feature</td>
-              <td><span class="badge badge--in-progress">In Progress</span></td>
-              <td>Automated AI Security Evaluation</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h2>Cross-Cutting Infrastructure <span class="source-ref">(curated selection)</span></h2>
-        <table class="status-table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Summary</th>
-              <th>Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="https://issues.redhat.com/browse/RHAIRFE-2222">RHAIRFE-2222</a></td>
-              <td>RFE</td>
-              <td><span class="badge badge--approved">Approved</span></td>
-              <td>Interactive playground for AI pipelines</td>
-              <td>—</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h2>Status Summary</h2>
-        <div class="callout callout--insight">
-          <h3>Ticket Breakdown by Status</h3>
+        <h2>Stored Scopes</h2>
+        <div class="callout callout--source">
+          <p>The four stored scopes, as recorded in <code>features/features.yaml</code>, and the date each was last swept:</p>
           <ul>
-            <li><strong>Approved RFEs:</strong> 22 tickets across MCP, Agent, Skills, and Model assets</li>
-            <li><strong>In Stakeholder Review:</strong> 4 RFEs (MCP registration UI, promotion flows, security scanning, certification)</li>
-            <li><strong>New RFEs:</strong> 2 (MCP tool search, BYO MCP validation)</li>
-            <li><strong>In Progress Features:</strong> 9 RHAISTRAT tickets (MCP Registry, MCPLO TP, Catalog Admin UI, Catalog↔Registry Integration, Catalog Support Tier Labeling, Gateway Operator dependency doc, AI Security Insights, Security Evaluation, plus one more; see tables above for the full curated set)</li>
-            <li><strong>Other:</strong> 19 tickets (mostly New Features, plus Release Pending and Closed)</li>
+            <li><strong>Gateway</strong> - <code>project = RHAISTRAT AND summary ~ "\"MCP Gateway\""</code> - swept 2026-07-12</li>
+            <li><strong>Catalog</strong> - <code>(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")</code> - swept 2026-07-11</li>
+            <li><strong>MCPLO</strong> - <code>(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")</code> - swept 2026-07-12</li>
+            <li><strong>Registry</strong> - <code>(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")</code> - swept 2026-07-12</li>
           </ul>
-          <p><strong>Key delivery milestone:</strong> RHOAI 3.5 (Aug 2026): MCP Registry DP, MCPLO TP (on risk, Jul 24 code freeze), Gateway TP, Agent Catalog, Skills Registry foundation</p>
-          <p><strong>GA target:</strong> RHOAI 3.6 (code freeze Oct 23, 2026) for MCP Registry, Catalog, and MCPLO (RHAISTRAT-1993/1994/1995); RHCL 1.5 (Oct 2026) for Gateway</p>
-          <p><strong>Total issues:</strong> 56 under RHAISTRAT-1339 as of 2026-07-10; tables above are a curated selection, not the complete set</p>
+          <p>Every stored scope also matches RHOAIENG (and, for MCPLO, OCPSTRAT) delivery-level issues; only the RHAISTRAT-prefixed rows are tabled below, one section per component. Every Key, Type, Status, Fix Versions, and Updated value is sourced directly from that component's <code>jira-snapshot.yaml</code>. The Summary field is null for every row (the sweep's unauthenticated-probe rule), rendered as "(summary withheld)" below. The "Known As" column is a supplementary descriptor, not a Jira summary, populated only where an existing hub source names and describes the key; rows without a cited source show "-".</p>
+        </div>
+        <div class="callout callout--warning">
+          <div class="callout__title">Gateway scope is provisional</div>
+          <p style="margin-bottom: 0;">The Gateway component's stored scope (<code>project = RHAISTRAT AND summary ~ "\"MCP Gateway\""</code>) is a first sweep with no explicit key list, unlike the other three components' scopes. It was validated against Jira (10 issues, all Feature type, no Outcome) but has not been reviewed by the feature owner for completeness - RHAISTRAT-1937 was the only key with an existing hub-cited description at sweep time. Treat the Gateway section below as a starting point pending owner refinement.</p>
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <section>
+        <h2>Gateway</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1233" target="_blank" rel="noopener">RHAISTRAT-1233</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--accepted">Closed</span></td>
+              <td>-</td>
+              <td>2026-06-12</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1440" target="_blank" rel="noopener">RHAISTRAT-1440</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-06</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1572" target="_blank" rel="noopener">RHAISTRAT-1572</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1721" target="_blank" rel="noopener">RHAISTRAT-1721</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--accepted">Release Pending</span></td>
+              <td>3.5 EA2 RHOAI RELEASE</td>
+              <td>2026-06-24</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1772" target="_blank" rel="noopener">RHAISTRAT-1772</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>-</td>
+              <td>2026-05-18</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1937" target="_blank" rel="noopener">RHAISTRAT-1937</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Gateway Operator RHOAI dependency documentation (TP); tracked as an external-dependency requirement across the RHCL Hub - version-compatibility matrix, install prerequisite, DSC/DSCI status condition</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2085" target="_blank" rel="noopener">RHAISTRAT-2085</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2086" target="_blank" rel="noopener">RHAISTRAT-2086</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2087" target="_blank" rel="noopener">RHAISTRAT-2087</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2089" target="_blank" rel="noopener">RHAISTRAT-2089</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>-</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-07</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">10 RHAISTRAT rows, no Outcome type. "Known As" for RHAISTRAT-1937 sourced from: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/ecosystem.html">rhcl-hub Ecosystem</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/reference.html">rhcl-hub Quick Reference</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
+      </section>
+
+      <section>
+        <h2>Catalog</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a></td>
+              <td>Outcome</td>
+              <td><em>(summary withheld)</em></td>
+              <td>AI Hub AI Asset Delivery for Agentic Solutions; the shared umbrella outcome for MCP, Agent, Skills, and Model Catalog asset delivery</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1084" target="_blank" rel="noopener">RHAISTRAT-1084</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>3.4 DP cycle</td>
+              <td><span class="badge badge--accepted">Closed</span></td>
+              <td>rhoai-3.4</td>
+              <td>2026-06-26</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1149" target="_blank" rel="noopener">RHAISTRAT-1149</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>3.4 DP cycle; also produced the MCP ecosystem best-practices guide</td>
+              <td><span class="badge badge--accepted">Release Pending</span></td>
+              <td>3.5 EA1 RHOAI RELEASE</td>
+              <td>2026-06-24</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1306" target="_blank" rel="noopener">RHAISTRAT-1306</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>3.4 DP cycle</td>
+              <td><span class="badge badge--accepted">Release Pending</span></td>
+              <td>-</td>
+              <td>2026-05-18</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1859" target="_blank" rel="noopener">RHAISTRAT-1859</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Catalog Admin UI for Managing Catalog Entries</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-10</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1938" target="_blank" rel="noopener">RHAISTRAT-1938</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>"[TP] MCP Catalog and Registry Integration - Unified Discovery and Governance for Tech Preview" (Obsolete resolution; superseded by RHAISTRAT-2027)</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1994" target="_blank" rel="noopener">RHAISTRAT-1994</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Catalog GA (RHOAI 3.6)</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-11</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>"MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for Tech Preview" (supersedes obsoleted RHAISTRAT-1938; delivery Feature for RHAIRFE-2434)</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.6 EA1 RHOAI RELEASE</td>
+              <td>2026-07-11</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2028" target="_blank" rel="noopener">RHAISTRAT-2028</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Catalog Support Tier Labeling</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-09</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2131" target="_blank" rel="noopener">RHAISTRAT-2131</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>STDIO listings in Catalog</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-29</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">10 RHAISTRAT rows (1 Outcome, listed first, + 9 Feature). "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/enablement/catalog-hub/plan/jira-tracker.html">MCP Catalog Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-11).</p>
+      </section>
+
+      <section>
+        <h2>MCPLO</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a></td>
+              <td>Outcome</td>
+              <td><em>(summary withheld)</em></td>
+              <td>RHOAI Outcome for the MCP Lifecycle Operator productization; container for all RHOAI 3.5 MCP capabilities to be delivered</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>RHOAI-side TP productization for the MCP Lifecycle Operator</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-08</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>RHOAI-side GA for the MCP Lifecycle Operator; addresses dependency awareness, operational maturity, documentation, and Agent Sandbox/Code Mode integration</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">3 RHAISTRAT rows (1 Outcome, listed first, + 2 Feature). "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/enablement/mcplo-hub/plan/jira-tracker.html">MCP Lifecycle Operator Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
+      </section>
+
+      <section>
+        <h2>Registry</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-138" target="_blank" rel="noopener">RHAISTRAT-138</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>Centralized Governance; the original, now-closed strategy feature that seeded the registry's governance core (gated import, certification, scoped visibility, audit trail)</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1677" target="_blank" rel="noopener">RHAISTRAT-1677</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>OGX (formerly Llama Stack) MCP Registry Integration; registry awareness so agent workloads can discover and connect to registered servers programmatically</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-16</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>Operational Governance; the main in-flight feature, extending governance so the Registry becomes the operational source of truth for every MCP server in use</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.6 EA1 RHOAI RELEASE</td>
+              <td>2026-07-11</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>General Availability; the graduation feature, stable APIs and production support</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-11</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2132" target="_blank" rel="noopener">RHAISTRAT-2132</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>STDIO MCP Server Registration; transport-aware registration for servers with no endpoint URL</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-29</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2133" target="_blank" rel="noopener">RHAISTRAT-2133</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>IDE-Native MCP Registry API; an upstream-spec-compliant registry API so IDE tools can discover and install governed servers</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-29</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">6 RHAISTRAT rows, no Outcome type. "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/enablement/registry-hub/plan/jira-tracker.html">MCP Registry Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
+      </section>
+
+      <section>
+        <h2>Rollup Summary</h2>
+        <div class="callout callout--insight">
+          <h3>29 RHAISTRAT rows across 4 components</h3>
+          <ul>
+            <li><strong>Gateway:</strong> 10 rows (0 Outcome, 10 Feature)</li>
+            <li><strong>Catalog:</strong> 10 rows (1 Outcome, 9 Feature)</li>
+            <li><strong>MCPLO:</strong> 3 rows (1 Outcome, 2 Feature)</li>
+            <li><strong>Registry:</strong> 6 rows (0 Outcome, 6 Feature)</li>
+          </ul>
+          <p>RHAISTRAT-1339 (the shared umbrella Outcome, "AI Hub AI Asset Delivery for Agentic Solutions") appears in both the Catalog and MCPLO sections because both components' stored scopes explicitly include it - it is one Jira issue, tabled twice by design, once per matching component.</p>
+        </div>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1339">RHAISTRAT-1339 (Jira)</a></li>
-            <li>Source Verification Report (2026-06-22); Jira sweep (2026-07-10, 56 children under RHAISTRAT-1339)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/work/jira-snapshot.yaml">mcp-gateway jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">mcp-catalog jira-snapshot.yaml</a> (swept 2026-07-11)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/work/jira-snapshot.yaml">mcp-lifecycle-operator jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/work/jira-snapshot.yaml">mcp-registry jira-snapshot.yaml</a> (swept 2026-07-12)</li>
           </ul>
         </div>
         <div class="related-pages">
