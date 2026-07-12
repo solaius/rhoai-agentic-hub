@@ -27,9 +27,10 @@ Rules:
   URL (`https://solaius.github.io/rhoai-agentic-hub-pages/<dest>/`), not a
   relative path, since the two targets are different repos and different
   sites. Internal-to-internal (hub-to-hub) links stay relative.
-- CI (`publish.yml`) pushes to `solaius/rhoai-agentic-hub-pages` and
-  regenerates that repo's landing `index.html` from manifest titles and
-  descriptions. The pages repo holds built artifacts only — no knowledge.
+- CI (`publish.yml`) pushes public entries to `solaius/rhoai-agentic-hub-pages`
+  and internal entries to this repo's gh-pages branch; each target's landing
+  regenerates from its own entries' titles and descriptions. The pages repos
+  hold built artifacts only — no knowledge.
 - Use the `hub.publish` skill; publishing is a disclosure decision and gets an
   inline confirm.
 - Each enablement artifact is a self-contained directory —

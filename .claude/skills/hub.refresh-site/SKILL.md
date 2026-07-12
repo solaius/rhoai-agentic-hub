@@ -40,9 +40,9 @@ keeps them OUT.
      feature id) and diff against the Jobs to be Done page (new jobs, changed
      status/evidence, removals).
    - jira tracker: when sections.jira_tracker is set, re-run
-     python scripts/hub_jira.py --sweep <feature> (refreshes
-     work/jira-snapshot.yaml), filter issues to keys of the configured
-     project, and diff against the tracker page rows.
+     `python scripts/hub_jira.py --sweep <feature> --out <scratch dir>` to produce
+     a proposed snapshot; diff it against stored work/jira-snapshot.yaml; on
+     approval copy it into place, then regenerate the tracker rows from it.
    Any unreachable source (Slack tokens expire; VPN) degrades to a "Fetch
    failures" report section - the run continues.
 4. CHANGE REPORT. Categorized: New / Changed / Confirmed-current / Fetch

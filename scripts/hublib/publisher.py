@@ -111,7 +111,7 @@ def _card(p):
 
 
 def generate_landing(root, plan, hub_sha="", template_name="landing-template.html"):
-    """Render publish/landing-template.html: sections in group_key order,
+    """Render the given landing template (template_name): sections in group_key order,
     cards title-sorted within a section, badges from the publish snapshot."""
     template = (Path(root) / "publish" / template_name) \
         .read_text(encoding="utf-8")
