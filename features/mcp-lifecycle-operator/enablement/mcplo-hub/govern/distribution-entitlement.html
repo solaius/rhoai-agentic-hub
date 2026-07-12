@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Distribution &amp; Entitlement | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Distribution &amp; Entitlement</h1>
+      <p class="lead">MCPLO ships under the standard OpenShift entitlement, not an RHOAI-only one. This page corrects an older, mistaken framing that circulated in early hub content, and covers how MCPLO is distributed, updated, and where entitlement questions remain open.</p>
+
+      <h2>Corrected Entitlement Story</h2>
+      <div class="callout callout--insight">
+        <div class="callout__title">MCPLO ships with OCP entitlement</div>
+        <p style="margin-bottom: 0;">MCPLO ships as a standalone operator under the <strong>standard OpenShift entitlement</strong>, not an RHOAI-restricted one. This was an explicit architecture decision (mrunalp, Slack #forum-mcp-lifecycle-operator, Feb 2026): base OCP customers get MCPLO's deployment capability without RHOAI, and can upgrade to RHOAI later without losing MCPLO functionality. RHOAI adds governance and enforcement on top: MCP Registry, Authorino (auth), and Limitador (rate limiting).</p>
+      </div>
+
+      <div class="callout callout--gap">
+        <div class="callout__title">Correcting an Earlier Claim</div>
+        <p style="margin-bottom: 0;">Two other pages in this hub family (the RHCL hub's Lifecycle Operator page and the Management hub's Entitlement page) state that MCPLO requires an RHOAI-restricted subscription tier to install or use. That claim is stale. It has not been corrected on those pages as of this writing; treat the framing on this page, and on this hub's own <a href="../reference.html">Quick Reference</a>, as current.</p>
+      </div>
+
+      <h2>Distribution</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Available in OperatorHub?</td>
+            <td><strong>No</strong></td>
+          </tr>
+          <tr>
+            <td>Available via OLM?</td>
+            <td><strong>No</strong>, container image not in public OLM catalog</td>
+          </tr>
+          <tr>
+            <td>Non-RHOAI customers?</td>
+            <td><strong>Yes</strong>, MCPLO ships under the standard OpenShift entitlement; RHOAI is not required to install or use it</td>
+          </tr>
+          <tr>
+            <td>Minimum subscription</td>
+            <td><strong>Standard OpenShift entitlement</strong>. RHOAI entitlement adds Registry, Authorino, and Limitador on top; it is not a prerequisite for MCPLO itself.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The first two rows above (OperatorHub, OLM) are unchanged from the RHCL hub's Lifecycle Operator page. The last two rows are corrected here: the RHCL source page names an RHOAI-restricted subscription tier as both the "non-RHOAI customers" answer and the minimum subscription; per the Slack architecture decision and the RHOAI Limited FAQ, that is not accurate for MCPLO.</p>
+
+      <h2>Update Delivery</h2>
+      <p>Today's actual mechanism and the FAQ's described target model differ, because productization (<a href="https://issues.redhat.com/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a>) has not started in engineering yet.</p>
+      <ul>
+        <li><strong>Today (actual):</strong> MCPLO is a standalone, manually-installed operator. "Updating" means re-applying a newer <code>install.yaml</code> release from the upstream GitHub repo. There is no OLM update channel.</li>
+        <li><strong>Target model (per the RHOAI Limited FAQ, not yet implemented):</strong> once productized as a DSC component, MCPLO would ship bundled within RHOAI operator releases. Connected clusters would receive updates automatically via RHOAI operator updates; disconnected clusters would update via the official RHOAI offline/disconnected installation bundle. The RHOAI operator engineering team would receive new MCPLO versions from the OCP team and bundle them into RHOAI operator releases.</li>
+        <li><strong>Upstream alternative:</strong> the upstream kubernetes-sigs project is public and usable independently by customers who want to bring their own MCP servers without a downstream RHOAI distribution.</li>
+      </ul>
+
+      <h2>Disconnected Catalog Delivery (Open Question)</h2>
+      <div class="callout callout--gap">
+        <div class="callout__title">Open: no oc-mirror equivalent defined yet</div>
+        <p>Raised in the RHOAI Limited FAQ: "How will the MCP server catalog be delivered to disconnected customers? Is there an equivalent to <code>oc-mirror</code> that mirrors the MCP catalog in disconnected mode?" No answer has been provided yet; this affects both MCPLO (which deploys from the catalog) and the MCP Catalog surface itself.</p>
+        <p style="margin-bottom: 0;">The requirements research for this hub recommends, as a P0 item, packaging the MCP server catalog as an OCI artifact (following the OLM File-Based Catalog pattern) with <code>oc-mirror</code> support via <code>ImageSetConfiguration</code> additional images, plus an offline catalog UI reading from a local or mirrored source. None of this exists today.</p>
+      </div>
+
+      <h2>OCP 5.0: RHOAI Limited Install Flow (Future)</h2>
+      <p>Per this hub's roadmap profile, OCP 5.0 is planned to include MCP Servers, the MCP Gateway, and MCPLO via a <strong>RHOAI Limited</strong> entitlement, with an install flow that presents RHOAI with capability toggles (Inference, Gateway, Guardrails, MCPLO on/off). This is a forward-looking roadmap statement, not a shipped mechanism; treat it as directional.</p>
+
+      <h2>OLS Transition: A Related Entitlement Question</h2>
+      <p>OpenShift Lightspeed (OLS) currently uses its own internal OCP MCP server. When MCPLO is productized, OLS plans to remove that internal server and ask users to install the OCP MCP server via MCPLO instead. This raises entitlement questions directly relevant to this page, still open as of 2026-07-11:</p>
+      <ul>
+        <li>What is the transition timeline?</li>
+        <li>Does this mean all OLS users need RHOAI installed, even if just a limited-use entitlement?</li>
+        <li>What happens to "continued same experience" for existing OLS users?</li>
+      </ul>
+      <p>In the Slack discussion, Calum Murray confirmed OLS's current internal-server behavior, Gaurav Singh confirmed the transition plan exists, Steve Gordon clarified that OCP customers should not have to think about an RHOAI Limited SKU for platform-internal applied-AI use cases, and Joshua Wilson raised a concern about OLS potentially carrying a cost as a result. None of this is resolved.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/qa-mcplo-installation-distribution.md">qa-mcplo-installation-distribution.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcplo-key-decisions-from-slack.md">fact-mcplo-key-decisions-from-slack.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/memory/profiles/roadmap.md">memory/profiles/roadmap.md</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/lifecycle-operator.html" target="_blank" rel="noopener">RHCL Knowledge Hub: Lifecycle Operator (source of the stale entitlement claim)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./qualification-security.html">Qualification &amp; Security</a></li>
+            <li><a href="./gateway-integration.html">Gateway Integration</a></li>
+            <li><a href="../build/installation.html">Installation</a></li>
+            <li><a href="../reference.html">Quick Reference</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

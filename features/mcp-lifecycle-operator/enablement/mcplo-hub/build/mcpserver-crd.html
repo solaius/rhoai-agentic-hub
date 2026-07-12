@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCPServer CRD Reference | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>MCPServer CRD Reference</h1>
+      <p class="lead">The <code>MCPServer</code> custom resource (<span class="mono">mcp.x-k8s.io/v1alpha1</span>) is MCPLO's single deployment primitive. Its current schema, verified against the upstream CRD 2026-07-10, nests configuration under <code>source</code>, <code>config</code>, and <code>runtime</code>. It is not a flat spec.</p>
+
+      <h2>Full Example</h2>
+      <pre><code>apiVersion: mcp.x-k8s.io/v1alpha1
+kind: MCPServer
+metadata:
+  name: ocp-mcp
+  namespace: my-mcp
+spec:
+  source:
+    type: ContainerImage
+    containerImage:
+      ref: registry.redhat.io/openshift-mcp-beta/openshift-mcp-server-rhel9:0.2
+  config:
+    port: 8080
+    path: /mcp
+    arguments:
+    - --config
+    - /etc/mcp-config/config.toml
+    storage:
+    - path: /etc/mcp-config
+      permissions: ReadOnly
+      source:
+        configMap:
+          name: openshift-mcp-server-config
+  runtime:
+    security:
+      serviceAccountName: mcp-viewer</code></pre>
+      <p class="source-ref">Verbatim from the MCP Management Knowledge Hub's Configuration Reference page, verified against the upstream CRD 2026-07-10.</p>
+
+      <h2>Field Reference</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Type / Values</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>spec.source.type</code></td>
+            <td><code>ContainerImage</code></td>
+            <td>Selects the source type for the MCP server workload. Currently the only supported value.</td>
+          </tr>
+          <tr>
+            <td><code>spec.source.containerImage.ref</code></td>
+            <td>OCI image reference</td>
+            <td>The container image to run, e.g. <code>registry.redhat.io/openshift-mcp-beta/openshift-mcp-server-rhel9:0.2</code>.</td>
+          </tr>
+          <tr>
+            <td><code>spec.config.port</code></td>
+            <td>integer</td>
+            <td>Container port the MCP server listens on.</td>
+          </tr>
+          <tr>
+            <td><code>spec.config.path</code></td>
+            <td>string</td>
+            <td>HTTP path for the MCP endpoint, e.g. <code>/mcp</code>.</td>
+          </tr>
+          <tr>
+            <td><code>spec.config.arguments</code></td>
+            <td>list of strings</td>
+            <td>Command-line arguments passed to the server process.</td>
+          </tr>
+          <tr>
+            <td><code>spec.config.storage</code></td>
+            <td>list of objects (<code>path</code>, <code>permissions</code>, <code>source</code>)</td>
+            <td>ConfigMap or Secret mounts. The operator validates referenced ConfigMap/Secret existence before rollout.</td>
+          </tr>
+          <tr>
+            <td><code>spec.runtime.security.serviceAccountName</code></td>
+            <td>string</td>
+            <td>RBAC scoping for the workload. The operator cannot auto-create ServiceAccounts, a deliberate security decision; users bring their own SA with appropriate RBAC bindings. Defaults to the namespace's default SA if omitted.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Auto-Created Resources</h2>
+      <p>All auto-created resources share the <code>MCPServer</code>'s name:</p>
+      <ul>
+        <li><strong>Deployment</strong>: security-hardened by default (non-root, read-only rootfs, all capabilities dropped, seccomp RuntimeDefault)</li>
+        <li><strong>Service</strong>: cluster-internal discovery</li>
+        <li><strong>NetworkPolicy</strong>: ingress-only on the configured port (reconciled automatically since upstream v0.2.0)</li>
+        <li><strong>Pods</strong>: labeled <span class="mono">mcp-server=&lt;name&gt;</span></li>
+      </ul>
+
+      <h2>Status Conditions &amp; Discovery</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Status field</th>
+            <th>Meaning</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Accepted</code> (reason: Valid)</td>
+            <td>Config validation passed. If a referenced ConfigMap/Secret does not exist, this is set to <code>False</code> with a clear error message instead of creating a broken deployment.</td>
+          </tr>
+          <tr>
+            <td><code>Ready</code> (reason: Available)</td>
+            <td>Deployment is available and the MCP protocol handshake succeeded.</td>
+          </tr>
+          <tr>
+            <td><code>status.deploymentName</code>, <code>status.serviceName</code></td>
+            <td>Names of the auto-created Deployment and Service.</td>
+          </tr>
+          <tr>
+            <td><code>status.address.url</code></td>
+            <td>Cluster-internal MCP endpoint, pattern <span class="mono">http://&lt;name&gt;.&lt;namespace&gt;.svc.cluster.local:&lt;port&gt;/mcp</span>. Still <span class="mono">http://</span>, not <span class="mono">https://</span>, today; see <a href="../govern/qualification-security.html">Qualification &amp; Security</a> for the in-cluster TLS gap.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p><code>kubectl get mcpservers</code> shows: <span class="mono">READY, ACCEPTED, IMAGE, PORT, ADDRESS</span>.</p>
+
+      <h2>Validation Behavior</h2>
+      <ul>
+        <li>Missing ConfigMap/Secret references produce a permanent <code>Accepted=False</code> validation error (no requeue); other, transient errors get exponential backoff.</li>
+        <li>Injects a default TCP socket readiness probe if none is specified.</li>
+        <li>Performs an MCP protocol-level handshake beyond the TCP health check: once the Deployment is available, connects via StreamableClientTransport (10s timeout), sends an Initialize request, and extracts server info and capabilities. Auth errors (401/403) count as reachable.</li>
+      </ul>
+
+      <h2>Prerequisites</h2>
+      <p>Kubernetes v1.28+.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcpserver-crd.md">fact-mcpserver-crd.md</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/build/configuration-reference.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Configuration Reference</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./installation.html">Installation</a></li>
+            <li><a href="../understand/architecture.html">Architecture</a></li>
+            <li><a href="../govern/qualification-security.html">Qualification &amp; Security</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

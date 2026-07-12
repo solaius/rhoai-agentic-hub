@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supported Servers &amp; Troubleshooting | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Supported Servers &amp; Troubleshooting</h1>
+      <p class="lead">Which MCP servers MCPLO deploys today, plus MCPLO's own operator dependencies, defaults, and its most common failure mode.</p>
+
+      <h2>Supported MCP Servers</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Server</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OpenShift</td>
+            <td><span class="badge badge--shipped">Available</span></td>
+          </tr>
+          <tr>
+            <td>Ansible AAP</td>
+            <td><span class="badge badge--shipped">Available</span></td>
+          </tr>
+          <tr>
+            <td>Red Hat Insights</td>
+            <td><span class="badge badge--shipped">Available</span></td>
+          </tr>
+          <tr>
+            <td>Red Hat Satellite</td>
+            <td><span class="badge badge--planned">WIP</span></td>
+          </tr>
+          <tr>
+            <td>Linux/RHEL</td>
+            <td><span class="badge badge--planned">WIP</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">This list reflects the MCP servers the catalog presents for MCPLO deployment; it is not an exhaustive list of every server that can run under an <code>MCPServer</code> CR (any container-image MCP server can, in principle, be pointed at by <code>spec.source.containerImage.ref</code>).</p>
+
+      <h2>Operator Behavior: Dependencies &amp; Defaults</h2>
+      <p>The following is drawn from an internal, anonymized field Q&amp;A (the "FAQ on RHOAI Limited," an internal collaborative FAQ fielded July 2026), not a customer-facing document. It answers questions PMs and field teams asked directly about MCPLO's install-time behavior.</p>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Q: Does the MCP Lifecycle Operator depend on the MCP Gateway?</div>
+        <p style="margin-bottom: 0;">No. MCPLO has no installation dependency on the MCP Gateway. It is installed first (or alongside RHOAI) to manage server deployment, while the MCP Gateway is downstream for routing traffic to deployed servers.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Q: Does it deploy any MCP servers by default?</div>
+        <p style="margin-bottom: 0;">No. Installing MCPLO does not automatically deploy any MCP servers.</p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Q: Can servers be installed after MCPLO is set up?</div>
+        <p style="margin-bottom: 0;">Yes. The operator provides configuration options (catalog UI or CRDs) for deploying and managing additional MCP servers as Day 2 operations. During installation, the full MCP catalog is displayed and users select which servers and tools to install.</p>
+      </div>
+
+      <h2>Troubleshooting: Operator Pods Crashlooping</h2>
+      <div class="issue" style="margin-bottom: var(--space-2xl); padding: var(--space-lg); background: var(--bg-card); border-left: 4px solid var(--rh-red); border-radius: 4px;">
+        <h3 style="margin-top: 0; color: var(--rh-red);">Operator Pods Crashlooping</h3>
+        <div style="margin-top: var(--space-lg);">
+          <h4 style="color: var(--text-secondary); font-size: var(--fs-body); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-sm);">Symptom</h4>
+          <p>MCP Lifecycle Operator or MCP Gateway Operator pods crashloop with CRD-related errors.</p>
+        </div>
+        <div style="margin-top: var(--space-lg);">
+          <h4 style="color: var(--text-secondary); font-size: var(--fs-body); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-sm);">Cause</h4>
+          <p>Missing CRD dependency. For example, deploying <code>MCPServer</code> CRs before MCPLO is installed, or deploying <code>MCPGatewayExtension</code> before Gateway API CRDs are present.</p>
+        </div>
+        <div style="margin-top: var(--space-lg);">
+          <h4 style="color: var(--text-secondary); font-size: var(--fs-body); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-sm);">Fix</h4>
+          <p>Verify installation order. Ensure all Tier 1 operators are healthy before installing Tier 2:</p>
+          <pre><code># Check Gateway API CRDs
+oc get crd gateways.gateway.networking.k8s.io
+
+# Check MCPLO installation
+oc get pods -n mcp-lifecycle-operator-system
+
+# Check Kuadrant
+oc get kuadrant -n gateway-system
+
+# If CRDs are missing, install in the correct order:
+# 1. Service Mesh
+# 2. cert-manager
+# 3. RHCL (Kuadrant)
+# 4. RHOAI
+# 5. MCPLO
+# 6. MCP Gateway Operator</code></pre>
+        </div>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">More Troubleshooting</div>
+        <p style="margin-bottom: 0;">This issue is one of ten cataloged in the <a href="../../../mcp-ecosystem/hub/build/troubleshooting.html" target="_blank" rel="noopener">MCP Management Knowledge Hub's Troubleshooting page</a>, which also covers Playground integration, Gateway auth, and namespace/ConfigMap gaps outside MCPLO's own scope.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/qa-mcplo-dependencies-defaults.md">qa-mcplo-dependencies-defaults.md</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/build/troubleshooting.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Troubleshooting</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/lifecycle-operator.html" target="_blank" rel="noopener">RHCL Knowledge Hub: Lifecycle Operator (supported servers table)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./installation.html">Installation</a></li>
+            <li><a href="./mcpserver-crd.html">MCPServer CRD Reference</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
