@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Integrations | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Integrations</h1>
+      <p class="lead">The MCP Registry does not stand alone: it is designed to sit between the MCP Lifecycle Operator, the MCP Catalog, and the MCP Gateway, governing what each of them does without deploying, discovering, or routing anything itself. This page maps the three Registry-facing integration flows, each flow's Jira tracking and timing, and the open questions still blocking a full answer.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Design, not delivery</div>
+        <p style="margin-bottom: 0;">
+          None of the flows below are running in a shipped product today. "Design resolved" means a design decision
+          has been made, not that code exists. "Planned" timing reflects the current release-train intent (Tech
+          Preview targeted RHOAI 3.6 EA1, GA targeted RHOAI 3.6, code freeze October 23, 2026), not a shipped
+          Dev Preview.
+        </p>
+      </div>
+
+      <h2>Integration Map</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Mechanism</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MCPLO</strong></td>
+            <td><strong>Registry</strong></td>
+            <td>MCPLO auto-registers deployed servers as "discovered" entries using <code>update_mode: SYSTEM_MANAGED</code> (vs. <code>MANUAL</code> for admin-entered records)</td>
+            <td><span class="badge badge--planned">Design resolved</span></td>
+          </tr>
+          <tr>
+            <td><strong>Catalog</strong></td>
+            <td><strong>Registry</strong></td>
+            <td>Catalog-discovered servers are submitted to the Registry for governance tracking; the Registry's lifecycle state flows back to enrich the Catalog UI</td>
+            <td><span class="badge badge--planned">Planned (3.6 EA1)</span><br><small>RHAISTRAT-2027</small></td>
+          </tr>
+          <tr>
+            <td><strong>Registry</strong></td>
+            <td><strong>Gateway</strong></td>
+            <td>Approval workflow auto-configures Gateway routing and auth policies</td>
+            <td><span class="badge badge--planned">Planned (GA target)</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">This table is the Registry-relevant slice of the ecosystem's full integration map; the Catalog-to-Lifecycle-Operator and Studio-to-Gateway flows are tracked on the Management Knowledge Hub, not here, because neither touches the Registry directly.</p>
+
+      <h2>The Three Flows</h2>
+
+      <h3>Flow: MCPLO &rarr; Registry (Design Resolved)</h3>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">MCPLO deploys MCP server</div>
+          <div class="flow-step__subtitle">Pod + Service created</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">MCPLO auto-registers server</div>
+          <div class="flow-step__subtitle">Creates a "discovered" entry in the Registry</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title"><code>update_mode: SYSTEM_MANAGED</code></div>
+          <div class="flow-step__subtitle">Only description and tags remain user-editable</div>
+        </div>
+      </div>
+      <p>
+        An earlier open question asked whether the MCP Lifecycle Operator should create read-only, system-managed
+        registry entries (Chris Hambridge and Matt Prahl feedback on the data model proposal comments). It is answered
+        in the current design: the <code>MCPUpdateMode</code> enum (<code>MANUAL</code> vs. <code>SYSTEM_MANAGED</code>)
+        governs whether a registry entry's mutable fields are user-edited or kept in sync by another system. MCPLO
+        auto-registers deployed servers as "discovered" entries with <code>update_mode: SYSTEM_MANAGED</code>,
+        distinct from <code>MANUAL</code> records an admin enters by hand.
+      </p>
+      <p class="source-ref">
+        Tracked under <a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a>
+        (Operational Governance), the in-flight strategy feature covering how the Registry becomes the operational
+        source of truth for every MCP server in use; no separate Jira key is broken out for this specific mechanism.
+      </p>
+
+      <h3>Flow: Catalog &harr; Registry (Planned, RHOAI 3.6 EA1)</h3>
+      <p>
+        MCP servers configured in the Catalog can be registered into the Registry for governance tracking. Tracked as
+        <a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>,
+        which supersedes a closed and obsolete predecessor (RHAISTRAT-1938), with fix version RHOAI 3.6 EA1. Current
+        scope delivers lifecycle-status enrichment only; approval, verification, and certification tracks are
+        proposed but not yet modeled (see <a href="./lifecycle-governance.html">Lifecycle &amp; Governance</a> for the
+        bounded four-track proposal).
+      </p>
+      <ul>
+        <li><strong>Registration:</strong> Catalog-discovered servers are submitted to the Registry for governance tracking.</li>
+        <li><strong>Governance metadata:</strong> The Registry adds <code>MCPServerStatus</code> / <code>MCPPublishState</code> lifecycle state; approval, certification, and ownership tracks are proposed but not yet modeled in the current data model.</li>
+        <li><strong>Lifecycle-status enrichment:</strong> The Registry's lifecycle state (active or deprecated) informs how servers are surfaced back in the Catalog UI; trust tiers and verification status are a later-phase capability, not delivered by this integration.</li>
+        <li><strong>Deprecation tracking:</strong> Registry lifecycle state (deprecated or retired) can signal servers that should be removed from active use.</li>
+      </ul>
+      <div class="callout callout--insight">
+        <strong>Key principle:</strong> Flow is always Catalog to Registry for registration, never the reverse. The
+        Registry is the authoritative governance layer; the Catalog is the discovery layer.
+      </div>
+
+      <h3>Flow: Registry &rarr; Gateway (Planned, GA target)</h3>
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="flow-step__title">MCP server registered</div>
+          <div class="flow-step__subtitle">In the Registry (manual or auto)</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Approval workflow</div>
+          <div class="flow-step__subtitle">Governance review and approval</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step flow-step--highlight">
+          <div class="flow-step__title">Registry updates Gateway</div>
+          <div class="flow-step__subtitle">Auto-config MCPGatewayExtension</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-step">
+          <div class="flow-step__title">Gateway routes traffic</div>
+          <div class="flow-step__subtitle">Tools visible to Studio</div>
+        </div>
+      </div>
+      <p>
+        Today, an admin manually registers a deployed server with the Gateway via an <code>MCPServerRegistration</code>
+        CRD and manually updates the <code>gen-ai-aa-mcp-servers</code> ConfigMap. The target design replaces that
+        manual bridge: once a Registry record clears approval, the Registry auto-configures Gateway routing and auth
+        policy directly, with no manual ConfigMap and no cluster-admin privileges required for that step.
+      </p>
+      <p class="source-ref">
+        Auto-config timing is a GA target, tracked under
+        <a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a>
+        (General Availability), aligned to RHOAI 3.6 (code freeze October 23, 2026). Until then, this remains the
+        current governance gap called out on the RHCL hub: the manual ConfigMap bridge is the only integration point
+        between deployed MCP servers and Gen AI Studio.
+      </p>
+
+      <h2>Open Questions</h2>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Resolved: MCPLO write access to the Registry</div>
+        <p style="margin-bottom: 0;">
+          "Should MCPLO create read-only 'discovered' registry entries, or get full governance write access?" is
+          resolved via <code>update_mode</code> (<code>MANUAL</code> vs. <code>SYSTEM_MANAGED</code>); see the MCPLO
+          &rarr; Registry flow above. This was the third of three open questions on registry state propagation; the
+          other two remain open below.
+        </p>
+      </div>
+
+      <h3>State propagation to Gateway and Catalog</h3>
+      <ul>
+        <li>How should Registry-governed state inform Gateway behavior? For example, should an unapproved or unverified server be routable at all, or should the Gateway only ever see approved records?</li>
+        <li>How should Registry state influence Catalog surfacing? For example, does a not-yet-published record show up next to a published one, or stay hidden until it clears governance? (This question predates the current two-enum model, whose <code>MCPPublishState</code> has no separate "Candidate" step; the underlying surfacing question is unchanged even though the original wording referenced states the current model does not have.)</li>
+      </ul>
+      <p class="source-ref">Source: question-mcp-registry-state-propagation.md, open since 2026-07-06.</p>
+
+      <h3>MLflow / Databricks upstream scope split</h3>
+      <p>
+        A separate, open scoping question sits upstream of the propagation questions above: how much of the Registry
+        design goes into the initial MLflow upstream proposal now, versus later. Databricks' review process favors
+        small, focused PRs, which is in tension with proposing the full four-track governance model in one step. That
+        tension is one reason the current design scope collapsed to two enums plus an update mode rather than
+        proposing all four tracks at once, and it is not yet resolved for what comes after the initial cut.
+      </p>
+      <p class="source-ref">Source: question-mlflow-upstream-registry-scope.md, open since 2026-07-06.</p>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/govern/component-integration.html">Management hub: govern/component-integration.html (data-verified 2026-07-10)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/registry.html">RHCL hub: govern/registry.html (data-verified 2026-07-11)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mcp-registry-state-propagation.md">question-mcp-registry-state-propagation.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mlflow-upstream-registry-scope.md">question-mlflow-upstream-registry-scope.md</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>, <a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a>, <a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./lifecycle-governance.html">Lifecycle &amp; Governance</a></li>
+            <li><a href="../understand/data-model.html">Data Model</a></li>
+            <li><a href="../build/mvp-scope-prototype.html">MVP Scope &amp; Prototype</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/govern/component-integration.html">Management hub: Component Integration</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/registry.html">RHCL hub: MCP Registry</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

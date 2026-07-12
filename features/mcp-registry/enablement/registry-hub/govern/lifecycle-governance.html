@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lifecycle &amp; Governance | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Lifecycle &amp; Governance</h1>
+      <p class="lead">The MCP Registry sits in the middle of a seven-stage lifecycle that runs from discovery through retirement. This page walks that lifecycle end to end, states the current governance model exactly as it exists today (two enums plus an update mode, nothing more), and draws a bounded line around what is proposed for later versus what is real now.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Nothing on this page is shipped</div>
+        <p style="margin-bottom: 0;">
+          The Registry has no code and no shipped Dev Preview. "Today" below means RHOAI 3.4, the last shipped state.
+          "Target" means the current design intent the Registry is working toward on the way to Tech Preview (targeted
+          RHOAI 3.6 EA1); it is not a claim about RHOAI 3.5, which does not carry a Registry Dev Preview.
+        </p>
+      </div>
+
+      <h2>Full Lifecycle Stages</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">Discover</div>
+          <div class="flow-box__desc">Catalog</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Deploy</div>
+          <div class="flow-box__desc">MCPLO</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Register</div>
+          <div class="flow-box__desc">Registry</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Configure</div>
+          <div class="flow-box__desc">Gateway</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Consume</div>
+          <div class="flow-box__desc">Studio</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Monitor</div>
+          <div class="flow-box__desc">Observability</div>
+        </div>
+        <div class="flow-arrow"></div>
+        <div class="flow-box">
+          <div class="flow-box__title">Retire</div>
+          <div class="flow-box__desc">Deprecation</div>
+        </div>
+      </div>
+      <p>
+        Each stage names the component that owns it today or is intended to own it. Register is the Registry's own
+        stage; Configure and Consume are where a Registry-driven design would change behavior in the Gateway and
+        Gen AI Studio without either of those components being replaced.
+      </p>
+
+      <h2>Today (3.4) vs Target (Design)</h2>
+      <div class="two-column" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin: var(--space-lg) 0;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: var(--space-lg);">
+          <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-md);">Today (3.4)</h3>
+          <table class="status-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Mechanism</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Discover</strong></td>
+                <td>MCP Catalog UI (manual browsing)</td>
+              </tr>
+              <tr>
+                <td><strong>Deploy</strong></td>
+                <td>MCPLO creates Deployment + Service from MCPServer CRD</td>
+              </tr>
+              <tr>
+                <td><strong>Register</strong></td>
+                <td><span class="badge badge--gap">Manual</span> Admin registers server with Gateway via CRD; there is no registry to register with today</td>
+              </tr>
+              <tr>
+                <td><strong>Configure</strong></td>
+                <td><span class="badge badge--gap">Manual ConfigMap</span> <code>gen-ai-aa-mcp-servers</code> in <code>redhat-ods-applications</code></td>
+              </tr>
+              <tr>
+                <td><strong>Consume</strong></td>
+                <td>Gen AI Studio reads ConfigMap, exposes tools to playground</td>
+              </tr>
+              <tr>
+                <td><strong>Monitor</strong></td>
+                <td>Per-server logs, no unified observability</td>
+              </tr>
+              <tr>
+                <td><strong>Retire</strong></td>
+                <td>Manual deletion of MCPServer CRD, manual ConfigMap cleanup</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 6px; padding: var(--space-lg);">
+          <h3 style="font-family: var(--font-sans); font-size: var(--fs-h2); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-md);">Target (Design)</h3>
+          <table class="status-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Mechanism</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Discover</strong></td>
+                <td>MCP Catalog UI, enhanced with lifecycle-status enrichment sourced from the Registry</td>
+              </tr>
+              <tr>
+                <td><strong>Deploy</strong></td>
+                <td>MCPLO creates Deployment + Service, then auto-registers the server in the Registry</td>
+              </tr>
+              <tr>
+                <td><strong>Register</strong></td>
+                <td><span class="badge badge--tp">Auto</span> Registry creates a governed record; approval workflow gates it</td>
+              </tr>
+              <tr>
+                <td><strong>Configure</strong></td>
+                <td><span class="badge badge--tp">Auto</span> Registry approval flows into Gateway configuration</td>
+              </tr>
+              <tr>
+                <td><strong>Consume</strong></td>
+                <td>Gen AI Studio reads from the Registry API, no ConfigMap needed</td>
+              </tr>
+              <tr>
+                <td><strong>Monitor</strong></td>
+                <td>Unified observability: per-tool metrics, health status, usage analytics</td>
+              </tr>
+              <tr>
+                <td><strong>Retire</strong></td>
+                <td>Registry lifecycle state moves to deprecated, then retired (auto-revokes Gateway access)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout callout--insight">
+        <strong>Key difference:</strong> Today, each handoff (Deploy to Register to Configure) requires manual admin
+        intervention. The target design makes the Registry the single source of truth that drives automation across
+        the rest of the ecosystem, without the Registry deploying or enforcing anything itself.
+      </div>
+
+      <h2>Current Governance Model (Two Enums, Not Four Tracks)</h2>
+      <p>The MCP Registry's current data model uses two independent enums plus an update mode. It does not use the four-track governance model described in early design proposals; that model is a separate, clearly-bounded proposal covered further down this page.</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Enum</th>
+            <th>States</th>
+            <th>Scope</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">MCPServerStatus</td>
+            <td>active, deprecated, retired</td>
+            <td>Asset-level (server)</td>
+          </tr>
+          <tr>
+            <td class="mono">MCPPublishState</td>
+            <td>draft, published, deprecated, retired</td>
+            <td>Version-level</td>
+          </tr>
+          <tr>
+            <td class="mono">MCPUpdateMode</td>
+            <td>MANUAL, SYSTEM_MANAGED</td>
+            <td>Controls whether a controller (for example, the MCP Lifecycle Operator) can system-manage the record</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">This is the whole current governance surface: two enums plus an update mode. No <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field exists in the current model. See <a href="../understand/data-model.html">Data Model</a> for the full entity and property list.</p>
+
+      <h2>Governance Invariants</h2>
+      <ul>
+        <li><code>MCPServerStatus</code> and <code>MCPPublishState</code> are independent enums; no approval, verification, or certification field exists in the current model to gate either transition.</li>
+        <li><code>workspace</code> on a version resolves to the same value as the parent <code>MCPServer.workspace</code>.</li>
+        <li><code>update_mode</code> (<code>MANUAL</code> or <code>SYSTEM_MANAGED</code>) controls whether a controller such as MCPLO may write to the record; it does not itself change lifecycle or publish state.</li>
+      </ul>
+
+      <h2>Registry-Owned vs Catalog-Surfaced State</h2>
+      <p>
+        The Registry, not the Catalog, is the authoritative owner of governance state. The Catalog only ever reflects
+        a narrow slice of that state back to its own UI; it never holds an independent copy of it.
+      </p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>State</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Registry-owned (canonical)</strong></td>
+            <td><code>MCPServerStatus</code> (active, deprecated, retired), <code>MCPPublishState</code> (draft, published, deprecated, retired), <code>update_mode</code>, and the immutable <code>server_json</code> payload</td>
+          </tr>
+          <tr>
+            <td><strong>Catalog-surfaced (derived, read-only)</strong></td>
+            <td>Lifecycle-status enrichment only: active/deprecated flagging sourced from the Registry's <code>MCPServerStatus</code>. Trust tiers and verification status are <em>not</em> surfaced; that remains out of scope until the four-track model below ships.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The Catalog-Registry integration that carries this enrichment is planned for RHOAI 3.6 EA1 (<a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>); see <a href="./integrations.html">Integrations</a> for the full flow. Flow is always Catalog to Registry for registration, and Registry to Catalog for status enrichment; the Registry is the authoritative governance layer, the Catalog is the discovery layer, and the direction never reverses.</p>
+
+      <h2>Phasing: Current Model vs Post-MVP Proposal</h2>
+      <div class="callout callout--gap">
+        <div class="callout__title">Proposed: four-track model (deferred, not shipped)</div>
+        <p>
+          Earlier design drafts described four independent governance tracks (lifecycle, approval, verification, and
+          certification), each with its own state enumeration. <strong>That is a deferred proposal, not the current
+          model.</strong> It comes from the MLflow MCP Registry Data Model Proposal, a brain-dump-stage document, not
+          a finalized design. Nothing in this section is implemented and nothing here belongs in the current-model
+          tables above.
+        </p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Proposed Track</th>
+              <th>Proposed States</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Lifecycle State</td>
+              <td>Draft &rarr; Candidate &rarr; Published &rarr; Deprecated &rarr; Retired</td>
+            </tr>
+            <tr>
+              <td>Approval Status</td>
+              <td>Draft &rarr; Pending &rarr; Approved &rarr; Rejected &rarr; Revoked</td>
+            </tr>
+            <tr>
+              <td>Verification Status</td>
+              <td>Unverified &rarr; Verified</td>
+            </tr>
+            <tr>
+              <td>Certification Status</td>
+              <td>None &rarr; Candidate &rarr; Certified &rarr; Expired &rarr; Revoked</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom: 0;">
+          The proposal's design intent: a version could be verified but not yet approved, or approved but not yet
+          certified, independent progression per track, constrained by one governance invariant:
+          <code>lifecycle_state=PUBLISHED</code> implies <code>approval_status=APPROVED</code>; a <code>REJECTED</code>
+          or <code>REVOKED</code> approval status cannot coexist with a <code>PUBLISHED</code> lifecycle state.
+        </p>
+      </div>
+
+      <div class="callout callout--source">
+        <div class="callout__title">Not abandoned, deferred</div>
+        <p style="margin-bottom: 0;">
+          A doc comment thread on the proposal states the phasing intent directly: "For MVP/DP we should follow the
+          same path as they are taking for the skills registry upstream to speed up approval/implementation... we
+          should follow immediately after with the governance implementation as proposed here." That is the source of
+          the current scope: the lighter two-enum model ships first, following the same lighter-weight path taken for
+          the upstream skills registry, with the fuller four-track model planned as a deliberate follow-on, not a
+          scrapped idea.
+        </p>
+      </div>
+
+      <p style="color: var(--text-secondary);">
+        The four-track proposal also supersedes an even older, pre-proposal linear seven-state governance flow (Draft
+        &rarr; Candidate &rarr; Verified &rarr; Approved &rarr; Published &rarr; Deprecated &rarr; Retired) that was
+        documented before the four-track split. That linear seven-state flow was a governance-state sequence for a
+        single server version; it is unrelated to the seven ecosystem lifecycle stages (Discover through Retire) at
+        the top of this page, which describe stages across components, not governance states on one record. Neither
+        the old linear flow nor the four-track split is what the current two-enum model implements; both are
+        historical or proposed, not current.
+      </p>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/govern/lifecycle-flow.html">Management hub: govern/lifecycle-flow.html (data-verified 2026-07-10)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/govern/component-integration.html">Management hub: govern/component-integration.html (data-verified 2026-07-10)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/ref-mlflow-mcp-registry-data-model-proposal.md">ref-mlflow-mcp-registry-data-model-proposal.md</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a> (Operational Governance, the in-flight strategy feature this data model design supports)</li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a> (Catalog-Registry integration, TP target RHOAI 3.6 EA1)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./integrations.html">Integrations</a></li>
+            <li><a href="../understand/data-model.html">Data Model</a></li>
+            <li><a href="../build/mvp-scope-prototype.html">MVP Scope &amp; Prototype</a></li>
+            <li><a href="../sell/governance-story.html">The Governance Story</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/govern/lifecycle-flow.html">Management hub: Lifecycle Flow</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
