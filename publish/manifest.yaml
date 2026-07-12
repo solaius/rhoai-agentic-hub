@@ -91,3 +91,8 @@
   audience: internal
   title: MCP Lifecycle Operator Knowledge Hub
   description: 16-page enablement site for the MCP Lifecycle Operator (declarative MCP server deployment) across understand/sell/build/govern/plan.
+- source: features/mcp-registry/enablement/registry-hub/
+  dest: mcp-registry/hub/
+  audience: internal
+  title: MCP Registry Knowledge Hub
+  description: 12-page enablement site for the MCP Registry (governance/system-of-record, design phase) across understand/sell/build/govern/plan.

@@ -103,12 +103,7 @@
             <span class="badge badge--gap">Gap</span>
             Registry Not Yet Built
           </h3>
-          <p><strong>Issue:</strong> MCP Registry does not exist in RHOAI 3.4. The governance backbone connecting Catalog, Lifecycle Operator, Gateway, and Gen AI Studio is missing.</p>
-          <p><strong>Impact:</strong> No system of record for MCP lifecycle, approval, certification, or trust. Each component operates in isolation with manual handoffs.</p>
-          <p><strong>Owner:</strong> RHOAI Registry Team</p>
-          <p><strong>Status:</strong> DP planned but will not land in RHOAI 3.5 stable (RHAIRFE-294, RHAIRFE-2421); TP now targeted for RHOAI 3.6 EA1 (PM direction, Jul 2026). <strong>Review by 3.6 EA1</strong>: this gap's status flips once Registry TP lands.</p>
-          <p><strong>Workaround:</strong> Use manual workflows for governance; document MCP servers in spreadsheets or wikis; enforce approval via team processes.</p>
-          <p class="source-ref">Source: MCP Registry Component Doc, Knowledge Registry #27</p>
+          <p>The MCP Registry does not exist in RHOAI 3.4 or 3.5; the governance backbone connecting Catalog, Lifecycle Operator, Gateway, and Gen AI Studio is missing. Dev Preview will not land in RHOAI 3.5 stable; Tech Preview is targeted for RHOAI 3.6 EA1 (owner ruling, 2026-07-11). Full detail, including the workaround and the design-vs-target comparison: <a href="../../../mcp-registry/hub/plan/gaps-open-questions.html">MCP Registry Knowledge Hub: Gaps &amp; Open Questions</a>.</p>
         </div>
 
         <div class="feature-card">
@@ -121,7 +116,7 @@
           <p><strong>Owner:</strong> RHOAI Catalog Team, RHOAI Registry Team</p>
           <p><strong>Status:</strong> Committed direction: three RFEs filed 2026-06-26: RHAIRFE-2514 (Catalog: list STDIO MCPs with local install info), RHAIRFE-2515 (Registry: allow registration/tracking of STDIO MCPs), RHAIRFE-2516 (spec-compliant IDE-native registry API for Cursor/Windsurf/VS Code). Delivery Features RHAISTRAT-2131/2132/2133, status New, no fix version yet.</p>
           <p><strong>Workaround:</strong> None today; STDIO MCP servers must be installed and tracked manually outside the governed Catalog/Registry path.</p>
-          <p class="source-ref">Source: Jira sweep 2026-07-10 (RHAIRFE-2514/2515/2516, RHAISTRAT-2131/2132/2133)</p>
+          <p class="source-ref">Source: Jira sweep 2026-07-10 (RHAIRFE-2514/2515/2516, RHAISTRAT-2131/2132/2133). Catalog-side detail: <a href="../../../mcp-catalog/hub/plan/gaps-open-questions.html">MCP Catalog Knowledge Hub: Gaps &amp; Open Questions</a>. Registry-side detail (RHAISTRAT-2132): <a href="../../../mcp-registry/hub/plan/gaps-open-questions.html">MCP Registry Knowledge Hub: Gaps &amp; Open Questions</a>.</p>
         </div>
 
         <div class="feature-card">
@@ -132,9 +127,9 @@
           <p><strong>Issue:</strong> MCP Registry approval state does not automatically configure MCP Gateway. Manual registration of MCPs in Gateway required even when Registry shows "Approved" state.</p>
           <p><strong>Impact:</strong> Governance and runtime enforcement are disconnected. Approved MCPs do not automatically become available through gateway-secured endpoints.</p>
           <p><strong>Owner:</strong> MCP Gateway Team + MCP Registry Team (integration work)</p>
-          <p><strong>Status:</strong> GA target (Q4 2026); manual registration path remains in 3.5</p>
+          <p><strong>Status:</strong> GA target, tracked under RHAISTRAT-1993 (code freeze Oct 23, 2026); manual registration path remains until then.</p>
           <p><strong>Workaround:</strong> After Registry approval, manually create an MCPServerRegistration CRD for Gateway or apply Gateway configuration YAML.</p>
-          <p class="source-ref">Source: MCP Gateway Roadmap, Knowledge Registry</p>
+          <p class="source-ref">Source: MCP Gateway Roadmap, Knowledge Registry. Registry-side detail and the full target flow: <a href="../../../mcp-registry/hub/plan/gaps-open-questions.html">MCP Registry Knowledge Hub: Gaps &amp; Open Questions</a> and <a href="../../../mcp-registry/hub/govern/integrations.html">MCP Registry Knowledge Hub: Integrations</a>.</p>
         </div>
       </section>
 
@@ -187,6 +182,7 @@
             <li><a href="../build/end-to-end-setup.html">End-to-End Setup</a></li>
             <li><a href="../govern/entitlement.html">Entitlements</a></li>
             <li><a href="../../../mcp-gateway/rhcl/plan/gaps.html">RHCL Hub: Known Gaps</a></li>
+            <li><a href="../../../mcp-registry/hub/plan/gaps-open-questions.html">MCP Registry Hub: Gaps &amp; Open Questions</a></li>
           </ul>
         </div>
       </footer>

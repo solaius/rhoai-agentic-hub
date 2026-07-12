@@ -55,7 +55,7 @@
       <div class="feature-card__header">
         <h3 class="feature-card__title">What We Delivered</h3>
       </div>
-      <p class="feature-card__description"><strong>Full Stack POC:</strong> MCP Gateway + MCP Lifecycle Operator + MCP Catalog (3.4 DP) + MCP Registry (3.5 early access offer). Catalog shipped with 10+ certified partners (Confluent, Dynatrace, Azure, Terraform, EDB) plus Red Hat (OpenShift, Ansible, Insights). Registry early access offered for governance workflows.</p>
+      <p class="feature-card__description"><strong>Full Stack POC:</strong> MCP Gateway + MCP Lifecycle Operator + MCP Catalog (3.4 DP) + MCP Registry (early access offer; Registry Dev Preview will not land in RHOAI 3.5 stable, TP now targeted RHOAI 3.6 EA1). Catalog shipped with 10+ certified partners (Confluent, Dynatrace, Azure, Terraform, EDB) plus Red Hat (OpenShift, Ansible, Insights). Registry early access offered for governance workflows.</p>
       <p class="feature-card__description"><strong>Technical Validation:</strong> Gateway deployed in the customer's local environment (not demo sandbox) for "real world use case" validation. Technical Preview state with support included. Red Hat engineering offered direct engineer access: "should you require an engineer that actually wrote the code for MCP Gateway, I'd be more than happy to get them on a call with you."</p>
       <p class="feature-card__description"><strong>Deployment Confidence:</strong> "Gateway can be deployed anywhere... you get a real feel for the product instead of doing it in some demo environment where everything's optimal anyways. Going into your own environment gives you a real world use case and it's the most important part of it." (Red Hat engineering, May 2026)</p>
       <div class="feature-card__why">
@@ -117,7 +117,7 @@
         <div class="feature-card__why-title">What We Fixed</div>
         <ul>
           <li><strong>Documented the undocumented:</strong> End-to-end minimal path now captured in knowledge docs (7 steps from operator install to playground usage).</li>
-          <li><strong>Identified gaps for 3.5:</strong> ConfigMap bridge will be replaced by registry integration in RHOAI 3.5. Catalog prerequisite creation is on 3.5 roadmap.</li>
+          <li><strong>Identified gaps, now retargeted:</strong> ConfigMap bridge will be replaced by registry integration once Registry TP lands (retargeted from the original 3.5 plan to RHOAI 3.6 EA1). Catalog prerequisite creation (RHAIRFE-2434) is likewise now targeted for 3.6 EA1, not 3.5.</li>
           <li><strong>Validated the happy path:</strong> Another engineer's comprehensive guide (full Gateway + Keycloak + Vault setup) now cross-referenced with this minimal path — users can choose their level of complexity.</li>
         </ul>
       </div>
@@ -139,7 +139,7 @@
       <p><strong>Gateway-specific stories:</strong> the OEM identity/token walkthrough and hardware-partner gap analysis above are ecosystem-level summaries. For the fuller Gateway-specific customer stories, see the <a href="../../../mcp-gateway/rhcl/sell/customer-stories.html">RHCL hub's Customer Stories</a>, the canonical source for Gateway engagements.</p>
     </div>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

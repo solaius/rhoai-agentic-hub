@@ -1,0 +1,16 @@
+# Source list for hub.refresh-site. Tracked and PUBLIC.
+site: features/mcp-registry/enablement/registry-hub/
+sources:
+  gdocs:
+  - {id: 11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y, title: MCP Registry MVP Requirements}
+  - {id: 1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8, title: MCP Registry Data Model Proposal}
+  jira:
+    jql: (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")
+  slack:
+    channels: [forum-ai-asset-management]
+    window_days: 14
+  local:
+  - features/mcp-registry/knowledge/
+sections:
+  jtbd: true
+  jira_tracker: {project: RHAISTRAT}

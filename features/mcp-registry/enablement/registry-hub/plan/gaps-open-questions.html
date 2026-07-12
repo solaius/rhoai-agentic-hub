@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gaps &amp; Open Questions | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Gaps &amp; Open Questions</h1>
+      <p class="lead">What is missing because the MCP Registry does not exist yet, what is still undecided in its data model, and what has already been resolved. Scope: the Registry-owned and Registry-co-owned gaps and questions from the Management Knowledge Hub's cross-cutting log, cross-checked against this feature's own fresh Jira sweep (swept 2026-07-12) and knowledge entries.</p>
+
+      <section>
+        <h2>Known Gaps</h2>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            MCP Registry Not Yet Built
+          </h3>
+          <p><strong>Issue:</strong> The MCP Registry does not exist in RHOAI 3.4 or 3.5. The governance backbone connecting the Catalog, the Lifecycle Operator, the Gateway, and Gen AI Studio is missing.</p>
+          <p><strong>Impact:</strong> No system of record for MCP lifecycle, approval, certification, or trust. Each component operates in isolation with manual handoffs; see <a href="../govern/lifecycle-governance.html">Lifecycle &amp; Governance</a> for the full Today vs. Target comparison.</p>
+          <p><strong>Owner:</strong> RHOAI Registry Team</p>
+          <p><strong>Status:</strong> Dev Preview planned but will not land in RHOAI 3.5 stable (<a href="https://issues.redhat.com/browse/RHAIRFE-294" target="_blank" rel="noopener">RHAIRFE-294</a>, <a href="https://issues.redhat.com/browse/RHAIRFE-2421" target="_blank" rel="noopener">RHAIRFE-2421</a>); Tech Preview targeted for RHOAI 3.6 EA1 (owner ruling, 2026-07-11). This gap's status flips once Registry TP lands.</p>
+          <p><strong>Workaround:</strong> Manual workflows for governance: document MCP servers in spreadsheets or wikis, enforce approval via team process.</p>
+          <p class="source-ref">Source: Management Knowledge Hub, plan/gaps.html ("Registry Not Yet Built," data-verified 2026-07-12).</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            Registry&rarr;Gateway Auto-Config Missing
+          </h3>
+          <p><strong>Issue:</strong> Registry approval state does not automatically configure the MCP Gateway. Manual registration in the Gateway is required even once a Registry design exists and a record clears approval.</p>
+          <p><strong>Impact:</strong> Governance and runtime enforcement stay disconnected. Approved MCPs do not automatically become available through gateway-secured endpoints. See the <a href="../govern/integrations.html">Registry &rarr; Gateway flow</a> on Integrations for the full target design.</p>
+          <p><strong>Owner:</strong> MCP Gateway Team + MCP Registry Team (joint; the Gateway-side half of this gap, including its manual-CRD workaround, is tracked in full on the <a href="../../../mcp-ecosystem/hub/plan/gaps.html">Management Knowledge Hub: Known Gaps</a>).</p>
+          <p><strong>Status:</strong> GA target, tracked under <a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a>, aligned to RHOAI 3.6 (code freeze October 23, 2026). Manual registration remains the only path until then.</p>
+          <p><strong>Workaround:</strong> After a manual governance decision, an admin creates an <code>MCPServerRegistration</code> CRD for the Gateway directly.</p>
+          <p class="source-ref">Source: Management Knowledge Hub, plan/gaps.html ("Registry&rarr;Gateway Auto-Config Missing," data-verified 2026-07-12); this hub's own <a href="../govern/integrations.html">Integrations</a> page.</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>
+            <span class="badge badge--gap">Gap</span>
+            STDIO Transport Not Supported
+          </h3>
+          <p>The Registry currently supports Streamable HTTP transport only; STDIO-based MCP servers cannot be registered or tracked through the governed path. This is co-owned with the Catalog team (STDIO listing is a Catalog-side concern too); the full gap, including the three filed RFEs and the Catalog-side detail, is tracked on the <a href="../../../mcp-catalog/hub/plan/gaps-open-questions.html">MCP Catalog Knowledge Hub: Gaps &amp; Open Questions</a>. The Registry's own half of the fix is <a href="https://redhat.atlassian.net/browse/RHAISTRAT-2132" target="_blank" rel="noopener">RHAISTRAT-2132</a> (STDIO MCP Server Registration), status New, no fix version yet, confirmed in this feature's own fresh sweep.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Open Questions</h2>
+        <p>Numbering preserved from the Management Knowledge Hub's cross-cutting Open Questions log so cross-references stay traceable.</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>How should registry-governed state inform Gateway behavior?</td>
+              <td>MCP Registry + Gateway</td>
+              <td>Integration Team</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span> Proposed direction: the Registry stores the deployment endpoint (from the Lifecycle Operator) as a runtime reference; the Gateway route is a property of the Gateway's own configuration, not the Registry. The two need to stay in sync; still undecided. See <a href="../govern/integrations.html">Integrations</a>.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Should certification programs be backed by an admin-managed allowlist?</td>
+              <td>MCP Registry</td>
+              <td>Registry Team (may connect to RHAIRFE-294)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Deferred beyond 3.6 EA1</span> Certification tracking is out of scope for the Registry MVP; see the four-track proposal on <a href="../understand/data-model.html">Data Model</a>.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Do approval, verification, and certification transitions need distinct permissions beyond general update permissions?</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Deferred beyond 3.6 EA1</span> Verification and certification tracking are out of scope for the Registry MVP.</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Do MCP registry entities need <code>EntityAssociationType</code> support in MVP or later?</td>
+              <td>MCP Registry</td>
+              <td>Registry Team</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span></td>
+            </tr>
+            <tr>
+              <td>9</td>
+              <td>What belongs in the MLflow upstream proposal now vs. later?</td>
+              <td>MCP Registry (Upstream)</td>
+              <td>MLflow Collaboration (Peter Double, Dan Kuc)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--partial">Partially Decided</span> RFC splits: Phase 1 (skills-only registry, no bundles), Phase 2 (bundle extensions: subagents, hooks, MCP configs), plus a separate non-technical product pitch. New PRs targeted for the following week. See <a href="../govern/integrations.html">Integrations</a>.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">Source: Management Knowledge Hub, plan/open-questions.html (Q1 in "High Priority", Q2-Q4 in "Medium Priority", Q9 in "Upstream &amp; MLflow Integration", data-verified 2026-07-12). Q1 and Q9's underlying threads (state propagation to Gateway/Catalog, and MLflow upstream scope) are covered in full narrative form, not just this table, on this hub's own <a href="../govern/integrations.html">Integrations</a> page, which this table stays consistent with.</p>
+      </section>
+
+      <section>
+        <h2>Resolved Questions</h2>
+        <p>Questions that have been answered or closed. Kept here for reference, with the retarget-in-progress annotation verified against this feature's fresh Jira sweep.</p>
+
+        <div class="callout callout--source">
+          <h3>Registry Metadata: What's Mandatory?</h3>
+          <p><strong>Question:</strong> What exact MCP metadata should be mandatory for registry records?</p>
+          <p><strong>Answer:</strong> Mandatory fields: name, version, description, hosting model, lifecycle state. Optional (with graceful degradation for consumers): readme, tools list, parameters, runtime prerequisites.</p>
+          <p><strong>Status:</strong> Resolved (MCP Registry MVP Requirements doc, revision dated 2026-05-07).</p>
+        </div>
+
+        <div class="callout callout--source">
+          <h3>Lifecycle States for the Registry MVP</h3>
+          <p><strong>Question:</strong> Which lifecycle states are required for the Registry MVP? (Source doc originally scoped this as "3.5 Dev Preview"; Registry DP is now not landing in RHOAI 3.5 stable, with TP retargeted to RHOAI 3.6 EA1, owner ruling 2026-07-11.)</p>
+          <p><strong>Answer:</strong> Four lifecycle states: <code>active</code>, <code>deprecated</code>, <code>disabled</code>, <code>retired</code>. This replaces the earlier "publish state" model (<code>draft</code>/<code>published</code>/<code>deprecated</code>), which the doc's own changelog calls a terminology correction.</p>
+          <p><strong>Status:</strong> Resolved (MCP Registry MVP Requirements doc, revision dated 2026-05-07; doc scoped to 3.5 DP, release vehicle retargeted to RHOAI 3.6 EA1 TP).</p>
+          <div class="callout callout--insight" style="margin: var(--space-md) 0 0 0;">
+            <div class="callout__title">Verified against the fresh sweep: retarget is confirmed in Jira</div>
+            <p style="margin-bottom: 0;">Every other page in this hub network describes the RHAISTRAT-1762 fix-version retarget as "in progress" or "pending." The 2026-07-12 sweep shows it is no longer pending: <code>RHAISTRAT-1762</code>'s fix version now reads <strong>"3.6 EA1 RHOAI RELEASE"</strong> (the 2026-07-10 snapshot had "3.5 GA RHOAI RELEASE"), and its <code>updated</code> timestamp, 2026-07-11, matches the day of the owner ruling. See <a href="./jira-tracker.html">Jira Tracker</a> for the row.</p>
+          </div>
+        </div>
+
+        <div class="callout callout--source">
+          <h3>Registry State &rarr; Catalog Surfacing</h3>
+          <p><strong>Question:</strong> How should registry state influence catalog surfacing?</p>
+          <p><strong>Answer:</strong> Resolved via Story 5: the Registry provides lifecycle-status feedback to the Catalog; the Catalog can query multiple lifecycle states (active + deprecated) in a single call to support sync workflows, surfacing active entries and detecting, flagging, or removing deprecated ones. This is one of the three original state-propagation questions; see <a href="../govern/integrations.html">Integrations</a> for the full Catalog &harr; Registry flow.</p>
+          <p><strong>Status:</strong> Resolved (MCP Registry MVP Requirements doc, Story 5).</p>
+        </div>
+
+        <div class="callout callout--source">
+          <h3>Lifecycle History: MVP or Deferred?</h3>
+          <p><strong>Question:</strong> Whether lifecycle history should be added in MVP or deferred.</p>
+          <p><strong>Answer:</strong> In MVP scope, Story 10 ("Preserve version history and manage lifecycle across versions"). Each version has an independent lifecycle state; older versions remain queryable.</p>
+          <p><strong>Status:</strong> Resolved (MCP Registry MVP Requirements doc, Story 10).</p>
+        </div>
+
+        <div class="callout callout--source">
+          <h3>MCPLO "Discovered" Registry Entries</h3>
+          <p><strong>Question:</strong> How should the MCP Lifecycle Operator interact with registry entries: read-only "discovered/managed" entries vs. full governance?</p>
+          <p><strong>Answer:</strong> Resolved via the <code>update_mode</code> field (<code>MANUAL</code> / <code>SYSTEM_MANAGED</code>) on the <code>MCPServer</code> entity, which controls whether a controller like MCPLO can system-manage the record. This is the third of the three original state-propagation questions; see <a href="../govern/integrations.html">Integrations</a> for the full MCPLO &rarr; Registry flow.</p>
+          <p><strong>Status:</strong> Resolved (MCP Registry Data Model Proposal + MVP Requirements doc comment threads).</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>MVP Data-Model Gaps: Six Decisions</h2>
+        <p>Six specific decisions were flagged to finalize the Registry's data model. Three are resolved above; three remain open in the Open Questions table above. Restated together here for a single checklist view:</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Decision</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>What exact metadata should be mandatory on a registry record?</td>
+              <td><span class="badge badge--accepted">Resolved</span> See "Registry Metadata" above.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Which of the four proposed tracks' lifecycle states are actually required for the initial cut, vs. deferred?</td>
+              <td><span class="badge badge--accepted">Resolved</span> See "Lifecycle States" above.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Should certification programs be backed by an admin-managed allowlist?</td>
+              <td><span class="badge badge--open">Open</span> Table row Q2 above.</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Should lifecycle history (an audit trail of state transitions) ship in MVP or be deferred?</td>
+              <td><span class="badge badge--accepted">Resolved</span> See "Lifecycle History" above.</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Do approval, verification, and certification transitions need distinct permissions beyond general update permissions?</td>
+              <td><span class="badge badge--open">Open</span> Table row Q3 above.</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Do registry entities need <code>EntityAssociationType</code> support in MVP, or can it wait?</td>
+              <td><span class="badge badge--open">Open</span> Table row Q4 above.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mcp-registry-mvp-data-model-gaps.md">question-mcp-registry-mvp-data-model-gaps.md</a>. This hub's own <a href="../build/mvp-scope-prototype.html">MVP Scope &amp; Prototype</a> page restates all six as open in its "Still Undecided" section; that framing predates the resolved-questions callouts collected above and is worth a follow-up pass to reconcile, noted as a concern in the task-18 report rather than edited here.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: plan/gaps.html (data-verified 2026-07-12)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/open-questions.html">Management hub: plan/open-questions.html (data-verified 2026-07-12)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mcp-registry-mvp-data-model-gaps.md">question-mcp-registry-mvp-data-model-gaps.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mcp-registry-state-propagation.md">question-mcp-registry-state-propagation.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/question-mlflow-upstream-registry-scope.md">question-mlflow-upstream-registry-scope.md</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./roadmap.html">Roadmap</a></li>
+            <li><a href="./jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="../govern/integrations.html">Integrations</a></li>
+            <li><a href="../understand/data-model.html">Data Model</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/plan/gaps.html">Management hub: Known Gaps</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/plan/open-questions.html">Management hub: Open Questions</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

@@ -307,12 +307,12 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75547 · Task · New · —
 
 ## mcp-registry
-_swept 2026-07-10 · `(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")`_
+_swept 2026-07-12 · `(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")`_
 _summaries withheld — the source Jira is not anonymously readable_
 
 - RHAISTRAT-138 · Feature · Closed · — → [MCP Registry Centralized Governance (RHAISTRAT-138)](/features/mcp-registry/knowledge/ref-rhaistrat-138-centralized-governance.md)
 - RHAISTRAT-1677 · Feature · New · — → [OGX MCP Registry Integration (RHAISTRAT-1677)](/features/mcp-registry/knowledge/ref-rhaistrat-1677-ogx-integration.md)
-- RHAISTRAT-1762 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [MCP Registry Operational Governance (RHAISTRAT-1762)](/features/mcp-registry/knowledge/ref-rhaistrat-1762-operational-governance.md)
+- RHAISTRAT-1762 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [MCP Registry Operational Governance (RHAISTRAT-1762)](/features/mcp-registry/knowledge/ref-rhaistrat-1762-operational-governance.md)
 - RHAISTRAT-1993 · Feature · New · — → [MCP Registry General Availability (RHAISTRAT-1993)](/features/mcp-registry/knowledge/ref-rhaistrat-1993-ga.md)
 - RHAISTRAT-2132 · Feature · New · — → [STDIO MCP Server Registration (RHAISTRAT-2132)](/features/mcp-registry/knowledge/ref-rhaistrat-2132-stdio-registration.md)
 - RHAISTRAT-2133 · Feature · New · — → [IDE-Native MCP Registry API (RHAISTRAT-2133)](/features/mcp-registry/knowledge/ref-rhaistrat-2133-ide-native-api.md)

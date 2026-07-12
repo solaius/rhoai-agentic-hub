@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Roadmap</h1>
+      <p class="lead">The MCP Registry's release train from today's design and Dev Preview work through Tech Preview and General Availability, and how it lines up with the MCP Catalog and the Catalog-Registry integration it depends on.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Nothing on this page is shipped</div>
+        <p style="margin-bottom: 0;">
+          The Registry has no code and no shipped Dev Preview. Every milestone below is a target, not a delivered
+          release.
+        </p>
+      </div>
+
+      <h2>Release Timeline</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Target</th>
+            <th>What Happens</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Now: Design &amp; DP work</strong></td>
+            <td>In progress</td>
+            <td>Data model and governance design continue. Dev Preview is planned but <span class="badge badge--gap">will not land in RHOAI 3.5 stable</span> (owner ruling, 2026-07-11). Interactive prototype and demo circulated 2026-06-30.</td>
+          </tr>
+          <tr>
+            <td><strong>Tech Preview</strong></td>
+            <td>RHOAI 3.6 EA1 (2026, date TBD)</td>
+            <td><span class="badge badge--tp">TP</span> Registry reaches Tech Preview alongside MCP Catalog TP and the Catalog-Registry integration (<a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>, In Progress), which carries the lifecycle-status enrichment flow between the two components.</td>
+          </tr>
+          <tr>
+            <td><strong>General Availability</strong></td>
+            <td>RHOAI 3.6 (code freeze October 23, 2026)</td>
+            <td><span class="badge badge--planned">GA Target</span> Gateway auto-config, catalog sync, and full lifecycle automation (<a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a>).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--source">
+        <div class="callout__title">Registry replan (owner ruling, 2026-07-11)</div>
+        <p>The MCP Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is MCP Catalog Tech Preview and MCP Registry Tech Preview together in RHOAI 3.6 EA1, alongside the Catalog-Registry integration above.</p>
+        <p style="margin-bottom: 0;"><strong>Fix-version retarget: confirmed, not just in progress.</strong> The 2026-07-10 Jira snapshot still showed <code>RHAISTRAT-1762</code>'s fix version as "3.5 GA RHOAI RELEASE." The fresh 2026-07-12 sweep shows it has moved to <strong>"3.6 EA1 RHOAI RELEASE"</strong>, updated 2026-07-11, the day of the owner ruling. The re-target that this hub's other pages describe as "in progress" is now reflected in Jira for this key; see <a href="./jira-tracker.html">Jira Tracker</a> for the full row and <a href="./gaps-open-questions.html">Gaps &amp; Open Questions</a> for the verification note.</p>
+      </div>
+
+      <h2>Dependencies</h2>
+      <p>The Registry is not a standalone delivery. Its own roadmap only moves as fast as three other components let it:</p>
+      <ul>
+        <li><strong>MCP Catalog:</strong> the Catalog-Registry integration (RHAISTRAT-2027) is the mechanism that lets the Registry's lifecycle state enrich Catalog search results; both reach Tech Preview in the same RHOAI 3.6 EA1 window. See the <a href="../../../mcp-catalog/hub/plan/roadmap.html">MCP Catalog Knowledge Hub: Roadmap</a>.</li>
+        <li><strong>MCP Lifecycle Operator (MCPLO):</strong> auto-registers deployed servers into the Registry as "discovered" entries (<code>update_mode: SYSTEM_MANAGED</code>); this flow is design-resolved today, independent of MCPLO's own OCP/RHOAI qualification timeline. See the <a href="../../../mcp-lifecycle-operator/hub/plan/roadmap.html">MCP Lifecycle Operator Knowledge Hub: Roadmap</a>.</li>
+        <li><strong>MCP Gateway:</strong> the Registry-to-Gateway auto-config flow that replaces today's manual <code>MCPServerRegistration</code> CRD bridge is GA-target work, tracked under RHAISTRAT-1993 alongside RHCL 1.5 (October 2026). See the <a href="../../../mcp-gateway/rhcl/plan/roadmap.html">MCP Gateway Knowledge Hub: Roadmap</a>.</li>
+      </ul>
+      <p class="source-ref">Full flow detail (mechanism, status, and open questions for each of the three integration points) lives on <a href="../govern/integrations.html">Integrations</a>.</p>
+
+      <h2>Key Jiras by Milestone</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Jira</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Design &amp; Dev Preview</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a> (Operational Governance)</td>
+            <td><span class="badge badge--in-progress">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>Tech Preview (Catalog-Registry integration)</td>
+            <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a></td>
+            <td><span class="badge badge--in-progress">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>General Availability</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a></td>
+            <td><span class="badge badge--new">New</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">RHAISTRAT-2027 is tracked in the Management Knowledge Hub's own Jira sweep, not this feature's; it falls outside this feature's stored JQL scope (its summary reads "MCP Catalog and Registry Integration," not "MCP Registry"). See <a href="./jira-tracker.html">Jira Tracker</a> for the full explanation and the RHAISTRAT rows this feature's own sweep does cover.</p>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/roadmap.html">Management hub: plan/roadmap.html (data-verified 2026-07-12)</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a>, <a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>, <a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="./gaps-open-questions.html">Gaps &amp; Open Questions</a></li>
+            <li><a href="../govern/integrations.html">Integrations</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/plan/roadmap.html">Management hub: Roadmap</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

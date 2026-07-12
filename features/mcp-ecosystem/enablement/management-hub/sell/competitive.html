@@ -111,7 +111,7 @@
 
     <div class="callout callout--insight">
       <h2 class="callout__title">Governance: The Missing Layer</h2>
-      <p>Discovery catalogs answer "what exists?" but not "who approved it?" or "is it safe?" Red Hat's Registry adds governance workflows (Draft → Candidate → Published), approval status (Draft, Pending, Approved, Rejected, Revoked), verification status (Unverified, Verified), and certification status (None, Candidate, Certified, Expired, Revoked). No competitor has approval workflows or immutable versioning with governance metadata.</p>
+      <p>Discovery catalogs answer "what exists?" but not "who approved it?" or "is it safe?" Red Hat's Registry design adds governance state today (<code>MCPServerStatus</code>: active/deprecated/retired; <code>MCPPublishState</code>: draft/published/deprecated/retired) plus immutable versioning, with a fuller approval/verification/certification model proposed as a deferred follow-on, not shipped. No competitor has approval workflows or immutable versioning with governance metadata, even at the current, lighter-weight stage.</p>
       <p>A strategic hardware partner's gap analysis (June 2026) identified "Central Metadata Registry" as a gap because registry is not yet integrated with gateway (planned for GA Q4 2026). Even in gap state, Red Hat's registry is more mature than any competitor's discovery-only catalog.</p>
     </div>
 
@@ -165,7 +165,7 @@
       <p>MCP Gateway and AI Gateway are complementary, not competing. MCP Gateway handles MCP protocol specifically; AI Gateway handles all AI traffic including inference, egress, Responses API, and A2A. Both share Envoy, Gateway API, and RHCL infrastructure. See <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway</a> for full context.</p>
     </div>
 
-      <footer class="page-footer" data-verified="2026-07-11">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
