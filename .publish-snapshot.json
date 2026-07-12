@@ -1,31 +1,31 @@
 {
   "mcp-catalog/hub": {
     "badge": "updated",
-    "hash": "2fe13f4d042a2e233031d0c1346503cc904b9156b82e3682df83ffbb5e444df9",
+    "hash": "f34dc8b4c2fc177afc912e3afd93d3d5e6a38399b02d825dd58548566f2930c2",
     "published": "2026-07-12",
     "source": "features/mcp-catalog/enablement/catalog-hub"
   },
   "mcp-ecosystem/hub": {
     "badge": "updated",
-    "hash": "7cc15330a25935a7cbc43d307510dfb373c33e50e50b2a99b4b3dbadb8266ec1",
+    "hash": "c5030fbff101e76abed0009538bac7a8b6f8c2d4403309ad5a7fdd24448a1630",
     "published": "2026-07-12",
     "source": "features/mcp-ecosystem/enablement/management-hub"
   },
   "mcp-gateway/rhcl": {
     "badge": "updated",
-    "hash": "e56e21c1003483950f5a16b8a6b98907143bb6caf1eb96bb5a108deba93dbc92",
+    "hash": "9a1a6754d9d332e8e597fb368e3553469c1dea43d964ace66d062b1bee9bda90",
     "published": "2026-07-12",
     "source": "features/mcp-gateway/enablement/rhcl-hub"
   },
   "mcp-lifecycle-operator/hub": {
     "badge": "updated",
-    "hash": "ff6b8f25bba7ebd7e9931fbcb2726758123a6be92265c4a324bfa5349d52b2f8",
+    "hash": "8d075127ee65e7e9c17f991ed94782452e23a894e6a7151d62fad7f444807be5",
     "published": "2026-07-12",
     "source": "features/mcp-lifecycle-operator/enablement/mcplo-hub"
   },
   "mcp-registry/hub": {
     "badge": "updated",
-    "hash": "b38fbde04f950353e0197fa67dd08c0091e8e3c92fffeb02b95804464a99870b",
+    "hash": "808c45acc41b57442bbbc08846d6f9fc25a4440fc127c7ea16a37f9587406695",
     "published": "2026-07-12",
     "source": "features/mcp-registry/enablement/registry-hub"
   }

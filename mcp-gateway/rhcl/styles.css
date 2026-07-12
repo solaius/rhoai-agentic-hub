@@ -399,6 +399,15 @@ pre code {
   color: var(--text-muted);
 }
 
+.callout--warning {
+  border-left-color: var(--rh-orange);
+  background: rgba(244, 180, 0, 0.08);
+}
+
+.callout--warning .callout__title {
+  color: var(--rh-orange);
+}
+
 .callout__title {
   font-family: var(--font-sans);
   font-weight: 600;
@@ -472,6 +481,40 @@ pre code {
 .badge--gap {
   background: var(--rh-red-dark);
   color: #ffffff;
+}
+
+/* Additional badge variants (jira-tracker, jobs-to-be-done).
+   Grouped by meaning: green-ish = accepted/final, blue = in motion,
+   amber = open/pending, gray = not available / deferred. */
+.badge--approved,
+.badge--accepted,
+.badge--decided {
+  background: var(--rh-green);
+  color: #ffffff;
+}
+
+.badge--in-progress,
+.badge--new {
+  background: var(--rh-blue);
+  color: #ffffff;
+}
+
+.badge--open,
+.badge--partial,
+.badge--stakeholder-review {
+  background: var(--rh-orange);
+  color: #000000;
+}
+
+.badge--not-available {
+  background: var(--border-muted);
+  color: var(--text-muted);
+}
+
+.badge--coming-soon {
+  background: transparent;
+  border: 1px solid var(--border-muted);
+  color: var(--text-muted);
 }
 
 /* Status Table */

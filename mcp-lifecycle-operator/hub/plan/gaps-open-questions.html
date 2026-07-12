@@ -28,7 +28,7 @@
             <div class="feature-card__title">Operator Maturity Gap (Level 1-2, GA Needs 3-4)</div>
           </div>
           <div class="feature-card__description">
-            <p><strong>Issue:</strong> MCPLO sits at Operator Capability Level 1-2 today (Basic Install, plus partial Seamless Upgrades). GA (<a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a>, <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a>) requires Level 3-4 (Full Lifecycle, Deep Insights).</p>
+            <p><strong>Issue:</strong> MCPLO sits at Operator Capability Level 1-2 today (Basic Install, plus partial Seamless Upgrades). GA (<a href="https://issues.redhat.com/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a>, <a href="https://issues.redhat.com/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a>) requires Level 3-4 (Full Lifecycle, Deep Insights).</p>
             <p><strong>Impact:</strong> No ServiceMonitor or alerting rules, unclear errors when the Gateway is absent, no production deployment patterns or upgrade runbooks, and only TP/DP-level support commitment today.</p>
             <p><strong>Owner:</strong> OCP + RHOAI teams (joint GA)</p>
             <p><strong>Status:</strong> P0 for GA. Recommendations: a Prometheus ServiceMonitor auto-created per <code>MCPServer</code>, a PrometheusRule for alerting (server down more than 5 minutes, handshake failures), a <code>GatewayAvailable</code> condition with actionable messages, an operator-level <code>/metrics</code> endpoint, and an admission webhook for CRD validation.</p>

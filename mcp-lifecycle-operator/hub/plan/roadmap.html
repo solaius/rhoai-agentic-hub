@@ -38,17 +38,17 @@
             <tr>
               <td><strong>TP (OCP-side)</strong> <span class="badge badge--tp">In Progress</span></td>
               <td>mid-Jul 2026</td>
-              <td>OCP team's <strong>functional qualification</strong>: server deployment, discovery, and management via the <code>MCPServer</code> CRD. Tracked as <a href="https://redhat.atlassian.net/browse/OCPSTRAT-3263" target="_blank" rel="noopener">OCPSTRAT-3263</a>.</td>
+              <td>OCP team's <strong>functional qualification</strong>: server deployment, discovery, and management via the <code>MCPServer</code> CRD. Tracked as <a href="https://issues.redhat.com/browse/OCPSTRAT-3263" target="_blank" rel="noopener">OCPSTRAT-3263</a>.</td>
             </tr>
             <tr>
               <td><strong>TP (RHOAI-side)</strong> <span class="badge badge--tp">Planned</span></td>
               <td>mid-Aug 2026</td>
-              <td>RHOAI team's <strong>deployment and integration qualification</strong>: rollout via the RHOAI operator with prerequisites satisfied, Day 2 operations. Tracked as <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a>. <strong>On risk</strong>: engineering's bug week falls the same week (Jul 13); <a href="https://redhat.atlassian.net/browse/OCPMCP-298" target="_blank" rel="noopener">OCPMCP-298</a> tracks moving this item into GA-scope tracking if the risk lands.</td>
+              <td>RHOAI team's <strong>deployment and integration qualification</strong>: rollout via the RHOAI operator with prerequisites satisfied, Day 2 operations. Tracked as <a href="https://issues.redhat.com/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a>. <strong>On risk</strong>: engineering's bug week falls the same week (Jul 13); <a href="https://issues.redhat.com/browse/OCPMCP-298" target="_blank" rel="noopener">OCPMCP-298</a> tracks moving this item into GA-scope tracking if the risk lands.</td>
             </tr>
             <tr>
               <td><strong>GA</strong> <span class="badge badge--planned">Planned</span></td>
               <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
-              <td>Joint OCP + RHOAI. Production hardening, disconnected support, registry sync, dependency awareness. Tracked as <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a> (RHOAI-side) and <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a> (OCP-side). Team is aiming for earlier in October if possible.</td>
+              <td>Joint OCP + RHOAI. Production hardening, disconnected support, registry sync, dependency awareness. Tracked as <a href="https://issues.redhat.com/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a> (RHOAI-side) and <a href="https://issues.redhat.com/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a> (OCP-side). Team is aiming for earlier in October if possible.</td>
             </tr>
             <tr>
               <td><strong>OCP 5.0</strong> <span class="badge badge--planned">Future</span></td>
@@ -59,15 +59,15 @@
         </table>
 
         <div class="callout callout--source">
-          <p><strong>On-risk note (bug week):</strong> per the MCP Management Knowledge Hub's roadmap, engineering's bug week falls the week of Jul 13, 2026, the same window as the RHOAI-side TP code-freeze push. <a href="https://redhat.atlassian.net/browse/OCPMCP-298" target="_blank" rel="noopener">OCPMCP-298</a> exists to move this item's tracking from TP into GA scope if the risk materializes.</p>
+          <p><strong>On-risk note (bug week):</strong> per the MCP Management Knowledge Hub's roadmap, engineering's bug week falls the week of Jul 13, 2026, the same window as the RHOAI-side TP code-freeze push. <a href="https://issues.redhat.com/browse/OCPMCP-298" target="_blank" rel="noopener">OCPMCP-298</a> exists to move this item's tracking from TP into GA scope if the risk materializes.</p>
           <p><strong>E2E release gate:</strong> finalized 2026-06-30. The primary release gate for GA is RHOAI's internal Jenkins test matrix (multi-platform, FIPS, disconnected, upgrade scenarios), not Konflux ITS. Konflux ITS is kept only for lightweight PR-level smoke and e2e checks.</p>
-          <p><strong>The OpenShift/Kubernetes MCP server is tracked separately from MCPLO.</strong> MCPLO is the deployment operator; the OpenShift/Kubernetes MCP server it can deploy has its own, distinct Jira tracking: <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2739" target="_blank" rel="noopener">OCPSTRAT-2739</a> (GA) and <a href="https://redhat.atlassian.net/browse/OCPSTRAT-3337" target="_blank" rel="noopener">OCPSTRAT-3337</a> (TP2, targeted early Aug 2026). Neither key belongs on this operator's own roadmap table above.</p>
+          <p><strong>The OpenShift/Kubernetes MCP server is tracked separately from MCPLO.</strong> MCPLO is the deployment operator; the OpenShift/Kubernetes MCP server it can deploy has its own, distinct Jira tracking: <a href="https://issues.redhat.com/browse/OCPSTRAT-2739" target="_blank" rel="noopener">OCPSTRAT-2739</a> (GA) and <a href="https://issues.redhat.com/browse/OCPSTRAT-3337" target="_blank" rel="noopener">OCPSTRAT-3337</a> (TP2, targeted early Aug 2026). Neither key belongs on this operator's own roadmap table above.</p>
         </div>
       </section>
 
       <section>
         <h2>Dependencies</h2>
-        <p>MCPLO delivery hangs off the same umbrella outcome as the rest of the MCP ecosystem, <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (AI Hub AI Asset Delivery for Agentic Solutions); see <a href="./jira-tracker.html">Jira Tracker</a> for MCPLO's own tracked slice of that outcome. MCPLO itself has no install-time dependency on the MCP Gateway: MCPLO installs first (or alongside RHOAI) to manage server deployment, while the Gateway is downstream for routing traffic to already-deployed servers. Gateway integration for MCPLO-deployed servers is explicitly scoped to GA, not TP, tracked as <a href="https://redhat.atlassian.net/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>. The MCP Catalog deploys discovered servers through MCPLO, and the MCP Registry will integrate with it for governance once Registry TP lands; neither of those schedules is MCPLO-owned, so they can move independently of the dates above.</p>
+        <p>MCPLO delivery hangs off the same umbrella outcome as the rest of the MCP ecosystem, <a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (AI Hub AI Asset Delivery for Agentic Solutions); see <a href="./jira-tracker.html">Jira Tracker</a> for MCPLO's own tracked slice of that outcome. MCPLO itself has no install-time dependency on the MCP Gateway: MCPLO installs first (or alongside RHOAI) to manage server deployment, while the Gateway is downstream for routing traffic to already-deployed servers. Gateway integration for MCPLO-deployed servers is explicitly scoped to GA, not TP, tracked as <a href="https://issues.redhat.com/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>. The MCP Catalog deploys discovered servers through MCPLO, and the MCP Registry will integrate with it for governance once Registry TP lands; neither of those schedules is MCPLO-owned, so they can move independently of the dates above.</p>
       </section>
 
       <footer class="page-footer" data-verified="2026-07-12">
@@ -79,7 +79,7 @@
             <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/memory/profiles/roadmap.md">memory/profiles/roadmap.md</a></li>
             <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/roadmap.html">Management hub: Roadmap (MCPLO sub-table, source before collapse)</a></li>
             <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12)</li>
-            <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (Jira umbrella)</li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (Jira umbrella)</li>
           </ul>
         </div>
         <div class="related-pages">

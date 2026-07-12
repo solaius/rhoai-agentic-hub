@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jobs to Be Done - MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jobs to Be Done</h1>
+      <p class="lead">The real jobs the MCP ecosystem serves, aggregated across all five component tags (<code>mcp-ecosystem</code>, <code>mcp-gateway</code>, <code>mcp-catalog</code>, <code>mcp-lifecycle-operator</code>, <code>mcp-registry</code>) from the hub's narrative layer, grouped by the component each job names. Each group links to that component hub's own Jobs to Be Done page for full depth; this page is the ecosystem-level front door, not a duplicate of the detail.</p>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">How this aggregation was built</div>
+        <p>Every entry under <code>narrative/knowledge/jtbd-*.md</code> carries a <code>features</code> frontmatter list. This page unions the jobs whose list includes any of the five component tags above (checked 2026-07-12; ten jobs exist in total in the narrative layer). Two unique jobs match: one names <code>mcp-gateway</code>, one names both <code>mcp-catalog</code> and <code>mcp-registry</code> (so it appears in both of those groups, once per matching component - the same pattern the component hubs' own Jira rollups use for shared umbrella items). No job in the current inventory names <code>mcp-ecosystem</code> or <code>mcp-lifecycle-operator</code> directly; those two groups are gaps, not empty by omission, and are called out below rather than left silently blank.</p>
+      </div>
+
+      <h2>MCP Gateway</h2>
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Govern agent tool and model access</div>
+        </div>
+        <div class="feature-card__description">
+          <p>
+            <span class="badge badge--coming-soon">Persona: agentops-admin</span>
+            &nbsp;
+            <span class="badge badge--open">Status: candidate</span>
+          </p>
+          <p><strong>When</strong> I manage a fleet of agents, <strong>I want to</strong> govern which tools and models each agent can access, <strong>so I can</strong> enforce least-privilege, rate-limit token usage per team, and audit every agent action.</p>
+          <p>MCP Gateway is named as the tool-access layer of a three-layer governance model (model access, tool access, identity): tool-level access control via OAuth 2.0 token exchange, On-Behalf-Of delegation for least-privilege, and a cryptographic <code>act</code>-claim audit trail.</p>
+          <p><a href="../../../mcp-gateway/rhcl/understand/jobs-to-be-done.html" class="component-card__cta">MCP Gateway Hub: Jobs to Be Done &rarr;</a></p>
+        </div>
+      </div>
+
+      <h2>MCP Catalog</h2>
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Discover my skills, MCP servers, and agentic assets</div>
+        </div>
+        <div class="feature-card__description">
+          <p>
+            <span class="badge badge--coming-soon">Persona: ai-engineer</span>
+            &nbsp;
+            <span class="badge badge--open">Status: candidate</span>
+          </p>
+          <p><strong>When</strong> I'm building or configuring agents, <strong>I want to</strong> discover governed skills, MCP servers, and agentic assets, <strong>so I can</strong> compose capable agents from validated, approved components rather than unvetted tools.</p>
+          <p>The Catalog is the storefront for Red Hat, Partner, Community, and (planned) approved enterprise MCP servers, with trust-tier display and a partner certification pipeline giving discovery a validated floor.</p>
+          <p><a href="../../../mcp-catalog/hub/understand/jobs-to-be-done.html" class="component-card__cta">MCP Catalog Hub: Jobs to Be Done &rarr;</a></p>
+        </div>
+      </div>
+
+      <h2>MCP Registry</h2>
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Discover my skills, MCP servers, and agentic assets</div>
+          <span class="badge badge--open">Same job as Catalog, above</span>
+        </div>
+        <div class="feature-card__description">
+          <p>This job's <code>features</code> list names both <code>mcp-catalog</code> and <code>mcp-registry</code>, so it is one narrative job tabled twice by design, once per matching component. The Registry's angle: it supplies the identity, version, and lifecycle state (<code>MCPServerStatus</code>, <code>MCPPublishState</code>) that makes a discovered server trustworthy, not just found, once Registry-Catalog wiring ships (tracked as <a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>).</p>
+          <p><a href="../../../mcp-registry/hub/understand/jobs-to-be-done.html" class="component-card__cta">MCP Registry Hub: Jobs to Be Done &rarr;</a></p>
+        </div>
+      </div>
+
+      <h2>MCP Lifecycle Operator</h2>
+      <div class="callout callout--gap">
+        <div class="callout__title">No job names MCPLO directly</div>
+        <p style="margin-bottom: 0;">Zero narrative jobs list <code>mcp-lifecycle-operator</code> in their <code>features</code> frontmatter (a gap in the narrative layer, not a claim that MCPLO serves no real job). MCPLO's own hub documents the two nearest ecosystem-level jobs it is <em>related to but not mapped onto</em> (<code>agent-ops</code> and <code>agent-registry</code>'s "Manage my agent fleet at scale," and <code>mcp-gateway</code> and <code>agent-ops</code>'s "Govern agent tool and model access," tabled above under Gateway). See that hub's page for the full "why related, not mapped" reasoning.</p>
+      </div>
+      <p><a href="../../../mcp-lifecycle-operator/hub/understand/jobs-to-be-done.html" class="component-card__cta">MCP Lifecycle Operator Hub: Jobs to Be Done &rarr;</a></p>
+
+      <h2>MCP Ecosystem (this hub)</h2>
+      <div class="callout callout--gap">
+        <div class="callout__title">No job names the umbrella directly</div>
+        <p style="margin-bottom: 0;">No narrative job lists <code>mcp-ecosystem</code> itself in its <code>features</code> frontmatter; every job that touches this ecosystem does so through one of the four named components above. This is expected: the umbrella is a composition of the four components, not a fifth surface with its own distinct job to be done. If a cross-component job (one that needs the whole umbrella, not any single piece) is written into the narrative layer later, it will surface here.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-govern-agent-tool-access.md">jtbd-govern-agent-tool-access.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-discover-agentic-assets.md">jtbd-discover-agentic-assets.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/views/jtbd.md">views/jtbd.md (generated index)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./component-directory.html" class="page-footer__link">Component Directory</a></li>
+            <li><a href="./decision-guide.html" class="page-footer__link">Which Component Do I Need?</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/understand/jobs-to-be-done.html" class="page-footer__link">MCP Gateway Hub: Jobs to Be Done</a></li>
+            <li><a href="../../../mcp-catalog/hub/understand/jobs-to-be-done.html" class="page-footer__link">MCP Catalog Hub: Jobs to Be Done</a></li>
+            <li><a href="../../../mcp-lifecycle-operator/hub/understand/jobs-to-be-done.html" class="page-footer__link">MCP Lifecycle Operator Hub: Jobs to Be Done</a></li>
+            <li><a href="../../../mcp-registry/hub/understand/jobs-to-be-done.html" class="page-footer__link">MCP Registry Hub: Jobs to Be Done</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
