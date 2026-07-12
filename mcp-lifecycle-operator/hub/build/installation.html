@@ -20,7 +20,7 @@
       <p class="lead">The MCP Lifecycle Operator (MCPLO) installs today as a standalone operator: manual, cluster-admin gated, and outside OperatorHub and OLM. This page covers the two-tier ecosystem it fits into, the exact install commands, validated versions, and the DataScienceCluster (DSC) path RHOAI has proposed but not yet built.</p>
 
       <h2>Where MCPLO Sits in the Two-Tier Model</h2>
-      <p>The broader MCP ecosystem on RHOAI installs in two tiers. Tier 1 is platform infrastructure (OpenShift Service Mesh, cert-manager, Red Hat Connectivity Link, RHOAI itself), installed via OperatorHub. Tier 2 is the MCP-specific layer (MCP Gateway Operator, MCPLO, RHBK, HashiCorp Vault), installed via a mix of OLM custom catalog, manual YAML, and Helm. Full cross-component install steps live in the <a href="../../../mcp-ecosystem/hub/build/operator-installation.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Operator Installation</a>; this page focuses on the MCPLO-specific path.</p>
+      <p>The broader MCP ecosystem on RHOAI installs in two tiers. Tier 1 is platform infrastructure (OpenShift Service Mesh, cert-manager, Red Hat Connectivity Link, RHOAI itself), installed via OperatorHub. Tier 2 is the MCP-specific layer (MCP Gateway Operator, MCPLO, RHBK, HashiCorp Vault), installed via a mix of OLM custom catalog, manual YAML, and Helm. Full cross-component install steps live in the <a href="../../../mcp-ecosystem/hub/build/end-to-end-setup.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Integration Scenarios (Operator Tiers &amp; Validated Versions)</a>; this page focuses on the MCPLO-specific path.</p>
 
       <table class="status-table">
         <thead>
@@ -130,7 +130,7 @@ oc get crd mcpservers.mcp.x-k8s.io</code></pre>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li><a href="../../../mcp-ecosystem/hub/build/operator-installation.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Operator Installation</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/build/end-to-end-setup.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Integration Scenarios (Operator Tiers &amp; Validated Versions)</a></li>
             <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcplo-key-decisions-from-slack.md">fact-mcplo-key-decisions-from-slack.md</a></li>
             <li><a href="../../../mcp-ecosystem/hub/plan/gaps.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Gaps (cluster-admin requirement)</a></li>
             <li><a href="https://issues.redhat.com/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a></li>

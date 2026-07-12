@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ecosystem Architecture — MCP Management Knowledge Hub</title>
+  <title>Umbrella Architecture - MCP Management Knowledge Hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,8 +16,8 @@
     <main class="hub-main">
       <div class="breadcrumb"></div>
 
-      <h1>Ecosystem Architecture</h1>
-      <p class="lead">How MCP components connect to deliver end-to-end governed AI tool access.</p>
+      <h1>Umbrella Architecture</h1>
+      <p class="lead">How the MCP components connect to deliver end-to-end governed AI tool access - the cross-component seams in summary form. The deep per-component tables now live in each component hub; this page is the map that ties them together.</p>
 
       <h2>Full Flow Diagram</h2>
 
@@ -100,6 +100,76 @@
         </div>
       </div>
 
+      <h2>Integration Map</h2>
+      <p>Where each seam stands today and where it is headed. This is the summary; each component hub carries the deep table for its own edges.</p>
+      <table class="status-table" style="margin-top: var(--space-lg);">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Mechanism</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Catalog</strong></td>
+            <td><strong>MCPLO</strong></td>
+            <td>Catalog UI triggers MCPServer CRD creation</td>
+            <td><span class="badge badge--shipped">Automated (3.4)</span></td>
+          </tr>
+          <tr>
+            <td><strong>MCPLO</strong></td>
+            <td><strong>Gateway</strong></td>
+            <td>Manual admin registration via MCPServerRegistration CRD + manual ConfigMap</td>
+            <td><span class="badge badge--gap">Manual</span><br><small>Target: Registry auto-config (GA Q4 2026)</small></td>
+          </tr>
+          <tr>
+            <td><strong>Registry</strong></td>
+            <td><strong>Gateway</strong></td>
+            <td>Approval workflow → auto-configure Gateway routing and auth</td>
+            <td><span class="badge badge--planned">Planned (GA Q4 2026)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Registry</strong></td>
+            <td><strong>Catalog</strong></td>
+            <td>Lifecycle-status enrichment only (active/deprecated flagging); not trust tiers or verification status, which remain out of scope until the four-track governance model ships</td>
+            <td><span class="badge badge--planned">Planned (3.6 EA1)</span><br><small>RHAISTRAT-2027, superseding RHAISTRAT-1938 (closed/obsolete)</small></td>
+          </tr>
+          <tr>
+            <td><strong>Studio</strong></td>
+            <td><strong>Gateway/Servers</strong></td>
+            <td><code>gen-ai-aa-mcp-servers</code> ConfigMap in <code>redhat-ods-applications</code></td>
+            <td><span class="badge badge--gap">Manual bridge</span><br><small>Target: Registry API (3.5)</small></td>
+          </tr>
+          <tr>
+            <td><strong>MCPLO</strong></td>
+            <td><strong>Registry</strong></td>
+            <td>MCPLO auto-registers deployed servers as "discovered" entries using <code>update_mode: SYSTEM_MANAGED</code> (vs. <code>MANUAL</code> for admin-entered records)</td>
+            <td><span class="badge badge--planned">Design resolved</span><br><small>Resolves the Hambridge/Prahl "discovered entries" question via <code>update_mode</code></small></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--gap">
+        <strong>Current Governance Gap:</strong> The manual ConfigMap bridge (<code>gen-ai-aa-mcp-servers</code>) is the only integration point between deployed MCP servers and Gen AI Studio. This will be replaced by Registry API once Registry TP lands, targeted for RHOAI 3.6 EA1 (retargeted from the original 3.5 plan, PM direction Jul 2026).
+      </div>
+
+      <h2>Integration Flows (Summary)</h2>
+      <p>The numbered seams in brief. For the full step diagrams and per-edge governance detail, follow the component-hub links.</p>
+
+      <ul>
+        <li><strong>Flow 1 - Catalog → MCPLO (automated today):</strong> User browses the Catalog, clicks Deploy and selects a namespace, the Catalog applies an <code>MCPServer</code> CRD, and MCPLO creates the Deployment + Service.</li>
+        <li><strong>Flow 2 - MCPLO → Gateway (manual today, auto target):</strong> Today an admin manually registers the server with the Gateway (<code>MCPServerRegistration</code> CRD) and updates the <code>gen-ai-aa-mcp-servers</code> ConfigMap, which needs cluster-admin. At GA (Q4 2026), MCPLO auto-registers the deployed server in the Registry, an approver reviews it, and the Registry auto-configures Gateway routing and auth - no manual ConfigMap, no cluster-admin.</li>
+        <li><strong>Flow 3 - Registry → Gateway (planned GA Q4 2026):</strong> A registered server passes an approval workflow, the Registry updates the Gateway (auto-config via <code>MCPGatewayExtension</code>), and the Gateway routes traffic so tools become visible to Studio. See <a href="../../../mcp-registry/hub/govern/integrations.html" class="page-footer__link">MCP Registry Hub: Integrations</a>.</li>
+        <li><strong>Flow 4 - Catalog → Registry (planned 3.6 EA1):</strong> Catalog-discovered servers are submitted to the Registry for governance tracking. RHAISTRAT-2027 (superseding the closed/obsolete RHAISTRAT-1938) carries this as fix version 3.6 EA1, not 3.5. Current scope delivers lifecycle-status enrichment (active/deprecated) via <code>MCPServerStatus</code> / <code>MCPPublishState</code>; approval, verification, and certification tracks are proposed but not yet modeled. See <a href="../govern/lifecycle-flow.html" class="page-footer__link">Lifecycle Flow</a>.</li>
+        <li><strong>Flow 5 - Studio → Gateway/Servers (manual bridge today):</strong> The <code>gen-ai-aa-mcp-servers</code> ConfigMap is the current integration point; once Registry TP lands (targeted RHOAI 3.6 EA1, PM direction Jul 2026) it is replaced by direct Registry API consumption, where Studio queries the Registry for approved MCP servers and their endpoints.</li>
+      </ul>
+
+      <div class="callout callout--insight">
+        <strong>Key Principle:</strong> Flow is always Catalog → Registry, never reverse. The Registry is the authoritative governance layer; the Catalog is the discovery layer.
+      </div>
+
       <h2>The ConfigMap Bridge (Current State)</h2>
 
       <p>In RHOAI 3.4, the <code>gen-ai-aa-mcp-servers</code> ConfigMap in <code>redhat-ods-applications</code> namespace is the integration point between deployed MCP servers and Gen AI Studio:</p>
@@ -118,46 +188,7 @@ data:
 
       <p><strong>Current State (3.4):</strong> Cluster admins manually edit this ConfigMap after deploying MCP servers. No validation. No approval workflow. No audit trail.</p>
 
-      <p><strong>Target State (3.5+):</strong> Registry replaces this ConfigMap. Gen AI Studio queries the Registry API for approved MCP servers. ConfigMap becomes read-only (generated from Registry state).</p>
-
-      <h2>How Components Connect</h2>
-
-      <div class="feature-card">
-        <div class="feature-card__header">
-          <div class="feature-card__title">Catalog → Registry</div>
-        </div>
-        <div class="feature-card__description">
-          <p>MCP servers are configured and discovered in the Catalog, then registered INTO the Registry for governance. The Catalog is the source; the Registry receives from it. Registry adds lifecycle state, approval status, certification, and ownership tracking. Registry's governance metadata (e.g., trust tiers) may inform how servers are displayed in the Catalog UI.</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card__header">
-          <div class="feature-card__title">Catalog → MCPLO</div>
-        </div>
-        <div class="feature-card__description">
-          <p>When a user clicks "Deploy" in Catalog, the Catalog creates an <code>MCPServer</code> CR. MCPLO watches for this CRD and deploys the workload. Deployment state can be reported back to the Registry (<code>is_deployed</code> flag).</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card__header">
-          <div class="feature-card__title">Registry → Gateway</div>
-        </div>
-        <div class="feature-card__description">
-          <p>Gateway polls Registry for approved MCP servers with <code>lifecycle_state=PUBLISHED</code>. For each, Gateway auto-creates an <code>MCPServer</code> CRD in its namespace, configuring routing and auth policies.</p>
-          <p><strong>Target (GA):</strong> Registry approval → Gateway configuration flows automatically.</p>
-        </div>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-card__header">
-          <div class="feature-card__title">Registry → Gen AI Studio</div>
-        </div>
-        <div class="feature-card__description">
-          <p>Studio queries Registry API for MCP servers visible to the current user (RBAC-filtered, approval-filtered). Replaces manual ConfigMap editing.</p>
-        </div>
-      </div>
+      <p><strong>Target State (Registry TP, targeted RHOAI 3.6 EA1):</strong> Registry replaces this ConfigMap. Gen AI Studio queries the Registry API for approved MCP servers. ConfigMap becomes read-only (generated from Registry state).</p>
 
       <h2>CRDs, ConfigMaps, and APIs</h2>
 
@@ -197,7 +228,7 @@ data:
           </tr>
           <tr>
             <td>MLflow Registry API</td>
-            <td>MCP Registry (3.5+)</td>
+            <td>MCP Registry (targeted RHOAI 3.6 EA1 TP)</td>
             <td>Governed MCP server metadata, lifecycle, approval</td>
           </tr>
         </tbody>
@@ -227,23 +258,34 @@ data:
         </ol>
       </div>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <h2>Open Integration Questions</h2>
+      <p>Resolved: whether MCPLO should create read-only "discovered" registry entries (Chris Hambridge, Matt Prahl feedback) is settled via the <code>update_mode</code> field - MCPLO auto-registers deployed servers as "discovered" entries with <code>update_mode: SYSTEM_MANAGED</code> (see the Integration Map above). Still open:</p>
+      <ul>
+        <li>How should registry state inform gateway behavior — full auto-config or approval-gated only?</li>
+        <li>Which lifecycle states should trigger gateway configuration updates?</li>
+        <li>Should the registry support multi-registry federation for conflict resolution?</li>
+      </ul>
+      <p>Full context for these lives in <a href="../plan/gaps.html" class="page-footer__link">Gaps &amp; Open Questions</a> and the <a href="../../../mcp-registry/hub/plan/gaps-open-questions.html" class="page-footer__link">MCP Registry Hub: Gaps &amp; Open Questions</a>.</p>
+
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
+            <li><a href="https://docs.google.com/document/d/1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8" class="page-footer__link">Fernando's MCP Research Notes</a></li>
             <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/flows/mcp-implementation-end-to-end.md" class="page-footer__link">MCP Implementation End-to-End</a></li>
-            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-registry.md" class="page-footer__link">MCP Registry Component Doc</a></li>
-            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li><a href="https://docs.google.com/document/d/11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y" class="page-footer__link">MCP Registry MVP Requirements</a></li>
+            <li><a href="https://docs.google.com/document/d/1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8" class="page-footer__link">MLflow MCP Registry Data Model Proposal</a></li>
             <li>Source verification: internal</li>
           </ul>
         </div>
         <div class="related-pages">
           <h4>Related Pages</h4>
           <ul>
-            <li><a href="./what-is-mcp-management.html" class="page-footer__link">What Is MCP Management? — Problem and positioning</a></li>
-            <li><a href="./component-overview.html" class="page-footer__link">Component Overview — Status, versions, repos</a></li>
-            <li><a href="../../../mcp-gateway/rhcl/" class="page-footer__link">MCP Gateway Hub — Deep dive into Gateway component</a></li>
+            <li><a href="./what-is-mcp-management.html" class="page-footer__link">What Is MCP Management? - Problem and positioning</a></li>
+            <li><a href="./component-directory.html" class="page-footer__link">Component Directory - Status, versions, hubs</a></li>
+            <li><a href="../govern/lifecycle-flow.html" class="page-footer__link">Lifecycle Flow - Governance states</a></li>
+            <li><a href="../../../mcp-registry/hub/govern/integrations.html" class="page-footer__link">MCP Registry Hub: Integrations - Deep edge tables</a></li>
           </ul>
         </div>
       </footer>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Customer Stories - MCP Management Knowledge Hub</title>
+  <title>Field Evidence - MCP Management Knowledge Hub</title>
   <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
@@ -13,8 +13,10 @@
     <main class="hub-main">
       <div class="breadcrumb"></div>
 
-    <h1>Customer Stories</h1>
-    <p class="lead">Real-world validation from customer POCs, partner integrations, and internal implementation experiences.</p>
+    <h1>Field Evidence</h1>
+    <p class="lead">Real-world validation from customer POCs, partner integrations, and internal implementation experiences, plus the synthesized customer asks and feature requests from Red Hat Summit 2026 and field engagements. Two parts: named-POC stories first, then the cross-component demand signal.</p>
+
+    <h2 style="margin-top: var(--space-xl);">Part 1 - Customer Stories</h2>
 
     <h2>Large Enterprise OEM Customer — "Dumb MCP Server" Validation</h2>
 
@@ -139,12 +141,201 @@
       <p><strong>Gateway-specific stories:</strong> the OEM identity/token walkthrough and hardware-partner gap analysis above are ecosystem-level summaries. For the fuller Gateway-specific customer stories, see the <a href="../../../mcp-gateway/rhcl/sell/customer-stories.html">RHCL hub's Customer Stories</a>, the canonical source for Gateway engagements.</p>
     </div>
 
+    <h2 style="margin-top: var(--space-2xl);">Part 2 - Summit &amp; Field Feedback</h2>
+    <p class="lead">Customer asks and feature requests from Red Hat Summit 2026 and field engagements.</p>
+
+    <div class="callout callout--source">
+      <p><strong>Note:</strong> Summit feedback synthesis is based on Slack summaries from the <code>#ai-asset-management</code> and <code>#mcp-lifecycle-operator</code> channels; sources verified 2026-07-10.</p>
+    </div>
+
+    <div class="callout callout--source">
+      <p><strong>Gateway-specific feedback:</strong> the component-interest matrix below is cross-component demand signal. For the fresher, fuller Gateway-specific Summit table (identity, observability, and cost asks from a 9-customer set), see the <a href="../../../mcp-gateway/rhcl/sell/summit-feedback.html">RHCL hub's Summit &amp; Field Feedback</a>.</p>
+    </div>
+
+    <h3>Top 3 Customer Asks</h3>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">1. Identity & Token Exchange</h2>
+      <p><strong>Customer Need:</strong> "How do I handle identity when my agent calls backend services? How do tokens flow through the stack?"</p>
+      <p><strong>Status:</strong> <span class="badge badge--shipped">Shipped</span> MCP Gateway + AuthBridge + Keycloak OIDC + Vault integration addresses this. Token exchange via Keycloak, OBO support via <code>act</code> claim chains, wristband signing for per-tool authorization, Vault secrets injection for backends requiring stored credentials (GitHub PATs, API keys). <em>AuthBridge's current implementation is Kagenti-delivered; Kagenti is being removed from the roadmap as of 2026-07-10, with OpenShell expected to expand to cover this capability. Claim under revalidation.</em></p>
+      <p><strong>Evidence:</strong> A large enterprise OEM customer validated "dumb MCP server" pattern (May 2026) — MCP server receives validated token in Authorization header, no auth code required. 10 technical Q&As answered covering Okta federation, token caching, OBO configuration, audit trail.</p>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">2. Observability & Monitoring</h2>
+      <p><strong>Customer Need:</strong> "How do I monitor MCP server usage? Which tools are being invoked? By which agents? What's the latency? What's failing?"</p>
+      <p><strong>Status:</strong> <span class="badge badge--shipped">Shipped</span> MCP Gateway provides OpenTelemetry traces, per-tool invocation metrics, structured audit logging, and agent-to-tool correlation. Metrics cover latency, retries, errors, and token usage.</p>
+      <p><strong>Gap:</strong> <span class="badge badge--planned">Planned</span> Cost tracking is not explicitly modeled (strategic hardware partner gap analysis, June 2026). Retry metrics are not differentiated from primary invocations. Cache-aware token rate limiting (cache hit/miss feedback into limiting decisions) is an open question. Planned for GA (Q4 2026).</p>
+    </div>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">3. Cost Optimization & Rate Limiting</h2>
+      <p><strong>Customer Need:</strong> "How do I control costs when agents fan out to external APIs? How do I prevent runaway usage?"</p>
+      <p><strong>Status:</strong> <span class="badge badge--tp">Partial</span> Rate limiting supported per-tool via Limitador (Red Hat Connectivity Link component). Timeouts and concurrency limits not yet configurable per-tool through MCP Gateway CRDs (strategic hardware partner gap analysis, June 2026).</p>
+      <p><strong>Roadmap:</strong> Full tool-level QoS (timeouts, concurrency, cost budgets) planned for future releases. Envoy provides infrastructure-level timeout configuration today — can be leveraged for near-term POCs even if not yet exposed through MCP Gateway CRDs.</p>
+    </div>
+
+    <h3>Customer Interest by Component</h3>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>MCP Catalog</th>
+          <th>MCP Registry</th>
+          <th>MCP Gateway</th>
+          <th>MCP Lifecycle Operator</th>
+          <th>Gen AI Studio Integration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>OEM Customer</strong></td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="badge badge--shipped">Active POC</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Telecom Provider</strong></td>
+          <td><span class="badge badge--shipped">Yes</span></td>
+          <td><span class="badge badge--tp">Early Access</span></td>
+          <td><span class="badge badge--shipped">Active POC</span></td>
+          <td><span class="badge badge--shipped">Yes</span></td>
+          <td><span class="badge badge--shipped">Yes</span></td>
+        </tr>
+        <tr>
+          <td><strong>Hardware Partner</strong></td>
+          <td>—</td>
+          <td><span class="badge badge--planned">Under Review</span></td>
+          <td><span class="badge badge--shipped">Gap Analysis</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>A U.S. bank</strong></td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="badge badge--shipped">Team A Use Case</span></td>
+        </tr>
+        <tr>
+          <td><strong>A large healthcare system</strong></td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="badge badge--planned">Control Plane Mapping</span></td>
+          <td>—</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout--source">
+      <p><strong>Context:</strong> A U.S. bank's and a large healthcare system's interest is based on AI Gateway F2F discussions (April 2026). The bank's Team A use case covers "single OCP cluster, migrate from upstream vLLM, API key mgmt, per-team access" — maps to RHOAI MaaS (in-cluster). The healthcare system's strategic paper maps 9 enterprise AI control plane capabilities onto AI Gateway, including "Agent registry and lifecycle management" (MCP tool catalog, agent discovery). See <a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway</a> for full context.</p>
+    </div>
+
+    <h3>Agent-to-Agent (A2A): Not Yet</h3>
+
+    <div class="callout callout--gap">
+      <h2 class="callout__title">A2A Status: Future Work</h2>
+      <p>Agent-to-Agent (A2A) communication is one of the four traffic types AI Gateway must serve (inference, tool calling/MCP, A2A, external provider egress). A2A covers agent discovery (AgentCard), invocation, and orchestration.</p>
+      <p><strong>Current State:</strong> Discussed at AI Gateway F2F (April 2026) but not yet substantively addressed. A2A is planned for future releases but not part of RHOAI 3.5 or MCP ecosystem initial deliverables.</p>
+      <p><strong>Related Context:</strong> The healthcare system's enterprise AI control plane mapping includes "Agent registry and lifecycle management" — overlaps with A2A discovery requirements. The bank's Team B use case (multi-cluster/region/cloud) may require A2A for cross-cluster agent orchestration.</p>
+    </div>
+
+    <h3>Feature Requests Summary</h3>
+
+    <table class="status-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Status</th>
+          <th>Customers</th>
+          <th>Timeline</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Identity & Token Exchange</strong></td>
+          <td><span class="badge badge--shipped">Shipped</span></td>
+          <td>OEM Customer, Telecom Provider, Hardware Partner</td>
+          <td>MCP Gateway v0.6.0 (April 2026); Kagenti-delivered, roadmap caveat above</td>
+        </tr>
+        <tr>
+          <td><strong>Per-Tool Rate Limiting</strong></td>
+          <td><span class="badge badge--shipped">Shipped</span></td>
+          <td>Hardware Partner, Telecom Provider</td>
+          <td>RHCL 1.3.2+ (April 2026)</td>
+        </tr>
+        <tr>
+          <td><strong>OpenTelemetry Observability</strong></td>
+          <td><span class="badge badge--shipped">Shipped</span></td>
+          <td>Hardware Partner, Telecom Provider, a large healthcare system</td>
+          <td>MCP Gateway v0.6.0 (April 2026)</td>
+        </tr>
+        <tr>
+          <td><strong>Cost Tracking</strong></td>
+          <td><span class="badge badge--planned">Planned</span></td>
+          <td>Hardware Partner, a U.S. bank</td>
+          <td>GA (Q4 2026)</td>
+        </tr>
+        <tr>
+          <td><strong>Per-Tool Timeouts & Concurrency</strong></td>
+          <td><span class="badge badge--planned">Planned</span></td>
+          <td>Hardware Partner</td>
+          <td>Future (post-GA)</td>
+        </tr>
+        <tr>
+          <td><strong>Health Checks & Circuit Breakers</strong></td>
+          <td><span class="badge badge--planned">Planned</span></td>
+          <td>Hardware Partner</td>
+          <td>GA (Q4 2026)</td>
+        </tr>
+        <tr>
+          <td><strong>Registry → Gateway Integration</strong></td>
+          <td><span class="badge badge--planned">Planned</span></td>
+          <td>Hardware Partner, Telecom Provider</td>
+          <td>GA (Q4 2026)</td>
+        </tr>
+        <tr>
+          <td><strong>WebSocket & stdio Transports</strong></td>
+          <td><span class="badge badge--planned">Active RFEs</span></td>
+          <td>Hardware Partner</td>
+          <td>RHAIRFE-2514/2515/2516 filed Jun 2026</td>
+        </tr>
+        <tr>
+          <td><strong>Agent-to-Agent (A2A)</strong></td>
+          <td><span class="badge badge--gap">Future</span></td>
+          <td>A large healthcare system, a U.S. bank (Team B)</td>
+          <td>2027+ (AI Gateway roadmap)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Key Takeaways</h3>
+
+    <div class="callout callout--insight">
+      <h2 class="callout__title">What Customers Care About Most</h2>
+      <ul>
+        <li><strong>Identity is table stakes:</strong> Every enterprise customer asks about identity and token flow before anything else. MCP Gateway's auth story (Keycloak + AuthBridge + Vault) is a differentiator.</li>
+        <li><strong>Observability for trust:</strong> Customers won't deploy AI agents at scale without visibility into what's happening. OpenTelemetry traces, per-tool metrics, and audit logging are critical.</li>
+        <li><strong>Cost control for safety:</strong> Runaway agent usage is a real fear. Rate limiting is a start; cost tracking and budgets are the next ask.</li>
+        <li><strong>Governance before runtime:</strong> The telecommunications-provider customer asked about registry early access because they need approval workflows before deploying 20+ MCP servers. Discovery alone isn't enough.</li>
+        <li><strong>Developer experience wins deals:</strong> The OEM customer's "dumb MCP server" requirement proves that complexity kills adoption. Gateway-layer auth means developers write business logic, not auth plumbing.</li>
+      </ul>
+    </div>
+
       <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
             <li>Source verification: internal</li>
+            <li>Partner gap analysis (POC gap analysis — internal)</li>
+            <li>Slack sweep (#ai-asset-management, #mcp-lifecycle-operator, 2026-07-10)</li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/ai-gateway.md" class="page-footer__link">AI Gateway F2F</a></li>
           </ul>
         </div>
         <div class="related-pages">
@@ -152,8 +343,8 @@
           <ul>
             <li><a href="value-prop.html" class="page-footer__link">Value Proposition</a></li>
             <li><a href="competitive.html" class="page-footer__link">Competitive Landscape</a></li>
-            <li><a href="summit-feedback.html" class="page-footer__link">Summit Feedback</a></li>
             <li><a href="../../../mcp-gateway/rhcl/sell/customer-stories.html" class="page-footer__link">RHCL Customer Stories</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/sell/summit-feedback.html" class="page-footer__link">RHCL Summit &amp; Field Feedback</a></li>
           </ul>
         </div>
       </footer>

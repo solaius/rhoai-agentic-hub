@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Which Component Do I Need? - MCP Management Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Which Component Do I Need?</h1>
+      <p class="lead">Start from what you are trying to do, and this table points you at the component that does it and the hub that documents it. The four components compose - most real deployments use more than one - but each need below has a primary owner.</p>
+
+      <h2>Decision Table</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>I need to...</th>
+            <th>Component</th>
+            <th>What it gives you</th>
+            <th>Hub</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Deploy an MCP server</strong></td>
+            <td>MCP Lifecycle Operator (MCPLO)</td>
+            <td>The <code>MCPServer</code> CRD as the deployment primitive: a Kubernetes-native operator that creates Deployment, Service, and NetworkPolicy from a declarative spec. Ships under the standard OpenShift entitlement.</td>
+            <td><a href="../../../mcp-lifecycle-operator/hub/" class="page-footer__link">MCPLO Hub →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Govern tool access at runtime</strong></td>
+            <td>MCP Gateway</td>
+            <td>An API gateway for AI tool calls: virtual MCP servers that aggregate tools from multiple backends, identity-aware tool filtering, per-tool authentication, metrics, and audit logging. Built on Red Hat Connectivity Link.</td>
+            <td><a href="../../../mcp-gateway/rhcl/" class="page-footer__link">Gateway Hub →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Discover approved servers</strong></td>
+            <td>MCP Catalog</td>
+            <td>A discovery layer to browse partner, community, and Red Hat MCP servers with metadata - tool lists, security indicators, license (SPDX), provider logo, and README - and a Deploy hand-off to the Lifecycle Operator.</td>
+            <td><a href="../../../mcp-catalog/hub/" class="page-footer__link">Catalog Hub →</a></td>
+          </tr>
+          <tr>
+            <td><strong>Prove provenance and audit</strong></td>
+            <td>MCP Registry</td>
+            <td>The authoritative governance layer and system of record: tracks lifecycle state, approval, certification, and ownership across a server's life from discovery through consumption. In design; TP targeted for RHOAI 3.6 EA1.</td>
+            <td><a href="../../../mcp-registry/hub/" class="page-footer__link">Registry Hub →</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">They compose into one governed path</div>
+        <p>Discover in the <strong>Catalog</strong>, register into the <strong>Registry</strong> for governance, deploy with the <strong>Lifecycle Operator</strong>, and enforce at runtime through the <strong>Gateway</strong> - with Gen AI Studio as the consumption surface. If you only need a playground demo, the Lifecycle Operator plus the Catalog gets you there without the Gateway. For the full picture of how these connect, see <a href="./ecosystem-architecture.html" class="page-footer__link">Umbrella Architecture</a>; to set one up, see <a href="../build/end-to-end-setup.html" class="page-footer__link">Integration Scenarios</a>.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-gateway.md" class="page-footer__link">MCP Gateway Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-catalog.md" class="page-footer__link">MCP Catalog Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-lifecycle-operator.md" class="page-footer__link">MCPLO Component Doc</a></li>
+            <li><a href="https://github.com/solaius/ai-asset-registry/blob/main/docs/knowledge-review/components/mcp-registry.md" class="page-footer__link">MCP Registry Component Doc</a></li>
+            <li>Source verification: internal</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./component-directory.html" class="page-footer__link">Component Directory - One card per component</a></li>
+            <li><a href="./ecosystem-architecture.html" class="page-footer__link">Umbrella Architecture - How components connect</a></li>
+            <li><a href="../build/end-to-end-setup.html" class="page-footer__link">Integration Scenarios - Set it up end to end</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
