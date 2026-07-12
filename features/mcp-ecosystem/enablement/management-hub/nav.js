@@ -2,35 +2,30 @@
 // Generates sidebar, header, breadcrumbs, quick-jump, and staleness indicators
 
 const SITE_MAP = [
-  { section: 'Understand It', id: 'understand', pages: [
+  { section: 'Ecosystem', id: 'ecosystem', pages: [
     { title: 'What Is MCP Management?', path: 'understand/what-is-mcp-management.html' },
-    { title: 'Ecosystem Architecture', path: 'understand/ecosystem-architecture.html' },
-    { title: 'Component Overview', path: 'understand/component-overview.html' },
+    { title: 'Umbrella Architecture', path: 'understand/ecosystem-architecture.html' },
     { title: 'Personas', path: 'understand/personas.html' },
+  ]},
+  { section: 'Components', id: 'components', pages: [
+    { title: 'Component Directory', path: 'understand/component-directory.html' },
+    { title: 'Which Component Do I Need?', path: 'understand/decision-guide.html' },
+  ]},
+  { section: 'Choose & Integrate', id: 'integrate', pages: [
+    { title: 'Integration Scenarios', path: 'build/end-to-end-setup.html' },
+    { title: 'Lifecycle Flow', path: 'govern/lifecycle-flow.html' },
+    { title: 'Entitlement', path: 'govern/entitlement.html' },
   ]},
   { section: 'Sell It', id: 'sell', pages: [
     { title: 'Value Proposition', path: 'sell/value-prop.html' },
-    { title: 'Customer Stories', path: 'sell/customer-stories.html' },
+    { title: 'Field Evidence', path: 'sell/customer-stories.html' },
     { title: 'Competitive Landscape', path: 'sell/competitive.html' },
-    { title: 'Summit & Field Feedback', path: 'sell/summit-feedback.html' },
   ]},
-  { section: 'Build It', id: 'build', pages: [
-    { title: 'End-to-End Setup', path: 'build/end-to-end-setup.html' },
-    { title: 'Operator Installation', path: 'build/operator-installation.html' },
-    { title: 'Configuration Reference', path: 'build/configuration-reference.html' },
-    { title: 'Troubleshooting', path: 'build/troubleshooting.html' },
-  ]},
-  { section: 'Govern It', id: 'govern', pages: [
-    { title: 'Lifecycle Flow', path: 'govern/lifecycle-flow.html' },
-    { title: 'Component Integration', path: 'govern/component-integration.html' },
-    { title: 'Security Model', path: 'govern/security-model.html' },
-    { title: 'Entitlement', path: 'govern/entitlement.html' },
-  ]},
-  { section: 'Plan It', id: 'plan', pages: [
+  { section: 'Plan & Govern', id: 'plan', pages: [
     { title: 'Roadmap', path: 'plan/roadmap.html' },
-    { title: 'Known Gaps', path: 'plan/gaps.html' },
-    { title: 'Jira Tracker', path: 'plan/jira-tracker.html' },
-    { title: 'Open Questions', path: 'plan/open-questions.html' },
+    { title: 'Jira Tracker (Strats Rollup)', path: 'plan/jira-tracker.html' },
+    { title: 'Security Model', path: 'govern/security-model.html' },
+    { title: 'Gaps & Open Questions', path: 'plan/gaps.html' },
   ]},
 ];
 

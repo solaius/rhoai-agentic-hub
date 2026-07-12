@@ -85,17 +85,15 @@ oc describe mcpserver ocp-mcp -n my-mcp</code></pre>
       <div class="callout callout--gap">
         <strong>Current limitation.</strong> Neither issue above has an automated fix today: the catalog does not create ServiceAccount, ConfigMap, or ClusterRoleBinding prerequisites for you, by design (auto-creating them would require the catalog controller to hold privilege-escalation rights). Prerequisite automation is tracked under <a href="https://issues.redhat.com/browse/RHAIRFE-2434" target="_blank" rel="noopener">RHAIRFE-2434</a> (Approved; delivery Feature RHAISTRAT-2027, In Progress; supersedes the obsoleted RHAISTRAT-1938), targeted for RHOAI 3.6 EA1 as part of Catalog/Registry Integration TP: an open ask, not shipped.
       </div>
-      <p class="source-ref">Two management-hub pages date this differently: <code>plan/gaps.html</code> reads "planned for 3.5 TP," while the Jira-sourced <code>plan/open-questions.html</code> and <code>plan/jira-tracker.html</code> both tie RHAIRFE-2434 to RHOAI 3.6 EA1 with an explicit delivery Feature (RHAISTRAT-2027). This page follows the more specific, Jira-verified 3.6 EA1 dating.</p>
+      <p class="source-ref">The management hub's Jira-sourced <code>plan/jira-tracker.html</code>, together with the Open Questions section of <code>plan/gaps.html</code> (Q7), ties RHAIRFE-2434 to RHOAI 3.6 EA1 with an explicit delivery Feature (RHAISTRAT-2027). This page follows that Jira-verified 3.6 EA1 dating.</p>
 
       <footer class="page-footer" data-verified="2026-07-11">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/troubleshooting.html">Management hub: Troubleshooting (issues #2, #3)</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/operator-installation.html">Management hub: Operator Installation (Post-Install Activation)</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/configuration-reference.html">Management hub: Configuration Reference</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/open-questions.html">Management hub: Open Questions (Q7)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/build/end-to-end-setup.html">Management hub: Integration Scenarios (Cross-Component Issues; Operator Tiers &amp; Configuration Artifacts)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps &amp; Open Questions (Q7)</a></li>
             <li><a href="https://issues.redhat.com/browse/RHAIRFE-2434" target="_blank" rel="noopener">RHAIRFE-2434</a></li>
           </ul>
         </div>
