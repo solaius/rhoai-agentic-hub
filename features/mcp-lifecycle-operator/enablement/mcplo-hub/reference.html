@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quick Reference: MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Quick Reference</h1>
+      <p class="lead">
+        Essential facts for the MCP Lifecycle Operator (MCPLO): the three-repo architecture, the MCPServer CRD, the release train, key Jiras, and entitlement.
+      </p>
+
+      <h2>Upstream & Architecture Repositories</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Repo</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" target="_blank" rel="noopener">kubernetes-sigs/mcp-lifecycle-operator</a></td>
+            <td>Upstream SIG Apps operator; reconciles <code>MCPServer</code> CRs (the deployment primitive)</td>
+          </tr>
+          <tr>
+            <td>opendatahub-io/mcp-lifecycle-module-operator</td>
+            <td>ODH module wrapper; reconciles <code>MCPLifecycleOperator</code> CRs and deploys the upstream controller as an operand</td>
+          </tr>
+          <tr>
+            <td>opendatahub-io/opendatahub-operator</td>
+            <td>Parent operator; embeds the module handler in the DataScienceCluster (DSC) CR as the <code>mcplifecycleoperator</code> component</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Downstream fork github.com/openshift/mcp-lifecycle-operator adds CI/build infrastructure but core operator code tracks upstream.</p>
+
+      <h2>MCPServer CRD Quick Facts</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>API group</td>
+            <td class="mono">mcp.x-k8s.io/v1alpha1</td>
+          </tr>
+          <tr>
+            <td>Kind</td>
+            <td class="mono">MCPServer</td>
+          </tr>
+          <tr>
+            <td>Prerequisite</td>
+            <td>Kubernetes v1.28+</td>
+          </tr>
+          <tr>
+            <td>Auto-created resources</td>
+            <td>Deployment, Service, NetworkPolicy (security-hardened: non-root, read-only rootfs, dropped capabilities, seccomp RuntimeDefault)</td>
+          </tr>
+          <tr>
+            <td>Status conditions</td>
+            <td><code>Accepted</code> (reason: Valid), <code>Ready</code> (reason: Available)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">Full field-by-field reference: see the <a href="./build/mcpserver-crd.html">MCPServer CRD Reference</a> page.</p>
+
+      <h2>Release Train</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Owner / qualification</th>
+            <th>Target</th>
+            <th>Jira</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DP</td>
+            <td>Upstream (kubernetes-sigs)</td>
+            <td>v0.2.0, Jun 17, 2026</td>
+            <td>-</td>
+            <td><span class="badge badge--shipped">Shipped</span></td>
+          </tr>
+          <tr>
+            <td>TP (OCP-side)</td>
+            <td>OCP team: owns <strong>functional qualification</strong> (server deployment, discovery, management)</td>
+            <td>mid-Jul 2026</td>
+            <td><a href="https://redhat.atlassian.net/browse/OCPSTRAT-3263" target="_blank" rel="noopener">OCPSTRAT-3263</a></td>
+            <td><span class="badge badge--tp">In Progress</span></td>
+          </tr>
+          <tr>
+            <td>TP (RHOAI-side)</td>
+            <td>RHOAI team: owns <strong>deployment/integration qualification</strong> (rollout via RHOAI operator, prerequisites satisfied)</td>
+            <td>mid-Aug 2026</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a></td>
+            <td><span class="badge badge--tp">Planned</span></td>
+          </tr>
+          <tr>
+            <td>GA</td>
+            <td>Joint (OCP + RHOAI)</td>
+            <td>RHOAI 3.6, code freeze Oct 23, 2026</td>
+            <td>
+              <a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a>,
+              <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a>
+            </td>
+            <td><span class="badge badge--planned">Planned</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The OCP-side TP lands earlier than the RHOAI-side TP because OCP owns functional qualification while RHOAI owns deployment/integration qualification: two separate tracks converging at GA.</p>
+
+      <h2>Key Jiras</h2>
+      <ul>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a>: RHOAI Outcome for the MCP Lifecycle Operator productization</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a>: RHOAI-side TP productization</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a>: RHOAI-side GA</li>
+        <li><a href="https://redhat.atlassian.net/browse/OCPSTRAT-3263" target="_blank" rel="noopener">OCPSTRAT-3263</a>: OCP-side TP</li>
+        <li><a href="https://redhat.atlassian.net/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a>: OCP-side GA</li>
+        <li><a href="https://redhat.atlassian.net/browse/RHOAIENG-65512" target="_blank" rel="noopener">RHOAIENG-65512</a>: RHOAI productization epic (Konflux builds, testing strategy, TLS, multi-arch)</li>
+        <li><a href="https://redhat.atlassian.net/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>: MCP Gateway integration (explicitly GA scope, not TP)</li>
+      </ul>
+      <p class="source-ref">Full STRAT enumeration pending the Jira hub skills; see the Jira Tracker page for the current snapshot.</p>
+
+      <h2>Entitlement</h2>
+      <div class="callout callout--insight">
+        <div class="callout__title">MCPLO ships with OCP entitlement</div>
+        <p style="margin-bottom: 0;">
+          MCPLO is not RHOAI-restricted. Base OpenShift customers get MCPLO with a standard OCP entitlement;
+          RHOAI adds Registry, Authorino, and Limitador on top. Customers can start on OCP and upgrade to
+          RHOAI later without losing MCPLO functionality.
+        </p>
+      </div>
+
+      <h2>Hub Network</h2>
+      <ul>
+        <li><a href="../../mcp-ecosystem/hub/">MCP Ecosystem Hub</a>: cross-component view across Catalog, Registry, Operator, and Gateway</li>
+        <li><a href="../../mcp-gateway/rhcl/">MCP Gateway Hub</a>: runtime connectivity knowledge base</li>
+        <li><a href="../../mcp-catalog/hub/">MCP Catalog Hub</a>: discovery/storefront knowledge base</li>
+        <li>MCP Registry Hub: <span class="badge badge--coming-soon">Dedicated hub planned</span></li>
+      </ul>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li>This page is a curated link index; see the section links above for individual sources.</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./understand/what-is-mcplo.html" class="page-footer__link">What Is the MCP Lifecycle Operator? Problem and positioning</a></li>
+            <li><a href="./build/mcpserver-crd.html" class="page-footer__link">MCPServer CRD Reference</a></li>
+            <li><a href="./index.html" class="page-footer__link">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="./nav.js"></script>
+</body>
+</html>
