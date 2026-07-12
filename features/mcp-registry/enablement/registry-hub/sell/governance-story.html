@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Governance Story | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>The Governance Story</h1>
+      <p class="lead">Discovery catalogs answer "what exists?" They do not answer "who approved it?" or "is it safe to use?" The MCP Registry is Red Hat's answer to that second pair of questions, but the full answer is a vision, and today's answer is a much smaller, still-unbuilt current design. This page keeps those two honest, and marks nothing as shipped.</p>
+
+      <div class="callout callout--warning">
+        <div class="callout__title">Status check before you read further</div>
+        <p style="margin-bottom: 0;">
+          The MCP Registry has no code and no shipped Dev Preview. Its Dev Preview will not land in RHOAI 3.5 stable;
+          Tech Preview is targeted for RHOAI 3.6 EA1, GA for RHOAI 3.6 (code freeze October 23, 2026). Every claim
+          below is labeled VISION (the aspirational, not-yet-designed-in-full end state), CURRENT DESIGN (the model
+          actually being built toward Tech Preview), or a plain field signal (something a customer or partner asked
+          for, with no release number attached because none has been committed to them).
+        </p>
+      </div>
+
+      <h2>Governance: The Missing Layer</h2>
+      <p>
+        No MCP discovery surface on the market today, Red Hat's own Catalog included, answers "who approved this
+        server?" or "has it been verified and certified for enterprise use?" That is the gap a registry, not just a
+        catalog, is meant to close. Approval workflows, verification, and certification tracking are conceptually
+        separate from listing something for discovery; a catalog can tell you a server exists, only a registry can
+        tell you whether it is governed.
+      </p>
+
+      <div class="callout callout--quote">
+        <div class="callout__title"><span class="badge badge--research">VISION</span> The full governance story</div>
+        <p>
+          The aspirational end state, described in an early, brain-dump-stage proposal, is four independent
+          governance tracks on every server version: a lifecycle state (Draft &rarr; Candidate &rarr; Published
+          &rarr; Deprecated &rarr; Retired), an approval status (Draft &rarr; Pending &rarr; Approved &rarr; Rejected
+          &rarr; Revoked), a verification status (Unverified &rarr; Verified), and a certification status (None
+          &rarr; Candidate &rarr; Certified &rarr; Expired &rarr; Revoked), each progressing independently. In that
+          vision, a version could be verified but not yet approved, or approved but not yet certified, giving a
+          precise answer to "how governed is this, exactly?" instead of one blended status.
+        </p>
+        <p style="margin-bottom: 0;">
+          <strong>None of this is built, and none of it is committed for the initial release.</strong> It is a
+          deferred proposal going through MLflow's upstream RFC process, not a design decision. See
+          <a href="../understand/data-model.html">Data Model</a> for the full, clearly-bounded proposal section.
+        </p>
+      </div>
+
+      <div class="callout callout--insight">
+        <div class="callout__title"><span class="badge badge--in-progress">CURRENT DESIGN</span> What is actually being built</div>
+        <p>
+          The current data model is two enums plus an update mode: <code>MCPServerStatus</code> (active, deprecated,
+          retired) at the asset level, and <code>MCPPublishState</code> (draft, published, deprecated, retired) at
+          the version level. Note the overlap in wording with the vision above: <code>MCPPublishState</code>
+          reuses "draft" and "published" as values, but it is a two-state-lighter model with no separate
+          "Candidate" step and no independent approval, verification, or certification tracks. No
+          <code>approval_status</code>, <code>verification_status</code>, or <code>certification_status</code> field
+          exists in the current design.
+        </p>
+        <p style="margin-bottom: 0;">
+          What the current design still delivers on the governance promise: governance metadata is first-class and
+          kept separate from tags, not just a freeform label; approval-style gating is architecturally distinct from
+          runtime enforcement (the Registry governs what's approved, the Gateway enforces at request time, two
+          different systems); and workspace-scoped, RBAC-aware visibility limits who sees what. That is a smaller
+          but real governance floor, not the full four-track vision.
+        </p>
+      </div>
+
+      <h2>Why a Registry, Not Just a Catalog</h2>
+      <p>
+        A catalog's job is discovery: list what exists, describe it, make it findable. Red Hat's own MCP Catalog does
+        that well. But listing something is not the same as governing it: a catalog has no natural place to
+        record who approved a server for production use, whether it has been verified, or what happens when it needs
+        to be deprecated or retired. Those are lifecycle and trust questions, and they need their own system of
+        record, kept separate from the discovery UI, so that approval and runtime enforcement stay two distinct
+        concerns rather than one blended step baked into a storefront.
+      </p>
+
+      <h2>What the Field Is Asking (Anonymized)</h2>
+      <p>
+        The Registry has no named customer reference and no shipped product to point to. What exists is early,
+        anonymized field signal that governance is a real, felt gap, not a speculative one:
+      </p>
+      <ul>
+        <li>A major telecommunications provider asked for early access to registry-style governance because it needs approval workflows in place before deploying 20+ MCP servers across its platform-APIs organization. For that customer, discovery alone was not enough; it needed a way to say "this one is approved for production" before it would move forward.</li>
+        <li>A strategic hardware partner's gap analysis identified a "central metadata registry" as a gap in its joint-solution proof of concept, specifically because registry-style governance was not yet integrated with runtime enforcement. The partner still rated the design more mature than any discovery-only competitor catalog it evaluated, even acknowledging that gap.</li>
+      </ul>
+      <p class="source-ref">
+        Both signals are anonymized on purpose and carry no release number: neither customer nor partner has been
+        offered a committed delivery date, and this hub does not attach one to them here.
+      </p>
+
+      <h2>Where This Leaves Positioning</h2>
+      <p>
+        The honest sell is: no competitor in the MCP discovery space (Docker MCP Catalog, Smithery, GitHub MCP
+        Registry, the official upstream MCP Registry spec) has approval workflows, verification, or certification
+        tracking of any kind, and that part of the comparison is genuinely favorable. What is not yet true is that
+        Red Hat has shipped the full governance vision described above. The accurate claim today is narrower: Red Hat
+        has a concrete, in-progress design for a governance layer, distinct from its discovery layer, with a real
+        two-enum model already specified and a fuller model already scoped as a deliberate follow-on. That is a
+        design commitment, not a shipped differentiator, and this page should not be quoted as if it were.
+      </p>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/sell/competitive.html">Management hub: sell/competitive.html ("Governance: The Missing Layer")</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/sell/summit-feedback.html">Management hub: sell/summit-feedback.html</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/fact-mcp-registry.md">fact-mcp-registry.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/knowledge/fact-mcp-registry-data-model-proposal.md">fact-mcp-registry-data-model-proposal.md</a></li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1762" target="_blank" rel="noopener">RHAISTRAT-1762</a> (Operational Governance) and <a href="https://issues.redhat.com/browse/RHAISTRAT-1993" target="_blank" rel="noopener">RHAISTRAT-1993</a> (General Availability)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/data-model.html">Data Model</a></li>
+            <li><a href="../understand/what-is-the-registry.html">What Is the MCP Registry?</a></li>
+            <li><a href="../build/mvp-scope-prototype.html">MVP Scope &amp; Prototype</a></li>
+            <li><a href="../../mcp-ecosystem/hub/sell/competitive.html">MCP Management Hub: Competitive Landscape</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jobs to Be Done | MCP Registry Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jobs to Be Done</h1>
+      <p class="lead">The real jobs the MCP Registry serves, sourced from the hub's narrative layer: the cross-feature jobs-to-be-done inventory that ties product surfaces back to what a persona is actually trying to accomplish.</p>
+
+      <p>As of this writing, one narrative job-to-be-done names <code>mcp-registry</code> in its <code>features</code> list (confirmed by <code>grep -l "mcp-registry" narrative/knowledge/jtbd-*.md</code> on 2026-07-12). More jobs may attach to the Registry over time as the narrative layer grows; this page reflects the current set.</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Discover my skills, MCP servers, and agentic assets</div>
+        </div>
+        <div class="feature-card__description">
+          <p>
+            <span class="badge badge--coming-soon">Persona: ai-engineer</span>
+            &nbsp;
+            <span class="badge badge--open">Status: candidate</span>
+          </p>
+
+          <p><strong>When</strong> I'm building or configuring agents,<br>
+          <strong>I want to</strong> discover governed skills, MCP servers, and agentic assets,<br>
+          <strong>so I can</strong> compose capable agents from validated, approved components rather than unvetted tools.</p>
+
+          <p><strong>How the Registry addresses it:</strong></p>
+          <ul>
+            <li>The job's own "How RHOAI addresses this" list names the MCP Registry specifically as the governance component: version, lifecycle, and policy for MCP servers, distinct from the MCP Catalog's storefront role</li>
+            <li>The Registry is the reason a discovered server can be trusted, not just found: it supplies the identity, version, and lifecycle state (<code>MCPServerStatus</code>, <code>MCPPublishState</code>) that a discovery surface can key off, once the two are wired together</li>
+            <li>Workspace-scoped, RBAC-aware visibility means an engineer sees the servers approved for their workspace, not an unfiltered global list, once the Registry ships</li>
+            <li>The certification context this job implies (knowing a component is "validated, approved") maps most directly onto the four-track proposal's verification and certification tracks, which are a deferred proposal, not part of the current two-enum model; see <a href="./data-model.html">Data Model</a></li>
+          </ul>
+
+          <div class="callout callout--gap" style="margin-top: var(--space-md);">
+            <p style="margin-bottom: 0;">
+              This job is served conceptually today, not through live cross-component wiring: the Registry has not
+              shipped, and Registry-to-Catalog surfacing integration is its own tracked Tech Preview item
+              (<a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>),
+              targeted for RHOAI 3.6 EA1 alongside the Registry's own Tech Preview.
+            </p>
+          </div>
+
+          <p class="source-ref">Pillar: Agents (AI Hub theme + MCP Ecosystem theme). Evidence status: not yet backed by direct customer evidence (tracked as "candidate" in the narrative inventory).</p>
+
+          <p><strong>Source:</strong> <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-discover-agentic-assets.md">jtbd-discover-agentic-assets.md</a></p>
+        </div>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-discover-agentic-assets.md">jtbd-discover-agentic-assets.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/views/jtbd.md">views/jtbd.md (generated index)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./what-is-the-registry.html">What Is the MCP Registry?</a></li>
+            <li><a href="./data-model.html">Data Model</a></li>
+            <li><a href="../../mcp-catalog/hub/understand/jobs-to-be-done.html">MCP Catalog Hub: Jobs to Be Done</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
