@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-11
+- **Update** -- sweep(mcp-registry): 1 entry refreshed (ref-mcp-lifecycle-operator-repo timestamp bumped, active upstream repo)
 - **Creation** -- standup + sweep batch shipped (#28, #3): hub.standup (daily PM brief), hub.weekly-plan (weekly planning), hub.sweep (feature staleness audit). All prompt-only skills.
 - **Creation** - R6 Cursor validation executed (#9): AGENTS.md + `.claude/skills/` discovery PASS (no symlink); scratch empty; project MCP stays disconnected until Settings → MCP enable (Google worked via user-level only); rhai-tracker missing from `.cursor/mcp.json`. Findings in docs/cursor.md + R6 outcome. fact-r6-cursor-validation; ref-cursor-mcp-docs filed under platform.
 - **Creation** - disclosure incident remediated: an internal strategy doc reached the public repo via a concurrent session's intake and was already pushed. Moved to restricted/, reindexed, purged from history with TWO filter-repo passes (the path purge alone missed the entry description, which hub_index had propagated into tracked generated views), force-pushed, CI green. Force-push does NOT purge the blob from GitHub; owner ruled the residual exposure accepted (0 forks) and no Support request sent. The restricted-pattern lint that surfaced it stays strict (not narrowed). Two facts: fact-disclosure-remediation, fact-never-bypass-disclosure-gate.
