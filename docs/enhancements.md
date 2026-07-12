@@ -17,7 +17,7 @@ including review. "When" is a best guess, not a schedule.
 | # | Enhancement | Value | Effort | When |
 |---|---|---|---|---|
 | 6 | R5: cross-machine continuity runbook + fixes it surfaces | **High**. Steps 2 and 3 executed 2026-07-11 on machine B (round-trip passed both directions; #14 answered). Step 1 (cold path) deferred: B was warm. Step 4 (push race) NOT executed. See R5 outcome below | Small (run it) | Steps 2-3 done; 1 and 4 open |
-| 9 | R6 — Cursor end-to-end validation (D2 debt) | Medium–High — bus-factor + harness independence | Small–Medium (run it) | Done (follow-ups: project MCP enable + doctor rhai mirror) |
+| ~~9~~ | ~~R6 — Cursor end-to-end validation (D2 debt)~~ | Done | Done | Done |
 | 12 | Curated FAQ / JTBD publishing (narrative spec Phase 2) | Medium now, High once qa/jtbd volume exists | Small–Medium | When ~20+ answered qa entries or UX/Docs ask |
 | 13 | `audience: internal` publishing target | Medium–High — gives GA-readout-class content a legitimate home instead of archive-only | Medium–Large | Shipped (interim) |
 | ~~14~~ | ~~`restricted/` cross-machine sync~~ | Done | Done | Done |
@@ -200,15 +200,11 @@ project MCP enable is the main friction. Full write-up:
    (compat with Claude/Codex skill dirs). No `.cursor/skills` symlink needed.
    All 20 hub skills appeared in the agent skill list. Marketplace
    `/plugin` wrappers remain Claude-only; CLIs still work.
-3. [~] MCP servers — **PARTIAL**. Doctor writes project `.cursor/mcp.json`
-   (`google-workspace`, `slack`). Cursor discovers them as
-   `project-0-rhoai-agentic-hub-*` but they stay **disconnected** until
-   enabled in Settings → MCP (project servers are not auto-approved as of
-   Cursor April 2026; user-level `~/.cursor/mcp.json` is). Google tool call
-   succeeded via the pre-existing **user-level** `google_workspace` server.
-   Slack: config + podman + image OK, tools unavailable until project
-   enable. `rhai-tracker`: on disk for Claude, **missing from**
-   `.cursor/mcp.json` (doctor section 7 mirror gap).
+3. [x] MCP servers — **PASS** (after follow-ups). Project `.cursor/mcp.json`
+   servers stay disconnected in Cursor Settings; user-level
+   `~/.cursor/mcp.json` is the reliable path. All three servers (Google,
+   Slack, rhai-tracker) working after mirroring to user-level config.
+   `CTRACK_DIR` path corrected; doctor section 7 now mirrors tracker.
 4. [x] Memory tier — **PASS**. `memory/.scratch/` empty (0 files); capture
    does not depend on scratch.
 5. [x] Full gated capture → reindex → commit → push — **PASS** (this session)
@@ -221,20 +217,18 @@ project MCP enable is the main friction. Full write-up:
 - Scratch degrades gracefully — **CONFIRMED**.
 - Doctor MCP config is enough — **PARTIAL**. File is written correctly, but
   a human must still enable project servers once per machine/workspace.
-- Three MCP servers usable after setup — **NOT YET**. Blocked on enable +
-  rhai-tracker missing from Cursor project config.
+- Three MCP servers usable after setup — **CONFIRMED** (after follow-ups:
+  user-level config + CTRACK_DIR path fix).
 
-**Follow-ups (not blocking daily hub.capture / reindex / commit):**
-- Owner observation mid-R6: Slack was **not listed** in Settings → MCP at
-  all (Google Workspace there is the user-level server). Project Slack
-  only appeared in logs as disconnected. Mirrored `slack` into
-  `~/.cursor/mcp.json` 2026-07-11 — restart Cursor, confirm it lists, then
-  re-probe one Slack tool.
-- Doctor tweak: ensure section 7 always mirrors `rhai-tracker` into
-  `.cursor/mcp.json` when the Claude registration exists; document that
-  Cursor day-to-day needs user-level `~/.cursor/mcp.json` for servers that
-  must appear in Settings (project file alone was insufficient here).
-- Update `docs/setup.md` / `docs/mcp-servers.md` Cursor appendix accordingly.
+**Follow-ups (all resolved 2026-07-11):**
+- Slack mirrored into `~/.cursor/mcp.json` (user-level) -- confirmed working
+  after Cursor restart.
+- `rhai-tracker` path fixed (`CTRACK_DIR` in `restricted/.env` pointed to
+  stale `../rh/c-track`; corrected to `../rhai-customer-tracker`). Doctor
+  section 7 now mirrors tracker to `.cursor/mcp.json` successfully.
+- `docs/setup.md` step 8 and `docs/mcp-servers.md` Cursor appendix updated:
+  user-level `~/.cursor/mcp.json` is the reliable path; project-level alone
+  is insufficient (Cursor does not auto-surface project servers in Settings).
 
 ---
 
@@ -433,6 +427,14 @@ Meta-tooling for understanding how the hub is actually used. Fits the
   GitHub activity). Flags stale entries and proposes updates through the
   standard gate. Prompt-only skill, no Python backbone. Spec:
   [/docs/specs/2026-07-11-standup-sweep-batch-design.md](/docs/specs/2026-07-11-standup-sweep-batch-design.md).
+- **#9 R6 Cursor validation** -- shipped 2026-07-11: Cursor validated as a
+  fully operable harness for daily hub work. Skills discovered natively from
+  `.claude/skills/` (no symlink needed). Memory scratch tier degrades
+  gracefully. MCP servers work via user-level `~/.cursor/mcp.json` (project
+  servers stay disconnected in Cursor Settings). Doctor sections 7-8 mirror
+  configs to `.cursor/mcp.json`. Full write-up: [/docs/cursor.md](/docs/cursor.md).
+  Spec: [/docs/specs/2026-07-11-restricted-sync-cursor-validation-design.md](/docs/specs/2026-07-11-restricted-sync-cursor-validation-design.md).
+  Plan: [/docs/plans/2026-07-11-restricted-sync-cursor-validation-plan.md](/docs/plans/2026-07-11-restricted-sync-cursor-validation-plan.md).
 - **#14 restricted/ cross-machine sync** -- shipped 2026-07-11: git-crypt
   encrypts `restricted/` in-repo (`.gitattributes` patterns, `.env.example`
   stays plaintext). Linter guards skip encrypted files gracefully on CI.
