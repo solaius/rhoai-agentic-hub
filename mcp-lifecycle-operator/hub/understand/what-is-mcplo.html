@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What Is the MCP Lifecycle Operator? | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>What Is the MCP Lifecycle Operator?</h1>
+      <p class="lead">The MCP Lifecycle Operator (MCPLO) is a Kubernetes-native operator that provides a declarative API, the <code>MCPServer</code> custom resource, to deploy, manage, and safely roll out MCP servers with security-hardened defaults. It is the deployment primitive underneath the MCP ecosystem on Red Hat OpenShift AI (RHOAI) and OpenShift.</p>
+
+      <div class="callout callout--insight">
+        <strong>Repository:</strong> <a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator" target="_blank" rel="noopener">kubernetes-sigs/mcp-lifecycle-operator</a><br>
+        <strong>Current version:</strong> v0.2.0 (released June 17, 2026), API <span class="mono">mcp.x-k8s.io/v1alpha1</span><br>
+        <strong>Status:</strong> Developer Preview (DP) shipped; Technology Preview (TP) targeted OCP-side mid-July 2026 and RHOAI-side mid-August 2026; GA targeted RHOAI 3.6 (code freeze Oct 23, 2026)
+      </div>
+
+      <h2>Purpose: Deployment Primitive, Not Governance Owner</h2>
+      <p>MCPLO is the deployment layer: it deploys MCP servers. It does <strong>NOT</strong> own governance or lifecycle state. That is the job of the MCP Registry, which represents the governed MCP asset and its deployment and runtime associations once MCPLO reports <span class="mono">is_deployed</span>. Concretely:</p>
+      <ul>
+        <li>MCPLO reconciles the <code>MCPServer</code> CRD into running Kubernetes workloads and reports deployment state back to the Registry</li>
+        <li>The Registry (still in Design phase, DP not landing in RHOAI 3.5 stable, TP targeted RHOAI 3.6 EA1) is the intended system of record for identity, approval, and lifecycle state</li>
+        <li>The MCP Catalog is the discovery layer in front of MCPLO: it disables its Deploy button when the <code>MCPServer</code> CRD is absent from the cluster</li>
+      </ul>
+      <p>In short: Catalog discovers, MCPLO deploys, Registry governs, Gateway connects.</p>
+
+      <h2>Component Flow</h2>
+      <div class="flow-diagram">
+        <div class="flow-box">
+          <div class="flow-box__title">MCPServer CRD</div>
+          <div class="flow-box__desc">Custom resource, one per server</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">Controller</div>
+          <div class="flow-box__desc">Watches CRDs, validates config</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">
+          <div class="flow-box__title">Deployment + Service + NetworkPolicy</div>
+          <div class="flow-box__desc">Running, security-hardened MCP server</div>
+        </div>
+      </div>
+      <p>When an <code>MCPServer</code> resource is created, the operator validates referenced ConfigMaps and Secrets, then provisions a Deployment, a Service, and a NetworkPolicy with security-hardened defaults (non-root, read-only filesystem, dropped capabilities, seccomp RuntimeDefault). It injects a default readiness probe and performs an MCP protocol-level handshake to verify the server is actually serving MCP, not just listening on a port, before marking it Ready. Full field-level detail lives on <a href="./architecture.html">Architecture</a>.</p>
+
+      <h2>What It Is NOT</h2>
+      <ul>
+        <li><strong>Not a governance layer.</strong> No approval workflow, no identity/trust tracking; that is Registry scope.</li>
+        <li><strong>Not a gateway.</strong> MCPLO does not route external traffic, terminate TLS at the edge, or provide tool-level auth; that is MCP Gateway scope, and it sits downstream of MCPLO.</li>
+        <li><strong>Not an auto-provisioner of identity.</strong> The operator cannot auto-create ServiceAccounts (a deliberate security decision from the upstream project); users bring their own ServiceAccount with appropriate RBAC bindings via <span class="mono">spec.runtime.security.serviceAccountName</span>.</li>
+        <li><strong>Not a stdio transport.</strong> SSE and streamable-HTTP only, an explicit upstream decision, not a gap.</li>
+        <li><strong>Not something that deploys servers by default.</strong> Installing MCPLO deploys zero MCP servers; it presents a catalog of available servers during setup, and the user selects which to deploy. Additional servers install as Day 2 operations via the catalog UI or CRDs.</li>
+      </ul>
+
+      <h2>Independence from Gateway</h2>
+      <div class="callout callout--insight">
+        <strong>No installation dependency on MCP Gateway.</strong> MCPLO installs first (or alongside RHOAI) to manage server deployment; the MCP Gateway is downstream for routing traffic to already-deployed servers. MCPLO also ships with a standard OCP entitlement, not an RHOAI-only one: base OpenShift customers get MCPLO's deployment capability without RHOAI, and can upgrade to RHOAI later (which adds Registry, Authorino, and Limitador) without losing MCPLO functionality.
+      </div>
+      <p>Gateway integration for MCPLO-deployed servers (HTTPRoute-based registration with the MCP Gateway) is explicitly scoped to GA, tracked as <a href="https://redhat.atlassian.net/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>. It is never Technology Preview scope.</p>
+
+      <h2>Where It Sits in the RHOAI Component Set</h2>
+      <p>Today, MCPLO installs as a standalone operator: manual, outside OperatorHub and OLM, under the standard OpenShift entitlement, and not bundled inside AI Hub. RHOAI plans to productize it as an automatically-deployed DataScienceCluster (DSC) component, installed the same way as FeastOperator and LlamaStackOperator, under <a href="https://redhat.atlassian.net/browse/RHAIRFE-1456" target="_blank" rel="noopener">RHAIRFE-1456</a>, status Approved, not started in engineering as of the RHCL hub's 2026-07-10 verification; the underlying DSC component code already exists in the opendatahub-operator source. See <a href="./architecture.html">Architecture</a> for the full three-repo integration model and code-level detail, and <a href="../../../mcp-ecosystem/hub/understand/component-overview.html">MCP Ecosystem Hub: Component Overview</a> for how MCPLO compares to Gateway, Catalog, and Registry side by side.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcp-lifecycle-operator-overview.md">fact-mcp-lifecycle-operator-overview.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcpserver-crd.md">fact-mcpserver-crd.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcplo-key-decisions-from-slack.md">fact-mcplo-key-decisions-from-slack.md</a></li>
+            <li><a href="../../../mcp-gateway/rhcl/govern/lifecycle-operator.html">RHCL hub: Lifecycle Operator (govern)</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/understand/component-overview.html">MCP Ecosystem Hub: Component Overview</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./architecture.html">Architecture</a></li>
+            <li><a href="./jobs-to-be-done.html">Jobs to Be Done</a></li>
+            <li><a href="./upstream.html">Upstream</a></li>
+            <li><a href="../sell/positioning-competitive.html">Positioning &amp; Competitive</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

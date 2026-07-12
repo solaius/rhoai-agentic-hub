@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gateway Integration | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Gateway Integration</h1>
+      <p class="lead">MCP Lifecycle Operator (MCPLO)-deployed servers register with the MCP Gateway manually today. Automating that handoff is explicitly scoped to GA, not Technology Preview, tracked as <a href="https://issues.redhat.com/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>.</p>
+
+      <h2>Today: Manual Registration</h2>
+      <p>MCPLO has no install-time dependency on the MCP Gateway: it installs first (or alongside RHOAI) to manage server deployment, while the Gateway is downstream for routing traffic to already-deployed servers. That independence is deliberate, but it means the handoff between the two is currently manual:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Mechanism today</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Deploy</strong></td>
+            <td>MCPLO creates Deployment + Service from the <code>MCPServer</code> CRD</td>
+          </tr>
+          <tr>
+            <td><strong>Register</strong></td>
+            <td><span class="badge badge--gap">Manual</span> An admin registers the server with the Gateway via a separate CRD (<code>MCPGatewayExtension</code> / HTTPRoute)</td>
+          </tr>
+          <tr>
+            <td><strong>Configure</strong></td>
+            <td><span class="badge badge--gap">Manual ConfigMap</span> <code>gen-ai-aa-mcp-servers</code> in <code>redhat-ods-applications</code>, hand-edited to point Gen AI Studio at the Gateway or at individual server URLs</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>OCPMCP-347: The Formal Proposal (GA Scope)</h2>
+      <p>aliok wrote a formal design document (May 2026, shared twice in <code>#forum-mcp-lifecycle-operator</code>) for how MCPLO-deployed <code>MCPServer</code> instances integrate with the MCP Gateway. It covers:</p>
+      <ul>
+        <li><strong>HTTPRoute-based server registration</strong> automatically registering deployed <code>MCPServer</code> instances with the gateway for external routing, auth, and observability</li>
+        <li><strong>Server-Side Apply (SSA) for status updates</strong>, chosen specifically to avoid status field conflicts between MCPLO and the Gateway both writing to the same resource</li>
+        <li><strong>Auth integration patterns</strong> between MCPLO-managed workloads and the Gateway's auth stack</li>
+      </ul>
+      <p>An upstream proof-of-concept exists: PR #219 (WIP/XXL). This design drives <a href="https://issues.redhat.com/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>.</p>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">GA scope, not TP</div>
+        <p style="margin-bottom: 0;">This was an explicit decision, made in Slack in May 2026, not an oversight: Gateway integration for MCPLO-deployed servers is scoped to GA. It is never Technology Preview scope. Do not read TP milestones on this hub as including automated Gateway registration.</p>
+      </div>
+
+      <h2>Target Flow: Deploy, Register, Configure</h2>
+      <p>The MCP Management Knowledge Hub's lifecycle-flow analysis lays out where this is headed for the ecosystem as a whole, once both Gateway integration and the MCP Registry exist:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Target mechanism</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Deploy</strong></td>
+            <td>MCPLO creates Deployment + Service and auto-registers the server in the Registry</td>
+          </tr>
+          <tr>
+            <td><strong>Register</strong></td>
+            <td><span class="badge badge--tp">Auto</span> Registry creates a governed record, with an approval workflow</td>
+          </tr>
+          <tr>
+            <td><strong>Configure</strong></td>
+            <td><span class="badge badge--tp">Auto</span> Registry approval flows into Gateway configuration; no manual ConfigMap edit</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">This target state depends on the MCP Registry existing (DP not landing in RHOAI 3.5 stable; TP targeted RHOAI 3.6 EA1) as well as OCPMCP-347 shipping. Neither has landed as of this writing. MCPLO's Gateway integration work is the deploy-side half of this chain; the Registry work is the governance-side half.</p>
+
+      <h2><code>update_mode: SYSTEM_MANAGED</code>, the Registry Handoff Mechanism</h2>
+      <p>The MCP Registry's current data model already has the field that would carry this handoff, even though nothing writes to it automatically yet. Two independent enums govern a registered server: <code>MCPServerStatus</code> (ACTIVE, DEPRECATED, RETIRED) at the server level, and <code>MCPPublishState</code> (DRAFT, PUBLISHED, DEPRECATED, RETIRED) at the version level. Alongside them, <code>update_mode</code> (<code>MANUAL</code> or <code>SYSTEM_MANAGED</code>) controls whether a controller such as MCPLO may write to the record; it does not itself change lifecycle or publish state.</p>
+      <div class="callout callout--source">
+        <p style="margin-bottom: 0;">Once OCPMCP-347's HTTPRoute-based registration and the Registry both exist, <code>update_mode: SYSTEM_MANAGED</code> is the mechanism by which a controller (MCPLO itself, or a Registry-side controller) could write deployment status back to the governed Registry record automatically, replacing today's manual ConfigMap step. This is documented, design-resolved integration behavior: the MCP Management Knowledge Hub's <a href="../../../mcp-ecosystem/hub/govern/component-integration.html">Component Integration</a> page details this pairing in its Integration Map (MCPLO → Registry row), linked to the resolved "discovered entries" question.</p>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-ocpmcp-347-gateway-integration.md">ref-ocpmcp-347-gateway-integration.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-gateway-integration-proposal.md">ref-gateway-integration-proposal.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcplo-key-decisions-from-slack.md">fact-mcplo-key-decisions-from-slack.md</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/govern/lifecycle-flow.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Lifecycle Flow (update_mode, target flow)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./distribution-entitlement.html">Distribution &amp; Entitlement</a></li>
+            <li><a href="./qualification-security.html">Qualification &amp; Security</a></li>
+            <li><a href="../understand/architecture.html">Architecture</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

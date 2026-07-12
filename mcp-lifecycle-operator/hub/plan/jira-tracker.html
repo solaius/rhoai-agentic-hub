@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jira Tracker | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jira Tracker</h1>
+      <p class="lead">The MCP Lifecycle Operator's Jira sweep tracks 39 issues in total: 3 RHAISTRAT strategy tickets, 2 OCPSTRAT OCP-side feature tickets, and 34 RHOAIENG delivery tickets. Stored scope (<code>features/mcp-lifecycle-operator/work/jira-snapshot.yaml</code>): RHAISTRAT issues with "MCP Lifecycle Operator" or "MCPLO" in the summary (plus the umbrella key RHAISTRAT-1339 explicitly), unioned with RHOAIENG issues matching "lifecycle operator", "MCPLO", or "MCPServer" in the summary, and OCPSTRAT issues matching "MCP lifecycle operator". Swept 2026-07-12.</p>
+
+      <div class="callout callout--source">
+        <p>This page tables the 3 RHAISTRAT-prefixed rows only, the strategy-level slice of the sweep. The 2 OCPSTRAT rows (the OCP-side TP and GA features) are tabled on <a href="./roadmap.html">Roadmap</a> instead, and the 34 RHOAIENG rows (epics, stories, tasks, sub-tasks, and one bug under the RHOAI-side productization epic) live in the same snapshot but are out of scope for this table.</p>
+      </div>
+
+      <section>
+        <h2>RHAISTRAT Tickets</h2>
+        <p>Every Key, Type, Status, Fix Versions, and Updated value below is sourced directly from <code>jira-snapshot.yaml</code>. The Summary field in the snapshot is null for all 3 rows (the sweep's unauthenticated-probe rule), rendered as "(summary withheld)" below. The "Known As" column is a supplementary descriptor, not a Jira summary: each entry traces verbatim to an existing hub page that names the key, cited per row.</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a></td>
+              <td>Outcome</td>
+              <td><em>(summary withheld)</em></td>
+              <td>RHOAI Outcome for the MCP Lifecycle Operator productization; container for all RHOAI 3.5 MCP capabilities to be delivered</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>RHOAI-side TP productization for the MCP Lifecycle Operator</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-08</td>
+            </tr>
+            <tr>
+              <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>RHOAI-side GA for the MCP Lifecycle Operator; addresses dependency awareness, operational maturity, documentation, and Agent Sandbox/Code Mode integration</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">"Known As" descriptors sourced from: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/enablement/mcplo-hub/reference.html">mcplo-hub Quick Reference</a> (Key Jiras section, all three keys) and this feature's own knowledge entries: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md">ref-rhaistrat-1339-rhoai-outcome.md</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md">ref-rhaistrat-1773-tp-productization.md</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md">ref-rhaistrat-1995-mcplo-ga.md</a>. Status badge colors follow the hub's existing green/blue/gray grouping (accepted-final, in-motion, not-available); the visible Status text is the literal snapshot value in every row. The RHAISTRAT-1773 fix-version string ("3.5 GA RHOAI RELEASE") is the literal Jira release-train label, not a claim that this TP-track Feature ships at GA.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-12">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (Jira umbrella)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./roadmap.html">Roadmap</a></li>
+            <li><a href="./gaps-open-questions.html">Gaps &amp; Open Questions</a></li>
+            <li><a href="../reference.html">Quick Reference</a></li>
+            <li><a href="../index.html">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

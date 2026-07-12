@@ -164,32 +164,7 @@ data:
     toolsets = ["core", "config"]</code></pre>
 
       <h3>MCPServer CRD</h3>
-      <p>Current schema (<code>mcp.x-k8s.io/v1alpha1</code>, verified against the upstream CRD 2026-07-10) nests config under <code>source</code>, <code>config</code>, and <code>runtime</code>. It is not a flat spec.</p>
-      <pre><code>apiVersion: mcp.x-k8s.io/v1alpha1
-kind: MCPServer
-metadata:
-  name: ocp-mcp
-  namespace: my-mcp
-spec:
-  source:
-    type: ContainerImage
-    containerImage:
-      ref: registry.redhat.io/openshift-mcp-beta/openshift-mcp-server-rhel9:0.2
-  config:
-    port: 8080
-    path: /mcp
-    arguments:
-    - --config
-    - /etc/mcp-config/config.toml
-    storage:
-    - path: /etc/mcp-config
-      permissions: ReadOnly
-      source:
-        configMap:
-          name: openshift-mcp-server-config
-  runtime:
-    security:
-      serviceAccountName: mcp-viewer</code></pre>
+      <p>Full field-by-field schema (<code>mcp.x-k8s.io/v1alpha1</code>, nested under <code>source</code>, <code>config</code>, and <code>runtime</code>) and a complete example now live in the <a href="../../../mcp-lifecycle-operator/hub/build/mcpserver-crd.html">MCP Lifecycle Operator Knowledge Hub: MCPServer CRD Reference</a>.</p>
 
       <h3>MCPGatewayExtension CRD</h3>
       <p>Current schema (<code>mcp.kuadrant.io/v1</code>, promoted from <code>kuadrant.io/v1alpha1</code> 2026-07-10). Full Gateway CRD reference lives in the <a href="../../../mcp-gateway/rhcl/build/crds.html">MCP Gateway Knowledge Hub</a>.</p>
@@ -315,7 +290,7 @@ spec:
       <h2>Bring Your Own MCP Server</h2>
       <p>Packaging and publishing an MCP server that isn't Red Hat- or partner-provided: container-packaging checklist, restricted-SCC compliance, and the Catalog-YAML metadata spec now live in the <a href="../../../mcp-catalog/hub/build/byo-mcp-server.html">MCP Catalog Knowledge Hub: Bring Your Own MCP Server</a>.</p>
 
-      <footer class="page-footer" data-verified="2026-07-11">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

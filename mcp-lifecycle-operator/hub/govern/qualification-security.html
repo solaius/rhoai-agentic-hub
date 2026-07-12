@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qualification &amp; Security | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Qualification &amp; Security</h1>
+      <p class="lead">MCP Lifecycle Operator (MCPLO) is qualified along two tracks that converge at GA, and carries a security posture that is strong on workload hardening but still has an in-cluster TLS gap. This page covers both, plus how the incoming stateless MCP spec shifts each.</p>
+
+      <h2>Qualification Split: OCP Functional vs RHOAI Deployment</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>Scope</th>
+            <th>Target</th>
+            <th>Jira</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>OCP team</strong></td>
+            <td>Functional qualification: server deployment, discovery, and management via the <code>MCPServer</code> CRD</td>
+            <td>TP: mid-July 2026</td>
+            <td><a href="https://issues.redhat.com/browse/OCPSTRAT-3263" target="_blank" rel="noopener">OCPSTRAT-3263</a> (TP), <a href="https://issues.redhat.com/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a> (GA)</td>
+          </tr>
+          <tr>
+            <td><strong>RHOAI team</strong></td>
+            <td>Deployment and integration qualification: rollout via the RHOAI operator with all prerequisites satisfied</td>
+            <td>TP: mid-August 2026</td>
+            <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a> (TP), <a href="https://issues.redhat.com/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a> (GA)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The OCP-side TP lands about a month before the RHOAI-side TP because the two tracks qualify different things: OCP verifies MCPLO can deploy, discover, and manage target MCP servers; RHOAI verifies MCPLO rolls out smoothly through the RHOAI operator itself. Both converge at GA (joint OCP + RHOAI), targeted for RHOAI 3.6, code freeze Oct 23, 2026.</p>
+
+      <div class="callout callout--insight">
+        <div class="callout__title">Where the docs live</div>
+        <p style="margin-bottom: 0;">Official MCPLO documentation lives in the RHOAI documentation, not OCP docs. This was discussed as OCP docs with RHOAI install links, but settled as RHOAI-owned since MCPLO ships via the RHOAI operator and OCP customers without RHOAI can fall back to the upstream project's own docs.</p>
+      </div>
+
+      <h2>TLS: Edge Hardening vs In-Cluster Gap</h2>
+      <p>Two distinct TLS stories apply to MCPLO, and they should not be conflated:</p>
+      <div class="callout callout--insight">
+        <div class="callout__title">MCPLO endpoint TLS: now hardened (QE-verified July 2026)</div>
+        <p style="margin-bottom: 0;">The MCP Management Knowledge Hub's security model page reports that MCPLO's endpoint TLS now offers TLS 1.3 with ML-KEM (post-quantum key exchange), QE-verified in July 2026. This is the Gateway-facing, edge-terminated TLS posture.</p>
+      </div>
+      <div class="callout callout--gap">
+        <div class="callout__title">In-cluster traffic is still unencrypted</div>
+        <p><code>status.address.url</code> on the <code>MCPServer</code> resource still shows <span class="mono">http://</span>, not <span class="mono">https://</span>. MCP server traffic is unencrypted within the cluster today; the MCP Gateway handles TLS termination only at ingress. <a href="https://issues.redhat.com/browse/RHOAIENG-72309" target="_blank" rel="noopener">RHOAIENG-72309</a> ("Central TLS Profile consistency") tracks closing this gap: the module operator would pass TLS config to MCPLO, and MCPLO would handle TLS from environment variables. The currently-empty <code>MCPLifecycleOperatorCommonSpec</code> on the DSC CR is the likely vehicle for that TLS profile configuration, and upstream PR #257 adds the TLS environment propagation.</p>
+        <p style="margin-bottom: 0;">Full detail: <a href="../understand/architecture.html">Architecture: The TLS Gap</a>.</p>
+      </div>
+
+      <h2>Security Posture Against External Frameworks</h2>
+      <p>Two external frameworks, published mid-2026, now form the enterprise compliance baseline PMs and customers measure MCP deployments against.</p>
+
+      <h3>NSA/CISA MCP Security Guidance (June 2026)</h3>
+      <p>Key recommendations: every MCP server should run in an isolated container or microVM; egress allowlists to prevent SSRF; input validation against well-defined schemas; host-level shell execution blocked at the container boundary.</p>
+      <p>MCPLO's Restricted Pod Security Standard defaults (non-root, read-only rootfs, dropped capabilities, seccomp RuntimeDefault) align with these recommendations. The NetworkPolicy gap, ingress-only with no source restrictions and no egress restrictions, is a partial miss against the egress-allowlist recommendation.</p>
+
+      <h3>OWASP MCP Top 10</h3>
+      <p>The first dedicated OWASP Top 10 for MCP identifies Credential/Secret Exposure (#1), Privilege Creep, Tool Poisoning, Command Injection, Inadequate Authentication, and Shadow MCP Servers as the key MCP-specific risks. Real-world threat data from H1 2026 backs the urgency: 30+ CVEs filed against MCP infrastructure (Jan-Feb 2026), a 78.3% attack success rate when 5 MCP servers are connected to one agent (Palo Alto Unit 42), and 36.7% of over 7,000 surveyed MCP servers potentially SSRF-vulnerable (BlueRock Security).</p>
+      <p>MCPLO's per-server ServiceAccount scoping (<code>spec.runtime.security.serviceAccountName</code>) and its refusal to auto-create ServiceAccounts both work against Privilege Creep specifically. Credential Exposure and Tool Poisoning are largely out of MCPLO's control surface; they are addressed at the Gateway (auth, wristband signing) and at the individual MCP server implementation, not at the deployment layer.</p>
+
+      <h2>Stateless Spec Shift: Qualification &amp; Security Implications</h2>
+      <p>The MCP 2026-07-28 spec, a Release Candidate locked May 21, 2026, removes the initialize/initialized handshake and the session header, making every request self-contained (protocol version, client info, and capabilities travel in <code>_meta</code> on each call). New <code>Mcp-Method</code> and <code>Mcp-Name</code> routing headers let gateways route without body parsing.</p>
+      <ul>
+        <li>Removing session stickiness removes a class of session-hijacking and session-fixation concerns that qualification would otherwise have to cover.</li>
+        <li>Self-contained, per-request auth context means every request must independently validate; there is no persisted session state to lean on for authorization decisions.</li>
+        <li>The new routing headers give gateways policy-enforcement hooks without body inspection, useful for security policy but also a new interface that qualification needs to cover.</li>
+        <li>New caching (<code>ttlMs</code>, <code>cacheScope</code>) and W3C Trace Context propagation hooks are new protocol-level surface, not yet assessed against the NSA/OWASP frameworks above.</li>
+      </ul>
+      <p>Full architectural detail on the stateless shift, including its impact on scaling and rollout strategy, lives on <a href="../understand/architecture.html">Architecture</a>; a cross-cutting analysis of the full breaking-change set (Gateway, Registry, Catalog/MCPLO/Studio) is published as <a href="https://solaius.github.io/rhoai-agentic-hub-pages/narrative/mcp-spec-rc-impact/" target="_blank" rel="noopener">MCP 2026-07-28 RC: RHOAI Impact Analysis</a>.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/qa-mcplo-documentation-qualification.md">qa-mcplo-documentation-qualification.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-3263-mcplo-tp.md">ref-ocpstrat-3263-mcplo-tp.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md">ref-rhaistrat-1773-tp-productization.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-2879-mcplo-ga.md">ref-ocpstrat-2879-mcplo-ga.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md">ref-rhaistrat-1995-mcplo-ga.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-nsa-mcp-security-guidance.md">ref-nsa-mcp-security-guidance.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-owasp-mcp-top-10.md">ref-owasp-mcp-top-10.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/fact-mcp-spec-stateless-shift.md">fact-mcp-spec-stateless-shift.md</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/govern/security-model.html" target="_blank" rel="noopener">MCP Management Knowledge Hub: Security Model (TLS 1.3/ML-KEM)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="../understand/architecture.html">Architecture</a></li>
+            <li><a href="./gateway-integration.html">Gateway Integration</a></li>
+            <li><a href="./distribution-entitlement.html">Distribution &amp; Entitlement</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

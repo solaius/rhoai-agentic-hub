@@ -95,12 +95,7 @@
             <span class="badge badge--gap">Gap</span>
             Cluster-Admin Requirement (Temporary)
           </h3>
-          <p><strong>Issue:</strong> MCP Lifecycle Operator installation and MCP Gateway configuration currently require cluster-admin privileges. No namespace-scoped installation path exists.</p>
-          <p><strong>Impact:</strong> AI Engineers cannot self-service deploy MCP infrastructure in multi-tenant clusters with restricted permissions.</p>
-          <p><strong>Owner:</strong> MCPLO Team (namespace-scoped operator), MCP Gateway Team (namespace-scoped gateway)</p>
-          <p><strong>Status:</strong> Cluster-admin requirement will be lifted when Registry provides tenant-scoped visibility and approval workflows (3.5 TP / GA)</p>
-          <p><strong>Workaround:</strong> Platform Engineers with cluster-admin deploy infrastructure; AI Engineers consume via RBAC-scoped catalog and AAA.</p>
-          <p class="source-ref">Source: Knowledge Registry #28</p>
+          <p>Both MCP Lifecycle Operator installation and MCP Gateway configuration currently require cluster-admin privileges; no namespace-scoped path exists for either, and both are expected to lift once the MCP Registry provides tenant-scoped visibility and approval workflows. MCPLO's side of this gap, including its workaround, now lives in the <a href="../../../mcp-lifecycle-operator/hub/build/installation.html">MCP Lifecycle Operator Knowledge Hub: Installation</a>; the Gateway's namespace-scoped configuration gap remains tracked here.</p>
         </div>
 
         <div class="feature-card">
@@ -173,7 +168,7 @@
         </div>
       </section>
 
-      <footer class="page-footer" data-verified="2026-07-11">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

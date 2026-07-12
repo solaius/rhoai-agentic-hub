@@ -179,14 +179,14 @@
         <li><strong>Gateway-level AuthPolicy</strong> for auth/wristband; per-server HTTPRoute for credential injection</li>
         <li><strong>Prefer OpenShift OAuth federation</strong> over seed users in production Keycloak</li>
         <li><strong>Namespace isolation</strong> for multi-tenant deployments</li>
-        <li><strong>MCPLO endpoint TLS:</strong> now offers TLS 1.3 with ML-KEM (post-quantum), QE-verified July 2026</li>
+        <li><strong>MCPLO endpoint TLS:</strong> now offers TLS 1.3 with ML-KEM (post-quantum), QE-verified July 2026. This is the Gateway-facing, edge-terminated posture; in-cluster MCP traffic is still unencrypted today. Full detail: <a href="../../../mcp-lifecycle-operator/hub/govern/qualification-security.html">MCP Lifecycle Operator Knowledge Hub: Qualification &amp; Security</a>.</li>
       </ul>
 
       <h2>Deep Dive: Gateway Security</h2>
       <p>For comprehensive coverage of MCP Gateway security architecture, policy configuration, and wristband signing:</p>
       <p style="margin-top: var(--space-md);"><a href="../../../mcp-gateway/rhcl/understand/security.html" style="color: var(--rh-blue-light); text-decoration: none; font-weight: 600;">→ MCP Gateway Security Deep Dive</a></p>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

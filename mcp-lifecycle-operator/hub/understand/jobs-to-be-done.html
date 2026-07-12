@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jobs to Be Done | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jobs to Be Done</h1>
+      <p class="lead">The real jobs the MCP Lifecycle Operator (MCPLO) serves, sourced from the hub's narrative layer: the cross-feature jobs-to-be-done inventory that ties product surfaces back to what a persona is actually trying to accomplish.</p>
+
+      <div class="callout callout--gap">
+        <strong>No narrative jobs are mapped to MCPLO yet.</strong> <span class="mono">grep -l "mcp-lifecycle-operator" narrative/knowledge/jtbd-*.md</span> returns zero matches (checked 2026-07-11). None of the ten jobs-to-be-done entries in <span class="mono">narrative/knowledge/</span> list <code>mcp-lifecycle-operator</code> in their <code>features</code> frontmatter. This is a gap in the narrative layer, not a claim that MCPLO serves no real job; it means nobody has yet written the job down and traced it to MCPLO specifically.
+      </div>
+
+      <p>Until that gap is closed, the two nearest jobs are ecosystem-level ones: they name adjacent features (<code>agent-ops</code>, <code>agent-registry</code>, <code>mcp-gateway</code>) but not <code>mcp-lifecycle-operator</code> itself. They are presented below as <strong>related, mapped at the ecosystem level</strong>, not as MCPLO-specific jobs.</p>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Manage my agent fleet at scale</div>
+          <span class="badge badge--open">Related, mapped at the ecosystem level</span>
+        </div>
+        <div class="feature-card__description">
+          <p>
+            <span class="badge badge--coming-soon">Persona: agentops-admin</span>
+            &nbsp;
+            <span class="badge badge--open">Status: candidate</span>
+          </p>
+
+          <p><strong>When</strong> I operate many agents across my organization,<br>
+          <strong>I want to</strong> centrally register, discover, and manage my agent fleet with lifecycle governance and emergency controls,<br>
+          <strong>so I can</strong> discover shadow agents, enforce policies fleet-wide, and revoke agent access in seconds during incidents.</p>
+
+          <p><strong>Why it is only related, not mapped:</strong> this job's <code>features</code> list names <code>agent-ops</code> and <code>agent-registry</code>, not <code>mcp-lifecycle-operator</code>. MCPLO deploys the MCP servers an agent fleet would call, but the job as written is scoped to fleet-level agent registration and governance, a layer above the individual server deployment primitive MCPLO provides.</p>
+
+          <p class="source-ref">Pillar: Agents (Agent Ops theme). Evidence status: candidate, not yet backed by direct customer evidence.</p>
+
+          <p><strong>Source:</strong> <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-manage-agent-fleet.md">jtbd-manage-agent-fleet.md</a></p>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-card__header">
+          <div class="feature-card__title">Govern agent tool and model access</div>
+          <span class="badge badge--open">Related, mapped at the ecosystem level</span>
+        </div>
+        <div class="feature-card__description">
+          <p>
+            <span class="badge badge--coming-soon">Persona: agentops-admin</span>
+            &nbsp;
+            <span class="badge badge--open">Status: candidate</span>
+          </p>
+
+          <p><strong>When</strong> I manage a fleet of agents,<br>
+          <strong>I want to</strong> govern which tools and models each agent can access,<br>
+          <strong>so I can</strong> enforce least-privilege, rate-limit token usage per team, and audit every agent action.</p>
+
+          <p><strong>Why it is only related, not mapped:</strong> this job's <code>features</code> list names <code>mcp-gateway</code> and <code>agent-ops</code>, not <code>mcp-lifecycle-operator</code>. The job's three governance layers (model access, tool access, identity) map onto the MCP Gateway and AI Gateway at runtime; MCPLO sits one step upstream, deploying the servers that expose the tools those layers then govern. MCPLO's own security posture (Restricted Pod Security Standards, no auto-created ServiceAccounts, per-server RBAC scoping) hardens the deployment, but the job as written describes runtime tool-access governance, not deployment.</p>
+
+          <p class="source-ref">Pillar: Agents (Agent Ops theme + MCP Ecosystem theme). Evidence status: candidate, not yet backed by direct customer evidence.</p>
+
+          <p><strong>Source:</strong> <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-govern-agent-tool-access.md">jtbd-govern-agent-tool-access.md</a></p>
+        </div>
+      </div>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-manage-agent-fleet.md">jtbd-manage-agent-fleet.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/narrative/knowledge/jtbd-govern-agent-tool-access.md">jtbd-govern-agent-tool-access.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/views/jtbd.md">views/jtbd.md (generated index)</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./what-is-mcplo.html">What Is the MCP Lifecycle Operator?</a></li>
+            <li><a href="../sell/positioning-competitive.html">Positioning &amp; Competitive</a></li>
+            <li><a href="../../../mcp-ecosystem/hub/understand/component-overview.html">MCP Ecosystem Hub: Component Overview</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

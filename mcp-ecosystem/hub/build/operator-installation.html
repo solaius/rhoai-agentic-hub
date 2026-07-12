@@ -128,17 +128,7 @@ EOF</code></pre>
       <h2>Tier 2: MCP Ecosystem</h2>
 
       <h3>1. MCP Lifecycle Operator</h3>
-      <p>Not available via OLM or Helm. Install manually from the GitHub release asset (repo is <code>kubernetes-sigs/mcp-lifecycle-operator</code>; <code>openshift/mcp-lifecycle-operator</code> is a fork with no releases of its own):</p>
-      <pre><code>oc apply -f https://github.com/kubernetes-sigs/mcp-lifecycle-operator/releases/download/v0.2.0/install.yaml
-
-# Wait for operator to be ready
-oc wait --for=condition=Ready pod -l control-plane=controller-manager \
-    -n mcp-lifecycle-operator-system --timeout=300s</code></pre>
-
-      <div class="callout callout--insight">
-        <div class="callout__title">Since v0.2.0 (upstream)</div>
-        <p>The operator now reconciles a <strong>NetworkPolicy per MCPServer operand</strong> automatically, so no manual NetworkPolicy prerequisite is needed. Its metrics/webhook server also supports TLS security-profile tuning via the <code>TLS_MIN_VERSION</code> and <code>TLS_CIPHER_SUITES</code> environment variables.</p>
-      </div>
+      <p>Not available via OLM or Helm; install manually from the upstream GitHub release. Full install commands, the DSC productization path (proposed, not yet built), and validated-version history now live in the <a href="../../../mcp-lifecycle-operator/hub/build/installation.html">MCP Lifecycle Operator Knowledge Hub: Installation</a>.</p>
 
       <h3>2. MCP Gateway Operator (for full Gateway setup)</h3>
       <p>Install via OLM using a custom CatalogSource:</p>
@@ -277,7 +267,7 @@ oc get csv -n openshift-operators | grep mcp-gateway
 oc get keycloak -A
 oc get pods -n vault  # if Vault installed</code></pre>
 
-      <footer class="page-footer" data-verified="2026-07-10">
+      <footer class="page-footer" data-verified="2026-07-12">
         <div class="staleness-indicator"></div>
         <div class="footer-sources">
           <h4>Sources</h4>

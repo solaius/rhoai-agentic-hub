@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Upstream | MCP Lifecycle Operator Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Upstream</h1>
+      <p class="lead">The MCP Lifecycle Operator (MCPLO) lives under kubernetes-sigs as a SIG Apps subproject. Red Hat is the dominant contributor by a wide margin, but the project ships with multi-vendor governance guardrails that keep it from reading as a single-vendor project.</p>
+
+      <h2>Project Governance</h2>
+      <p>The <code>mcp-lifecycle-operator</code> repo is governed as a subproject of SIG Apps (chairs: Janet Kuo/Google, Kenneth Owens/Snowflake, Maciej Szulik/Defense Unicorns), listed under the "application" subproject grouping. There is no formal KEP process for CRD changes at v1alpha1; changes go through standard PR review via the OWNERS file.</p>
+
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Approver</th>
+            <th>Affiliation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>aliok (Ali Ok)</td><td>Red Hat</td></tr>
+          <tr><td>ArangoGutierrez (Carlos Eduardo Arango Gutierrez)</td><td>NVIDIA</td></tr>
+          <tr><td>matzew (Matthias Wessendorf)</td><td>Red Hat</td></tr>
+          <tr><td>mikebrow (Mike Brown)</td><td>IBM</td></tr>
+          <tr><td>mrunalp (Mrunal Patel)</td><td>Red Hat</td></tr>
+          <tr><td>soltysh (Maciej Szulik)</td><td>Defense Unicorns (SIG chair)</td></tr>
+          <tr><td>jaideepr97 (Jaideep Rao)</td><td>Red Hat</td></tr>
+          <tr><td>Cali0707 (Calum Murray)</td><td>Red Hat</td></tr>
+        </tbody>
+      </table>
+      <p class="source-ref">8 approvers total: 5 Red Hat, 1 NVIDIA, 1 IBM, 1 Defense Unicorns. Red Hat holds a majority of OWNERS seats, but four other companies hold approval rights, including the SIG chair.</p>
+
+      <h2>Commit Share</h2>
+      <p>Across roughly 182 human commits to date, Red Hat authored about 83% of them:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Commits</th>
+            <th>Share</th>
+            <th>Contributors</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Red Hat</td><td>151</td><td>~83%</td><td>8 (matzew 49, aliok 46, jaideepr97 21, creydr 18, Cali0707 13, isumitsolanki 2, cardil 1, OchiengEd 1)</td></tr>
+          <tr><td>IBM</td><td>16</td><td>~9%</td><td>1 (ibm-adarsh)</td></tr>
+          <tr><td>NVIDIA</td><td>9</td><td>~5%</td><td>1 (ArangoGutierrez)</td></tr>
+          <tr><td>SUSE</td><td>2</td><td>~1%</td><td>1 (Priyankasaggu11929)</td></tr>
+          <tr><td>Other</td><td>4</td><td>~2%</td><td>3</td></tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The v0.2.0 release notes cite "11 contributors plus Dependabot, including 6 first-time contributors," suggesting the contributor base is growing beyond the core Red Hat group.</p>
+
+      <div class="callout callout--insight">
+        <strong>Notably:</strong> despite Red Hat's ~83% commit share and 5-of-8 OWNERS seats, releases are signed by ArangoGutierrez of NVIDIA, not by a Red Hat approver. That is a deliberate governance guardrail, not an accident: it keeps the release mechanics in the hands of a non-Red-Hat maintainer even as Red Hat dominates day-to-day development.
+      </div>
+
+      <h2>Release Velocity</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Date</th>
+            <th>Gap</th>
+            <th>PRs merged</th>
+            <th>Contributors</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>v0.1.0</td><td>2026-04-08</td><td>-</td><td>~43</td><td>5 + Dependabot</td></tr>
+          <tr><td>v0.2.0</td><td>2026-06-17</td><td>~10 weeks</td><td>99</td><td>11 + Dependabot</td></tr>
+        </tbody>
+      </table>
+      <p>v0.1.0 to v0.2.0 shipped in roughly 10 weeks with more than double the merged PRs, a sign of accelerating, not slowing, development pace. API changes in that window included replacing phase-based status with Kubernetes-style Conditions, adding <span class="mono">ServerInfo</span> and <span class="mono">MCPServerCapabilities</span> (MCP handshake data), adding <span class="mono">Replicas</span>/<span class="mono">ReadyReplicas</span> to status, adding <span class="mono">MCPConfig.Stateless</span> for session affinity control, adding label/annotation pass-through, and adding Prometheus metrics and event recording. The install artifact is a single <span class="mono">install.yaml</span>; staging images build via Google Cloud Build.</p>
+
+      <h2>Since v0.2.0</h2>
+      <div class="callout callout--insight">
+        <strong>Upstream activity beyond the last tagged release</strong> (no new tag yet; v0.2.0 remains current):
+        <ul style="margin-bottom: 0;">
+          <li><strong>NetworkPolicy reconciliation</strong> per <code>MCPServer</code> operand with ingress and egress controls (2026-07-03)</li>
+          <li><strong>TLS security profile</strong>, configurable via environment variables</li>
+          <li><strong>Added RBAC update/patch verbs</strong></li>
+          <li><strong>Go 1.26.5 security bump</strong></li>
+        </ul>
+      </div>
+
+      <h2>CRD Evolution: Roadmap Signals</h2>
+      <p>Current API remains <span class="mono">mcp.x-k8s.io/v1alpha1</span>. A v1beta1 timeline is not publicly stated; given the pace of API change, it is likely several releases away. Open issues and PRs signal where the CRD is headed:</p>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th>Issue / PR</th>
+            <th>Impact</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>MCP spec alignment</td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/issues/199" target="_blank" rel="noopener">#199</a></td><td>Broad API changes</td></tr>
+          <tr><td><span class="mono">server/discover</span> handshake</td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/issues/200" target="_blank" rel="noopener">#200</a></td><td>New handshake mechanism</td></tr>
+          <tr><td><span class="mono">runtimeMetadata.prerequisites</span></td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/issues/226" target="_blank" rel="noopener">#226</a></td><td>New CRD field</td></tr>
+          <tr><td>BYO resources + DaemonSet/StatefulSet</td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/issues/154" target="_blank" rel="noopener">#154</a></td><td>Workload type expansion</td></tr>
+          <tr><td>TLS env propagation</td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/pull/257" target="_blank" rel="noopener">PR #257</a></td><td>TLS support</td></tr>
+          <tr><td>HTTPRoute gateway integration</td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/pull/219" target="_blank" rel="noopener">PR #219</a></td><td>Gateway API integration (POC)</td></tr>
+          <tr><td>OLM support</td><td><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/issues/215" target="_blank" rel="noopener">#215</a></td><td>OLM packaging</td></tr>
+        </tbody>
+      </table>
+      <p class="source-ref">MCPLO depends on <span class="mono">github.com/modelcontextprotocol/go-sdk</span> v1.6.1 for MCP protocol handshake validation; PR #254 bumps it to v1.7.0-pre.1. Technical stack: Go 1.26.0 at v0.2.0, bumped to Go 1.26.5 since (see Since v0.2.0 above); controller-runtime v0.24.1, client-go v0.36.2. Tests via Ginkgo v2, kubernetes-sigs/e2e-framework v0.7.0, and Kind. CI: 6 GitHub Actions workflows. Multi-arch: amd64, arm64, s390x, ppc64le.</p>
+
+      <h2>Upstream to Downstream Delta</h2>
+      <p>The downstream fork <code>openshift/mcp-lifecycle-operator</code> carries 264 commits, about 11 ahead of upstream's 253, with 5 OWNERS, all Red Hat, 4 of whom overlap with the upstream OWNERS list. The delta is entirely CI and build infrastructure: <span class="mono">Dockerfile.ocp</span>, <span class="mono">.ci-operator.yaml</span>, <span class="mono">Makefile-ocp.mk</span>, <span class="mono">.tekton/</span> pipelines, <span class="mono">AGENTS.md</span>, <span class="mono">.coderabbit.yaml</span>, <span class="mono">.snyk</span>. Core operator code tracks upstream. That midstream repo moved from the <span class="mono">openshift/</span> org to the <span class="mono">opendatahub-io/</span> org in June 2026, and the upstream-to-midstream sync cadence increased to twice daily in July 2026.</p>
+
+      <h2>Release Train: TP and GA</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Milestone</th>
+            <th>Owner / qualification</th>
+            <th>Target</th>
+            <th>Jira</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TP (OCP-side)</td>
+            <td>OCP team: functional qualification (server deployment, discovery, management)</td>
+            <td>mid-July 2026</td>
+            <td><a href="https://redhat.atlassian.net/browse/OCPSTRAT-3263" target="_blank" rel="noopener">OCPSTRAT-3263</a></td>
+          </tr>
+          <tr>
+            <td>TP (RHOAI-side)</td>
+            <td>RHOAI team: deployment/integration qualification (rollout via RHOAI operator, prerequisites)</td>
+            <td>mid-August 2026</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1773" target="_blank" rel="noopener">RHAISTRAT-1773</a></td>
+          </tr>
+          <tr>
+            <td>GA</td>
+            <td>Joint (OCP + RHOAI)</td>
+            <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
+            <td><a href="https://redhat.atlassian.net/browse/RHAISTRAT-1995" target="_blank" rel="noopener">RHAISTRAT-1995</a>, <a href="https://redhat.atlassian.net/browse/OCPSTRAT-2879" target="_blank" rel="noopener">OCPSTRAT-2879</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="source-ref">The OCP-side TP lands a month ahead of the RHOAI-side TP because the two tracks own different qualification scopes; they converge at GA. Gateway integration for MCPLO-deployed servers is explicitly GA scope (<a href="https://redhat.atlassian.net/browse/OCPMCP-347" target="_blank" rel="noopener">OCPMCP-347</a>), never Technology Preview.</p>
+
+      <h2>Assessment</h2>
+      <p><strong>Maturity:</strong> early alpha, maturing deliberately. The Conditions migration and observability additions in v0.2.0 show real progress toward production readiness.</p>
+      <p><strong>Red Hat's position:</strong> dominant but with governance guardrails; the multi-vendor approver set and NVIDIA-signed releases provide credibility that a single-vendor OWNERS file would not.</p>
+      <p><strong>Key risk:</strong> a fast-moving API at v1alpha1. The gateway integration POC (PR #219) is strategically significant, since it could either complement or compete with standalone gateway projects, and the OLM support issue (#215) directly affects OpenShift distribution options.</p>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/01-upstream.md">Research: Upstream</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/ref-upstream-repo.md">ref-upstream-repo.md</a></li>
+            <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/blob/main/OWNERS" target="_blank" rel="noopener">OWNERS file</a></li>
+            <li><a href="https://github.com/kubernetes-sigs/mcp-lifecycle-operator/graphs/contributors" target="_blank" rel="noopener">GitHub contributor stats</a></li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./architecture.html">Architecture</a></li>
+            <li><a href="./what-is-mcplo.html">What Is the MCP Lifecycle Operator?</a></li>
+            <li><a href="../sell/positioning-competitive.html">Positioning &amp; Competitive</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
