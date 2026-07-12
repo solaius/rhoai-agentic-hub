@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jira Tracker | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Jira Tracker</h1>
+      <p class="lead">The MCP Catalog's Jira sweep tracks 42 issues in total: 10 RHAISTRAT strategy tickets and 32 RHOAIENG delivery tickets (component "AI Hub"). Stored scope (<code>features/mcp-catalog/work/jira-snapshot.yaml</code>): RHAISTRAT issues with "MCP Catalog" in the summary, plus six explicitly named keys (RHAISTRAT-1339, 1084, 1306, 1149, 1859, 1994), unioned with RHOAIENG/AI Hub-component issues matching the same summary text. Swept 2026-07-11.</p>
+
+      <div class="callout callout--source">
+        <p>This page tables the 10 RHAISTRAT-prefixed rows only, the strategy-level slice of the sweep. The 32 RHOAIENG rows (Epics, Stories, Tasks, and Bugs under the AI Hub component) live in the same snapshot but are out of scope for this table.</p>
+      </div>
+
+      <section>
+        <h2>RHAISTRAT Tickets</h2>
+        <p>Every Key, Type, Status, Fix Versions, and Updated value below is sourced directly from <code>jira-snapshot.yaml</code>. The Summary field in the snapshot is null for all 10 rows (the sweep's unauthenticated-probe rule), rendered as "(summary withheld)" below. The "Known As" column is a supplementary descriptor, not a Jira summary: each entry traces verbatim to an existing hub page that names the key, cited per row.</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Type</th>
+              <th>Summary</th>
+              <th>Known As (hub-sourced)</th>
+              <th>Status</th>
+              <th>Fix Versions</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1084" target="_blank" rel="noopener">RHAISTRAT-1084</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>3.4 DP cycle</td>
+              <td><span class="badge badge--accepted">Closed</span></td>
+              <td>rhoai-3.4</td>
+              <td>2026-06-26</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1149" target="_blank" rel="noopener">RHAISTRAT-1149</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>3.4 DP cycle; also produced the MCP ecosystem best-practices guide</td>
+              <td><span class="badge badge--accepted">Release Pending</span></td>
+              <td>3.5 EA1 RHOAI RELEASE</td>
+              <td>2026-06-24</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1306" target="_blank" rel="noopener">RHAISTRAT-1306</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>3.4 DP cycle</td>
+              <td><span class="badge badge--accepted">Release Pending</span></td>
+              <td>-</td>
+              <td>2026-05-18</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a></td>
+              <td>Outcome</td>
+              <td><em>(summary withheld)</em></td>
+              <td>AI Hub AI Asset Delivery for Agentic Solutions</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>-</td>
+              <td>2026-06-23</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1859" target="_blank" rel="noopener">RHAISTRAT-1859</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Catalog Admin UI for Managing Catalog Entries</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-10</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1938" target="_blank" rel="noopener">RHAISTRAT-1938</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>"[TP] MCP Catalog and Registry Integration - Unified Discovery and Governance for Tech Preview" (Obsolete resolution; superseded by RHAISTRAT-2027, see Roadmap)</td>
+              <td><span class="badge badge--not-available">Closed</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-07</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-1994" target="_blank" rel="noopener">RHAISTRAT-1994</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Catalog GA (RHOAI 3.6)</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-07-11</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>"MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for Tech Preview" (supersedes obsoleted RHAISTRAT-1938; delivery Feature for RHAIRFE-2434)</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.6 EA1 RHOAI RELEASE</td>
+              <td>2026-07-11</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2028" target="_blank" rel="noopener">RHAISTRAT-2028</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>MCP Catalog Support Tier Labeling</td>
+              <td><span class="badge badge--in-progress">In Progress</span></td>
+              <td>3.5 GA RHOAI RELEASE</td>
+              <td>2026-07-09</td>
+            </tr>
+            <tr>
+              <td><a href="https://issues.redhat.com/browse/RHAISTRAT-2131" target="_blank" rel="noopener">RHAISTRAT-2131</a></td>
+              <td>Feature</td>
+              <td><em>(summary withheld)</em></td>
+              <td>STDIO listings in Catalog</td>
+              <td><span class="badge badge--new">New</span></td>
+              <td>-</td>
+              <td>2026-06-29</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">"Known As" descriptors sourced from: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/enablement/catalog-hub/reference.html">catalog-hub Quick Reference</a> (RHAISTRAT-1084, 1149, 1306), <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/roadmap.html">management hub Roadmap</a> (RHAISTRAT-1339, 1938, 2027), and <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/jira-tracker.html">management hub Jira Tracker</a> (RHAISTRAT-1859, 1994, 2028, 2131). Status badge colors follow the hub's existing green/blue/gray grouping (accepted-final, in-motion, not-available); the visible Status text is the literal snapshot value in every row.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-11)</li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (Jira umbrella)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./roadmap.html">Roadmap</a></li>
+            <li><a href="./gaps-open-questions.html">Gaps &amp; Open Questions</a></li>
+            <li><a href="../reference.html">Quick Reference</a></li>
+            <li><a href="../index.html">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

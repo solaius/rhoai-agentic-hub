@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Roadmap</h1>
+      <p class="lead">The MCP Catalog's own release plan across RHOAI versions: Dev Preview shipped in 3.4, Dev Preview continues through 3.5, Tech Preview targeted for RHOAI 3.6 EA1, and GA targeted at RHOAI 3.6 stable.</p>
+
+      <section>
+        <h2>Version Timeline</h2>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Release</th>
+              <th>Key Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>3.4 DP</strong> <span class="badge badge--shipped">Shipped</span></td>
+              <td>Apr 2026 (code freeze Apr 10, 2026)</td>
+              <td>5 partners + 2 community MCPs, deploy wizard, manual prerequisites (10 servers shipped total; see <a href="../understand/what-is-the-catalog.html">What Is the MCP Catalog?</a>)</td>
+            </tr>
+            <tr>
+              <td><strong>3.5 (DP continues)</strong> <span class="badge badge--shipped">DP continues</span></td>
+              <td>Aug 2026</td>
+              <td>Enhanced metadata; the Catalog itself stays in Dev Preview stage this release. Registry integration work is re-targeted to RHOAI 3.6 EA1 (see source note below), so it does not land in 3.5.</td>
+            </tr>
+            <tr>
+              <td><strong>3.6 EA1 TP</strong> <span class="badge badge--tp">TP</span></td>
+              <td>2026 (date TBD)</td>
+              <td>Catalog reaches Tech Preview alongside MCP Registry TP. Prerequisite automation ships here (<a href="https://issues.redhat.com/browse/RHAIRFE-2434" target="_blank" rel="noopener">RHAIRFE-2434</a>, Approved) as part of the Catalog-Registry integration, delivery Feature <a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a> (In Progress, fix version 3.6 EA1 RHOAI RELEASE), which supersedes the obsoleted <a href="https://issues.redhat.com/browse/RHAISTRAT-1938" target="_blank" rel="noopener">RHAISTRAT-1938</a>.</td>
+            </tr>
+            <tr>
+              <td><strong>GA</strong> <span class="badge badge--planned">GA</span></td>
+              <td>RHOAI 3.6 (code freeze Oct 23, 2026)</td>
+              <td>Multi-registry federation, partner pipeline scaling, tier labeling (<a href="https://issues.redhat.com/browse/RHAISTRAT-1994" target="_blank" rel="noopener">RHAISTRAT-1994</a>, status New per this feature's Jira sweep).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout--source">
+          <p><strong>Owner re-plan (2026-07-10/11):</strong> MCP Registry Dev Preview will not land in RHOAI 3.5 stable. The current push is MCP Catalog TP and MCP Registry TP together in RHOAI 3.6 EA1, alongside the Catalog-Registry integration row above. This re-plan is why prerequisite automation (RHAIRFE-2434) and the Catalog-Registry integration both moved from an earlier RHOAI 3.5 target to RHOAI 3.6 EA1.</p>
+          <p><strong>RHAIRFE-2434 dating:</strong> two older sources still read RHOAI 3.5: the management hub's <code>plan/gaps.html</code> and its pre-replan <code>plan/roadmap.html</code> MCP Catalog sub-table. The Jira-sourced management hub <code>plan/open-questions.html</code> (Q7) and <code>plan/jira-tracker.html</code> both tie RHAIRFE-2434 to RHOAI 3.6 EA1 via delivery Feature RHAISTRAT-2027, confirmed In Progress with fix version <code>3.6 EA1 RHOAI RELEASE</code> in this feature's own <code>jira-snapshot.yaml</code> (swept 2026-07-11). This page follows the Jira-verified 3.6 EA1 dating, consistent with <a href="../build/enablement-troubleshooting.html">Enablement &amp; Troubleshooting</a>.</p>
+          <p><strong>Catalog-Registry integration re-scoped (2026-07-10):</strong> RHAISTRAT-1938 ("[TP] MCP Catalog and Registry Integration - Unified Discovery and Governance for Tech Preview") is now <strong>Closed/Obsolete</strong> (confirmed in the snapshot), superseded by <strong>RHAISTRAT-2027</strong> ("MCP Catalog and Registry Integration - Unified Discovery-to-Governance Workflow for Tech Preview," In Progress), which carries fix version 3.6 EA1 rather than 3.5.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Dependencies</h2>
+        <p>Catalog delivery hangs off the same umbrella outcome as the rest of the MCP ecosystem, <a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (AI Hub AI Asset Delivery for Agentic Solutions); see <a href="./jira-tracker.html">Jira Tracker</a> for the Catalog's own tracked slice of that outcome. The Catalog depends on the MCP Lifecycle Operator for its deployment primitive and on the MCP Registry for the governance and federation work targeted at 3.6 EA1 and GA; neither dependency is Catalog-owned, so their own schedules can move the Catalog's TP and GA dates.</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/roadmap.html">Management hub: Roadmap (MCP Catalog sub-table)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-11)</li>
+            <li><a href="https://issues.redhat.com/browse/RHAISTRAT-1339" target="_blank" rel="noopener">RHAISTRAT-1339</a> (Jira umbrella)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="./gaps-open-questions.html">Gaps &amp; Open Questions</a></li>
+            <li><a href="../build/enablement-troubleshooting.html">Enablement &amp; Troubleshooting</a></li>
+            <li><a href="../index.html">Hub Home</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>

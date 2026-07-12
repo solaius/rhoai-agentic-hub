@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gaps &amp; Open Questions | MCP Catalog Knowledge Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <div class="hub-layout">
+    <header id="hub-header"></header>
+    <aside id="hub-sidebar"></aside>
+    <main class="hub-main">
+      <div class="breadcrumb"></div>
+
+      <h1>Gaps &amp; Open Questions</h1>
+      <p class="lead">The MCP Catalog's two committed-but-unshipped gaps, plus the open questions that touch the Catalog: two raised by this feature's own upstream research, and seven carried from the management hub's cross-cutting open-questions log.</p>
+
+      <section>
+        <h2>Known Gaps</h2>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">Catalog Does Not Create Prerequisites</div>
+          </div>
+          <div class="feature-card__description">
+            <p><strong>Issue:</strong> Deploying an MCP server from the Catalog requires manually creating a ServiceAccount, RBAC (ClusterRoleBinding), and ConfigMap. The Catalog's "Deploy" button does not automate this today, by design: auto-creating them would require the catalog controller to hold privilege-escalation rights.</p>
+            <p><strong>Impact:</strong> Users must prepare the target namespace with the correct prerequisites before deployment succeeds. The failure mode is silent: the deployment is created, but pods crash.</p>
+            <p><strong>Owner:</strong> RHOAI Catalog Team</p>
+            <p><strong>Status:</strong> Prerequisite automation targeted for RHOAI 3.6 EA1 (<a href="https://issues.redhat.com/browse/RHAIRFE-2434" target="_blank" rel="noopener">RHAIRFE-2434</a>, Approved; delivery Feature <a href="https://issues.redhat.com/browse/RHAISTRAT-2027" target="_blank" rel="noopener">RHAISTRAT-2027</a>, In Progress, fix version 3.6 EA1 RHOAI RELEASE per this feature's own Jira sweep; supersedes the obsoleted <a href="https://issues.redhat.com/browse/RHAISTRAT-1938" target="_blank" rel="noopener">RHAISTRAT-1938</a>). An open ask, not shipped.</p>
+            <p><strong>Workaround:</strong> Create the ServiceAccount, ClusterRoleBinding, and ConfigMap before deploying from the Catalog; see <a href="../build/enablement-troubleshooting.html">Enablement &amp; Troubleshooting</a> for the exact commands.</p>
+            <p class="source-ref">Two older sources date this to RHOAI 3.5 TP: the management hub's <code>plan/gaps.html</code> and its pre-replan <code>plan/roadmap.html</code>. This page follows the Jira-verified 3.6 EA1 dating, consistent with <a href="../build/enablement-troubleshooting.html">Enablement &amp; Troubleshooting</a> and <a href="./roadmap.html">Roadmap</a>.</p>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card__header">
+            <span class="badge badge--gap">Gap</span>
+            <div class="feature-card__title">STDIO Transport Not Supported</div>
+          </div>
+          <div class="feature-card__description">
+            <p><strong>Issue:</strong> The Catalog and Registry currently support Streamable HTTP transport only. STDIO-based MCP servers cannot be listed, registered, or consumed through the governed path (see the Transport requirement on <a href="../govern/partner-pipeline.html">Partner Onboarding Pipeline</a>).</p>
+            <p><strong>Impact:</strong> Local and IDE-native MCP servers, a large share of community and developer tooling, are invisible to Catalog search and cannot be tracked in the Registry.</p>
+            <p><strong>Owner:</strong> RHOAI Catalog Team, RHOAI Registry Team</p>
+            <p><strong>Status:</strong> Committed direction, not shipped. Three RFEs filed 2026-06-26: <a href="https://issues.redhat.com/browse/RHAIRFE-2514" target="_blank" rel="noopener">RHAIRFE-2514</a> (Catalog: list STDIO MCPs with local install info), <a href="https://issues.redhat.com/browse/RHAIRFE-2515" target="_blank" rel="noopener">RHAIRFE-2515</a> (Registry: allow registration/tracking of STDIO MCPs), and <a href="https://issues.redhat.com/browse/RHAIRFE-2516" target="_blank" rel="noopener">RHAIRFE-2516</a> (IDE registry access: install STDIO MCPs / configure remote HTTP-SSE MCPs from IDEs). Delivery Feature <a href="https://issues.redhat.com/browse/RHAISTRAT-2131" target="_blank" rel="noopener">RHAISTRAT-2131</a> (STDIO listings in Catalog) is status New with no fix version yet, confirmed in this feature's own Jira sweep. The paired Registry and IDE-API delivery Features, RHAISTRAT-2132 and RHAISTRAT-2133, are status New with no fix version per the management hub's sweep; they fall outside this feature's own RHAISTRAT scope.</p>
+            <p><strong>Workaround:</strong> None today; STDIO MCP servers must be installed and tracked manually outside the governed Catalog/Registry path.</p>
+            <p class="source-ref">RHAIRFE-2516 framing corrected to the Jira-sourced title (management hub's <code>plan/jira-tracker.html</code>); the management hub's <code>plan/gaps.html</code> and this feature's own <code>govern/partner-pipeline.html</code> both paraphrase it as "spec-compliant IDE-native registry API."</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Open Questions Raised by This Feature</h2>
+        <p>Two questions came out of this feature's own upstream research and are filed as standalone knowledge entries, not rows in the management hub's log:</p>
+
+        <div class="callout callout--gap">
+          <p><strong>Open question: official registry federation posture.</strong> The Catalog has no stated federation posture toward the protocol-official MCP registry (<code>registry.modelcontextprotocol.io</code>): whether Red Hat implements its subregistry OpenAPI spec (becoming a governed subregistry), polls it as an aggregator only, or stays fully closed. This is a decision for the TP window (RHOAI 3.6 EA1); it shapes TP scope, the metadata schema, and whether Red Hat publishes its own servers to the official registry namespace (none found there today). See <a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a> for the full landscape and <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a>.</p>
+        </div>
+
+        <div class="callout callout--gap">
+          <p><strong>Open question: spec-version compatibility policy at GA.</strong> The largest MCP specification revision since launch finalizes 2026-07-28 (streamable HTTP becomes stateless, the <code>initialize</code> handshake and SSE resumability are removed), roughly three months ahead of the Catalog's own GA code freeze (RHOAI 3.6, Oct 23, 2026). No compatibility-matrix policy is stated yet for which spec versions catalog entries declare, what the Gateway accepts, or what the Red Hat and Partner tiers require at GA. See <a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a> and <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a>.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Open Questions from the Management Hub</h2>
+        <p>The Catalog-tagged rows carried over from the management hub's cross-cutting open-questions log, numbering preserved for traceability: prerequisite automation, community-vs-partner positioning, and five partner pipeline mechanics questions (scanning, metadata schema, pipeline orchestration, indemnification, and non-MCP asset types).</p>
+        <table class="status-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Component</th>
+              <th>Owner</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>7</td>
+              <td>MCP Catalog prerequisite automation: Catalog "Deploy" button requires ServiceAccount, ConfigMap, ClusterRoleBinding pre-created. UX friction vs privilege escalation trade-off.</td>
+              <td>MCP Catalog</td>
+              <td>Catalog Team (Jaideep Rao, Fernando Lozano)</td>
+              <td>High</td>
+              <td><span class="badge badge--planned">Planned</span> RHAIRFE-2434 (3.6 EA1; delivery Feature RHAISTRAT-2027, In Progress; supersedes the obsoleted RHAISTRAT-1938)</td>
+            </tr>
+            <tr>
+              <td>11</td>
+              <td>What does Snyk's AI/agent scanning actually check? Is it needed beyond standard CVE scanning?</td>
+              <td>Partner Pipeline (Ingestion)</td>
+              <td>Ecosystem Engineering (Ann Murray)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--research">Needs Research</span></td>
+            </tr>
+            <tr>
+              <td>12</td>
+              <td>What should the standardized MCP container metadata schema look like for Kubernetes? No upstream standard exists; all 4 partner MCPs in 3.4 had different metadata.</td>
+              <td>MCP Catalog + Upstream</td>
+              <td>Catalog Team + Upstream Advocacy</td>
+              <td>High</td>
+              <td><span class="badge badge--open">Open</span> Red Hat opportunity to lead upstream</td>
+            </tr>
+            <tr>
+              <td>13</td>
+              <td>How should the partner ingestion pipeline be orchestrated? Konflux suggested.</td>
+              <td>Partner Pipeline</td>
+              <td>Ecosystem Engineering (Serob, Matt Dorn)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--research">Needs Investigation</span></td>
+            </tr>
+            <tr>
+              <td>14</td>
+              <td>What indemnification clause is needed for partners whose MCPs are in our catalog? A prospective catalog partner requested IP indemnity; legal ownership unclear.</td>
+              <td>Partner Catalog (Legal)</td>
+              <td>Legal + Product Team</td>
+              <td>High</td>
+              <td><span class="badge badge--blocked">Blocked</span> May need platform-level answer for all agentic assets. Not urgent for the current Dev Preview scope: no immediate indemnification needed in a DP context; the underlying legal question remains open long-term.</td>
+            </tr>
+            <tr>
+              <td>15</td>
+              <td>How should Azure "Agentic Packs" / plugins beyond MCP be handled in AI Hub?</td>
+              <td>Partner Catalog</td>
+              <td>Catalog Team (Azure requested during consent)</td>
+              <td>Medium</td>
+              <td><span class="badge badge--open">Open</span> Internally framed as a candidate new asset type in AI Hub, not just a catalog-placement question</td>
+            </tr>
+            <tr>
+              <td>16</td>
+              <td>How should community MCP servers be positioned differently from partner servers in the catalog? MariaDB and MongoDB in 3.4 but not featured in Summit splash.</td>
+              <td>MCP Catalog</td>
+              <td>Catalog Team + Marketing</td>
+              <td>Low</td>
+              <td><span class="badge badge--open">Open</span> Next step: catalog UI's "Others" tab is being renamed "Community"; addition criteria (popularity in agentic workflows, customer asks) still being decided</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="source-ref">Rows carried verbatim from the management hub's <code>plan/open-questions.html</code>, numbering preserved, filtered to the Catalog-tagged rows (Q7, Q11-Q16).</p>
+      </section>
+
+      <footer class="page-footer" data-verified="2026-07-11">
+        <div class="staleness-indicator"></div>
+        <div class="footer-sources">
+          <h4>Sources</h4>
+          <ul>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps (Catalog cards)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/open-questions.html">Management hub: Open Questions (Q7, Q11-Q16)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-11)</li>
+          </ul>
+        </div>
+        <div class="related-pages">
+          <h4>Related Pages</h4>
+          <ul>
+            <li><a href="./roadmap.html">Roadmap</a></li>
+            <li><a href="./jira-tracker.html">Jira Tracker</a></li>
+            <li><a href="../build/enablement-troubleshooting.html">Enablement &amp; Troubleshooting</a></li>
+            <li><a href="../understand/upstream-ecosystem.html">Upstream &amp; Ecosystem</a></li>
+            <li><a href="../govern/partner-pipeline.html">Partner Onboarding Pipeline</a></li>
+          </ul>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <script src="../nav.js"></script>
+</body>
+</html>
