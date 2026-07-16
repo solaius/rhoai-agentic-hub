@@ -23,6 +23,18 @@ Anything else directly under a feature is a lint **error**. `platform/` is the
 cross-cutting pseudo-feature (releases, people, personas, SKUs, org process —
 story/strategy content lives in /narrative/).
 
+## Feature families
+`related:` in `features/features.yaml` declares a feature's boundary
+siblings — e.g. the agent family (agent-registry · agent-interop ·
+agent-catalog) and the mcp family (mcp-gateway · mcp-catalog ·
+mcp-lifecycle-operator · mcp-registry · mcp-ecosystem). Closed vocabulary:
+ids must exist in the routing table (lint error), no self-reference, and
+keep it symmetric (the linter warns on one-way links). Consumers: the
+generated feature index (Related line), `hub.research` (siblings are
+standing context in every lens brief), `hub.sweep` (boundary-drift
+candidates). This is partition-level wiring; per-entry spread is still the
+`features:` list.
+
 ## The narrative layer
 `narrative/` is a peer of `features/` holding the connective story — pillars,
 cross-feature stories, the strategy spine, cross-feature artifacts. Same

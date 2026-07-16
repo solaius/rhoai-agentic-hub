@@ -3,6 +3,8 @@
 
 The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
 
+Related: [MCP Gateway](/features/mcp-gateway/index.md) · [MCP Lifecycle Operator](/features/mcp-lifecycle-operator/index.md) · [MCP Registry](/features/mcp-registry/index.md) · [MCP Ecosystem](/features/mcp-ecosystem/index.md)
+
 - [knowledge/](/features/mcp-catalog/knowledge/)
 - [research/](/features/mcp-catalog/research/)
 - [strategy/](/features/mcp-catalog/strategy/)

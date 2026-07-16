@@ -43,6 +43,16 @@ every feature.
    Collect: `{path, type, timestamp, review_after, resource, source,
    status, description, staleness_reason}` for each flagged entry.
 
+   RELATED-FEATURE DRIFT (hub-local): if the feature has a `related:`
+   list in `features/features.yaml` (its boundary siblings), find the
+   target's newest entry timestamp, then list sibling entries
+   (knowledge/ + research/) with timestamps newer than it. Carry these
+   into phase 3 (PRESENT FINDINGS) as an informational "boundary drift
+   candidates" block --
+   sibling activity the target's entries may not reflect. Candidates
+   only, never auto-flagged: no update is proposed unless the user picks
+   one up.
+
 3. PHASE 2 -- LIVE SOURCE CROSS-REFERENCING (API calls):
 
    For each entry (flagged or not) that has a `resource:` or `source:`

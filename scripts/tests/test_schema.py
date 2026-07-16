@@ -223,6 +223,57 @@ def test_unknown_feature_id_is_error(tmp_path):
     assert any("unknown feature id 'made-up'" in e for e in errors)
 
 
+def test_related_symmetric_passes(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "  related: [mcp-gateway]\n"
+          "- id: mcp-gateway\n  title: G\n  description: d\n"
+          "  related: [mcp-registry]\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert not any("related" in w for w in warnings)
+
+
+def test_related_unknown_id_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "  related: [made-up]\n")
+    errors, _ = lint_repo(root)
+    assert any("unknown related feature id 'made-up'" in e for e in errors)
+
+
+def test_related_self_reference_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "  related: [mcp-registry]\n")
+    errors, _ = lint_repo(root)
+    assert any("must not include the feature itself" in e for e in errors)
+
+
+def test_related_must_be_a_list(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "  related: mcp-gateway\n"
+          "- id: mcp-gateway\n  title: G\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("related must be a list of feature ids" in e for e in errors)
+
+
+def test_related_asymmetry_is_warning(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+          "  related: [mcp-gateway]\n"
+          "- id: mcp-gateway\n  title: G\n  description: d\n")
+    errors, warnings = lint_repo(root)
+    assert errors == []
+    assert any("related is asymmetric" in w for w in warnings)
+
+
 def test_features_must_be_a_list(tmp_path):
     root = make_repo(tmp_path)
     write(root, "features/features.yaml", FEATURES_YAML)

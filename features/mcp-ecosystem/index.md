@@ -3,6 +3,8 @@
 
 MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.
 
+Related: [MCP Gateway](/features/mcp-gateway/index.md) · [MCP Catalog](/features/mcp-catalog/index.md) · [MCP Lifecycle Operator](/features/mcp-lifecycle-operator/index.md) · [MCP Registry](/features/mcp-registry/index.md)
+
 - [knowledge/](/features/mcp-ecosystem/knowledge/)
 - [research/](/features/mcp-ecosystem/research/)
 - [strategy/](/features/mcp-ecosystem/strategy/)

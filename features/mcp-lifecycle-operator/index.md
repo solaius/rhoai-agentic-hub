@@ -3,6 +3,8 @@
 
 Kubernetes operator for declarative MCP server deployment and lifecycle management — upstream kubernetes-sigs project, productized in RHOAI operator for 3.5.
 
+Related: [MCP Gateway](/features/mcp-gateway/index.md) · [MCP Catalog](/features/mcp-catalog/index.md) · [MCP Registry](/features/mcp-registry/index.md) · [MCP Ecosystem](/features/mcp-ecosystem/index.md)
+
 - [knowledge/](/features/mcp-lifecycle-operator/knowledge/)
 - [research/](/features/mcp-lifecycle-operator/research/)
 - [strategy/](/features/mcp-lifecycle-operator/strategy/)

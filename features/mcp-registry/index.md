@@ -3,6 +3,8 @@
 
 The governance/system-of-record layer for MCP servers — identity, version, lifecycle state, certification, trust, and auditability.
 
+Related: [MCP Gateway](/features/mcp-gateway/index.md) · [MCP Catalog](/features/mcp-catalog/index.md) · [MCP Lifecycle Operator](/features/mcp-lifecycle-operator/index.md) · [MCP Ecosystem](/features/mcp-ecosystem/index.md)
+
 - [knowledge/](/features/mcp-registry/knowledge/)
 - [research/](/features/mcp-registry/research/)
 - [strategy/](/features/mcp-registry/strategy/)

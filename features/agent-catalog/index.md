@@ -3,6 +3,8 @@
 
 The agent storefront in RHOAI AI Hub — RH-curated starter-kit templates in 3.5 (link-out, no deploy), agent deployment with supported harness images in 3.6 EA1; built on Kubeflow hub alongside the MCP and Model catalogs.
 
+Related: [Agent Registry](/features/agent-registry/index.md) · [Agent Interop](/features/agent-interop/index.md)
+
 - [knowledge/](/features/agent-catalog/knowledge/)
 - [research/](/features/agent-catalog/research/)
 - [strategy/](/features/agent-catalog/strategy/)

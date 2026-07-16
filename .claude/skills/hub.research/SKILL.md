@@ -42,8 +42,18 @@ second is the payload:
    to write into); stop there if declined.
 2. CONTEXT LOAD: read <home>/knowledge/index.md (if present), every doc
    in the existing <home>/research/ series, and open question- entries
-   for the home. Open questions become research inputs. RHOAI feature
-   topics: the RHOAI architecture repo
+   for the home. Open questions become research inputs. RELATED FEATURES:
+   if the feature has a `related:` list in features/features.yaml (its
+   boundary siblings — e.g. the agent family agent-registry/agent-interop/
+   agent-catalog, or the mcp family), read each sibling's
+   knowledge/index.md, research/00-executive-summary.md, strategy/ docs,
+   and work/jira-snapshot.yaml where present (skeleton dirs appear on
+   first use — skip what does not exist), plus the home's own
+   ## Connections section in features/<id>/index.md. Sibling context is
+   STANDING CONTEXT in every lens brief; the split boundary is where
+   drift lives, so scope conflicts between the home's docs and a
+   sibling's (either direction) go into 00 and become step-5 knowledge
+   drafts. RHOAI feature topics: the RHOAI architecture repo
    (/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
    is STANDING CONTEXT — include its matching release snapshot in every
    lens agent's brief. A non-empty series ⇒ this is a REFRESH run.

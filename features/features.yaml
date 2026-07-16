@@ -1,6 +1,11 @@
 # The feature routing table. One entry per feature partition.
 # hub.file appends here when creating a partition. features/index.md is
 # generated from this file.
+# related: — boundary siblings (feature families), closed vocabulary,
+# lint-checked symmetric; see conventions/layout.md. Consumers: generated
+# feature indexes, hub.research context load, hub.sweep drift check.
+# ai-gateway (pending intake) joins BOTH the agent and mcp families'
+# related: lists once its partition exists.
 features:
 - id: skills-registry
   title: Skills Registry
@@ -8,27 +13,32 @@ features:
 - id: mcp-gateway
   title: MCP Gateway
   description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
+  related: [mcp-catalog, mcp-lifecycle-operator, mcp-registry, mcp-ecosystem]
   jira:
     jql: 'project = RHAISTRAT AND summary ~ "\"MCP Gateway\""'
     ref_types: [Outcome, Feature]
 - id: mcp-registry
   title: MCP Registry
   description: The governance/system-of-record layer for MCP servers — identity, version, lifecycle state, certification, trust, and auditability.
+  related: [mcp-gateway, mcp-catalog, mcp-lifecycle-operator, mcp-ecosystem]
   jira:
     jql: '(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")'
     ref_types: [Outcome, Feature]
 - id: mcp-ecosystem
   title: MCP Ecosystem
   description: MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.
+  related: [mcp-gateway, mcp-catalog, mcp-lifecycle-operator, mcp-registry]  # may move to narrative/
 - id: mcp-catalog
   title: MCP Catalog
   description: The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
+  related: [mcp-gateway, mcp-lifecycle-operator, mcp-registry, mcp-ecosystem]
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")'
     ref_types: [Outcome, Feature]
 - id: agent-registry
   title: Agent Registry
   description: Post-deployment agent registry, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop; catalog/starter kits moved to agent-catalog).
+  related: [agent-interop, agent-catalog]
 - id: platform
   title: Platform
   description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
@@ -44,15 +54,18 @@ features:
 - id: mcp-lifecycle-operator
   title: MCP Lifecycle Operator
   description: Kubernetes operator for declarative MCP server deployment and lifecycle management — upstream kubernetes-sigs project, productized in RHOAI operator for 3.5.
+  related: [mcp-gateway, mcp-catalog, mcp-registry, mcp-ecosystem]
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")'
     ref_types: [Outcome, Feature]
 - id: agent-interop
   title: Agent Interop
   description: Agent interoperability — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A communication, agent cards, BYO agent onboarding, discovery, and declarative harness configuration.
+  related: [agent-registry, agent-catalog]
   jira:
     jql: '(project = RHOAIENG AND component = "AgentOps") OR (project IN (RHOAIENG, RHAISTRAT) AND labels IN (agentic, agentic-theme))'
     ref_types: [Outcome, Feature]
 - id: agent-catalog
   title: Agent Catalog
   description: The agent storefront in RHOAI AI Hub — RH-curated starter-kit templates in 3.5 (link-out, no deploy), agent deployment with supported harness images in 3.6 EA1; built on Kubeflow hub alongside the MCP and Model catalogs.
+  related: [agent-registry, agent-interop]

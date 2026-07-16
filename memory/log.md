@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-16
+- **Creation** -- feature families shipped: `related:` in features.yaml declares boundary siblings (agent family: agent-registry/agent-interop/agent-catalog; mcp family: mcp-gateway/mcp-catalog/mcp-lifecycle-operator/mcp-registry/mcp-ecosystem). Lint enforces closed vocabulary + symmetry; generated feature indexes gain a Related line; hub.research loads siblings as standing context in every lens brief; hub.sweep reports boundary-drift candidates. ai-gateway joins both families after its intake. Convention: /conventions/layout.md "Feature families".
+
 ## 2026-07-11
 - **Update** -- sweep(mcp-registry): 1 entry refreshed (ref-mcp-lifecycle-operator-repo timestamp bumped, active upstream repo)
 - **Creation** -- standup + sweep batch shipped (#28, #3): hub.standup (daily PM brief), hub.weekly-plan (weekly planning), hub.sweep (feature staleness audit). All prompt-only skills.

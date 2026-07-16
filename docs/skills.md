@@ -118,13 +118,17 @@ whole batch in one table before writing anything. Ends by offering a
 **`hub.research`** — standalone deep research on any feature or narrative
 topic, organized per [/conventions/research.md](/conventions/research.md).
 Lenses (landscape · upstream · architecture · requirements · competitive
-— the last driven by `domains/*.yaml` configs; a future `jira-gap` lens
-arrives with backlog #27b) are scoped by your prompt: name lenses and
-only those run. Two gates: a plan gate (lenses × depth
-quick/standard/deep, a hard cap) before any fan-out, and a batch write
-gate before any file lands. Re-runs are refreshes: numbering continues,
-`00-executive-summary` is rewritten, contradicted findings get supersede
-notes — never deletions. Tracker/NDA-sourced findings route to
+· jira-gap — the last two driven by `domains/*.yaml` configs) are scoped
+by your prompt: name lenses and only those run. The context load pulls
+the home's knowledge/research/questions plus its `related:` boundary
+siblings from `features/features.yaml` (see
+[/conventions/layout.md](/conventions/layout.md) — sibling knowledge
+indexes, research summaries, strategy docs, and Jira snapshots are
+standing context in every lens brief). Two gates: a plan gate (lenses ×
+depth quick/standard/deep, a hard cap) before any fan-out, and a batch
+write gate before any file lands. Re-runs are refreshes: numbering
+continues, `00-executive-summary` is rewritten, contradicted findings get
+supersede notes — never deletions. Tracker/NDA-sourced findings route to
 `restricted/`.
 
 **`hub.jira-sweep`** — the Jira intake path for one feature. First run does

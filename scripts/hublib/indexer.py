@@ -151,11 +151,19 @@ def build_all(root, today=None):
     built["features/index.md"] = "\n".join(lines) + "\n"
 
     # per-feature indexes (only for partitions that exist on disk)
+    titles = {f["id"]: f.get("title", f["id"]) for f in feats}
     for f in feats:
         fdir = root / "features" / f["id"]
         if not fdir.is_dir():
             continue
         lines = [MARKER + f"# {f.get('title', f['id'])}", "", f.get("description", ""), ""]
+        # feature family (related: in features.yaml) — unknown ids are a lint
+        # error, so the index just skips them rather than emit a broken link
+        rel = [r for r in (f.get("related") or []) if r in titles and r != f["id"]]
+        if rel:
+            lines.append("Related: " + " · ".join(
+                f"[{titles[r]}](/features/{r}/index.md)" for r in rel))
+            lines.append("")
         for sub in ("knowledge", "research", "strategy", "enablement", "work"):
             lines.append(f"- [{sub}/](/features/{f['id']}/{sub}/)")
         conns = [(rp, m) for rp, m in connections.get(f["id"], [])

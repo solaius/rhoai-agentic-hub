@@ -94,6 +94,44 @@ def _feature_ids(base):
     return {f.get("id") for f in (data.get("features") or []) if isinstance(f, dict)}
 
 
+def _lint_routing_table(root, errors, warnings):
+    """features.yaml related: — boundary-sibling declarations. Closed
+    vocabulary like features: (spec D13); symmetry is a warning because a
+    one-way family link is usually a typo, not a design."""
+    p = root / "features" / "features.yaml"
+    if not p.is_file():
+        return
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as exc:
+        errors.append(f"features/features.yaml: invalid YAML: {exc}")
+        return
+    feats = [f for f in (data.get("features") or []) if isinstance(f, dict)]
+    ids = {f.get("id") for f in feats}
+    related = {}
+    for f in feats:
+        rel_ids = f.get("related")
+        if rel_ids is None:
+            continue
+        where = f"features/features.yaml[{f.get('id')}]"
+        if not isinstance(rel_ids, list) or not all(isinstance(x, str) for x in rel_ids):
+            errors.append(f"{where}: related must be a list of feature ids")
+            continue
+        related[f.get("id")] = rel_ids
+        for rid in rel_ids:
+            if rid == f.get("id"):
+                errors.append(f"{where}: related must not include the feature itself")
+            elif rid not in ids:
+                errors.append(f"{where}: unknown related feature id '{rid}' "
+                              f"(not in features/features.yaml)")
+    for fid, rel_ids in related.items():
+        for rid in rel_ids:
+            if rid in ids and rid != fid and fid not in related.get(rid, []):
+                warnings.append(f"features/features.yaml[{rid}]: related is "
+                                f"asymmetric — '{fid}' lists '{rid}' but not "
+                                f"the reverse")
+
+
 def _check_features(rel, meta, feature_ids, errors):
     """features: cross-refs — closed vocabulary, unlike dangling links (spec D13)."""
     feats = meta.get("features")
@@ -341,6 +379,7 @@ def lint_repo(root):
     root = Path(root)
     errors, warnings = [], []
     feature_ids = _feature_ids(root)
+    _lint_routing_table(root, errors, warnings)
     _lint_tree(root, root, errors, warnings, feature_ids)
     restricted = root / "restricted"
     if restricted.is_dir():

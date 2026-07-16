@@ -3,6 +3,8 @@
 
 Post-deployment agent registry, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop; catalog/starter kits moved to agent-catalog).
 
+Related: [Agent Interop](/features/agent-interop/index.md) · [Agent Catalog](/features/agent-catalog/index.md)
+
 - [knowledge/](/features/agent-registry/knowledge/)
 - [research/](/features/agent-registry/research/)
 - [strategy/](/features/agent-registry/strategy/)

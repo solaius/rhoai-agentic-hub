@@ -98,6 +98,28 @@ def test_feature_index_ignores_untracked_content(tmp_path):
     assert "file(s)" not in after
 
 
+def test_feature_index_related_line(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/features.yaml",
+          "features:\n"
+          "- id: mcp-registry\n  title: MCP Registry\n  description: Registry MVP\n"
+          "  related: [mcp-gateway, ghost]\n"
+          "- id: mcp-gateway\n  title: MCP Gateway\n  description: Gateway\n"
+          "  related: [mcp-registry]\n")
+    (root / "features" / "mcp-gateway").mkdir()
+    built = build_all(root, today=TODAY)
+    idx = built["features/mcp-registry/index.md"]
+    assert "Related: [MCP Gateway](/features/mcp-gateway/index.md)" in idx
+    assert "ghost" not in idx  # unknown id: lint's problem, never a broken link
+    assert ("Related: [MCP Registry](/features/mcp-registry/index.md)"
+            in built["features/mcp-gateway/index.md"])
+
+
+def test_feature_index_no_related_line_when_absent(tmp_path):
+    built = build_all(make_repo(tmp_path), today=TODAY)
+    assert "Related:" not in built["features/mcp-registry/index.md"]
+
+
 def test_check_ignores_time_dependent_stale_view(tmp_path):
     root = make_repo(tmp_path)
     write_all(root, today=TODAY)
