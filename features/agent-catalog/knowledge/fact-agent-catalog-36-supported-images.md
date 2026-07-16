@@ -43,3 +43,15 @@ Double) and the July forum threads:
 - **Explicitly deferred:** purpose-built plug-and-play agents (e.g. LangGraph
   RAG); anything crossing the
   [framework-support boundary](/features/agent-catalog/knowledge/question-agent-catalog-framework-support-boundary.md).
+
+**Upstream reality check (research 2026-07-16, verified):** the Go SDK is
+pre-merge — NVIDIA/OpenShell PR #2271 ("first PR in a 6-PR decomposition",
+sandbox client only) was still open on 2026-07-16; the only complete
+implementation is Roland Huss's personal-repo SDK (v0.2.2). OpenShell
+itself is alpha (v0.0.x) with Kubernetes/OpenShift support flagged
+experimental/evaluation-only (privileged SCC, TLS disabled). Naming note:
+the upstream CRD kind is **`Sandbox`** in `agents.x-k8s.io`
+(kubernetes-sigs/agent-sandbox) — "AgentSandbox" does not exist upstream
+and appears to be product-discussion shorthand; confirm the actual kind and
+the `openshell.ai/managed-by` label against live cluster objects. See
+[02-upstream](/features/agent-catalog/research/02-upstream.md).

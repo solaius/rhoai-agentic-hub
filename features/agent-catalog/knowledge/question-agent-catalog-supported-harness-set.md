@@ -19,3 +19,14 @@ disconnected; one image per harness or vanilla + RHOAI-preconfigured
 flavors; and whether a mostly field/demo-value feature justifies the
 maintenance (Bill Murdock / Daniele Zonca). If no harness can be supported,
 "do we still have a catalog?" (Bill).
+
+**Research findings (2026-07-16, verified — narrows the question):**
+licensing is now fact, not risk — Claude Code's license prohibits
+modification/redistribution (Anthropic agreement required), while **Codex
+CLI is Apache-2.0** (not proprietary as assumed in the meetings) and Goose
+is Apache-2.0 under the Linux Foundation. Four of five open candidates
+self-update in some form (OpenClaw channels, Hermes runtime skill
+self-creation, pi `update --self`, OpenCode installer — upstream air-gap
+issues #16117/#20027 open), conflicting with image-pinned governance. See
+[fact-supported-images-enterprise-requirements](/features/agent-catalog/knowledge/fact-supported-images-enterprise-requirements.md)
+and the [upstream research](/features/agent-catalog/research/02-upstream.md).
