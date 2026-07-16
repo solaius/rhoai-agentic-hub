@@ -126,7 +126,14 @@ echo "[4] restricted/.env + shell wiring"
 # overrides) — never LLM-provider credentials; Claude Code/Cursor is set up
 # before this repo and the hub never configures or touches that auth.
 ENV_FILE="$ROOT/restricted/.env"
-if [ -f "$ENV_FILE" ]; then
+if [ -f "$ENV_FILE" ] && [ "$(head -c 9 "$ENV_FILE" | tr -d '\0')" = "GITCRYPT" ]; then
+  # A ciphertext .env means the checkout was never git-crypt-unlocked (or
+  # the file was copied from a locked checkout). Every consumer then breaks
+  # with misleading "missing var" warnings and ~/.bashrc spews parse errors
+  # on every shell (seen 2026-07-16). Do not source it; fail loud with the
+  # real fix instead of the per-var noise.
+  fail "restricted/.env is git-crypt CIPHERTEXT — the checkout is locked; run: git-crypt unlock ${GIT_CRYPT_KEY:-$HOME/.git-crypt-keys/rhoai-agentic-hub.key} (or: bash scripts/doctor.sh setup)"
+elif [ -f "$ENV_FILE" ]; then
   # Shell wiring (backlog #19), run BEFORE this process sources $ENV_FILE
   # below: hub_env.py inspects the AMBIENT environment on purpose (it reads
   # restricted/.env itself via --root), and if it ran after the sourcing it
@@ -595,14 +602,22 @@ echo "[11] git-crypt (restricted/ encryption)"
 KEYFILE="${GIT_CRYPT_KEY:-$HOME/.git-crypt-keys/rhoai-agentic-hub.key}"
 if command -v git-crypt >/dev/null 2>&1; then
   ok "git-crypt installed ($(git-crypt version 2>/dev/null || echo 'unknown version'))"
-  # Check locked/unlocked state: read the first .md under restricted/ --
-  # if it starts with a NUL byte, it is a git-crypt encrypted blob.
+  # Check locked/unlocked state on a TRACKED restricted file — a find over
+  # the working tree can hit untracked hand-copied plaintext and report
+  # "unlocked" on a fully locked checkout (exactly what happened
+  # 2026-07-16). Only files git checked out prove the smudge state.
   LOCKED=0
-  FIRST_MD="$(find "$ROOT/restricted" -name '*.md' -type f 2>/dev/null | head -1)"
+  FIRST_MD="$(git -C "$ROOT" ls-files -- restricted/ | grep '\.md$' | grep -v '\.env\.example' | head -1)"
   if [ -n "$FIRST_MD" ]; then
-    if head -c 1 "$FIRST_MD" 2>/dev/null | od -An -tx1 | grep -q '00'; then
+    if head -c 1 "$ROOT/$FIRST_MD" 2>/dev/null | od -An -tx1 | grep -q '00'; then
       LOCKED=1
     fi
+  fi
+  # The smudge/clean filters live in LOCAL git config, written by unlock.
+  # Without them, even a plaintext worktree would commit restricted files
+  # raw (public repo!) — treat a missing filter as locked.
+  if ! git -C "$ROOT" config --get filter.git-crypt.clean >/dev/null 2>&1; then
+    LOCKED=1
   fi
   if [ "$LOCKED" = 0 ]; then
     ok "restricted/ is unlocked (plaintext)"
