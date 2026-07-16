@@ -10,6 +10,7 @@ Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement 
 - [work/](/features/mcp-gateway/work/)
 
 ## Connections
+- reference · [Platform skills for harnesses proposal (Jehlum)](/features/agent-catalog/knowledge/ref-platform-skills-for-harnesses-gdoc.md) — 3.6 bootstrap proposal — preconfigure supported harness images to work with RHOAI platform tools via a skill + the coming OpenShift AI MCP server, ideally through the MCP Gateway.
 - reference · [RHAISTRAT-1269: Platform-Level Safety Enforcement for Agent Tool Calls](/features/agent-interop/knowledge/ref-rhaistrat-1269-agent-safety-enforcement.md) — Safety controls at the infrastructure layer (NeMo Guardrails via MCP Gateway) for agent tool calls -- policy enforcement, intent alignment, action rails. Zero agent code changes.
 - fact · [fact-kagenti-roadmap-removal](/features/agent-registry/knowledge/fact-kagenti-roadmap-removal.md) — Kagenti is being removed from the roadmap; OpenShell will expand to cover its capabilities (owner ruling 2026-07-10)
 - fact · [MCP upstream status — registry, governance, spec (July 2026)](/features/mcp-catalog/knowledge/fact-mcp-upstream-status.md) — Official registry is big but immature (≥36K records, still preview/v0.1); MCP governed by the Linux Foundation's AAIF since Dec 2025; largest-ever spec revision finalizes 2026-07-28 (stateless HTTP); upstream expects vendor catalogs to federate as subregistries.

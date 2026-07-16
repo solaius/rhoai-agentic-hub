@@ -29,9 +29,13 @@
 
 ## person
 - [Adel Zaalouk](/features/platform/knowledge/person-adel-zaalouk.md) — Agentic Strategy maintainer — recurring voice across base-images scope, UBI version, and messaging-guide review.
+- [Andrew Ballantyne](/features/platform/knowledge/person-andrew-ballantyne.md) — Dashboard architect — owns the Model→MCP→Agent catalog UI pattern, made the no-admin-UI-in-3.5 call; pushes back on forcing flows through the registry.
 - [Arjay Hinek](/features/platform/knowledge/person-arjay-hinek.md) — PM — authored the RICE scoring rubric used for RHAI prioritization.
+- [Bill Murdock](/features/platform/knowledge/person-bill-murdock.md) — AgentDev architecture voice — curates the catalog's starter-kit repo list, drives the MLflow skills/agent registry RFCs, EA-first release principle; built the assistant-agent demo.
 - [Catherine Weeks](/features/platform/knowledge/person-catherine-weeks.md) — Leadership — clarified that OpenShift, not AgentOps, is the control plane.
+- [Daniele Zonca](/features/platform/knowledge/person-daniele-zonca.md) — RHOAI serving/supportability engineering leader — guards the validated-vs-supported image boundary, CVE/maintenance scope, and framework-support due diligence; commenting on the AIPCC ADR.
 - [Manuela Ansaldo](/features/platform/knowledge/person-manuela-ansaldo.md) — RHAI Documentation Program Manager — owns the CCS documentation intake process and is the key contact for RHAI docs requests.
+- [Ramesh Reddy](/features/platform/knowledge/person-ramesh-reddy.md) — AI Hub engineering lead — built the Model/MCP catalog backends, owns the catalog pattern; disconnected-env and catalog-immutability advocate; assigned the Agent Catalog backend.
 - [Tushar Katarki](/features/platform/knowledge/person-tushar-katarki.md) — IBM/Red Hat alignment strategy for agentic AI.
 - [Younes Ben Brahim](/features/platform/knowledge/person-younes-ben-brahim.md) — Product Marketing Manager — drives agentic messaging and Summit content.
 
@@ -57,3 +61,4 @@
 - [opendatahub-io/architecture-context — THE RHOAI architecture repo](/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md) — Per-release architecture snapshots for all of RHOAI (~48 components) — component summaries, Mermaid/C4 diagrams, build metadata; agent entry point AGENT_USAGE.md. Standing context for every feature.
 - [PatternFly Design System](/features/platform/knowledge/ref-patternfly-design-system.md) — Red Hat's open source design system (v6.4.0) — the required component/token library for all RHOAI UI and prototypes.
 - [Requesting Red Hat AI Documentation](/features/platform/knowledge/ref-requesting-rhai-documentation.md) — RHAI CCS documentation request process guide — docs levels by release type, Jira intake, definitions of Ready/Done.
+- [#forum-ai-asset-management](/features/platform/knowledge/ref-slack-forum-ai-asset-management.md) — The AI asset management forum — MCP Catalog/Registry, Agent Catalog/Deployments, Skills Registry (MLflow upstream), OpenShell, AI Hub; ~105 msgs/week; where the 2026-07-09 no-deploy-in-3.5 call landed.

@@ -6,7 +6,7 @@
 ## Profiles (current state)
 - [now](/memory/profiles/now.md) — Now: 12 partitions (added mcp-lifecycle-operator + agent-interop), deep research complete on both — daily PM work running on the hub; five-hub internal knowledge network live
 - [preferences](/memory/profiles/preferences.md) — Preferences: inline gates, no lift-and-shift, spec-first, Windows + Git Bash, no em dashes
-- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCPLO TP + OpenShell DP in 3.5; OpenShell TP in 3.6 EA; Catalog TP + Registry TP to 3.6 EA1; MCPLO/Registry/Catalog GAs in 3.6; OpenShell GA in 3.7; OCP5 includes MCPLO via RHOAI Limited
+- [roadmap](/memory/profiles/roadmap.md) — Roadmap: MCPLO TP + OpenShell DP + Agent Catalog DP (link-out, no deploy) in 3.5; OpenShell TP in 3.6 EA; Catalog TP + Registry TP + agent deploy to 3.6 EA1; Agent Registry backend 3.6 EA2; MCPLO/Registry/Catalog GAs in 3.6; OpenShell GA in 3.7; OCP5 includes MCPLO via RHOAI Limited
 - [strategy](/memory/profiles/strategy.md) — Strategy: registry=governance (MLflow), catalog=discovery (Kubeflow hub); metadata-first, plugin-based
 
 ## Recent facts

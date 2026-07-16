@@ -63,7 +63,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1678 · Feature · Backlog · 3.6 EA1 RHOAI RELEASE
 - RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/features/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
 - RHAISTRAT-1730 · Feature · New · — → [RHAISTRAT-1730: Policy-Based Authorization and Access Control for Agents](/features/agent-interop/knowledge/ref-rhaistrat-1730-agent-authorization.md)
-- RHAISTRAT-1740 · Feature · In Progress · 3.5 GA RHOAI RELEASE
+- RHAISTRAT-1740 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1740 — Agent Catalog](/features/agent-catalog/knowledge/ref-rhaistrat-1740.md)
 - RHAISTRAT-1742 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1748 · Feature · Backlog · —
 - RHAISTRAT-1749 · Feature · In Progress · —

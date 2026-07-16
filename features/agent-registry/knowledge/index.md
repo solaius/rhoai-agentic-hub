@@ -2,7 +2,6 @@
 # Agent Registry — knowledge
 
 ## fact
-- [Agent Catalog & Starter Kits (3.5 target)](/features/agent-registry/knowledge/fact-agent-catalog-starter-kits.md) — RHOAI AI Hub's curated deployable-agent catalog with a one-click deploy wizard, mirroring the MCP server catalog pattern.
 - [Agent Registry (upstream proposal)](/features/agent-registry/knowledge/fact-agent-registry.md) — Post-deployment registry for live, running agents — identity, health, discovery, trust — as a draft MLflow RFC Peter Double is taking over.
 - [Agentic Base Images (RHAIRFE-2443)](/features/agent-registry/knowledge/fact-agentic-base-images.md) — Proposed shared, Konflux-validated UBI base images for coding-agent harnesses (Claude Code, OpenCode, etc.) — AIPCC scope decision pending.
 - [fact-kagenti-roadmap-removal](/features/agent-registry/knowledge/fact-kagenti-roadmap-removal.md) — Kagenti is being removed from the roadmap; OpenShell will expand to cover its capabilities (owner ruling 2026-07-10)
@@ -14,8 +13,6 @@
 - [Varsha Prasad Narsing](/features/agent-registry/knowledge/person-varsha-prasad-narsing.md) — Engineering — authored the post-deployment agent registry proposal Peter Double is now taking over.
 
 ## question
-- [Off-the-shelf harness integration with the agent catalog playground](/features/agent-registry/knowledge/question-agent-catalog-harness-playground-integration.md) — Full chat-interface integration for harnesses like OpenCode/Claude Code needs session management, human-in-the-loop, and tool approval — not 3.5 scope.
-- [Should the agent catalog standardize on one protocol or support several?](/features/agent-registry/knowledge/question-agent-catalog-protocol-diversity.md) — Open call on whether starter-kit harnesses should all translate to A2A, or support multiple protocols with labels.
 - [Agent-to-agent relationships and composition graphs — deferred](/features/agent-registry/knowledge/question-agent-registry-composition-graphs.md) — Multi-agent composition/relationship modeling is needed for multi-agent systems but explicitly out of scope for the current agent registry proposal.
 - [Should the agent discovery plugin interface generalize beyond agents?](/features/agent-registry/knowledge/question-agent-registry-discovery-generalization.md) — Whether AgentDiscoveryProvider should be broadened to support other discoverable AI asset types, as the proposal's design hints.
 - [How does the agent registry interact with Red Hat's multi-track governance model?](/features/agent-registry/knowledge/question-agent-registry-governance-integration.md) — Open question on reconciling the agent registry's simple runtime lifecycle with MCP Registry's four-track approval/verification/certification governance model.
@@ -32,4 +29,3 @@
 - [kagenti/agent-examples (GitHub)](/features/agent-registry/knowledge/ref-kagenti-agent-examples-repo.md) — Agent starter kits and examples — A2A reference agent, sample environment configs, catalog-ready container images.
 - [varshaprasad96/mlflow (branch: spike/gateway)](/features/agent-registry/knowledge/ref-mlflow-agent-registry-proposal-branch.md) — Draft agent registry RFC — domain model, discovery plugin interface, trust verification, Python client API. Not merged upstream.
 - [omnigent-ai/omnigent (GitHub)](/features/agent-registry/knowledge/ref-omnigent-repo.md) — A universal "meta-harness" agent abstraction — discussed and rejected as the 3.5 starter-kit approach.
-- [Starter Kit Deployment Spec — RHOAI 3.5](/features/agent-registry/knowledge/ref-starter-kit-deployment-spec-rhoai-35.md) — How starter kits must be structured for the 3.5 deploy wizard — container rules, catalog YAML schema, deploy flow.

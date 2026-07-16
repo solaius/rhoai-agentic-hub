@@ -11,4 +11,6 @@ RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketp
 
 ## Connections
 - reference · [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md) — Unified registry and governance for agents, skills, and MCP servers -- discovery, versioning, promotion, supply chain scanning, Agent Hub UI.
+- person · [Bill Murdock](/features/platform/knowledge/person-bill-murdock.md) — AgentDev architecture voice — curates the catalog's starter-kit repo list, drives the MLflow skills/agent registry RFCs, EA-first release principle; built the assistant-agent demo.
+- reference · [#forum-ai-asset-management](/features/platform/knowledge/ref-slack-forum-ai-asset-management.md) — The AI asset management forum — MCP Catalog/Registry, Agent Catalog/Deployments, Skills Registry (MLflow upstream), OpenShell, AI Hub; ~105 msgs/week; where the 2026-07-09 no-deploy-in-3.5 call landed.
 - jtbd · [Discover my skills, MCP servers, and agentic assets](/narrative/knowledge/jtbd-discover-agentic-assets.md) — When I'm building agents, I want to discover governed skills, MCP servers, and agentic assets, so I can compose capable agents from validated, approved components.
