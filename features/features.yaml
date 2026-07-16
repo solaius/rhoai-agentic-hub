@@ -69,3 +69,6 @@ features:
   title: Agent Catalog
   description: The agent storefront in RHOAI AI Hub — RH-curated starter-kit templates in 3.5 (link-out, no deploy), agent deployment with supported harness images in 3.6 EA1; built on Kubeflow hub alongside the MCP and Model catalogs.
   related: [agent-registry, agent-interop]
+  jira:
+    jql: '(project = RHAISTRAT AND (summary ~ "\"Agent Catalog\"" OR key in (RHAISTRAT-1740, RHAISTRAT-1697, RHAISTRAT-1742, RHAISTRAT-1758, RHAISTRAT-1349, RHAISTRAT-1792))) OR key = RHAIRFE-2443 OR (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"Agent Catalog\"" OR summary ~ "agent-catalog"))'
+    ref_types: [Outcome, Feature]
