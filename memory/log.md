@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-07-16
+- **Creation** -- git-crypt restricted-sync facts captured after the machine-B locked-checkout repair: fact-restricted-git-crypt-sync (backlog #14 resolved via git-crypt; \0GITCRYPT symptoms; unlock fix; doctor detection since dde6574) and fact-mcp-tokens-baked-into-claude-config (setup bakes MCP secrets into ~/.claude.json — breakage masked; never run setup on a broken .env). Same session: doctor s4/s11 hardened, .env.example gaps documented, openshell strategic-bet decision + lint-patterns.txt committed encrypted, features.zip + Downloads/env deleted.
 - **Creation** -- feature families shipped: `related:` in features.yaml declares boundary siblings (agent family: agent-registry/agent-interop/agent-catalog; mcp family: mcp-gateway/mcp-catalog/mcp-lifecycle-operator/mcp-registry/mcp-ecosystem). Lint enforces closed vocabulary + symmetry; generated feature indexes gain a Related line; hub.research loads siblings as standing context in every lens brief; hub.sweep reports boundary-drift candidates. ai-gateway joins both families after its intake. Convention: /conventions/layout.md "Feature families".
 
 ## 2026-07-11
