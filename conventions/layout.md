@@ -15,7 +15,7 @@ use, never pre-created empty):
 |---|---|
 | `knowledge/` | typed entries only, plus generated `index.md` |
 | `research/`  | deep documents (numbered series optional) |
-| `strategy/`  | strategy docs, RFE roadmaps, outcomes |
+| `strategy/`  | strategy docs, RFE roadmaps, outcomes — `strategy.md` is the living per-feature strategy doc ([strategy.md](/conventions/strategy.md)) |
 | `enablement/`| one subdirectory per artifact (deck, hub site, blog) |
 | `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored), `jira-snapshot.yaml` (machine-written by hub.jira-sweep; tracked), `triage-log.yaml` (machine-written by hub.jira-triage; tracked; carries no Jira prose by design, so it needs no redaction in this PUBLIC repo) |
 
