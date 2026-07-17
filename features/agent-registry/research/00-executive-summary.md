@@ -35,6 +35,7 @@ research is standing context throughout:
 | [08-landscape](08-landscape.md) | landscape | **new 2026-07-16** |
 | [09-architecture](09-architecture.md) | architecture | **new 2026-07-16** |
 | [10-requirements](10-requirements.md) | requirements | **new 2026-07-16** |
+| [11-jira-gap](11-jira-gap.md) | jira-gap | **new 2026-07-16** (same-day follow-up run) |
 
 ## The bottom line
 
@@ -56,7 +57,8 @@ agent entity lands with the dual-entity structure the platform needs;
 split enumeration from enrichment: `Sandbox` CRs enumerate workloads but
 carry zero agent semantics, and no component fetches or verifies agent
 cards anymore, so the schema's `verified`/`identity`/`trust_domain`
-fields have no producer (RHAISTRAT-1956 is the only vehicle); **(3) hold
+fields have no producer (the former vehicle RHAISTRAT-1956 closed
+between 2026-07-11 and 07-16 with no successor — see finding 15); **(3) hold
 the wedge** — nobody ships a self-managed, disconnected, governed fleet
 registry with lineage, and regulation now effectively mandates the
 record shape we'd govern — but the window is time-boxed by IBM's
@@ -145,6 +147,20 @@ slot (CNCF Sandbox review 2026-09-22).
     pressure is the discovery write path. Keep runtime-critical
     resolution OUT of the registry (revocation is enforced in the
     identity/gateway plane; the registry is the lookup) (10).
+15. **The card-verification vehicle closed days after being identified
+    as the long pole.** RHAISTRAT-1956 (New in the 2026-07-11 interop
+    snapshot) is Closed as of 07-16, no children, close reason not
+    anonymously visible; the whole card chain (1956, 1213, 1599) is
+    closed while clone RHAIRFE-2388 remains Approved. Zero active Jira
+    paths to `verified=true` — the single most urgent re-file (11).
+16. **The EA2 backend is tracked after all — and diverges.**
+    RHAISTRAT-1436 (unscheduled, parent AI Hub, 9 epics) is MLflow-native
+    with a single entity and single governance lifecycle: no runtime
+    states, no SUSPENDED, no `version_ref`, no risk-tier/log-refs/
+    retention fields, and a sync epic still targeting removed kagenti.
+    It is assigned to the RFC-0008 author — upstream and downstream
+    share an author, so the alignment channel exists. Schema input is
+    cheap before the EA2 freeze, breaking after (11).
 
 ## Boundary notes (siblings)
 
@@ -172,9 +188,9 @@ slot (CNCF Sandbox review 2026-09-22).
 
 ## Lens gaps
 
-- **jira-gap not run** (kept out of the approved plan; the interop
-  jira-gap of 2026-07-11 covers the domain broadly). Retry:
-  `hub.research agent-registry jira-gap`.
+- ~~**jira-gap not run**~~ — DONE same day (2026-07-16), see
+  [11-jira-gap](11-jira-gap.md): 12-row Direction B table, RHAISTRAT-1436
+  found, 1956 closure caught.
 - **competitive not run as a separate lens** — competitive signals were
   folded into 08 by plan; a dedicated pass (e.g. IBM ACP on-prem
   tracking, AWS GA pricing) remains available:
@@ -182,16 +198,26 @@ slot (CNCF Sandbox review 2026-09-22).
 
 ## Recommended follow-ups (not auto-run)
 
+- **Re-file card verification** (most urgent, from 11): RHAISTRAT-1956
+  closed with no successor while RHAIRFE-2388 sits Approved — an owner
+  check on the close reason, then a post-kagenti re-file (registry-side
+  fetch + JWS verify per 09 §3), is the only path back to
+  `verified=true`.
+- **1436 schema input before the EA2 freeze** (from 11): runtime
+  instance states + SUSPENDED, `version_ref`, risk tier, log refs,
+  retention — cheap now, breaking later; the shared author with RFC-0008
+  is the channel.
 - **Shape RFC-0008 Phase 2**: the agent entity design (dual-entity,
   SUSPENDED state, card-verification fields) should be prepared as
   upstream input before Phase 1 review concludes — this is the
   strategy-doc work `strategy/strategy-status.md` has been waiting on.
 - **Re-baseline Varsha's proposal** off kagenti onto Sandbox/OpenShell
   (doc 09 §1 is the input) as the Phase-2 runtime-discovery companion.
-- **hub.jira-sweep agent-registry** — the partition has no stored Jira
-  scope yet; sweep before the next refresh so jira-gap can run.
-- **EA1 registry-view data source decision** (question filed) — needs a
-  product call before the 3.6 EA1 build starts.
+- **hub.jira-sweep agent-registry** — the partition still has no stored
+  Jira scope of its own (11 ran off the domain JQL + sibling snapshots);
+  a sweep would make the next jira-gap cheaper and enable hub.jira-sync.
+- **EA1 registry-view data source decision** (question filed, now
+  Jira-confirmed) — needs a product call before the 3.6 EA1 build starts.
 - **Watch list for next refresh**: RFC-0008 PR #26 review state; OpenShell
   Go SDK PR series (only Part A open as of 07-16); Solo.io agentregistry
   CNCF review (2026-09-22); IBM ACP on-prem port; AWS registry GA +

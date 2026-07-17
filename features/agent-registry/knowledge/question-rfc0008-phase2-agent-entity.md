@@ -13,3 +13,10 @@ Phase 2 before Phase 1 review hardens the patterns. Varsha's branch is
 dormant since 2026-04-23 and kagenti-baselined; re-baselining it
 ([research/09-architecture](/features/agent-registry/research/09-architecture.md) §1)
 as the Phase-2 runtime-discovery companion is the recommended vehicle.
+
+**Evidence 2026-07-16 (jira-gap lens)**: the downstream EA2 backend
+([RHAISTRAT-1436](/features/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md))
+is assigned to the RFC-0008 author — upstream and downstream share an
+author, so the alignment channel exists; the Phase-2 question is now
+also a 1436-schema question
+([question-agent-registry-backend-dual-entity](/features/agent-registry/knowledge/question-agent-registry-backend-dual-entity.md)).

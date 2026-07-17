@@ -91,7 +91,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1355 · Outcome · In Progress · — → [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md)
 - RHAISTRAT-1356 · Outcome · In Progress · — → [RHAISTRAT-1356: A2A Protocol and Agent-to-Agent Orchestration](/features/agent-interop/knowledge/ref-rhaistrat-1356-a2a-protocol.md)
 - RHAISTRAT-1357 · Outcome · In Progress · —
-- RHAISTRAT-1436 · Feature · New · —
+- RHAISTRAT-1436 · Feature · New · — → [RHAISTRAT-1436: Agent Registry Backend (MLflow-native)](/features/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md)
 - RHAISTRAT-1527 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1561 · Feature · Backlog · —
 - RHAISTRAT-1572 · Feature · Closed · —

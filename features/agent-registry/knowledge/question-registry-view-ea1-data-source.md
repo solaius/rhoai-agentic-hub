@@ -12,3 +12,10 @@ Options sketched in
 view; honest merged view with explicit linkage states). The
 registry-view/deployments-view split is the product's own two-entity
 commitment — the EA1 stopgap must not erase it.
+
+**Confirmed 2026-07-16 (jira-gap lens)**: the risk is visible in Jira
+structure — the backend
+([RHAISTRAT-1436](/features/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md))
+is unscheduled, the registry-view UI RFE (RHAIRFE-1313, paraphrased) sits
+in stakeholder review, and the deploy path (RHAISTRAT-1742) is committed
+to 3.6 EA1. No issue records the stopgap-vs-slip decision.

@@ -8,6 +8,8 @@ review_after: 2026-10-16
 
 # Agent Registry research — post-kagenti architecture
 
+> Superseded 2026-07-16 (same day) in one respect by [11-jira-gap](11-jira-gap.md) — RHAISTRAT-1956, named throughout this doc as the only card-verification vehicle, closed between 2026-07-11 and 2026-07-16 with no successor (clone RHAIRFE-2388 still Approved); read "the only vehicle" as "no active vehicle exists". Also: the EA2 backend is tracked after all (RHAISTRAT-1436, unscheduled).
+
 **Date**: 2026-07-16
 **Lens**: architecture
 **Replaces the architecture spine of**: [03-kagenti-and-kubernetes](03-kagenti-and-kubernetes.md) (2026-04-24) — see the supersedes section at the end.
