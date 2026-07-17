@@ -1,7 +1,7 @@
 {
   "agent-registry/deep-dive": {
-    "badge": "new",
-    "hash": "5c68441bd046bd9e072ec5f9fa55f98f14157082dc895ed45f99a3d1ae323dba",
+    "badge": "updated",
+    "hash": "3a4ff1f6eea09cbcf2086a3f0cee6f00108e664999cf273f8e60516553ba7eea",
     "published": "2026-07-17",
     "source": "features/agent-registry/enablement/agent-registry-deep-dive"
   },
