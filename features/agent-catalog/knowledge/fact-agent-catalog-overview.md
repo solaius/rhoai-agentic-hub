@@ -29,8 +29,9 @@ is pointing people at working examples of agents on the Red Hat AI stack.
   OpenShell Go SDK, restricted to
   [supported images](/features/agent-catalog/knowledge/fact-agent-catalog-36-supported-images.md);
   shape still in discussion.
-- **Agent Registry** — backend targeted 3.6 EA2 (RHAISTRAT-1436), UI later
-  (RHAIRFE-1313); versioned/configured agents are
+- **Agent Registry** — work starts 3.6 EA2 at the earliest, multi-release
+  to DP (~3.7 EA1 directional; RHAISTRAT-1436 unscheduled, UI later —
+  RHAIRFE-1313); versioned/configured agents are
   [agent-registry](/features/agent-registry/index.md) scope.
 
 ## Boundaries (routing)

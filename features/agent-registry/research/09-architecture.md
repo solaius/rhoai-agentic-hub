@@ -9,6 +9,8 @@ review_after: 2026-10-16
 # Agent Registry research — post-kagenti architecture
 
 > Superseded 2026-07-16 (same day) in one respect by [11-jira-gap](11-jira-gap.md) — RHAISTRAT-1956, named throughout this doc as the only card-verification vehicle, closed between 2026-07-11 and 2026-07-16 with no successor (clone RHAIRFE-2388 still Approved); read "the only vehicle" as "no active vehicle exists". Also: the EA2 backend is tracked after all (RHAISTRAT-1436, unscheduled).
+>
+> Superseded 2026-07-16 (same day) in a second respect by an owner re-timing (recorded in [/memory/profiles/roadmap.md](/memory/profiles/roadmap.md) History): the roadmap frame used throughout — "Agent Registry TP 3.6 EA1; backend EA2; GAs in 3.6" — is retired. Registry work starts **3.6 EA2 at the earliest**, on a multi-release path to DP (~3.7 EA1 directional, no committed GA); deployment (BFF → Go SDK) is **its own workstream** that catalog and registry both consume. Read §4.3's sequencing table and every "EA1 registry view / EA2 backend" reference through that lens — the §4.3 stopgap warning gets stronger, not weaker (any early registry view now predates its backend by even more).
 
 **Date**: 2026-07-16
 **Lens**: architecture

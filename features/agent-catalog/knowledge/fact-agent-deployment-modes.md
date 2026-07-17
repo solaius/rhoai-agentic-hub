@@ -33,6 +33,6 @@ models with runtime model-name translation.
 Catalog vs registry in this frame (Adel): the catalog is where you discover
 seeds/templates; a configured, deployed instance (same seed, different
 model/MCP/skills) is a **version** that belongs in the agent registry —
-[agent-registry](/features/agent-registry/index.md) scope, backend targeted
-3.6 EA2 (RHAISTRAT-1436). Bill Murdock flagged the full declarative binding
-as "extremely ambitious" for 3.6.
+[agent-registry](/features/agent-registry/index.md) scope; registry work
+starts 3.6 EA2 at the earliest (RHAISTRAT-1436). Bill Murdock flagged the
+full declarative binding as "extremely ambitious" for 3.6.

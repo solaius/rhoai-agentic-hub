@@ -97,10 +97,14 @@ slot (CNCF Sandbox review 2026-09-22).
    **SUSPENDED** state (Sandbox `operatingMode: Suspended` has no home),
    and the governance Verification track vs the runtime `verified` bit
    is a naming hazard to resolve before the EA2 schema freeze (09).
-6. **Sequencing risk**: the registry TP (3.6 EA1) lands before its own
-   backend (EA2). A Sandbox-CR-fed stopgap registry view would collapse
-   the 1697/1758 distinction on arrival — the EA1 data source is an
-   open product decision (09).
+6. **Sequencing risk — re-timed 2026-07-16 (owner)**: registry work
+   starts 3.6 EA2 at the earliest, on a multi-release path to DP
+   (~3.7 EA1 directional, no committed GA), and deployment is its own
+   workstream — so any registry-view surface shipped before the backend
+   exists would predate it. A Sandbox-CR-fed stopgap view would collapse
+   the 1697/1758 distinction on arrival — the first registry view's data
+   source is an open product call, including "don't ship one early"
+   (09; re-timing per /memory/profiles/roadmap.md History).
 7. **Regulation converged on the record shape**: EU AI Act (Art.
    26/49/50) + OMB M-25-21 + NIST GV-1.6/CSA jointly force an eight-field
    agent record (identity+version, owner, purpose, risk class, lineage,
@@ -216,8 +220,10 @@ slot (CNCF Sandbox review 2026-09-22).
 - **hub.jira-sweep agent-registry** — the partition still has no stored
   Jira scope of its own (11 ran off the domain JQL + sibling snapshots);
   a sweep would make the next jira-gap cheaper and enable hub.jira-sync.
-- **EA1 registry-view data source decision** (question filed, now
-  Jira-confirmed) — needs a product call before the 3.6 EA1 build starts.
+- **First-registry-view data source decision** (question filed, now
+  Jira-confirmed) — registry work starts 3.6 EA2 at the earliest (owner
+  re-timing 2026-07-16), so any earlier registry-view surface needs a
+  deliberate product call — or an explicit deferral.
 - **Watch list for next refresh**: RFC-0008 PR #26 review state; OpenShell
   Go SDK PR series (only Part A open as of 07-16); Solo.io agentregistry
   CNCF review (2026-09-22); IBM ACP on-prem port; AWS registry GA +
