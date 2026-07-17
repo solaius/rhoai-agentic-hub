@@ -5,6 +5,7 @@ description: Formalize the bidirectional interface between the RHOAI agent platf
 resource: https://redhat.atlassian.net/browse/RHAISTRAT-2019
 timestamp: 2026-07-11
 tags: [agent-interop, runtime-contract, kagenti]
+features: [agent-registry]
 source: jira sweep 2026-07-11
 ---
 

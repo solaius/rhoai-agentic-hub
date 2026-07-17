@@ -257,6 +257,30 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75981 · Story · New · —
 - RHOAIENG-75984 · Story · New · —
 
+## agent-registry
+_swept 2026-07-16 · `(project = RHAISTRAT AND (summary ~ "\"Agent Registry\"" OR key in (RHAISTRAT-1355, RHAISTRAT-1436, RHAISTRAT-1697, RHAISTRAT-1955, RHAISTRAT-1956, RHAISTRAT-2019, RHAISTRAT-1758))) OR parent = RHAISTRAT-1436 OR key in (RHAIRFE-2443, RHAIRFE-2388, RHAIRFE-1313) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"Agent Registry\"")`_
+_summaries withheld — the source Jira is not anonymously readable_
+
+- RHAI-8 · Epic · New · —
+- RHAI-9 · Epic · New · —
+- RHAI-10 · Epic · New · —
+- RHAI-11 · Epic · New · —
+- RHAI-12 · Epic · New · —
+- RHAI-13 · Epic · New · —
+- RHAI-14 · Epic · New · —
+- RHAI-15 · Epic · New · —
+- RHAI-16 · Epic · New · —
+- RHAIRFE-1313 · Feature Request · Stakeholder review · — → [RHAIRFE-1313: Agent Registry UI](/features/agent-registry/knowledge/ref-rhairfe-1313-agent-registry-ui.md)
+- RHAIRFE-2388 · Feature Request · Approved · — → [RHAIRFE-2388: Agent Metadata Extraction (surviving RFE)](/features/agent-registry/knowledge/ref-rhairfe-2388-agent-metadata-extraction.md)
+- RHAIRFE-2443 · Feature Request · Approved · —
+- RHAISTRAT-1355 · Outcome · In Progress · — → [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md)
+- RHAISTRAT-1436 · Feature · New · — → [RHAISTRAT-1436: Agent Registry Backend (MLflow-native)](/features/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md)
+- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/features/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
+- RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/features/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
+- RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/features/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
+- RHAISTRAT-1956 · Feature · Closed · — → [RHAISTRAT-1956: Agent Metadata Extraction](/features/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
+- RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/features/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
+
 ## mcp-catalog
 _swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")`_
 _summaries withheld — the source Jira is not anonymously readable_
