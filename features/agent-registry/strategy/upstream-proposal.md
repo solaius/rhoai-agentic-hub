@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # Proposal: Post-Deployment Agent Registry with Pluggable Discovery
 
+> Caveat 2026-07-16: the abstract discovery design below survives, but the "Reference Plugin: Kubernetes with kagenti" section describes a dead substrate (kagenti removed from the RH roadmap 2026-07-10) — see [research/09-architecture](/features/agent-registry/research/09-architecture.md) for the post-kagenti sources; the lifecycle model also needs a SUSPENDED state. The branch has had no commits since 2026-04-23.
+
 > **Source**: [varshaprasad96/mlflow (branch: spike/gateway)](https://github.com/varshaprasad96/mlflow/blob/spike/gateway/proposals/agent-registry-discovery.md)
 > **Author**: Varsha Prasad Narsing
 > **Date**: 2026-02-16

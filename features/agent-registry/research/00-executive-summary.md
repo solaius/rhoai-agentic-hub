@@ -1,128 +1,208 @@
 ---
-title: Agent Registry Research - Executive Summary
-description: Synthesis of all agent ecosystem research into actionable findings for the MLflow Agent Registry RFC and RHOAI agent governance strategy.
-source: ai-asset-registry/agents/agent-registry/research/00-executive-summary.md (as of 2026-07-05)
-timestamp: 2026-07-06
-review_after: 2026-08-05
+title: Agent Registry research — executive summary
+description: Living synthesis after the 2026-07-16 post-split refresh — the April first-mover thesis is retired, the play is now RFC-0008 Phase 2 upstream plus owning the unowned post-deployment join (enumeration without enrichment), inside a time-boxed self-managed/disconnected wedge.
+timestamp: 2026-07-16
+review_after: 2026-10-16
 ---
 
-# Agent Registry Research - Executive Summary
+# Agent Registry research — executive summary
 
-**Date**: 2026-04-24
-**Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
-**Purpose**: Synthesize all agent ecosystem research into actionable findings for the MLflow Agent Registry RFC and RHOAI agent governance strategy.
+This is the living synthesis for the agent-registry research series.
+**Refresh run 2026-07-16** (standard depth, 4 lenses: upstream, landscape
+with competitive signals folded in, architecture, requirements) — the
+first refresh since the partition split (catalog/starter kits →
+agent-catalog; sandboxing/identity → agent-interop) and since kagenti was
+removed from the roadmap (owner ruling 2026-07-10). Docs 01–06 are the
+migrated April 2026 series and stand as written except where their
+supersede notes say otherwise; docs 07–10 are this refresh. Sibling
+research is standing context throughout:
+[agent-interop 00](/features/agent-interop/research/00-executive-summary.md)
+(2026-07-11) and
+[agent-catalog 00](/features/agent-catalog/research/00-executive-summary.md)
+(2026-07-16).
 
----
+## The series
 
-## The Bottom Line
+| Doc | Lens | State |
+|---|---|---|
+| [01-agent-ecosystem](01-agent-ecosystem.md) | landscape (2026-04) | current — terminology/abstraction ladder still holds |
+| [02-standards-and-protocols](02-standards-and-protocols.md) | upstream (2026-04) | superseded in part → 07 (A2A v1.0.1 + extensions, ARD) |
+| [03-kagenti-and-kubernetes](03-kagenti-and-kubernetes.md) | architecture (2026-04) | superseded → 09 (kagenti spine removed) |
+| [04-agent-management-landscape](04-agent-management-landscape.md) | competitive (2026-04) | superseded in part → 08 (market GA'd past it) |
+| [05-mlflow-upstream](05-mlflow-upstream.md) | upstream (2026-04) | superseded in part → 07 (RFC-0008 exists) |
+| [06-rhoai-context](06-rhoai-context.md) | requirements (2026-04) | superseded in part → 09/10 |
+| [07-upstream](07-upstream.md) | upstream | **new 2026-07-16** |
+| [08-landscape](08-landscape.md) | landscape | **new 2026-07-16** |
+| [09-architecture](09-architecture.md) | architecture | **new 2026-07-16** |
+| [10-requirements](10-requirements.md) | requirements | **new 2026-07-16** |
 
-The AI agent market is projected to grow from $7.8B to $52.6B by 2030 (44-46% CAGR), and enterprises are already deploying multi-agent systems. Yet no open-source platform offers a dedicated agent registry. AWS launched the first hyperscaler Agent Registry in April 2026, validating the market need, but it is proprietary and cloud-locked. The A2A protocol has achieved critical mass (150+ orgs, 22K+ stars, IBM ACP merged into A2A in August 2025, Linux Foundation governance), establishing a de facto standard for agent interoperability. MLflow has model, prompt, and skill registries but no agent registry. The `mlflow.agents` namespace exists but is empty. No competing proposals exist in the MLflow GitHub. This creates a first-mover opportunity for Red Hat.
+## The bottom line
 
-Red Hat should submit an upstream MLflow RFC defining `RegisteredAgent` / `AgentVersion` entities following the proven Entity+Version pattern, with a plugin-based discovery interface that keeps Kubernetes-specific integration downstream. This positions RHOAI to deliver agent governance as a natural extension of existing registry capabilities, differentiated by open-source foundations, Kubernetes-native runtime integration through kagenti, cross-registry composition tracking (agents referencing models, tools, prompts, skills, and other agents), and SPIFFE-based workload identity. The immediate priority is securing the MLflow namespace before a competitor does.
+The April thesis — "the MLflow namespace is unoccupied, move before a
+competitor does" — is retired, half by success and half by the market.
+The upstream registry stream now exists and is **Red Hat-authored**:
+RFC-0008 (MVP Skill Registry, Phase 1, draft PR 2026-07-14) puts
+metadata-first records and lifecycle stages upstream, with agent-shaped
+entities explicitly deferred to Phase 2. Meanwhile every hyperscaler
+shipped or GA'd a registry around us (Microsoft GA'd Agent 365 with a
+free inventory floor; Google shipped a documented registry product; AWS
+is still in preview; IBM repositioned as an "Agentic Control Plane" —
+SaaS-only for now). The registry lag is ~6–12 months, smaller than the
+catalog's 12–18.
 
-## Research Documents
+The play that remains is specific: **(1) shape RFC-0008 Phase 2** so the
+agent entity lands with the dual-entity structure the platform needs;
+**(2) own the post-deployment join nobody owns** — kagenti's removal
+split enumeration from enrichment: `Sandbox` CRs enumerate workloads but
+carry zero agent semantics, and no component fetches or verifies agent
+cards anymore, so the schema's `verified`/`identity`/`trust_domain`
+fields have no producer (RHAISTRAT-1956 is the only vehicle); **(3) hold
+the wedge** — nobody ships a self-managed, disconnected, governed fleet
+registry with lineage, and regulation now effectively mandates the
+record shape we'd govern — but the window is time-boxed by IBM's
+eventual on-prem port and by Solo.io's `agentregistry` occupying the OSS
+slot (CNCF Sandbox review 2026-09-22).
 
-| # | Document | What It Covers |
-|---|----------|----------------|
-| 01 | [Agent Ecosystem Analysis](01-agent-ecosystem.md) | Agent definitions, 12 frameworks, composition patterns, AgentCard as metadata standard |
-| 02 | [Standards and Protocols](02-standards-and-protocols.md) | MCP/A2A/Oracle protocol stack, AAIF governance, NIST initiative, design principles |
-| 03 | [Kagenti and Kubernetes](03-kagenti-and-kubernetes.md) | Three K8s agent projects, kagenti architecture, MLflow integration patterns |
-| 04 | [Agent Management Landscape](04-agent-management-landscape.md) | AWS/IBM/Google/Microsoft/Salesforce platforms, 5 OSS platforms, market gaps |
-| 05 | [MLflow Upstream Strategy](05-mlflow-upstream.md) | Entity+Version pattern, Skills Registry precedent, RFC process, Red Hat contributors |
-| 06 | [RHOAI Context and Patterns](06-rhoai-context.md) | MCP/skills pattern reuse, agent-specific differences, stakeholder open questions |
+## Key findings (2026-07-16)
 
-## Key Findings
+1. **RFC-0008 is skills-first, agents are Phase 2.** The upstream
+   registry conversation runs through mlflow/rfcs PR #26 (Bill Murdock,
+   draft, no review activity yet) and feeder issue mlflow/mlflow#22833.
+   Lifecycle stages are proposed **in the upstream core** — shrinking
+   the downstream governance delta if accepted (07).
+2. **Varsha's post-deployment branch is dormant** (no commits since
+   2026-04-23; the last one deepened the now-dead kagenti dependency).
+   Its abstract `AgentDiscoveryProvider` interface survives; its
+   reference plugin does not. Natural vehicle: the runtime-discovery
+   companion to RFC Phase 2 (07, 09).
+3. **Enumeration and enrichment have split.** Sandbox v1beta1 CRs
+   (v0.5.0 2026-06-24, v0.5.1 2026-07-09) expose infrastructure fields
+   only. The recommended architecture: WATCH Sandbox CRs to enumerate;
+   register-on-deploy (WEBHOOK) for rich records gated on approval;
+   an ADR-#142-style sync controller adopting out-of-band/GitOps
+   deployments as **unlinked instances** (the shadow inventory,
+   visible); a registry-side card-fetch + JWS-verification loop as the
+   only path back to `verified=true` (09).
+4. **Dual entities, not one**: AgentVersion (four governance tracks,
+   MCP Registry pattern) ↔ Agent instance (runtime states), joined by a
+   nullable `version_ref`; join keys in strength order: stamped
+   annotations > image digest + config hash > card identity claims.
+   RHAISTRAT-1697 (registry view) vs -1758 (deployments view) already
+   encode the two-entity split (09).
+5. **Governance and runtime state machines don't map — by design.**
+   Four join points instead (deploy gate, deprecation impact,
+   retire-safety evidence, forensics). Varsha's model needs a
+   **SUSPENDED** state (Sandbox `operatingMode: Suspended` has no home),
+   and the governance Verification track vs the runtime `verified` bit
+   is a naming hazard to resolve before the EA2 schema freeze (09).
+6. **Sequencing risk**: the registry TP (3.6 EA1) lands before its own
+   backend (EA2). A Sandbox-CR-fed stopgap registry view would collapse
+   the 1697/1758 distinction on arrival — the EA1 data source is an
+   open product decision (09).
+7. **Regulation converged on the record shape**: EU AI Act (Art.
+   26/49/50) + OMB M-25-21 + NIST GV-1.6/CSA jointly force an eight-field
+   agent record (identity+version, owner, purpose, risk class, lineage,
+   status, log refs, permissions); the pre/post dual structure maps 1:1
+   onto "approved vs running". Registry retention: keep REMOVED-instance
+   records ≥6 months. Caution: the Apr 2026 interagency MRM guidance
+   **excludes** agentic AI from model-risk scope — don't claim SR 11-7
+   extends to agents (10).
+8. **Shadow-agent inventory is the best-evidenced fleet need** (82% of
+   orgs discovered unknown agents; 67% of NHIs unseen by IAM; discovery
+   tooling is now a commercial category — Zenity, WitnessAI, plus
+   Microsoft's free tier). The unlinked-instance state is the direct
+   answer (08, 10).
+9. **The registry market inverted its monetization**: Microsoft ships
+   the inventory free and charges $15/user/mo for the governance stack;
+   AWS signals per-record GA pricing; registries are directly monetized
+   — an infra-priced registry is a TCO argument, blunted by Microsoft's
+   free floor (08).
+10. **Federation is arriving bilaterally, not via standards**:
+    ServiceNow ↔ Agent 365 dual-registry publishing ships; Salesforce
+    Agent Scanners auto-discover cross-cloud agents normalized to A2A
+    cards; the ARD spec (Google+Microsoft+9, v0.9, /.well-known/ai-catalog.json)
+    formalizes the discovery layer but adoption is thin — implement-and-
+    influence window, cheap hedge is URN-mappable IDs + native-media-type
+    card storage (07, 08).
+11. **Unity Catalog made agents first-class** (DAIS 2026) and Databricks
+    open-sourced Unity AI Gateway pieces into MLflow — upstream MLflow is
+    becoming a governance surface; free primitives for us, Databricks
+    steering the substrate (07, 08).
+12. **Upstream kagenti is NOT winding down** — it remains active
+    (v0.6.1, Jun 2026) and is rebranding to **Rosso**. The roadmap
+    removal is Red Hat's decision, not upstream's status; public docs
+    must keep the two claims separate (07).
+13. **Base images are supply-chain metadata on versions, not registry
+    entities**: AgentVersion pins the harness image digest + Konflux
+    attestation refs (SLSA/in-toto/cosign); attestations mirror via the
+    OCI referrers API (verification recorded at ingestion — no live
+    Rekor calls in enclaves). Payoff: the CVE blast-radius query
+    ("which ACTIVE agents run the affected base?") only the registry can
+    answer. Public pipeline tip: opendatahub-io/agentic-ci publishes
+    daily coding-agent runner images to quay.io/aipcc/ (07, 09, 10).
+14. **Scale/SLO**: design for tens-to-hundreds of governed agents per
+    tenant, thousands of discovered instances per fleet; the scaling
+    pressure is the discovery write path. Keep runtime-critical
+    resolution OUT of the registry (revocation is enforced in the
+    identity/gateway plane; the registry is the lookup) (10).
 
-1. **"Agent" has three distinct meanings the registry must serve.** Agent-as-code (development artifact), agent-as-service (running endpoint), and agent-as-record (governance metadata) each require different registry capabilities. The MLflow RFC should define the agent-as-record primitives; agent-as-service discovery belongs in the plugin layer.
+## Boundary notes (siblings)
 
-2. **A2A AgentCard is the de facto agent metadata standard.** Adopted by AWS, Google, IBM BeeAI, kagenti, and Microsoft, AgentCard provides structured capability descriptions, authentication requirements, and endpoint information. The MLflow `RegisteredAgent` schema should align with AgentCard fields to enable seamless round-tripping between registry records and runtime discovery.
+- The registry-shaped Jira surface (RHAISTRAT-1355, -1697, -1758, -1955,
+  -1956, -2019) is filed under agent-interop and cross-listed here via
+  `features:` — no re-filing needed.
+- "Deploy always registers, reconcile the rest" comes from the catalog
+  series (their 04/01) and is adopted by 09's architecture; the deploy
+  path is catalog territory, the registration semantics are ours.
+- Agentic base images (RHAIRFE-2443/AIPCC) are shared with agent-catalog
+  (their supported-images program consumes them; our registry records
+  their provenance). Licensing/air-gap depth lives in catalog 04.
 
-3. **The three-layer protocol stack is stabilizing.** MCP handles agent-to-tool communication, A2A handles agent-to-agent communication, and Oracle Agent Spec handles declarative definitions. All three are governed by AAIF under the Linux Foundation (Red Hat is a Gold member). This stability de-risks building registry infrastructure on these standards.
+## Open question status
 
-4. **Agents are composite assets with unique dependency graphs.** An agent may reference models, tools, prompts, guardrails, knowledge sources, and other agents. No existing registry tracks these cross-asset composition relationships. This is the single most valuable capability the MLflow Agent Registry can provide and the strongest differentiator for RHOAI's cross-registry approach.
+| Question | Finding | Status |
+|---|---|---|
+| kagenti integration architecture (pull/push/hybrid) | Moot — kagenti removed; dissolves into Sandbox WATCH + deploy WEBHOOK + sync controller | answered (09) |
+| Pre- vs post-deployment relationship | Recommendation: separate entities + hard `version_ref`, LoggedModel as lineage hub; regulators need both views | open — evidence added (09, 10) |
+| Lifecycle ↔ governance mapping | Don't map: orthogonal machines, four join points; SUSPENDED missing; verified-naming hazard | open — evidence added (09, 10) |
+| Discovery plugin generalization | Unchanged (RFC-0008's typed-source design points the same way); duplicate entry removed | open |
+| Governance integration (multi-track) | AWS approval-workflow precedent; RFC-0008 puts lifecycle stages upstream | open — evidence added (07, 10) |
+| Composition graphs | CSA delegation-lineage expectations make it compliance-adjacent, still deferred | open — evidence added (10) |
+| Base images: UBI version, product ID | No new external data; two Red Hat shapes coexist (UBI runner images vs fedora-bootc host proposal) sharpens the ADR question | open (07) |
 
-5. **MLflow's Entity+Version pattern is proven and predictable.** `RegisteredModel`/`ModelVersion`, `Prompt`/`PromptVersion`, `Skill`/`SkillVersion` all follow the same architecture. The Skills Registry MVP validated using dedicated database tables rather than tag-based hacks on `ModelVersion`. The agent registry should follow this pattern with `RegisteredAgent`/`AgentVersion` and dedicated tables.
+## Lens gaps
 
-6. **Pre-deployment and post-deployment are both required.** Varsha's earlier proposal covered only post-deployment agent discovery. A complete registry must also handle pre-deployment governance: versioning agent definitions, tracking composition, enforcing policies before agents reach production. The MLflow RFC addresses pre-deployment; kagenti integration addresses post-deployment.
+- **jira-gap not run** (kept out of the approved plan; the interop
+  jira-gap of 2026-07-11 covers the domain broadly). Retry:
+  `hub.research agent-registry jira-gap`.
+- **competitive not run as a separate lens** — competitive signals were
+  folded into 08 by plan; a dedicated pass (e.g. IBM ACP on-prem
+  tracking, AWS GA pricing) remains available:
+  `hub.research agent-registry competitive`.
 
-7. **AWS validated the registry-as-MCP-server pattern.** AWS Bedrock Agent Registry exposes registered agents as MCP server resources, enabling AI assistants to discover and invoke agents through the same protocol used for tools. This pattern should inform the RHOAI catalog surface design.
+## Recommended follow-ups (not auto-run)
 
-8. **Kagenti provides Kubernetes-native agent runtime, but MLflow must remain platform-agnostic.** Kagenti's operator, AgentCard CRD, SPIFFE/SPIRE identity, and Istio Ambient mesh integration are powerful for RHOAI. However, the upstream MLflow RFC must define an `AgentDiscoveryProvider` plugin interface with `mlflow.agent_discovery` entry points, keeping Kubernetes as one discovery source among Docker, cloud services, static configurations, and SaaS platforms.
+- **Shape RFC-0008 Phase 2**: the agent entity design (dual-entity,
+  SUSPENDED state, card-verification fields) should be prepared as
+  upstream input before Phase 1 review concludes — this is the
+  strategy-doc work `strategy/strategy-status.md` has been waiting on.
+- **Re-baseline Varsha's proposal** off kagenti onto Sandbox/OpenShell
+  (doc 09 §1 is the input) as the Phase-2 runtime-discovery companion.
+- **hub.jira-sweep agent-registry** — the partition has no stored Jira
+  scope yet; sweep before the next refresh so jira-gap can run.
+- **EA1 registry-view data source decision** (question filed) — needs a
+  product call before the 3.6 EA1 build starts.
+- **Watch list for next refresh**: RFC-0008 PR #26 review state; OpenShell
+  Go SDK PR series (only Part A open as of 07-16); Solo.io agentregistry
+  CNCF review (2026-09-22); IBM ACP on-prem port; AWS registry GA +
+  pricing; ARD adoption beyond GitHub Agent Finder; agent-sandbox
+  post-v1beta1 API churn.
 
-9. **No open-source platform has a dedicated agent registry.** LangSmith, CrewAI, AutoGen, Semantic Kernel, and Haystack all lack registry capabilities for agents. The five enterprise platforms surveyed (AWS, IBM, Google, Microsoft, Salesforce) are all proprietary. MLflow with an agent registry would be the first open-source solution.
+## Verification
 
-10. **Governance is the enterprise differentiator, not features.** IBM watsonx leads with deepest governance (100+ prebuilt agents, regulatory compliance). AWS leads with hybrid search and first-mover advantage. Google leads with the A2A reference implementation. But none offer open-source, auditable governance with Kubernetes-native identity. RHOAI can own this space.
-
-11. **Seven of ten MCP registry patterns transfer to agents, but three do not.** Agents differ from MCP servers in fundamental ways: they are running services with endpoints, they have dual state (governance record plus runtime status), they use diverse protocols (A2A, MCP, HTTP, gRPC), they require capability-based discovery, and they need cryptographic identity. The registry design must accommodate these differences rather than forcing agents into the MCP model.
-
-12. **The MLflow namespace is unoccupied and the RFC design-approval process typically takes several weeks.** Red Hat has active contributors (Matt Prahl with 20+ PRs, Edson Tirelli as Databricks liaison, Dan Kuc on registry engineering). No competing agent registry proposals exist. Moving quickly is more important than perfecting the design, since the plugin architecture allows iteration without breaking the core API.
-
-## Competitive Positioning
-
-| Competitor | Strength | RHOAI Differentiator |
-|------------|----------|---------------------|
-| AWS AgentCore | First-mover agent registry, hybrid search, registry-as-MCP-server pattern | Open-source MLflow foundation; no cloud lock-in; cross-registry composition |
-| IBM watsonx | Deepest governance, 100+ prebuilt agents, regulatory compliance focus | Kubernetes-native identity (SPIFFE); open governance model; community-driven |
-| Google Gemini Platform | ADK ecosystem, API Registry, A2A reference implementation | Multi-cloud/hybrid deployment; not tied to single model provider |
-| Microsoft | Agent Framework 1.0, 75K+ GitHub stars combined, broad developer reach | Dedicated registry (Microsoft has none); enterprise governance layer |
-| Salesforce | A2A in production at 150+ orgs, MuleSoft Agent Fabric | General-purpose platform; not restricted to CRM/sales domain |
-
-**RHOAI's combined differentiators**: open-source MLflow foundation, Kubernetes-native runtime via kagenti, cross-registry composition tracking (agents to models to tools to prompts to skills), SPIFFE workload identity, and hybrid/multi-cloud deployment without cloud provider lock-in.
-
-## Architecture Patterns Worth Adopting
-
-**From internal projects (MCP and Skills registries):**
-- Entity+Version with dedicated database tables (not tag-based ModelVersion overlay)
-- Plugin-based discovery providers with standard entry points (`mlflow.agent_discovery`)
-- Separation of upstream primitives (registration, versioning, search) from downstream governance (policy enforcement, approval workflows, audit trails)
-- Metadata-first approach: store the agent record; defer runtime concerns to plugins
-
-**From market (AWS, A2A, kagenti):**
-- Registry-as-MCP-server: expose registered agents as MCP resources for AI-assisted discovery (AWS pattern)
-- AgentCard as the interchange format between registry records and runtime endpoints (A2A standard)
-- Operator + CRD pattern for Kubernetes-native lifecycle management (kagenti architecture)
-- Hybrid integration model: Pull (watch CRDs for changes), Push (webhook on registration), or Hybrid (both) for connecting registry to runtime platforms
-- SPIFFE/SPIRE for cryptographic workload identity rather than API key rotation (kagenti security model)
-- Capability-based discovery: search by what agents can do, not just by name or tag (A2A AgentCard capability fields)
-
-## Recommended Next Steps
-
-### Immediate (Weeks 1-2)
-- Submit the MLflow RFC defining `RegisteredAgent` / `AgentVersion` entities with the Entity+Version pattern and `AgentDiscoveryProvider` plugin interface
-- Engage Edson Tirelli (Databricks liaison) and Matt Prahl on timing and review process
-- Align the `RegisteredAgent` schema fields with A2A AgentCard to minimize impedance mismatch
-- Circulate this research summary with RHOAI PM and engineering leadership (Adam Bellusci, Landon LaSmith, kagenti team) for alignment
-
-### Short-Term (Weeks 3-8)
-- Implement the kagenti `AgentDiscoveryProvider` plugin as the first concrete discovery source
-- Build RHOAI governance extensions on top of upstream primitives: approval workflows, policy enforcement, audit logging
-- Define the cross-registry composition schema linking agents to their constituent models, tools, prompts, skills, and sub-agents
-- Coordinate with the kagenti team on AgentCard CRD alignment with the MLflow schema
-
-### Medium-Term (Weeks 9-16)
-- Deliver cross-registry composition tracking in the RHOAI UI, showing full dependency graphs for registered agents
-- Implement A2A AgentCard import/export so agents discovered at runtime can be registered, and registered agents can publish AgentCards
-- Build catalog surface for agent discovery, following the registry-as-MCP-server pattern validated by AWS
-- Contribute upstream MLflow CLI/SDK commands (`mlflow.agents.register()`, `mlflow.agents.load()`, `mlflow.agents.search()`)
-
-## Open Questions for Stakeholder Input
-
-1. **Schema scope for the MLflow RFC**: Should the upstream `RegisteredAgent` include composition references (links to models, tools, prompts) or should composition tracking be a downstream RHOAI extension only?
-2. **AgentCard alignment depth**: Should `RegisteredAgent` fields map 1:1 to A2A AgentCard, or should MLflow define its own schema with an AgentCard export function?
-3. **Dual-state management**: How should the registry handle the gap between a registered agent definition (pre-deployment) and a discovered running agent (post-deployment)? Are these the same entity at different lifecycle stages or separate entities with references?
-4. **Kagenti coupling**: Kagenti is targeting RHOAI 3.5 Tech Preview. Should the agent registry timeline be coupled to kagenti readiness, or should the registry ship independently with static/manual registration first?
-5. **Multi-agent composition governance**: When an agent orchestrates sub-agents, should the registry enforce that all sub-agents are also registered? What happens when a sub-agent version changes?
-6. **Testing and validation**: No agent testing framework standards exist. Should RHOAI define testing metadata fields in the registry, or defer to emerging standards (NIST AI Agent Standards Initiative, expected 2026-2027)?
-7. **Plugin architecture feedback**: Databricks requested revisions to the plugin architecture proposal. What specific concerns need to be addressed before resubmission?
-
-## File Index
-
-| File | Description |
-|------|-------------|
-| [00-executive-summary.md](00-executive-summary.md) | This document -- synthesis of all research findings |
-| [01-agent-ecosystem.md](01-agent-ecosystem.md) | Agent definitions, frameworks, composition patterns, metadata standards |
-| [02-standards-and-protocols.md](02-standards-and-protocols.md) | Protocol stack (MCP/A2A/Oracle), governance bodies, design principles |
-| [03-kagenti-and-kubernetes.md](03-kagenti-and-kubernetes.md) | Kubernetes agent projects, kagenti architecture, MLflow integration |
-| [04-agent-management-landscape.md](04-agent-management-landscape.md) | Enterprise and OSS platform survey, market sizing, competitive gaps |
-| [05-mlflow-upstream.md](05-mlflow-upstream.md) | MLflow registry patterns, namespace analysis, RFC strategy |
-| [06-rhoai-context.md](06-rhoai-context.md) | RHOAI pattern reuse, agent-specific differences, open questions |
+Standard run — no adversarial verification pass (deep-run feature). The
+orchestrator re-verified the one flagged ambiguity: agent-sandbox
+v0.5.0 = 2026-06-24, v0.5.1 = 2026-07-09 (GitHub releases API), and
+HTTP-verified the four load-bearing new-source URLs (RFC-0008 PR, ARD
+site, sigstore-a2a, Solo.io agentregistry). Load-bearing claims carry
+inline primary-source citations in 07–10.

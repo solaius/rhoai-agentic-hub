@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # Agent Registry Research - Agent Standards & Protocols
 
+> Superseded 2026-07-16 in part by [07-upstream](07-upstream.md) — A2A is v1.0.1 with four official extensions and dual-version card advertising; ARD (Google+Microsoft) now formalizes federated discovery; the AAIF three-layer framing stands.
+
 **Date**: 2026-04-24
 **Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
 **Purpose**: Deep technical analysis of the standards that inform the agent registry data model and discovery architecture.

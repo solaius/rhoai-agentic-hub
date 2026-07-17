@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # Agent Registry Research - Agent Management Landscape
 
+> Superseded 2026-07-16 in part by [08-landscape](08-landscape.md) — Microsoft, Google, and IBM shipped or GA'd registry products since April; AWS remains in preview; the OSS slot is contested (Solo.io agentregistry, AGNTCY); "no open-source agent registry" no longer holds unqualified.
+
 **Date**: 2026-04-24
 **Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
 **Purpose**: Survey the competitive landscape of agent registry, catalog, and governance products. Identify features, gaps, and RHOAI differentiation opportunities.

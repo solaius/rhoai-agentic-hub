@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # Agent Registry Research - RHOAI Patterns, Decisions & Internal Context
 
+> Superseded 2026-07-16 in part by [09-architecture](09-architecture.md) and [10-requirements](10-requirements.md) — kagenti-as-deployment-primitive and the 3.5 co-priority are overtaken (OpenShell, 3.6); the dual-state-machine analysis stands and is extended (four join points, SUSPENDED state, verified-naming hazard).
+
 **Date**: 2026-04-24
 **Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
 **Purpose**: Extract transferable patterns from MCP and skills registry work, document internal decisions, and map the ownership landscape.

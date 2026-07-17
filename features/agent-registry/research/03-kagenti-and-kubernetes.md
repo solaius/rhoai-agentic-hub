@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # Agent Registry Research - Kagenti & Kubernetes Agent Patterns
 
+> Superseded 2026-07-16 by [09-architecture](09-architecture.md) — kagenti was removed from the Red Hat roadmap (owner ruling 2026-07-10; upstream continues independently and is rebranding to Rosso); the registry's discovery architecture is rebuilt on Sandbox CRs, deploy-time registration, and a registry-side card-verification loop.
+
 **Date**: 2026-04-24
 **Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
 **Purpose**: Document the Kubernetes agent landscape with deep focus on kagenti as the RHOAI runtime discovery partner. Disambiguate kagenti from similarly-named projects.

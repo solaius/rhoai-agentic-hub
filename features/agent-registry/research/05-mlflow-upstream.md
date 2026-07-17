@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # Agent Registry Research - MLflow Agent Support & Registry Patterns
 
+> Superseded 2026-07-16 in part by [07-upstream](07-upstream.md) — the "window is open" thesis executed: RFC-0008 (skills Phase 1, Red Hat-authored) exists with lifecycle stages proposed upstream; Unity Catalog now registers agents; mlflow.agents remains registry-less through 3.14; the kagenti reference-plugin framing is dead.
+
 **Date**: 2026-04-24
 **Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
 **Purpose**: Analyze MLflow's current agent capabilities and existing registry patterns to identify the RFC insertion point.
