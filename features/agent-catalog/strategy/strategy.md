@@ -27,7 +27,7 @@ registers.
 |---|---|---|
 | 3.5 DP | Read-only catalog: starter-kit cards from [agentic-starter-kits](/features/agent-catalog/knowledge/ref-agentic-starter-kits-repo.md) → GitHub link-out; read-only deployments view (sandbox-CR discovery); YAML catalog source baked for disconnected; no deploy button, no agent-card discovery, no admin UI ([scope](/features/agent-catalog/knowledge/fact-agent-catalog-35-scope.md)) | In build — OpenAPI merged 2026-07-03 (kubeflow/hub #2907), [field set final 2026-07-02](/features/agent-catalog/knowledge/decision-agent-catalog-35-field-set.md), BFF show-and-tell ~2026-07-17 |
 | 3.6 EA1 | Deploy from the detail page, [supported images only](/features/agent-catalog/knowledge/decision-agent-catalog-deploy-supported-images-only.md): BFF → OpenShell Go SDK; declarative binding (RHAIRFE-2309/2310) aspirational — descope path is deploy-with-manual-config ([direction](/features/agent-catalog/knowledge/fact-agent-catalog-36-supported-images.md)) | Planned — SDK pre-merge upstream |
-| 3.6 EA2 | Agent Registry backend (MLflow) — a configured deployed instance becomes a registry version; deploy-time registration is the registry's rich discovery path ([sibling](/features/agent-registry/knowledge/fact-agent-registry.md)) | Planned (RHAISTRAT-1436, agent-registry scope) |
+| 3.6 EA2+ | Agent Registry — work starts here at the earliest, multi-release to DP (~3.7 EA1 directional); a configured deployed instance becomes a registry version, and deploy-time registration is the registry's rich discovery path ([sibling](/features/agent-registry/knowledge/fact-agent-registry.md)). Deployment itself is a separate workstream both features consume | Not started (RHAISTRAT-1436 unscheduled, agent-registry scope) |
 | Later | Harness playground/chat ([question](/features/agent-catalog/knowledge/question-agent-catalog-harness-playground-integration.md)), purpose-built agents, eval/validated tier (RHAISTRAT-1792) | Deferred |
 
 **Boundaries.** Not the runtime (sandboxing/identity/deploy mechanics →
@@ -162,6 +162,11 @@ strategy element carries zero Jira coverage except the candidates below.
 
 ## History
 
+- 2026-07-16 — **Refresh** (hub.strategy, same day) — registry hand-off
+  re-timed per owner: work starts 3.6 EA2 at the earliest, multi-release
+  to DP (~3.7 EA1 directional); was "backend 3.6 EA2". Deployment noted
+  as its own workstream consumed by catalog and registry. (source:
+  /memory/profiles/roadmap.md History, owner 2026-07-16)
 - 2026-07-16 — **Creation** (hub.strategy pilot run) — synthesized from
   the same-day intake (4 transcripts, 2 GDocs, 2 Slack channels), the
   adversarially-verified 5-lens research series, and the 37-issue Jira
