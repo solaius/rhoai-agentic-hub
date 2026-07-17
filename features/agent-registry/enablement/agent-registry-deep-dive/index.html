@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Agent Registry — an Engineer's Deep Dive — Red Hat OpenShift AI</title>
+  <meta name="description" content="The system of record for agents on RHOAI — governed versions, running instances, post-kagenti discovery, register-on-deploy, and the open decisions an engineer can own." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.65rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === NAVIGATION === */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+    .hat {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; background: var(--rh-red); color: white;
+      font-family: var(--font-sans); font-weight: 800; font-size: 0.65rem; border-radius: 4px;
+    }
+    .nav-title { font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); }
+    .nav-links { display: flex; gap: 1.25rem; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.8rem; font-family: var(--font-text); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* === SECTIONS === */
+    section { padding: 5rem 1.5rem; scroll-margin-top: calc(var(--nav-height) + 16px); }
+    .section-inner { max-width: var(--content-max); margin: 0 auto; }
+    .section-label {
+      font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .h3 { font-family: var(--font-sans); font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin: var(--space-xl) 0 var(--space-sm); }
+    .lead { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 78ch; }
+    .accent { color: var(--rh-red); }
+    .mono { font-family: var(--font-mono); font-size: 0.85em; color: var(--rh-blue-light); }
+    strong { color: var(--text-primary); }
+
+    /* === HERO === */
+    .hero { min-height: 78vh; display: flex; align-items: center; position: relative; padding-top: calc(var(--nav-height) + 3rem); }
+    .hero::before {
+      content: ''; position: absolute; top: -50px; right: -100px; width: 600px; height: 600px;
+      border-radius: 50%; background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .stat-strip { display: flex; gap: 2.5rem; margin-top: 2.25rem; flex-wrap: wrap; }
+    .stat-value { font-family: var(--font-sans); font-size: 2rem; font-weight: 800; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; max-width: 15ch; }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-elevated); border: 1px solid var(--border-subtle);
+      border-radius: 12px; padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover { border-color: rgba(238, 0, 0, 0.4); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08); }
+    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: var(--space-xl); }
+    .card-title { font-family: var(--font-sans); font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem; }
+    .card-body { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+    .card-tag {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.65rem; font-weight: 600;
+      padding: 0.2rem 0.55rem; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem;
+    }
+    .tag-red    { background: rgba(238,0,0,0.14);   color: #ff6b6b; }
+    .tag-teal   { background: rgba(0,149,150,0.16); color: #35c4c5; }
+    .tag-blue   { background: rgba(0,102,204,0.18); color: var(--rh-blue-light); }
+    .tag-purple { background: rgba(103,83,172,0.2); color: #a695e0; }
+    .tag-green  { background: rgba(62,134,53,0.18); color: #6fbf65; }
+    .tag-amber  { background: rgba(244,180,0,0.15); color: var(--rh-orange); }
+    .tag-gray   { background: rgba(138,138,138,0.15); color: var(--text-muted); }
+
+    /* === EXAMPLE STRIP (the running example) === */
+    .example {
+      background: linear-gradient(135deg, rgba(0,102,204,0.08), rgba(0,102,204,0.02));
+      border: 1px solid rgba(0,102,204,0.3); border-left: 4px solid var(--rh-blue);
+      border-radius: 0 10px 10px 0; padding: 1.1rem 1.35rem; margin-top: var(--space-lg); max-width: 82ch;
+    }
+    .example .ex-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-blue-light); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+    .example p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* === CALLOUT === */
+    .callout {
+      background: linear-gradient(135deg, rgba(244,180,0,0.07), rgba(244,180,0,0.02));
+      border: 1px solid rgba(244,180,0,0.3); border-left: 4px solid var(--rh-orange);
+      border-radius: 0 10px 10px 0; padding: 1.1rem 1.35rem; margin-top: var(--space-lg); max-width: 82ch;
+    }
+    .callout .co-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+    .callout p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* === MATRIX TABLE === */
+    .matrix-wrap { overflow-x: auto; margin-top: var(--space-xl); border: 1px solid var(--border-subtle); border-radius: 12px; }
+    table.matrix { width: 100%; border-collapse: collapse; background: var(--bg-elevated); font-size: 0.82rem; min-width: 720px; }
+    table.matrix th {
+      font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-muted); text-align: left; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-muted);
+      background: var(--bg-card);
+    }
+    table.matrix td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); vertical-align: top; }
+    table.matrix tr:last-child td { border-bottom: none; }
+    table.matrix td.src { font-family: var(--font-sans); font-weight: 600; color: var(--text-primary); }
+    .pill { display: inline-block; font-family: var(--font-mono); font-size: 0.62rem; padding: 0.12rem 0.5rem; border-radius: 999px; letter-spacing: 0.05em; }
+    .pill-yes  { background: rgba(62,134,53,0.2);  color: #6fbf65; }
+    .pill-best { background: rgba(0,149,150,0.22); color: #35c4c5; font-weight: 700; }
+    .pill-no   { background: rgba(138,138,138,0.12); color: var(--text-muted); }
+
+    /* === STATE CHIPS === */
+    .chip {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600;
+      padding: 0.3rem 0.7rem; border-radius: 6px; margin: 0.2rem 0.25rem 0.2rem 0;
+      border: 1px solid var(--border-muted); color: var(--text-secondary); background: var(--bg-card);
+    }
+    .chip-green  { border-color: rgba(62,134,53,0.5);  color: #6fbf65; }
+    .chip-amber  { border-color: rgba(244,180,0,0.5);  color: var(--rh-orange); }
+    .chip-gray   { border-color: var(--border-muted);   color: var(--text-muted); }
+    .chip-red    { border-color: rgba(238,0,0,0.5);     color: #ff6b6b; }
+    .chip-dashed { border-style: dashed; }
+
+    /* === ENTITY DIAGRAM === */
+    .entity-diagram { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: stretch; margin-top: var(--space-xl); }
+    .entity-box { background: var(--bg-elevated); border-radius: 12px; padding: 1.4rem; }
+    .entity-box.gov { border: 2px solid rgba(103,83,172,0.55); }
+    .entity-box.run { border: 2px solid rgba(0,149,150,0.55); }
+    .entity-kind { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.4rem; }
+    .entity-name { font-family: var(--font-sans); font-weight: 800; font-size: 1.15rem; color: var(--text-primary); }
+    .entity-sub { font-size: 0.8rem; color: var(--text-muted); margin: 0.3rem 0 0.9rem; }
+    .join-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; min-width: 130px; }
+    .join-arrow { font-size: 1.5rem; color: var(--rh-red); }
+    .join-label { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-primary); background: var(--bg-card); border: 1px solid var(--border-muted); border-radius: 6px; padding: 0.3rem 0.6rem; }
+    .join-note { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-align: center; }
+    .ghost-card {
+      margin-top: 1rem; border: 1.5px dashed var(--border-muted); border-radius: 12px; padding: 1.1rem 1.4rem;
+      background: rgba(138,138,138,0.04);
+    }
+
+    /* === LADDER === */
+    .ladder { display: grid; gap: 0.6rem; margin-top: var(--space-lg); max-width: 760px; }
+    .rung { display: flex; gap: 1rem; align-items: baseline; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 0.9rem 1.2rem; }
+    .rung-rank { font-family: var(--font-mono); font-weight: 700; font-size: 0.7rem; min-width: 88px; }
+
+    /* === FLAGSHIP SVG === */
+    .arch-figure { margin-top: var(--space-xl); border: 1px solid var(--border-subtle); border-radius: 12px; background: var(--bg-elevated); overflow: hidden; }
+    .arch-figure svg { display: block; width: 100%; height: auto; }
+    .arch-legend { display: flex; gap: 1.5rem; padding: 0.75rem 1.25rem; border-top: 1px solid var(--border-subtle); background: var(--bg-card); font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-secondary); flex-wrap: wrap; }
+    .arch-legend span.k { display: inline-flex; align-items: center; gap: 0.4rem; }
+    @keyframes dash-flow { to { stroke-dashoffset: -28; } }
+    .flow-anim { animation: dash-flow 2.2s linear infinite; }
+
+    /* === STEP LIST === */
+    .steps { counter-reset: step; display: grid; gap: 0.55rem; margin-top: var(--space-lg); max-width: 82ch; }
+    .step { display: flex; gap: 0.9rem; align-items: baseline; font-size: 0.88rem; color: var(--text-secondary); }
+    .step::before {
+      counter-increment: step; content: counter(step);
+      font-family: var(--font-mono); font-weight: 700; font-size: 0.72rem; color: white;
+      background: var(--rh-red); border-radius: 50%; min-width: 1.35rem; height: 1.35rem;
+      display: inline-flex; align-items: center; justify-content: center; transform: translateY(-1px);
+    }
+
+    /* === TWO-COL === */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: var(--space-xl); }
+
+    /* === PIPELINE === */
+    .pipe { display: flex; align-items: stretch; gap: 0.5rem; flex-wrap: wrap; margin-top: var(--space-xl); }
+    .pipe-step { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem 1.2rem; min-width: 150px; flex: 1 1 150px; }
+    .pipe-k { font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.3rem; }
+    .pipe-t { font-family: var(--font-sans); font-weight: 700; font-size: 0.88rem; color: var(--text-primary); }
+    .pipe-d { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; line-height: 1.45; }
+    .pipe-arrow { align-self: center; color: var(--rh-red); opacity: 0.6; font-size: 1.2rem; }
+
+    /* === DECISION CARDS === */
+    .decision { border-left: 4px solid var(--border-muted); border-radius: 0 12px 12px 0; }
+    .decision.u-red   { border-left-color: var(--rh-red); }
+    .decision.u-amber { border-left-color: var(--rh-orange); }
+    .decision.u-blue  { border-left-color: var(--rh-blue); }
+    .decision.u-gray  { border-left-color: var(--border-muted); }
+    .decision-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: var(--space-xl); }
+
+    /* === TIMELINE === */
+    .timeline-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: var(--space-xl); }
+    .t-col { border-top: 3px solid var(--border-muted); padding-top: 1rem; }
+    .t-k { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; }
+    .t-t { font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--text-primary); margin: 0.5rem 0; }
+    .t-col ul { list-style: none; padding: 0; }
+    .t-col li { font-size: 0.8rem; color: var(--text-secondary); padding: 0.22rem 0 0.22rem 0.9rem; position: relative; }
+    .t-col li::before { content: ''; position: absolute; left: 0; top: 0.72rem; width: 5px; height: 5px; border-radius: 50%; background: var(--text-muted); }
+
+    /* === RESOURCES === */
+    .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin-top: var(--space-xl); }
+    .res { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1rem 1.2rem; text-decoration: none; transition: border-color 250ms; }
+    .res:hover { border-color: rgba(238,0,0,0.45); }
+    .res .r-t { font-family: var(--font-sans); font-weight: 600; font-size: 0.85rem; color: var(--text-primary); }
+    .res .r-d { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem; line-height: 1.4; }
+
+    /* === SCROLL ANIMATIONS === */
+    .animate-on-scroll { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      .flow-anim { animation: none !important; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* === PRINT === */
+    @media print {
+      * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      body { background: var(--bg-canvas); }
+      nav { display: none; }
+      section { padding: 2rem 1rem; }
+      .animate-on-scroll { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 1024px) {
+      .nav-links { gap: 0.8rem; }
+      .card-grid, .decision-grid { grid-template-columns: repeat(2, 1fr); }
+      .timeline-cols { grid-template-columns: repeat(2, 1fr); }
+      .res-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+      .card-grid, .two-col, .decision-grid, .timeline-cols, .res-grid { grid-template-columns: 1fr; }
+      .entity-diagram { grid-template-columns: 1fr; }
+      .join-col { flex-direction: row; min-width: 0; }
+      .pipe-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">Agent Registry — Deep Dive</span>
+      </div>
+      <div class="nav-links">
+        <a href="#why">Why</a>
+        <a href="#model">The Model</a>
+        <a href="#discovery">Discovery</a>
+        <a href="#flow">The Flow</a>
+        <a href="#lifecycles">Lifecycles</a>
+        <a href="#strategy">Strategy</a>
+        <a href="#impact">Your Impact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== 1. HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">RHOAI ENGINEERING DEEP-DIVE · VERIFIED 2026-07-16</div>
+      <h1 class="display-xl animate-on-scroll"><span class="accent">The Agent Registry.</span><br/>Every agent, on the record.</h1>
+      <p class="lead animate-on-scroll">
+        The system of record for agents on Red Hat OpenShift AI: <strong>governed versions</strong> of what's allowed to run,
+        <strong>live records</strong> of what actually runs, and the machinery that keeps the two honest with each other.
+        This page covers the architecture, the requirements evidence behind it, the strategy — and the decisions still open, where your input lands hardest.
+      </p>
+      <div class="stat-strip animate-on-scroll">
+        <div><div class="stat-value" style="color: var(--rh-red);">2</div><div class="stat-label">entities: version &amp; instance</div></div>
+        <div><div class="stat-value">4</div><div class="stat-label">discovery sources on a 3.6 cluster</div></div>
+        <div><div class="stat-value">4 + 4</div><div class="stat-label">governance tracks × runtime states</div></div>
+        <div><div class="stat-value" style="color: var(--rh-teal);">3.6</div><div class="stat-label">TP at EA1 · backend at EA2</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 2. WHY ===== -->
+  <section id="why">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">WHY A REGISTRY</div>
+      <h2 class="display-lg animate-on-scroll">You can't govern what you can't see</h2>
+      <p class="lead animate-on-scroll">
+        Agents aren't like models. A model sits in a serving endpoint you configured; an agent is a <em>running service</em> —
+        it holds credentials, calls tools, and can be deployed by anyone with cluster access.
+        Three forces make a system of record non-optional:
+      </p>
+
+      <div class="card-grid" data-stagger>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-red">THE SHADOW FLEET</span>
+          <div class="card-title">Agents nobody recorded</div>
+          <p class="card-body">
+            Industry discovery data: <strong>82%</strong> of organizations that ran agent discovery found agents they didn't know about,
+            and <strong>67%</strong> of non-human identities were created outside IAM visibility.
+            Concretely: a teammate <span class="mono">oc apply</span>'s an agent from a Git repo on Friday. It works. It has a service account.
+            Six months later nobody remembers it exists — but it still holds its credentials.
+          </p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-amber">THE AUDIT LETTER</span>
+          <div class="card-title">Regulation already wrote the schema</div>
+          <p class="card-body">
+            EU AI Act (applies Aug 2026), US OMB guidance, and NIST/CSA governance frameworks independently converge on the same
+            <strong>eight-field agent record</strong>: identity+version, owner, purpose, risk class, lineage, deployment status, log references, permissions.
+            The "approved vs running" split they assume maps 1:1 onto the registry's two entities. When the audit letter arrives, this is the query it asks.
+          </p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-teal">THE TRUST HOLE</span>
+          <div class="card-title">Nothing verifies agents today</div>
+          <p class="card-body">
+            Every agent advertises its own capabilities via its <strong>agent card</strong> (a JSON manifest served at
+            <span class="mono">/.well-known/agent-card.json</span>, defined by the A2A protocol). Today <strong>no component on the platform fetches or
+            cryptographically verifies those cards</strong> — the schema's <span class="mono">verified</span> field has zero producers.
+            Every card is taken at its word. That's the single most urgent gap in this feature.
+          </p>
+        </div>
+      </div>
+
+      <div class="example animate-on-scroll">
+        <div class="ex-label">RUNNING EXAMPLE — MEET TRIAGE-BOT</div>
+        <p>
+          Throughout this page we'll follow one agent: <strong>triage-bot</strong>, a support-ticket triage agent built from the LangGraph starter kit.
+          One version was reviewed and approved. Three copies run in production across two clusters. A fourth copy — an experiment someone
+          GitOps'd — runs in a dev namespace nobody governs. A good registry must represent <em>all four</em> truthfully.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 3. THE TWO-ENTITY MODEL ===== -->
+  <section id="model">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE DATA MODEL</div>
+      <h2 class="display-lg animate-on-scroll">Two entities, because one lie is worse than two truths</h2>
+      <p class="lead animate-on-scroll">
+        The core design decision: a single "Agent" record cannot be both <em>approved once</em> and <em>running three times</em>.
+        So the registry keeps two entities and an explicit join between them.
+      </p>
+
+      <div class="entity-diagram animate-on-scroll">
+        <div class="entity-box gov">
+          <div class="entity-kind" style="color:#a695e0;">GOVERNANCE SIDE · "SHOULD THIS EXIST?"</div>
+          <div class="entity-name">AgentVersion</div>
+          <div class="entity-sub">One record per approved definition. Follows the MCP Registry's proven two-tier pattern (RegisteredAgent → AgentVersion).</div>
+          <div>
+            <span class="chip chip-gray">image digest + config</span>
+            <span class="chip chip-gray">owner &amp; purpose</span>
+            <span class="chip chip-gray">provenance refs</span>
+          </div>
+          <div style="margin-top:0.7rem;">
+            <span class="chip">Lifecycle</span>
+            <span class="chip">Approval</span>
+            <span class="chip">Verification</span>
+            <span class="chip">Certification</span>
+          </div>
+          <p class="card-body" style="margin-top:0.8rem;">
+            Anchored in MLflow as (or referencing) a <strong>LoggedModel</strong> — MLflow 3's version hub that links a version to its
+            git commit, config, traces, and eval runs. That closes the lineage chain end-to-end.
+          </p>
+        </div>
+
+        <div class="join-col">
+          <div class="join-label">version_ref</div>
+          <div class="join-arrow">&#8596;</div>
+          <div class="join-note">nullable —<br/>and that's the point</div>
+        </div>
+
+        <div class="entity-box run">
+          <div class="entity-kind" style="color:#35c4c5;">RUNTIME SIDE · "IS IT RUNNING, AND WELL?"</div>
+          <div class="entity-name">Agent (instance)</div>
+          <div class="entity-sub">One record per running copy. Identity, endpoint, health, trust status — live service facts, not artifact facts.</div>
+          <div>
+            <span class="chip chip-gray">endpoint FQDN</span>
+            <span class="chip chip-gray">SPIFFE identity</span>
+            <span class="chip chip-gray">card verified?</span>
+          </div>
+          <div style="margin-top:0.7rem;">
+            <span class="chip chip-green">ACTIVE</span>
+            <span class="chip chip-amber">UNHEALTHY</span>
+            <span class="chip chip-gray">STALE</span>
+            <span class="chip chip-gray">REMOVED</span>
+            <span class="chip chip-red chip-dashed">SUSPENDED — missing, see §Lifecycles</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ghost-card animate-on-scroll">
+        <span class="card-tag tag-gray">THE FOURTH COPY</span>
+        <div class="card-title" style="font-size:0.95rem;">Unlinked instance (<span class="mono">version_ref = null</span>)</div>
+        <p class="card-body">
+          Triage-bot's GitOps'd experiment matches no approved version — so it's registered as an <strong>unlinked instance</strong>:
+          visible to governance as shadow inventory instead of invisible. This one nullable field is what turns "you can't police
+          <span class="mono">oc apply</span>" from an objection into a feature: the registry doesn't block the side door, it <em>lights it</em>.
+        </p>
+      </div>
+
+      <h3 class="h3 animate-on-scroll">How a discovered instance finds its version — the join-key ladder</h3>
+      <p class="body animate-on-scroll">Three keys, in strength order. The platform path uses the strongest; BYO agents fall through to the weakest.</p>
+      <div class="ladder" data-stagger>
+        <div class="rung animate-on-scroll">
+          <span class="rung-rank" style="color:#6fbf65;">STRONGEST</span>
+          <span style="font-size:0.85rem;"><strong>Stamped identity</strong> — the deploy path writes the registry's version ID as an annotation on the workload it creates. Reconciliation becomes a lookup. Costs one line in the deploy flow; should be a hard requirement of the 3.6 path.</span>
+        </div>
+        <div class="rung animate-on-scroll">
+          <span class="rung-rank" style="color:var(--rh-orange);">FALLBACK</span>
+          <span style="font-size:0.85rem;"><strong>Image digest + config hash</strong> — digest alone isn't enough: two Mode-2 agents can share the same harness image and differ only in configuration. The composite narrows to a unique version.</span>
+        </div>
+        <div class="rung animate-on-scroll">
+          <span class="rung-rank" style="color:var(--text-muted);">WEAKEST</span>
+          <span style="font-size:0.85rem;"><strong>Card identity claims</strong> — the agent card's name/provider/version. Self-asserted unless the card is signed, but it's the only key a fully out-of-band agent offers.</span>
+        </div>
+      </div>
+
+      <div class="example animate-on-scroll">
+        <div class="ex-label">TRIAGE-BOT, JOINED</div>
+        <p>
+          The three production copies were deployed through the platform, so their workloads carry stamped annotations — instant, unambiguous join to
+          <span class="mono">triage-bot v1.2</span>. The GitOps copy has no annotation; its image digest matches the LangGraph harness (shared by many agents),
+          and its config hash matches nothing approved — so it stays <strong>unlinked</strong>, and shows up in the shadow-inventory view exactly as it should.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 4. DISCOVERY ===== -->
+  <section id="discovery">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">DISCOVERY</div>
+      <h2 class="display-lg animate-on-scroll">The split: knowing an agent exists &ne; knowing what it is</h2>
+      <p class="lead animate-on-scroll">
+        The registry's discovery layer was rebuilt in July 2026. The previous runtime component bundled two jobs in one CRD:
+        it <strong>enumerated</strong> agents <em>and</em> <strong>enriched</strong> them (fetched their cards, verified signatures).
+        On today's cluster those jobs are split across different sources — and nobody currently does the second one.
+      </p>
+
+      <div class="matrix-wrap animate-on-scroll">
+        <table class="matrix">
+          <thead>
+            <tr><th>Source</th><th>What it tells you</th><th>Poll</th><th>Watch</th><th>Webhook</th><th>Status today</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="src">Sandbox CRs<br/><span class="mono" style="font-size:0.7rem;">agents.x-k8s.io/v1beta1</span></td>
+              <td>A workload <em>exists</em>: image digest, endpoint FQDN, health conditions, suspend state. <strong>Zero agent semantics</strong> — no skills, no protocol, no card, by upstream design.</td>
+              <td><span class="pill pill-yes">yes</span></td>
+              <td><span class="pill pill-best">natural fit</span></td>
+              <td><span class="pill pill-no">via controller</span></td>
+              <td>Shipping — the 3.5 dashboard already lists them</td>
+            </tr>
+            <tr>
+              <td class="src">Deploy-time registration</td>
+              <td>The richest record the platform will ever have: declared config, owner, version identity — available at the moment of deployment, before the pod starts.</td>
+              <td><span class="pill pill-no">n/a</span></td>
+              <td><span class="pill pill-no">n/a</span></td>
+              <td><span class="pill pill-best">richest</span></td>
+              <td>Arrives with the 3.6 EA1 deploy path</td>
+            </tr>
+            <tr>
+              <td class="src">A2A agent cards<br/><span class="mono" style="font-size:0.7rem;">/.well-known/agent-card.json</span></td>
+              <td>The actual agent semantics: capabilities, skills, security schemes — optionally <strong>JWS-signed</strong> (a cryptographic signature over the card, verifiable against the agent's identity).</td>
+              <td><span class="pill pill-yes">enrichment</span></td>
+              <td><span class="pill pill-no">no</span></td>
+              <td><span class="pill pill-no">no</span></td>
+              <td>Endpoint contractually present; <strong>no fetcher exists</strong></td>
+            </tr>
+            <tr>
+              <td class="src">OpenShell gateway</td>
+              <td>Lifecycle truth and behavioral health: session state, policy in force, egress denials. Access is gRPC via a Go SDK that is still landing upstream (first of six PRs open).</td>
+              <td><span class="pill pill-yes">eventually</span></td>
+              <td><span class="pill pill-no">no surface</span></td>
+              <td><span class="pill pill-no">no</span></td>
+              <td>Future enrichment source — never the backbone</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="body animate-on-scroll">
+        <strong>Why not build discovery on the OpenShell gateway?</strong> Coupling the registry to a single runtime is exactly the mistake
+        that just cost us a rewrite. Sandbox CRs are the only runtime-agnostic signal on the cluster; the gateway is reserved as a future
+        health/policy enrichment source.
+      </p>
+
+      <div class="callout animate-on-scroll">
+        <div class="co-label">WHAT THE OLD COMPONENT DID THAT NOTHING DOES NOW</div>
+        <p>
+          Three capabilities were lost with the runtime pivot and have <strong>no current equivalent</strong>:
+          (1)&nbsp;automatic card fetch and caching, (2)&nbsp;JWS verification bound to workload identity — the whole trust chain behind
+          <span class="mono">verified=true</span>, and (3)&nbsp;label-based discovery of BYO agents running as plain Deployments
+          (today they're simply invisible). Each is now a registry-side responsibility — see <a href="#impact" style="color:var(--rh-orange);">Your Impact</a>.
+        </p>
+        <p style="margin-top:0.6rem; font-size:0.8rem; color:var(--text-muted);">
+          Naming note, worth getting right in public docs: <strong>Kagenti is off the RHOAI roadmap</strong> — Red Hat's runtime bet is OpenShell.
+          The upstream Kagenti project continues independently (rebranding to Rosso); its design concepts inform OpenShell contributions.
+          Two separate facts; don't merge them.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 5. THE FLOW ===== -->
+  <section id="flow">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE ARCHITECTURE</div>
+      <h2 class="display-lg animate-on-scroll">Register on deploy; reconcile the rest</h2>
+      <p class="lead animate-on-scroll">
+        One flow, two doors. Agents deployed through the platform get registered <em>synchronously, with full metadata</em>.
+        Agents that arrive any other way get <em>detected and adopted</em> as unlinked instances. Governance sees a complete inventory either way.
+      </p>
+
+      <div class="arch-figure animate-on-scroll">
+        <svg viewBox="0 0 960 700" role="img" aria-label="Register-on-deploy architecture: platform path and out-of-band path converging on the MLflow agent registry through a sync controller, with a card-verification enrichment loop and two read surfaces.">
+          <defs>
+            <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#8a8a8a"/>
+            </marker>
+            <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#EE0000"/>
+            </marker>
+            <marker id="arr-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#009596"/>
+            </marker>
+          </defs>
+
+          <!-- lane headers -->
+          <text x="240" y="34" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="11" fill="#6fbf65" letter-spacing="2">PLATFORM PATH — REGISTER ON DEPLOY</text>
+          <text x="770" y="34" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="11" fill="#F4B400" letter-spacing="2">OUT-OF-BAND — RECONCILE</text>
+          <line x1="560" y1="20" x2="560" y2="400" stroke="#333" stroke-width="1" stroke-dasharray="3,5"/>
+
+          <!-- platform path -->
+          <rect x="60" y="52" width="180" height="52" rx="9" fill="#1a1a1a" stroke="#3E8635" stroke-width="1.5"/>
+          <text x="150" y="74" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="13" fill="#fff">Agent Catalog</text>
+          <text x="150" y="92" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">browse &#8594; deploy</text>
+
+          <rect x="60" y="150" width="180" height="52" rx="9" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+          <text x="150" y="172" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="13" fill="#fff">Dashboard BFF</text>
+          <text x="150" y="190" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">+ binding resolution</text>
+
+          <rect x="300" y="150" width="150" height="52" rx="9" fill="#1a1a1a" stroke="#009596" stroke-width="1.5"/>
+          <text x="375" y="172" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="13" fill="#fff">OpenShell</text>
+          <text x="375" y="190" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">via Go SDK</text>
+
+          <rect x="300" y="256" width="150" height="60" rx="9" fill="#1a1a1a" stroke="#009596" stroke-width="1.5"/>
+          <text x="375" y="278" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="12" fill="#fff">Sandbox CR</text>
+          <text x="375" y="294" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#6fbf65">+ registry annotations</text>
+          <text x="375" y="308" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">(stamped at create)</text>
+
+          <rect x="300" y="356" width="150" height="56" rx="9" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+          <text x="375" y="378" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="12" fill="#fff">agent pod :8000</text>
+          <text x="375" y="396" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="8.5" fill="#4394e5">/.well-known/agent-card.json</text>
+
+          <!-- out-of-band path -->
+          <rect x="680" y="52" width="180" height="52" rx="9" fill="#1a1a1a" stroke="#F4B400" stroke-width="1.5"/>
+          <text x="770" y="74" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="13" fill="#fff">GitOps / oc apply</text>
+          <text x="770" y="92" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">any side door</text>
+
+          <rect x="680" y="256" width="180" height="60" rx="9" fill="#1a1a1a" stroke="#F4B400" stroke-width="1.5" stroke-dasharray="6,4"/>
+          <text x="770" y="278" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="12" fill="#fff">Sandbox CR</text>
+          <text x="770" y="294" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#F4B400">no annotations</text>
+          <text x="770" y="308" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">&#8594; unlinked instance</text>
+
+          <!-- sync controller -->
+          <rect x="520" y="440" width="200" height="64" rx="9" fill="#202020" stroke="#EE0000" stroke-width="1.5"/>
+          <text x="620" y="464" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="13" fill="#fff">Registry sync controller</text>
+          <text x="620" y="482" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">watches Sandbox CRs cluster-wide</text>
+          <text x="620" y="495" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">(MCP sync-controller pattern, generalized)</text>
+
+          <!-- registry -->
+          <rect x="80" y="430" width="330" height="130" rx="12" fill="#1a1a1a" stroke="#6753AC" stroke-width="2"/>
+          <text x="245" y="456" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="800" font-size="14" fill="#fff">MLflow Agent Registry</text>
+          <rect x="100" y="470" width="130" height="34" rx="6" fill="#202020" stroke="#6753AC" stroke-width="1"/>
+          <text x="165" y="491" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="10" fill="#a695e0">AgentVersion</text>
+          <rect x="260" y="470" width="130" height="34" rx="6" fill="#202020" stroke="#009596" stroke-width="1"/>
+          <text x="325" y="491" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="10" fill="#35c4c5">Agent (instance)</text>
+          <line x1="230" y1="487" x2="260" y2="487" stroke="#8a8a8a" stroke-width="1.5"/>
+          <text x="245" y="530" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">version_ref join &#183; unlinked = shadow inventory</text>
+
+          <!-- read surfaces -->
+          <rect x="80" y="608" width="330" height="56" rx="9" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+          <text x="245" y="630" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="12" fill="#fff">Registry view — all registered agents</text>
+          <text x="245" y="648" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">"what exists &amp; is approved?"</text>
+
+          <rect x="530" y="608" width="330" height="56" rx="9" fill="#1a1a1a" stroke="#333" stroke-width="1.5"/>
+          <text x="695" y="630" text-anchor="middle" font-family="Red Hat Display, sans-serif" font-weight="700" font-size="12" fill="#fff">Deployments view — running instances</text>
+          <text x="695" y="648" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">"what is running right now?"</text>
+
+          <!-- edges: platform path -->
+          <line x1="150" y1="104" x2="150" y2="150" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="240" y1="176" x2="300" y2="176" stroke="#009596" stroke-width="1.5" marker-end="url(#arr-teal)" class="flow-anim" stroke-dasharray="8,6"/>
+          <line x1="375" y1="202" x2="375" y2="256" stroke="#009596" stroke-width="1.5" marker-end="url(#arr-teal)"/>
+          <line x1="375" y1="316" x2="375" y2="356" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#arr)"/>
+          <!-- register synchronously -->
+          <path d="M 120 202 C 100 300, 130 380, 175 430" fill="none" stroke="#EE0000" stroke-width="1.7" marker-end="url(#arr-red)" class="flow-anim" stroke-dasharray="8,6"/>
+          <text x="66" y="330" font-family="Red Hat Mono, monospace" font-size="9" fill="#ff6b6b" transform="rotate(-77 96 330)">register (sync, approval-gated)</text>
+
+          <!-- out-of-band down -->
+          <line x1="770" y1="104" x2="770" y2="256" stroke="#F4B400" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="6,4"/>
+
+          <!-- watches -->
+          <path d="M 450 300 C 520 340, 570 390, 605 440" fill="none" stroke="#8a8a8a" stroke-width="1.3" stroke-dasharray="3,4" marker-end="url(#arr)"/>
+          <path d="M 770 316 C 750 370, 700 410, 660 440" fill="none" stroke="#8a8a8a" stroke-width="1.3" stroke-dasharray="3,4" marker-end="url(#arr)"/>
+          <text x="705" y="392" font-family="Red Hat Mono, monospace" font-size="9" fill="#8a8a8a">watch / adopt</text>
+
+          <!-- controller -> registry webhook -->
+          <line x1="520" y1="490" x2="410" y2="490" stroke="#EE0000" stroke-width="1.7" marker-end="url(#arr-red)" class="flow-anim" stroke-dasharray="8,6"/>
+          <text x="466" y="478" text-anchor="middle" font-family="Red Hat Mono, monospace" font-size="9" fill="#ff6b6b">webhook push</text>
+
+          <!-- enrichment loop -->
+          <path d="M 165 430 C 175 380, 250 385, 300 390" fill="none" stroke="#4394e5" stroke-width="1.5" stroke-dasharray="5,5" marker-end="url(#arr)" class="flow-anim"/>
+          <text x="196" y="374" font-family="Red Hat Mono, monospace" font-size="9" fill="#4394e5">card fetch + JWS verify (mTLS)</text>
+          <text x="196" y="387" font-family="Red Hat Mono, monospace" font-size="9" fill="#4394e5">&#8594; the only path to verified=true</text>
+
+          <!-- read surfaces edges -->
+          <line x1="245" y1="560" x2="245" y2="608" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#arr)"/>
+          <path d="M 620 504 C 640 540, 670 570, 690 608" fill="none" stroke="#8a8a8a" stroke-width="1.5" marker-end="url(#arr)"/>
+          <path d="M 390 540 C 480 570, 560 585, 610 608" fill="none" stroke="#8a8a8a" stroke-width="1.3" stroke-dasharray="3,4" marker-end="url(#arr)"/>
+        </svg>
+        <div class="arch-legend">
+          <span class="k"><span style="width:14px;height:3px;background:#EE0000;display:inline-block;"></span> registration path</span>
+          <span class="k"><span style="width:14px;height:3px;background:#009596;display:inline-block;"></span> deploy path</span>
+          <span class="k"><span style="width:14px;height:3px;background:#4394e5;display:inline-block;"></span> enrichment loop</span>
+          <span class="k"><span style="width:14px;height:0;border-top:2px dashed #F4B400;display:inline-block;"></span> out-of-band</span>
+          <span class="k"><span style="width:14px;height:0;border-top:2px dotted #8a8a8a;display:inline-block;"></span> watch / reconcile</span>
+        </div>
+      </div>
+
+      <div class="steps" data-stagger>
+        <div class="step animate-on-scroll"><span>User deploys from the catalog detail page; the BFF resolves the declared configuration (model, MCP servers, skills) against the platform registries.</span></div>
+        <div class="step animate-on-scroll"><span>The BFF calls the OpenShell Go SDK — and <strong>stamps the registry's version ID as annotations</strong> on the Sandbox CR it creates. One line of code; it makes reconciliation a lookup instead of a guess.</span></div>
+        <div class="step animate-on-scroll"><span>The BFF registers <strong>synchronously</strong>: confirms the AgentVersion, creates the instance record with <span class="mono">version_ref</span> set. The deploy gate refuses versions that aren't Published + Approved — enforcement at the one door the platform controls.</span></div>
+        <div class="step animate-on-scroll"><span>The sync controller watches Sandbox CRs cluster-wide: annotated CRs get confirmed/healed; unannotated CRs (GitOps) become <strong>unlinked instances</strong>. Same pattern as the MCP registry's sync controller — one mechanism family, two asset types.</span></div>
+        <div class="step animate-on-scroll"><span>CR state changes push to the registry's webhook: pod gone → instance goes STALE, then REMOVED after grace.</span></div>
+        <div class="step animate-on-scroll"><span>An enrichment loop fetches each instance's agent card over mutually-authenticated TLS, verifies the JWS signature, and fills skills/protocol/<span class="mono">verified</span>. <strong>This loop doesn't exist yet</strong> — it's the most urgent open item (see Your Impact).</span></div>
+      </div>
+
+      <div class="two-col">
+        <div class="animate-on-scroll" style="background: linear-gradient(135deg, rgba(62,134,53,0.06), rgba(62,134,53,0.02)); border: 1px solid rgba(62,134,53,0.25); border-radius: 12px; padding: 1.4rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: #6fbf65; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">PLATFORM PATH GUARANTEES</div>
+          <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.55;">
+            <strong>Registration</strong> — synchronous, rich, approval-gated. Every catalog deploy produces a complete, owner-attributed, provenance-linked record at birth.
+          </p>
+        </div>
+        <div class="animate-on-scroll" style="background: linear-gradient(135deg, rgba(244,180,0,0.06), rgba(244,180,0,0.02)); border: 1px solid rgba(244,180,0,0.25); border-radius: 12px; padding: 1.4rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--rh-orange); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.5rem;">OUT-OF-BAND PATH GUARANTEES</div>
+          <p style="color: var(--text-secondary); font-size: 0.88rem; line-height: 1.55;">
+            <strong>Detection only</strong> — reconciled within a watch interval, thin metadata, unlinked. The reasoning: you genuinely cannot police <span class="mono">oc apply</span>, so don't pretend to. Compliance needs the inventory to be <em>complete</em>, not every record to be born through the front door.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 6. LIFECYCLES ===== -->
+  <section id="lifecycles">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">LIFECYCLES</div>
+      <h2 class="display-lg animate-on-scroll">Two state machines that don't map — on purpose</h2>
+      <p class="lead animate-on-scroll">
+        Governance answers <em>"should this exist?"</em> Runtime answers <em>"does it, and is it well?"</em>
+        Those are different questions with different clocks, so the registry keeps them as independent machines and connects them
+        at four join points instead of forcing a mapping.
+      </p>
+
+      <div class="two-col">
+        <div class="card animate-on-scroll" style="border-color: rgba(103,83,172,0.5);">
+          <span class="card-tag tag-purple">ON THE AGENTVERSION — 4 GOVERNANCE TRACKS</span>
+          <p class="card-body" style="margin-bottom:0.8rem;">Independent tracks, borrowed from the MCP Registry's proven model:</p>
+          <div><span class="chip">Lifecycle: Draft &#8594; Candidate &#8594; Published &#8594; Deprecated &#8594; Retired</span></div>
+          <div><span class="chip">Approval: Draft &#8594; Pending &#8594; Approved &#8594; Rejected/Revoked</span></div>
+          <div><span class="chip">Verification: Unverified &#8594; Verified</span></div>
+          <div><span class="chip">Certification: None &#8594; Candidate &#8594; Certified &#8594; Expired</span></div>
+        </div>
+        <div class="card animate-on-scroll" style="border-color: rgba(0,149,150,0.5);">
+          <span class="card-tag tag-teal">ON THE INSTANCE — RUNTIME STATES</span>
+          <p class="card-body" style="margin-bottom:0.8rem;">Live-service facts, driven by discovery:</p>
+          <div>
+            <span class="chip chip-green">ACTIVE</span>
+            <span class="chip chip-amber">UNHEALTHY</span>
+            <span class="chip chip-gray">STALE — source stopped reporting</span>
+            <span class="chip chip-gray">REMOVED — kept &ge; 6 months for audit</span>
+          </div>
+          <p class="card-body" style="margin-top:0.8rem;">
+            <span class="chip chip-red chip-dashed">SUSPENDED — missing</span><br/>
+            Sandbox CRs support <span class="mono">operatingMode: Suspended</span> — deliberately paused. That's not ACTIVE, not UNHEALTHY
+            (nothing is wrong), not STALE (still reported). The state model needs a fifth state — a concrete, ready-to-file upstream edit.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="h3 animate-on-scroll">The four join points</h3>
+      <div class="card-grid" style="grid-template-columns: repeat(2, 1fr);" data-stagger>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-green">1 · DEPLOY GATE</span>
+          <p class="card-body">Governance &#8594; runtime, at the front door: the platform deploy path refuses any version that isn't <strong>Published and Approved</strong>. The only enforcement point the platform actually controls — so it's the only one the design uses.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-amber">2 · IMPACT SURFACING</span>
+          <p class="card-body">Deprecating triage-bot v1.2 doesn't kill its three ACTIVE instances — it <strong>flags</strong> them. A signal to owners, never a kill switch. (Killing running workloads from a metadata store is how you lose the trust of every platform engineer.)</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-teal">3 · RETIRE SAFETY</span>
+          <p class="card-body">Runtime &#8594; governance: a version with <strong>zero non-REMOVED instances</strong> is provably safe to retire. The instance ledger finally gives governance real evidence for the Retired transition — something a deployed-yes/no boolean can never provide.</p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-red">4 · A NAMING HAZARD</span>
+          <p class="card-body">The governance <strong>Verification track</strong> (a human curation judgment on the record) and the runtime <strong><span class="mono">verified</span> field</strong> (a cryptographic property of a fetched card) are different facts sharing one word. Rename one — e.g. <span class="mono">verification_status</span> vs <span class="mono">card_attested</span> — <em>before</em> the backend schema freezes names.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 7. SUPPLY CHAIN ===== -->
+  <section id="supply">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">SUPPLY CHAIN</div>
+      <h2 class="display-lg animate-on-scroll">The one question only the registry can answer</h2>
+      <p class="lead animate-on-scroll">
+        <em>"A CVE just landed in the UBI base image — which running agents are affected?"</em>
+        The image registry knows digests but not agents. The cluster knows pods but not versions. The agent registry is the only
+        component that can walk the whole chain.
+      </p>
+
+      <div class="pipe" data-stagger>
+        <div class="pipe-step animate-on-scroll">
+          <div class="pipe-k" style="color: var(--rh-red);">LAYER 1</div>
+          <div class="pipe-t">UBI base image</div>
+          <div class="pipe-d">Shared agentic base (AIPCC-built), Konflux pipeline, signed SBOM.</div>
+        </div>
+        <div class="pipe-arrow">&#x2192;</div>
+        <div class="pipe-step animate-on-scroll">
+          <div class="pipe-k" style="color: var(--rh-orange);">LAYER 2</div>
+          <div class="pipe-t">Harness image</div>
+          <div class="pipe-d">Per-harness layer (the catalog's supported-images program). SLSA provenance via Tekton Chains, attached with cosign.</div>
+        </div>
+        <div class="pipe-arrow">&#x2192;</div>
+        <div class="pipe-step animate-on-scroll">
+          <div class="pipe-k" style="color: #a695e0;">LAYER 3</div>
+          <div class="pipe-t">AgentVersion</div>
+          <div class="pipe-d">Pins the harness image <strong>by digest</strong> + declared config, with attestation references alongside.</div>
+        </div>
+        <div class="pipe-arrow">&#x2192;</div>
+        <div class="pipe-step animate-on-scroll">
+          <div class="pipe-k" style="color: #35c4c5;">LAYER 4</div>
+          <div class="pipe-t">Instance</div>
+          <div class="pipe-d">Carries the digest it <em>actually runs</em>, observable from the Sandbox CR's pod template.</div>
+        </div>
+      </div>
+
+      <div class="example animate-on-scroll">
+        <div class="ex-label">THE BLAST-RADIUS QUERY, CONCRETELY</div>
+        <p>
+          CVE lands in the UBI base &#8594; resolve which harness digests build on it &#8594; find AgentVersions pinning those digests &#8594;
+          list their non-REMOVED instances. Answer: <em>"triage-bot's three production copies, plus two other agents — here are the owners."</em>
+          Minutes, not a spreadsheet archaeology week.
+        </p>
+      </div>
+
+      <p class="body animate-on-scroll">
+        <strong>One subtlety that matters:</strong> automated CVE patching rebuilds images, producing new digests for the "same" harness.
+        If a version pins a digest, every patch forces a governance re-approval (churn); if it pins a tag, the blast-radius query breaks.
+        The design threads the needle: <strong>version identity = image <em>line</em> + declared config</strong> (stable across patch rebuilds),
+        while each <strong>instance records the exact digest it runs</strong> (preserving the audit query). Base images themselves are
+        <em>not</em> registry entities — they're supply-chain metadata on versions; Konflux and Quay already govern the images themselves.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 8. STRATEGY ===== -->
+  <section id="strategy">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">UPSTREAM &amp; STRATEGY</div>
+      <h2 class="display-lg animate-on-scroll">Build upstream, own the join, hold the wedge</h2>
+      <p class="lead animate-on-scroll">
+        The April 2026 thesis was "the MLflow registry namespace is empty — move first." That's over: partly because we moved
+        (the upstream RFC stream is now Red Hat-authored), partly because the market GA'd around us. The play now has three parts.
+      </p>
+
+      <div class="card-grid" data-stagger>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-blue">1 · SHAPE THE UPSTREAM</span>
+          <div class="card-title">RFC-0008: skills first, agents next</div>
+          <p class="card-body">
+            The MLflow registry stream is live as <strong>RFC-0008</strong> (MVP Skill Registry, Phase 1 — Red Hat-authored, in draft review).
+            Agent-shaped entities are explicitly Phase 2. The window: get the dual-entity model, the SUSPENDED state, and the
+            card-verification fields into Phase 2 <em>before</em> Phase 1 review concludes. Bonus: the downstream backend and the upstream RFC
+            share an author — the alignment channel already exists.
+          </p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-red">2 · OWN THE UNOWNED JOIN</span>
+          <div class="card-title">Enumeration without enrichment</div>
+          <p class="card-body">
+            Nobody — upstream or downstream — currently owns the join between "a workload exists" and "it's a trustworthy agent."
+            The dormant post-deployment proposal (the <span class="mono">AgentDiscoveryProvider</span> interface survives; its reference plugin
+            described a dead substrate) gets re-baselined onto Sandbox CRs as Phase 2's runtime companion. This is the differentiated engineering.
+          </p>
+        </div>
+        <div class="card animate-on-scroll">
+          <span class="card-tag tag-green">3 · HOLD THE WEDGE</span>
+          <div class="card-title">Self-managed, disconnected, governed</div>
+          <p class="card-body">
+            Nobody ships a self-managed, disconnected-capable, governed <em>fleet</em> registry with lineage — and regulation now effectively
+            mandates the record shape we'd govern. But the window is time-boxed: IBM will eventually port its control plane on-prem,
+            and an OSS registry project is under CNCF Sandbox review this September.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="h3 animate-on-scroll">The market, in one strip</h3>
+      <div class="card-grid" style="grid-template-columns: repeat(4, 1fr);" data-stagger>
+        <div class="card animate-on-scroll" style="padding: 1.1rem;">
+          <div class="card-title" style="font-size:0.9rem;">Microsoft</div>
+          <p class="card-body" style="font-size:0.78rem;">Inventory is <strong>free</strong>; governance is $15/user/mo (GA May 2026). Sets the floor: you can't charge for the list, only for what you do with it.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding: 1.1rem;">
+          <div class="card-title" style="font-size:0.9rem;">AWS</div>
+          <p class="card-body" style="font-size:0.78rem;">Registry in preview; record-centric with approval workflow — and its endpoint-ingestion validates our card-fetch design. Watch GA pricing.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding: 1.1rem;">
+          <div class="card-title" style="font-size:0.9rem;">IBM</div>
+          <p class="card-body" style="font-size:0.78rem;">"Agentic Control Plane" positioning — SaaS-only today. The on-prem window is ours until they port it.</p>
+        </div>
+        <div class="card animate-on-scroll" style="padding: 1.1rem;">
+          <div class="card-title" style="font-size:0.9rem;">OSS / federation</div>
+          <p class="card-body" style="font-size:0.78rem;">Solo.io's agentregistry is in CNCF Sandbox review (Sept); the ARD spec (Google+Microsoft) formalizes federated discovery — thin adoption, cheap to hedge via URN-mappable IDs.</p>
+        </div>
+      </div>
+
+      <p class="body animate-on-scroll">
+        <strong>Why MLflow at all?</strong> Reasoning, not reflex: MLflow is already on the platform (stateless service, PostgreSQL,
+        workspace-scoped RBAC — so versions inherit access control for free), it already has the version-side entity
+        (LoggedModel links a version to git commit, traces, and evals), and Databricks just made agents first-class in Unity Catalog while
+        open-sourcing gateway pieces <em>into</em> MLflow — meaning upstream MLflow is becoming a governance surface with momentum we can ride.
+        The trade-off is honest: Databricks steers the substrate. That's what the RFC channel is for.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 9. YOUR IMPACT ===== -->
+  <section id="impact">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">WHERE YOU CAN HAVE IMPACT</div>
+      <h2 class="display-lg animate-on-scroll">The open decisions — cheap now, breaking later</h2>
+      <p class="lead animate-on-scroll">
+        This feature is at the moment where one engineer's design input changes the schema everyone lives with.
+        Ordered by urgency:
+      </p>
+
+      <div class="decision-grid" data-stagger>
+        <div class="card decision u-red animate-on-scroll">
+          <span class="card-tag tag-red">MOST URGENT</span>
+          <div class="card-title">Rebuild the path to <span class="mono">verified=true</span></div>
+          <p class="card-body">
+            The card-verification work item closed in mid-July with no successor, while its approved RFE clone still sits open.
+            Result: <strong>zero active work items produce agent trust</strong>. The design is ready (registry-side card fetch + JWS verify
+            over mTLS); it needs a re-filed home and an owner.
+          </p>
+        </div>
+        <div class="card decision u-amber animate-on-scroll">
+          <span class="card-tag tag-amber">BEFORE THE EA2 SCHEMA FREEZE</span>
+          <div class="card-title">Fix the backend schema while it's cheap</div>
+          <p class="card-body">
+            The tracked EA2 backend is currently <strong>single-entity with one lifecycle</strong> — no runtime instance states, no SUSPENDED,
+            no <span class="mono">version_ref</span>, no risk-tier/log-refs/retention fields, and a sync epic still aimed at the removed runtime.
+            Every one of these is a cheap schema addition today and a breaking migration after the freeze.
+          </p>
+        </div>
+        <div class="card decision u-blue animate-on-scroll">
+          <span class="card-tag tag-blue">PRODUCT CALL NEEDED</span>
+          <div class="card-title">What feeds the EA1 registry view?</div>
+          <p class="card-body">
+            The registry TP (3.6 EA1) lands <em>before its own backend</em> (EA2). If the stopgap feeds the registry view from Sandbox CRs,
+            it becomes a second deployments view and the registry/deployments distinction collapses on arrival. Feed it from deploy-time
+            registrations (even file-backed), or label it honestly as a preview.
+          </p>
+        </div>
+        <div class="card decision u-amber animate-on-scroll">
+          <span class="card-tag tag-amber">UNTRACKED REGRESSION</span>
+          <div class="card-title">BYO agents are invisible</div>
+          <p class="card-body">
+            The old label convention for discovering bring-your-own agents (plain Deployments, no sandbox) lost its owner in the runtime pivot.
+            Sandbox-CR discovery only sees sandbox-shaped workloads. Someone needs to own a new label/CR convention — otherwise Mode-1 agents
+            never reach the inventory at all.
+          </p>
+        </div>
+        <div class="card decision u-blue animate-on-scroll">
+          <span class="card-tag tag-blue">IMPLEMENT-AND-INFLUENCE WINDOW</span>
+          <div class="card-title">ARD federation endpoint at TP?</div>
+          <p class="card-body">
+            The Google+Microsoft federated-discovery spec (<span class="mono">/.well-known/ai-catalog.json</span>) is v0.9 with thin adoption —
+            exactly when implementing it buys influence. Cheap hedge either way: URN-mappable IDs and native-media-type card storage.
+          </p>
+        </div>
+        <div class="card decision u-gray animate-on-scroll">
+          <span class="card-tag tag-gray">BOUNDARY TO DEFEND</span>
+          <div class="card-title">The registry is the lookup, not the enforcement</div>
+          <p class="card-body">
+            Fleet evidence demands seconds-level agent revocation — which must live in the identity/gateway plane, never behind a registry sync.
+            The registry's job: make the identity linkage one query away. Resist every design that puts the registry in a runtime-critical path;
+            that's how it becomes the outage.
+          </p>
+        </div>
+      </div>
+
+      <p class="body animate-on-scroll" style="margin-top: var(--space-xl);">
+        Also open, lower heat: whether the discovery-plugin interface generalizes beyond agents; multi-agent composition graphs
+        (compliance-adjacent via delegation-lineage expectations, still deferred); and the namespace&#8596;workspace mapping for reconciled
+        instances — the MCP sync controller never had to solve it because its deployments are always platform-initiated.
+      </p>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== 10. ROADMAP + RESOURCES ===== -->
+  <section id="roadmap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">ROADMAP &amp; RESOURCES</div>
+      <h2 class="display-lg animate-on-scroll">Where this lands, release by release</h2>
+
+      <div class="timeline-cols" data-stagger>
+        <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-green);">
+          <div class="t-k" style="color: #6fbf65;">RHOAI 3.5 — NOW</div>
+          <div class="t-t">Read-only visibility</div>
+          <ul>
+            <li>Dashboard agents table lists Sandbox CRs (no deploy)</li>
+            <li>MCP Registry debuts the four governance tracks</li>
+            <li>Registry &amp; runtime deliberately disconnected</li>
+          </ul>
+        </div>
+        <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-blue);">
+          <div class="t-k" style="color: var(--rh-blue-light);">3.6 EA1</div>
+          <div class="t-t">Registry TP + deploy path</div>
+          <ul>
+            <li>Agent Catalog TP; deploy via OpenShell Go SDK</li>
+            <li>Registry view TP — data-source decision pending</li>
+            <li>Stamped annotations should land here</li>
+          </ul>
+        </div>
+        <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-purple);">
+          <div class="t-k" style="color: #a695e0;">3.6 EA2</div>
+          <div class="t-t">The backend</div>
+          <ul>
+            <li>MLflow-native agent registry backend</li>
+            <li>Sync controller + enrichment loop realistic here</li>
+            <li>Schema freeze — the input deadline</li>
+          </ul>
+        </div>
+        <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-red);">
+          <div class="t-k" style="color: #ff6b6b;">3.6 GA</div>
+          <div class="t-t">Governed fleet</div>
+          <ul>
+            <li>Four tracks + workspace RBAC on agents</li>
+            <li>Full register-on-deploy flow</li>
+            <li><span class="mono">verified=true</span> only if the enrichment loop ships</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="h3 animate-on-scroll">Primary sources</h3>
+      <div class="res-grid" data-stagger>
+        <a class="res animate-on-scroll" href="https://github.com/mlflow/rfcs/pull/26" target="_blank" rel="noopener">
+          <div class="r-t">MLflow RFC-0008 (PR #26)</div>
+          <div class="r-d">The upstream registry stream — skills Phase 1, agents deferred to Phase 2</div>
+        </a>
+        <a class="res animate-on-scroll" href="https://github.com/varshaprasad96/mlflow/commits/spike/gateway" target="_blank" rel="noopener">
+          <div class="r-t">Post-deployment proposal branch</div>
+          <div class="r-d">The Agent entity, discovery-provider interface, runtime lifecycle — needs re-baselining</div>
+        </a>
+        <a class="res animate-on-scroll" href="https://github.com/kubernetes-sigs/agent-sandbox" target="_blank" rel="noopener">
+          <div class="r-t">kubernetes-sigs/agent-sandbox</div>
+          <div class="r-d">The Sandbox CRD (v1beta1) — the enumeration substrate</div>
+        </a>
+        <a class="res animate-on-scroll" href="https://github.com/opendatahub-io/architecture-decision-records/pull/142" target="_blank" rel="noopener">
+          <div class="r-t">ODH ADR #142</div>
+          <div class="r-d">The MCP sync-controller pattern this architecture generalizes</div>
+        </a>
+        <a class="res animate-on-scroll" href="https://a2a-protocol.org/latest/specification/" target="_blank" rel="noopener">
+          <div class="r-t">A2A specification 1.0</div>
+          <div class="r-d">Agent cards, discovery, and JWS card signing (&sect;8)</div>
+        </a>
+        <a class="res animate-on-scroll" href="https://github.com/sigstore/sigstore-a2a" target="_blank" rel="noopener">
+          <div class="r-t">sigstore-a2a</div>
+          <div class="r-d">Keyless signing/verification of A2A cards — the candidate producer for verified=true</div>
+        </a>
+      </div>
+
+      <p class="body animate-on-scroll" style="margin-top: var(--space-xl);">
+        Full evidence trail: the <span class="mono">agent-registry</span> partition in the PM hub — knowledge entries, the 11-document research
+        series (all load-bearing claims carry primary-source citations), the Jira snapshot, and the strategy folder.
+        Jira anchors, by key: RHAISTRAT-1436 (backend), -1697 (registry view), -1758 (deployments view), -1955 (registration CR),
+        RHAIRFE-2388 (metadata extraction), -1313 (registry UI), -2443 (base images).
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 2rem 1.5rem; text-align: center; border-top: 1px solid var(--border-subtle);">
+    <p style="font-size: 0.8rem; color: var(--text-muted);">Peter Double &mdash; Principal Product Manager, Red Hat OpenShift AI &middot; Content synthesized from the agent-registry research series &middot; sources verified 2026-07-16</p>
+  </footer>
+
+  <!-- ===== SCROLL ANIMATION OBSERVER ===== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Stagger indices
+    document.querySelectorAll('[data-stagger]').forEach(container => {
+      Array.from(container.children).forEach((el, i) => {
+        el.style.transitionDelay = (i * 80) + 'ms';
+      });
+    });
+
+    // Active nav link tracking
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)' : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>
