@@ -88,6 +88,7 @@ def stale_rows(root, today=None):
     cfg = _staleness_config(root)
     entries = list(_load_entries(root, "*/knowledge/*.md"))
     entries += list(_load_entries(root, "knowledge/*.md", base="narrative"))
+    strategies = list(_load_entries(root, "*/strategy/*.md"))
     mem = root / "memory"
     rows = []
     mem_files = []
@@ -120,6 +121,13 @@ def stale_rows(root, today=None):
             if review and review < today:
                 rows.append(f"- {rp} — {m.get('description', '')} "
                             f"(review overdue)")
+    # strategy docs have no type-based staleness default (conventions/strategy.md) —
+    # review_after is the only signal hub.sweep can act on here.
+    for rp, m, _ in strategies:
+        review = _date(m.get("review_after"))
+        if review and review < today:
+            rows.append(f"- {rp} — {m.get('description', '')} "
+                        f"(review overdue)")
     return rows
 
 

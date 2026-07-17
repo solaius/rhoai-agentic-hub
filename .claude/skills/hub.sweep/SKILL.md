@@ -25,6 +25,8 @@ every feature.
    For each target feature, use `Glob` to list all `*.md` files in
    `features/<id>/knowledge/`. For `--all`, also check
    `narrative/knowledge/` and `memory/facts/` and `memory/profiles/`.
+   Also check `features/<id>/strategy/strategy.md` for a `review_after`
+   overdue check only -- strategy docs have no type-based staleness default.
 
    Read each file and parse its YAML frontmatter. Skip files that:
    - Cannot be read as UTF-8 (git-crypt locked files)

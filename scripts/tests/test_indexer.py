@@ -239,6 +239,24 @@ def test_stale_view_includes_overdue_qa(tmp_path):
     assert "/features/mcp-registry/knowledge/qa-old.md" in v
 
 
+def test_stale_view_includes_overdue_strategy(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/strategy/strategy.md",
+          "---\ntitle: MCP Registry — strategy\ndescription: living strategy\n"
+          "timestamp: 2026-01-01\nstatus: current\nreview_after: 2026-06-01\n---\nb\n")
+    v = build_all(root, today=TODAY)["views/stale-facts.md"]
+    assert "/features/mcp-registry/strategy/strategy.md" in v
+
+
+def test_stale_view_excludes_future_review_strategy(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "features/mcp-registry/strategy/strategy.md",
+          "---\ntitle: MCP Registry — strategy\ndescription: living strategy\n"
+          "timestamp: 2026-07-01\nstatus: current\nreview_after: 2026-12-01\n---\nb\n")
+    v = build_all(root, today=TODAY)["views/stale-facts.md"]
+    assert "/features/mcp-registry/strategy/strategy.md" not in v
+
+
 def test_jtbd_view(tmp_path):
     root = make_repo(tmp_path)
     write(root, "features/mcp-registry/knowledge/jtbd-find.md",

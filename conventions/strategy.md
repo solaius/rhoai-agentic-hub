@@ -17,11 +17,14 @@ artifacts (RFE roadmaps, outcome write-ups) may sit alongside it under
 
 ## Frontmatter
 
-`title` ("<Feature> — strategy") · `description` (one line — feeds the
-indexes) · `timestamp` (date of last rewrite) · `status: current` ·
+`title` ("<Feature> — strategy") · `description` (one line — heads the
+doc; the generated feature index links the `strategy/` directory, not
+individual files) · `timestamp` (date of last rewrite) · `status: current` ·
 `review_after` (default +60 days — hub.sweep flags staleness) · `source`
-(generator note: inputs + date). Linted as warnings only, like research
-docs — strategy documents never fail the build.
+(generator note: inputs + date). No dedicated frontmatter lint (unlike
+research docs, which get warning-level description/timestamp checks) —
+only the repo-wide broken-link scan touches strategy files, and it never
+fails the build.
 
 ## The eight sections (fixed order, fixed names)
 
