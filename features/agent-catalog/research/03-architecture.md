@@ -8,6 +8,8 @@ review_after: 2026-10-16
 
 # Agent catalog architecture — RHOAI integration map and 3.6 deploy path
 
+> Superseded 2026-07-16 (same day) in one respect by an owner re-timing (recorded in [/memory/profiles/roadmap.md](/memory/profiles/roadmap.md) History): Agent Registry work starts **3.6 EA2 at the earliest**, on a multi-release path to DP (~3.7 EA1 directional, no committed GA). Read this doc's "Agent Registry backend (3.6 EA2)" references — the integration-map diagram, the deploy-sequence note, and the agent-registry row of the sibling table — as "registry work *begins* at EA2 at the earliest; the registration flows shown are the eventual target state, not an EA2 deliverable". Deployment (BFF → OpenShell Go SDK) is its own workstream, consumed by both catalog and registry; its 3.6 EA1 timing here is unchanged.
+
 ## Snapshot and method
 
 Standing context used: **`architecture/rhoai-3.5-ea.2`** in [opendatahub-io/architecture-context](https://github.com/opendatahub-io/architecture-context) — the newest concrete snapshot (generated 2026-06-22, 65 components; newer than the `rhoai-3.4*` examples suggested; `rhoai.next` and symlinks like `newest` also exist). Docs pulled: `PLATFORM.md`, `agents-operator.md`, `odh-dashboard.md`, `mlflow.md`, `models-as-a-service.md`, `rhoai-mcp.md`, `kubeflow.md`, plus the snapshot `README.md`.
