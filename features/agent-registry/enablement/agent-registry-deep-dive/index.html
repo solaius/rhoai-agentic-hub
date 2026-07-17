@@ -334,7 +334,7 @@
         <div><div class="stat-value" style="color: var(--rh-red);">2</div><div class="stat-label">entities: version &amp; instance</div></div>
         <div><div class="stat-value">4</div><div class="stat-label">discovery sources on a 3.6 cluster</div></div>
         <div><div class="stat-value">4 + 4</div><div class="stat-label">governance tracks × runtime states</div></div>
-        <div><div class="stat-value" style="color: var(--rh-teal);">3.6</div><div class="stat-label">TP at EA1 · backend at EA2</div></div>
+        <div><div class="stat-value" style="color: var(--rh-teal);">EA2+</div><div class="stat-label">work starts 3.6 EA2 · DP ~3.7</div></div>
       </div>
     </div>
   </section>
@@ -469,7 +469,7 @@
       <div class="ladder" data-stagger>
         <div class="rung animate-on-scroll">
           <span class="rung-rank" style="color:#6fbf65;">STRONGEST</span>
-          <span style="font-size:0.85rem;"><strong>Stamped identity</strong> — the deploy path writes the registry's version ID as an annotation on the workload it creates. Reconciliation becomes a lookup. Costs one line in the deploy flow; should be a hard requirement of the 3.6 path.</span>
+          <span style="font-size:0.85rem;"><strong>Stamped identity</strong> — the deploy path writes the registry's version ID as an annotation on the workload it creates. Reconciliation becomes a lookup. Costs one line in the deploy flow — and because deployment ships before registry work even starts, stamping from day one is what lets records join <em>retroactively</em> once the registry exists.</span>
         </div>
         <div class="rung animate-on-scroll">
           <span class="rung-rank" style="color:var(--rh-orange);">FALLBACK</span>
@@ -525,7 +525,7 @@
               <td><span class="pill pill-no">n/a</span></td>
               <td><span class="pill pill-no">n/a</span></td>
               <td><span class="pill pill-best">richest</span></td>
-              <td>Arrives with the 3.6 EA1 deploy path</td>
+              <td>Arrives with the deploy path (3.6 EA1 — its own workstream)</td>
             </tr>
             <tr>
               <td class="src">A2A agent cards<br/><span class="mono" style="font-size:0.7rem;">/.well-known/agent-card.json</span></td>
@@ -580,6 +580,8 @@
       <p class="lead animate-on-scroll">
         One flow, two doors. Agents deployed through the platform get registered <em>synchronously, with full metadata</em>.
         Agents that arrive any other way get <em>detected and adopted</em> as unlinked instances. Governance sees a complete inventory either way.
+        One boundary to keep straight: <strong>deployment is its own workstream</strong> (OpenShell, the Go SDK, the catalog's deploy surface) —
+        the registry doesn't own it; it consumes its events. This diagram shows the target state once both exist.
       </p>
 
       <div class="arch-figure animate-on-scroll">
@@ -939,21 +941,22 @@
           </p>
         </div>
         <div class="card decision u-amber animate-on-scroll">
-          <span class="card-tag tag-amber">BEFORE THE EA2 SCHEMA FREEZE</span>
+          <span class="card-tag tag-amber">BEFORE BACKEND WORK STARTS (3.6 EA2 EARLIEST)</span>
           <div class="card-title">Fix the backend schema while it's cheap</div>
           <p class="card-body">
-            The tracked EA2 backend is currently <strong>single-entity with one lifecycle</strong> — no runtime instance states, no SUSPENDED,
+            The tracked backend (work starting 3.6 EA2 at the earliest) is currently drafted <strong>single-entity with one lifecycle</strong> — no runtime instance states, no SUSPENDED,
             no <span class="mono">version_ref</span>, no risk-tier/log-refs/retention fields, and a sync epic still aimed at the removed runtime.
             Every one of these is a cheap schema addition today and a breaking migration after the freeze.
           </p>
         </div>
         <div class="card decision u-blue animate-on-scroll">
           <span class="card-tag tag-blue">PRODUCT CALL NEEDED</span>
-          <div class="card-title">What feeds the EA1 registry view?</div>
+          <div class="card-title">What feeds the first registry view?</div>
           <p class="card-body">
-            The registry TP (3.6 EA1) lands <em>before its own backend</em> (EA2). If the stopgap feeds the registry view from Sandbox CRs,
-            it becomes a second deployments view and the registry/deployments distinction collapses on arrival. Feed it from deploy-time
-            registrations (even file-backed), or label it honestly as a preview.
+            Registry backend work starts at <strong>3.6 EA2 at the earliest</strong>, with DP not expected before ~3.7 — so any registry-view
+            surface shipped before then would predate its own backend. If a stopgap feeds it from Sandbox CRs, it becomes a second deployments
+            view and the registry/deployments distinction collapses on arrival. Feed it from deploy-time registrations (even file-backed),
+            or label it honestly as a preview — or simply don't ship one early.
           </p>
         </div>
         <div class="card decision u-amber animate-on-scroll">
@@ -999,6 +1002,12 @@
     <div class="section-inner">
       <div class="section-label animate-on-scroll">ROADMAP &amp; RESOURCES</div>
       <h2 class="display-lg animate-on-scroll">Where this lands, release by release</h2>
+      <p class="lead animate-on-scroll">
+        Three separate workstreams, easy to conflate: the <strong>catalog</strong> (discovery surface), <strong>deployment</strong>
+        (OpenShell + the deploy path — its own effort, which catalog <em>and</em> registry both consume), and the
+        <strong>registry</strong> — the latest-starting of the three. Registry work begins at 3.6 EA2 at the earliest and is expected
+        to take multiple releases to reach Dev Preview (directionally ~3.7 EA1).
+      </p>
 
       <div class="timeline-cols" data-stagger>
         <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-green);">
@@ -1007,34 +1016,33 @@
           <ul>
             <li>Dashboard agents table lists Sandbox CRs (no deploy)</li>
             <li>MCP Registry debuts the four governance tracks</li>
-            <li>Registry &amp; runtime deliberately disconnected</li>
+            <li>No registry work — deliberately</li>
           </ul>
         </div>
         <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-blue);">
-          <div class="t-k" style="color: var(--rh-blue-light);">3.6 EA1</div>
-          <div class="t-t">Registry TP + deploy path</div>
+          <div class="t-k" style="color: var(--rh-blue-light);">3.6 EA1 — DEPLOYMENT (NOT REGISTRY)</div>
+          <div class="t-t">The deploy workstream lands</div>
           <ul>
-            <li>Agent Catalog TP; deploy via OpenShell Go SDK</li>
-            <li>Registry view TP — data-source decision pending</li>
-            <li>Stamped annotations should land here</li>
+            <li>Agent Catalog TP; deploy via OpenShell Go SDK — a separate effort the registry will later consume</li>
+            <li>The registry's one ask of it: stamp annotations from day one, so records can join retroactively</li>
           </ul>
         </div>
         <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-purple);">
-          <div class="t-k" style="color: #a695e0;">3.6 EA2</div>
-          <div class="t-t">The backend</div>
+          <div class="t-k" style="color: #a695e0;">3.6 EA2 — EARLIEST START</div>
+          <div class="t-t">Registry work begins</div>
           <ul>
-            <li>MLflow-native agent registry backend</li>
-            <li>Sync controller + enrichment loop realistic here</li>
-            <li>Schema freeze — the input deadline</li>
+            <li>MLflow-native backend build starts (no earlier than this)</li>
+            <li>Schema decisions made here live forever — this is the input window</li>
+            <li>Sync controller + enrichment loop designed against the by-then-real deploy path</li>
           </ul>
         </div>
         <div class="t-col animate-on-scroll" style="border-top-color: var(--rh-red);">
-          <div class="t-k" style="color: #ff6b6b;">3.6 GA</div>
-          <div class="t-t">Governed fleet</div>
+          <div class="t-k" style="color: #ff6b6b;">~3.7 EA1 — DIRECTIONAL</div>
+          <div class="t-t">Dev Preview, then maturing</div>
           <ul>
-            <li>Four tracks + workspace RBAC on agents</li>
-            <li>Full register-on-deploy flow</li>
-            <li><span class="mono">verified=true</span> only if the enrichment loop ships</li>
+            <li>First registry DP (multi-release path; date directional, not committed)</li>
+            <li>Four tracks + workspace RBAC on agents mature beyond DP</li>
+            <li><span class="mono">verified=true</span> still gated on the enrichment loop finding an owner</li>
           </ul>
         </div>
       </div>
