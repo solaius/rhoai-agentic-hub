@@ -105,4 +105,5 @@ second is the payload:
    `git commit -m "research(<home>): <lenses> <depth>" -- <those paths>`
    && `git push`.
 8. Offer follow-ups the run surfaced (a deeper lens pass, hub.intake for
-   an adjacent topic) — never auto-run them.
+   an adjacent topic, `hub.strategy <home>` now that a series exists —
+   the strategy doc consumes it) — never auto-run them.

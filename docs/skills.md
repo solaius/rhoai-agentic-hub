@@ -31,6 +31,12 @@ families (design decisions D8/D11):
   under `research/` + gated knowledge entries + living
   `00-executive-summary`. Series contract:
   [/conventions/research.md](/conventions/research.md).
+- **Strategy:** `hub.strategy <feature>` → the ONE living
+  `strategy/strategy.md` (eight-section contract:
+  [/conventions/strategy.md](/conventions/strategy.md)) synthesized from
+  knowledge + research + the Jira snapshot; refresh rewrites in place +
+  `## History`. Offered by intake and research; its candidate jiras feed
+  `/rfe.create`.
 - **Jira:** `hub.jira-sweep <feature>` (scope discovery → tracked snapshot +
   gated refs) then `hub.jira-sync` on demand — diff-driven refresh; the map
   lives in [/views/jira-map.md](/views/jira-map.md). `hub.jira-hygiene` audits
@@ -66,6 +72,7 @@ families (design decisions D8/D11):
 | `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `features.yaml` on first use |
 | `hub.intake` | onboard a new feature area or bulk-add sources | ask-once upfront + batch write gate (incl. partition) | partition (first use), ref-/typed entries, reindex + commit |
 | `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
+| `hub.strategy` | write/refresh a feature's living strategy doc | brief shown inline + write gate | `strategy/strategy.md`, reindex + commit |
 | `hub.jira-sweep` | sweep Jira for one feature (snapshot + strategic refs) | scope confirm + batch write gate | features.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
 | `hub.jira-sync` | refresh swept scopes + watched keys against live Jira | batch write gate | snapshot refreshes, ref-/jtbd updates, reindex + commit |
 | `hub.jira-hygiene` | audit one Jira issue against its type checklist | no (read-only, reports in chat) | nothing - it reports, it does not fix |
@@ -130,6 +137,16 @@ write gate before any file lands. Re-runs are refreshes: numbering
 continues, `00-executive-summary` is rewritten, contradicted findings get
 supersede notes — never deletions. Tracker/NDA-sourced findings route to
 `restricted/`.
+
+**`hub.strategy`** — the synthesis layer: one living strategy document per
+feature (`strategy/strategy.md`, contract in
+[/conventions/strategy.md](/conventions/strategy.md)) built from the
+partition's knowledge entries, research series, Jira snapshot + refs,
+memory profiles, and `related:` siblings. PM working register — dense,
+60-second re-entry brief, honest gaps section, Jira coverage map plus
+gap-derived candidate jiras ready for `/rfe.create`. Rewritten in place on
+refresh with a `## History` entry; preconditions nudge toward
+`hub.research` / `hub.jira-sweep` first when those inputs are missing.
 
 **`hub.jira-sweep`** — the Jira intake path for one feature. First run does
 conversational scope discovery (`--try-jql` iterations until the JQL looks

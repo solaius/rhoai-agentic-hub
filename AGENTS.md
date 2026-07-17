@@ -50,6 +50,7 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.file | intake a doc/URL/transcript as a typed entry |
 | hub.intake | onboard a feature area / bulk-add sources (gated batch; offers research) |
 | hub.research | lens-scoped deep research → research/ series + gated entries |
+| hub.strategy | synthesize/refresh the feature's living strategy doc (strategy/strategy.md) from knowledge + research + jira -- gated |
 | hub.standup | daily PM brief -- Jira (PM portfolio) + Slack + Gemini Notes + AI news, structured as Urgent/Important/Monitor |
 | hub.sweep | per-feature staleness audit -- date-arithmetic + live source cross-referencing (Jira/GDocs/GitHub), gated updates |
 | hub.weekly-plan | weekly planning superset of hub.standup -- adds Google Calendar analysis, carry-over tracking, checklist file |

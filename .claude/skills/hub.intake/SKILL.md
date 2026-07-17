@@ -52,4 +52,6 @@ file) — then run the flow without further questions until the gate.
 6. OFFER RESEARCH: suggest `hub.research <home>` with a lens set fitted
    to what intake revealed (unknown competitive space → competitive;
    heavy technical sources → architecture + upstream; scoping gaps →
-   requirements). Never auto-run.
+   requirements). Never auto-run. Once research has landed (now or
+   later), also offer `hub.strategy <home>` — the living strategy doc
+   synthesizes it (/conventions/strategy.md).
