@@ -1,4 +1,10 @@
 {
+  "agent-registry/deep-dive": {
+    "badge": "new",
+    "hash": "5c68441bd046bd9e072ec5f9fa55f98f14157082dc895ed45f99a3d1ae323dba",
+    "published": "2026-07-17",
+    "source": "features/agent-registry/enablement/agent-registry-deep-dive"
+  },
   "mcp-catalog/hub": {
     "badge": "updated",
     "hash": "f34dc8b4c2fc177afc912e3afd93d3d5e6a38399b02d825dd58548566f2930c2",
