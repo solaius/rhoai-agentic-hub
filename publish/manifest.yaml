@@ -96,3 +96,8 @@
   audience: internal
   title: MCP Registry Knowledge Hub
   description: 12-page enablement site for the MCP Registry (governance/system-of-record, design phase) across understand/sell/build/govern/plan.
+- source: features/agent-registry/enablement/agent-registry-deep-dive/
+  dest: agent-registry/deep-dive/
+  audience: internal
+  title: Agent Registry — Engineer's Deep Dive
+  description: Vertical deep-dive for engineers — the dual-entity model, post-kagenti discovery architecture, register-on-deploy flow, lifecycle join points, supply-chain queries, upstream/market strategy, and the open decisions.
