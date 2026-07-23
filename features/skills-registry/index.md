@@ -10,6 +10,9 @@ RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketp
 - [work/](/features/skills-registry/work/)
 
 ## Connections
+- fact · [Ann Marie's deploy-from-catalog POC proposal](/features/agent-catalog/knowledge/fact-ann-marie-poc-proposal.md) — POC plan — pre-built agent image + MLflow skill bundle (install-bundle from RFC PR
+- question · [Skills/MCP configuration at deploy time — not in UX designs](/features/agent-catalog/knowledge/question-skills-at-deploy-time.md) — MCP and skills set at runtime are not part of the deploy wizard UX designs (Gage, 2026-07-11); only agent-card skill/MCP discovery exists. No mechanism to say "use this skill for my harness" at deploy time.
+- reference · [Slack group DM — deploy-from-catalog UX and POC proposal](/features/agent-catalog/knowledge/ref-slack-mpdm-catalog-deploy-poc.md) — Ann Marie/Andrew/Gage MPDM (~2026-07-11) on deploy-from-catalog UX designs, ET co-engineering POC proposal, skills-at-deploy-time gap, and prototype URLs.
 - reference · [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md) — Unified registry and governance for agents, skills, and MCP servers -- discovery, versioning, promotion, supply chain scanning, Agent Hub UI.
 - fact · [MLflow RFC-0008 — registry stream is live, skills-first, Red Hat-authored](/features/agent-registry/knowledge/fact-mlflow-rfc-0008-skills-phase1.md) — RFC-0008 (MVP Skill Registry Phase 1, mlflow/rfcs PR
 - fact · [Unity Catalog registers agents first-class; Unity AI Gateway parts open-sourced into MLflow](/features/agent-registry/knowledge/fact-unity-catalog-agents-first-class.md) — At DAIS 2026 (June), agents/skills/MCP services became registrable and governable in Unity Catalog via Unity AI Gateway, with gateway/governance pieces open-sourced into MLflow — upstream MLflow is becoming a governance surface with Databricks steering the substrate.
