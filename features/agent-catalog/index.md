@@ -3,7 +3,7 @@
 
 The agent storefront in RHOAI AI Hub — RH-curated starter-kit templates in 3.5 (link-out, no deploy), agent deployment with supported harness images in 3.6 EA1; built on Kubeflow hub alongside the MCP and Model catalogs.
 
-Related: [Agent Registry](/features/agent-registry/index.md) · [Agent Interop](/features/agent-interop/index.md)
+Related: [Agent Registry](/features/agent-registry/index.md) · [Agent Interop](/features/agent-interop/index.md) · [Skills Catalog](/features/skills-catalog/index.md)
 
 - [knowledge/](/features/agent-catalog/knowledge/)
 - [research/](/features/agent-catalog/research/)
@@ -25,4 +25,5 @@ Related: [Agent Registry](/features/agent-registry/index.md) · [Agent Interop](
 - person · [Daniele Zonca](/features/platform/knowledge/person-daniele-zonca.md) — RHOAI serving/supportability engineering leader — guards the validated-vs-supported image boundary, CVE/maintenance scope, and framework-support due diligence; commenting on the AIPCC ADR.
 - person · [Ramesh Reddy](/features/platform/knowledge/person-ramesh-reddy.md) — AI Hub engineering lead — built the Model/MCP catalog backends, owns the catalog pattern; disconnected-env and catalog-immutability advocate; assigned the Agent Catalog backend.
 - reference · [#forum-ai-asset-management](/features/platform/knowledge/ref-slack-forum-ai-asset-management.md) — The AI asset management forum — MCP Catalog/Registry, Agent Catalog/Deployments, Skills Registry (MLflow upstream), OpenShell, AI Hub; ~105 msgs/week; where the 2026-07-09 no-deploy-in-3.5 call landed.
+- reference · [#forum-ai-asset-management Slack channel](/features/skills-catalog/knowledge/ref-slack-forum-ai-asset-management.md) — Slack channel for AI asset management discussions -- skills catalog/registry, agent catalog/registry, MCP catalog, packaging, cross-cutting asset governance.
 - fact · [Skills packaging landscape — 4 package manager options for MLFlow registry](/features/skills-registry/knowledge/fact-skills-packaging-landscape.md) — Comparative analysis of APM (Microsoft, must for Databricks), LOLA (Red Hat, must for RH), NPM/NPX (general standard), and OCI artifacts (under discussion) as package manager plugins for the MLFlow skills registry (RFC-0008).

@@ -2,6 +2,7 @@
 # Features
 
 - [Skills Registry](/features/skills-registry/index.md) — RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketplace
+- [Skills Catalog](/features/skills-catalog/index.md) — The skills storefront in RHOAI AI Hub — discover and consume Red Hat, partner, and community AI agent skills; Kubeflow hub surface alongside MCP and agent catalogs.
 - [MCP Gateway](/features/mcp-gateway/index.md) — Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
 - [MCP Registry](/features/mcp-registry/index.md) — The governance/system-of-record layer for MCP servers — identity, version, lifecycle state, certification, trust, and auditability.
 - [MCP Ecosystem](/features/mcp-ecosystem/index.md) — MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.

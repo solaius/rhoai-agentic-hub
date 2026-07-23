@@ -46,3 +46,4 @@
 - platform · [Ramesh Reddy](/features/platform/knowledge/person-ramesh-reddy.md) — Engineering Lead, RHOAI AI Hub — AI Hub engineering lead — built the Model/MCP catalog backends, owns the catalog pattern; disconnected-env and catalog-immutability advocate; assigned the Agent Catalog backend.
 - platform · [Tushar Katarki](/features/platform/knowledge/person-tushar-katarki.md) — Alignment Strategy, IBM/Red Hat — IBM/Red Hat alignment strategy for agentic AI.
 - platform · [Younes Ben Brahim](/features/platform/knowledge/person-younes-ben-brahim.md) — Product Marketing Manager, Product Marketing — Product Marketing Manager — drives agentic messaging and Summit content.
+- skills-catalog · [Aditi Saluja](/features/skills-catalog/knowledge/person-aditi-saluja.md) — PM (or analyst), Red Hat — Authored the comprehensive Skills Registry and Catalog status/scope/roadmap document; mapping upstream/RHOAI skills landscape + NVIDIA secure supply chain.

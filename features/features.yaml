@@ -10,6 +10,11 @@ features:
 - id: skills-registry
   title: Skills Registry
   description: RHOAI skills registry work — upstream MLflow collaboration, ODH plugin marketplace
+  related: [skills-catalog]
+- id: skills-catalog
+  title: Skills Catalog
+  description: The skills storefront in RHOAI AI Hub — discover and consume Red Hat, partner, and community AI agent skills; Kubeflow hub surface alongside MCP and agent catalogs.
+  related: [skills-registry, agent-catalog]
 - id: mcp-gateway
   title: MCP Gateway
   description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
@@ -71,7 +76,7 @@ features:
 - id: agent-catalog
   title: Agent Catalog
   description: The agent storefront in RHOAI AI Hub — RH-curated starter-kit templates in 3.5 (link-out, no deploy), agent deployment with supported harness images in 3.6 EA1; built on Kubeflow hub alongside the MCP and Model catalogs.
-  related: [agent-registry, agent-interop]
+  related: [agent-registry, agent-interop, skills-catalog]
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"Agent Catalog\"" OR key in (RHAISTRAT-1740, RHAISTRAT-1697, RHAISTRAT-1742, RHAISTRAT-1758, RHAISTRAT-1349, RHAISTRAT-1792))) OR key = RHAIRFE-2443 OR (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"Agent Catalog\"" OR summary ~ "agent-catalog"))'
     ref_types: [Outcome, Feature]
