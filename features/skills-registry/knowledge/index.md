@@ -2,11 +2,15 @@
 # Skills Registry — knowledge
 
 ## fact
+- [Skills packaging landscape — 4 package manager options for MLFlow registry](/features/skills-registry/knowledge/fact-skills-packaging-landscape.md) — Comparative analysis of APM (Microsoft, must for Databricks), LOLA (Red Hat, must for RH), NPM/NPX (general standard), and OCI artifacts (under discussion) as package manager plugins for the MLFlow skills registry (RFC-0008).
 - [Skills Registry MVP — data model, packaging, and gap analysis](/features/skills-registry/knowledge/fact-skills-registry-mvp-analysis.md) — The Databricks Skills Registry MVP's data model, installation modes, what it deliberately omits, and what that means for Red Hat's own upstream skills-registry proposal.
 
 ## question
-- [Skills packaging format — gaps beyond the Databricks MVP](/features/skills-registry/knowledge/question-skills-packaging-format-gaps.md) — Databricks' MVP settled on SKILL.md + YAML frontmatter as the skill packaging format, but OCI artifacts and other formats remain unaddressed.
+- [Skills packaging format — plugin architecture resolves format, standardization gap remains](/features/skills-registry/knowledge/question-skills-packaging-format-gaps.md) — RFC-0008's PackageManagerPlugin interface resolves the multi-format question (APM, LOLA, NPM, OCI coexist as plugins), but no single standard has emerged and the plugin interface is not yet merged upstream.
 
 ## reference
+- [Agent Skills OCI Artifacts Spec (v0.1.0)](/features/skills-registry/knowledge/ref-agent-skills-oci-spec.md) — Draft spec for packaging AI agent skills as OCI artifacts — custom media types, OCI Image Index as collection catalog, skills.json/skills.lock.json for version pinning. v0.1.0, Thomas Vitale.
+- [LOLA — universal skill package manager (Red Hat Product Security)](/features/skills-registry/knowledge/ref-lola-package-manager.md) — Red Hat Product Security's universal AI skill package manager — convention-based auto-discovery, federated marketplace, multi-assistant install. Must-have for Red Hat in the MLFlow skills registry plugin architecture.
+- [Microsoft APM (Agent Package Manager)](/features/skills-registry/knowledge/ref-microsoft-apm.md) — Microsoft's open-source agent dependency manager — apm.yml manifest, git-based distribution, multi-client targeting, org-wide policy governance. Must-have for Databricks in the MLFlow skills registry plugin architecture.
 - [B-Step62/mlflow (branch: skill-registry-mvp)](/features/skills-registry/knowledge/ref-mlflow-skill-registry-mvp-branch.md) — Databricks' Skills Registry MVP prototype — full CRUD, CLI, UI, and Claude Code integration. Not merged upstream.
 - [ODH skills-registry (plugin marketplace)](/features/skills-registry/knowledge/ref-odh-skills-registry.md) — The org plugin marketplace this hub consumes shared skills from — registry.yaml → marketplace.json/catalog.md
