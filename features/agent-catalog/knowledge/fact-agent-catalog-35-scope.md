@@ -11,10 +11,13 @@ review_after: 2026-08-31
 narrowed by the
 [2026-07-09 no-deploy decision](/features/agent-catalog/knowledge/decision-agent-catalog-no-deploy-35.md)):
 
-- Agents View: RH-curated starter-kit templates from
+- Agents View: RH-curated starter-kit templates **and** harness kits from
   [agentic-starter-kits](/features/agent-catalog/knowledge/ref-agentic-starter-kits-repo.md),
   cards linking out to GitHub; fields per the
   [3.5 field set](/features/agent-catalog/knowledge/decision-agent-catalog-35-field-set.md).
+  Harness kits (OpenCode, Claude Code, OpenClaw, etc.)
+  [confirmed in scope](/features/agent-catalog/knowledge/decision-harness-kits-in-scope-35-catalog.md)
+  by Adel Zaalouk ~2026-07-11 (PR #256).
 - Agent Deployments view: read-only discovery of AgentSandbox CRs
   (label `openshell.ai/managed-by`).
 - No deploy button, no agent-card discovery, no admin/settings UI

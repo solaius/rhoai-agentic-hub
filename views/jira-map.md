@@ -430,3 +430,4 @@ _summaries withheld — the source Jira is not anonymously readable_
 ## Referenced elsewhere
 - HATSTRAT-314 → [HATSTRAT-314](/features/agent-interop/knowledge/ref-hatstrat-314.md)
 - OCPMCP-347 → [OCPMCP-347: MCP Gateway integration (GA scope)](/features/mcp-lifecycle-operator/knowledge/ref-ocpmcp-347-gateway-integration.md)
+- RHAIENG-6156 → [RHAIENG-6156 -- Agent catalog metadata](/features/agent-catalog/knowledge/ref-rhaieng-6156-agent-metadata.md)
