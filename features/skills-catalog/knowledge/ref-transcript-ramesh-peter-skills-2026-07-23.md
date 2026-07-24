@@ -1,7 +1,7 @@
 ---
 type: reference
 title: "Transcript: Ramesh/Peter 1:1 -- Skills (2026-07-23)"
-description: Ramesh/Peter 1:1 on skills direction -- catalog proposal in Kubeflow, governance belongs at agent level, NPX/Claude plugin support, OCI deferred, org change hint (restricted).
+description: Ramesh/Peter 1:1 on skills direction -- catalog proposal in Kubeflow, governance belongs at agent level, NPX/Claude plugin support, OCI deferred.
 resource: https://app.tactiq.io/api/2/u/m/r/mlxF9nyRlBku0hWpv4Yv
 tags: [skills-catalog, skills-registry, transcript]
 features: [skills-catalog, skills-registry]

@@ -106,8 +106,7 @@ proprietary and tightly coupled. See [fact-nvidia-skills-catalog-landscape](/fea
 
 - Bill Murdock: continuing skills RFC design + writing agent registry
   RFC for immediate submission after second skills RFC.
-- Ramesh Reddy: catalog spec work, NPX/Claude plugin support. Potential
-  org change (restricted context).
+- Ramesh Reddy: catalog spec work, NPX/Claude plugin support.
 - Aditi Saluja: skills landscape mapping, status/scope/roadmap doc.
 - Ann Marie Fred: evaluating NVIDIA skills repo as a model; talking to
   Jason/Edson/Daniele about catalog+registry alignment.
@@ -188,7 +187,6 @@ to discover the full issue set and build the snapshot.
 
 | Date | Trigger | If it fires, what changes |
 |---|---|---|
-| 2026-07-30 (next week) | Potential AI Hub team org change (Ramesh hint) | Catalog ownership, architecture decisions, and timeline may shift. Verify RHAISTRAT-1780 ownership. |
 | 2026-08-02 | EU AI Act Article 50 transparency obligations take effect | Skills generating user-facing outputs need disclosure metadata in catalog cards. Compliance metadata becomes a hard requirement, not a nice-to-have. |
 | 2026-08 (est.) | MLflow RFC-0008 Phase 1 review outcome | If approved: registry timeline firms up, catalog-to-registry integration path is defined. If rejected/stalled: registry decoupling validated, catalog standalone value increases. |
 | 2026-08 (est.) | MLflow next release code freeze | Determines whether any registry capability can ride RHOAI 3.6. Affects whether catalog must own install features or can delegate to registry. |
