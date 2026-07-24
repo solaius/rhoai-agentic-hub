@@ -1,13 +1,17 @@
 ---
 title: "Agent Catalog research — executive summary"
-description: Living synthesis of the 5-lens deep sweep (2026-07-16) — the market pattern validates our sequencing, the wedge is disconnected+supported+governed, and the 3.6 deploy path rests on one unmerged SDK.
-timestamp: 2026-07-16
-review_after: 2026-10-16
+description: Living synthesis of the 5-lens deep sweep (2026-07-16) + focused requirements refresh (2026-07-24 — deploymentModel metadata) — the market pattern validates our sequencing, the wedge is disconnected+supported+governed, and the deploy path needs a routing key the schema doesn't yet type.
+timestamp: 2026-07-24
+review_after: 2026-10-24
 ---
 
 # Agent Catalog research — executive summary
 
-First research run for the partition: **deep, 5 lenses, 2026-07-16**, all lenses completed, plus an adversarial verification pass (20 load-bearing claims checked: 18 confirmed, 2 corrected — IBM catalog GA date, Google GA phrasing). No lens gaps to retry.
+First research run: **deep, 5 lenses, 2026-07-16**, all lenses completed,
+plus an adversarial verification pass (20 load-bearing claims checked:
+18 confirmed, 2 corrected). Focused refresh: **quick, requirements lens,
+2026-07-24** — deploymentModel metadata facet prompted by the real
+filter_options response surfacing `config-driven` / `flow-import`.
 
 ## The series
 
@@ -18,6 +22,7 @@ First research run for the partition: **deep, 5 lenses, 2026-07-16**, all lenses
 | [03-architecture](/features/agent-catalog/research/03-architecture.md) | architecture | RHOAI platform baseline (rhoai-3.5-ea.2 snapshot), per-feature integration map, 3.6 deploy reference path, risks |
 | [04-requirements](/features/agent-catalog/research/04-requirements.md) | requirements | Disconnected, supportability, licensing, personas, governance/regulation, day-zero enablement — evidence-graded |
 | [05-competitive](/features/agent-catalog/research/05-competitive.md) | competitive | Hyperscaler/IBM/NVIDIA/Databricks moves, analyst view, honest wedge-vs-behind positioning |
+| [06-requirements-deployment-model-metadata](/features/agent-catalog/research/06-requirements-deployment-model-metadata.md) | requirements | deploymentModel customProperty (config-driven / flow-import) — the unstated deploy routing key, schema gap, and 3.6 contract recommendation |
 
 ## What the sweep establishes
 
@@ -34,6 +39,8 @@ First research run for the partition: **deep, 5 lenses, 2026-07-16**, all lenses
 **6. Governance evidence supports "Deploy always registers, reconcile the rest."** EU AI Act transparency applies 2 Aug 2026 (one cycle from 3.6); NIST AI RMF GV-1.6 and CSA's agentic profile expect per-agent accountability records; no surveyed vendor exposes "Register" as a catalog verb — registration is a deploy side-effect plus discovery/reconciliation for out-of-band deployments (matching the ODH ADR #142 direction and Andrew Ballantyne's GitOps objection). The deploy flow is uniquely positioned to capture owner metadata at deploy time (04, 01).
 
 **7. What separates starter kits from "glorified quick starts" is the golden-path checklist.** One-command run against platform defaults, support matrix + sizing, pre-wired binding (or documented copy-paste config if binding slips), and an eval hook. Jehlum's platform-skills bootstrap is the highest-leverage enablement item; catalog trust is empirically fragile (Port 2025: 3% full trust in portal metadata) — card accuracy is a requirement, not polish (04).
+
+**8. The catalog-to-deploy contract has an unstated routing key: `deploymentModel`.** The real filter_options response (2026-07-11) surfaces `deploymentModel.string_value` with values `config-driven` (13/15 kits — standalone container via OpenShell SDK) and `flow-import` (1/15 — Langflow flow definition imported into a managed instance, no standalone container). These are fundamentally different deploy mechanisms, not just metadata variants. But `deploymentModel` is a customProperty (not a typed field) with a parsing gap: agent.yaml files set it as a top-level key the backend's Go struct silently ignores. For 3.6 EA1, the artifacts endpoint (raw agent.yaml) can carry it without a schema change; the deploy wizard should descope flow-import support and deploy only config-driven agents. Promotion to a typed field is justified at GA if more deployment models emerge (06).
 
 ## Recommended follow-ups (not auto-run)
 
