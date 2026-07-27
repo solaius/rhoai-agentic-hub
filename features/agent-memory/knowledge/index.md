@@ -2,6 +2,7 @@
 # Agent Memory — knowledge
 
 ## fact
+- [Adel's positioning thesis: alongside harness, not instead of](/features/agent-memory/knowledge/fact-adel-positioning-alongside-harness.md) — Adel Zaalouk's positioning guidance for RHOAI agent memory — "memory is the new lock-in vector," platform runs alongside harness-native memory, 5 anti-patterns, 3 integration tiers, harness convergence analysis, and the tagline.
 - [Agent memory 1:1 — paths forward (Peter × Sanjeev, 2026-06-30)](/features/agent-memory/knowledge/fact-agent-memory-1on1-paths-forward-20260630.md) — Standalone-service architecture position (decoupled from OGX AND AI Gateway), multi-backend requirement, substrate/intelligence/governance layering, and the revised phasing — 3.6 DP → 3.7 TP (Feb 2027) → 3.8 GA (Summit 2027).
 - [Agent Memory Team sync transcript (2026-06-23)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260623-transcript.md) — Team discussion of MemoryHub demo, OGX Memory Alpha MVP, and session-vs-long-term memory separation consensus.
 - [Agent Memory Team sync (2026-06-30)](/features/agent-memory/knowledge/fact-agent-memory-team-sync-20260630-transcript.md) — Team repo launched (opendatahub-io/agent-memory), configurable-backends consensus (vector + file, extensible), Wes's file-vs-DB guidance, the PII/governance gap, and the episodic outcome-evaluation thread.
@@ -33,6 +34,7 @@
 - [Should RHAISTRAT-1345 expand to cover the Knowledge layer?](/features/agent-memory/knowledge/question-rhaistrat-1345-scope-expansion.md) — The Outcome currently covers conversation state, persistence, and context compaction, but not the org-wide Knowledge graph layer.
 
 ## reference
+- [Adel Zaalouk — Agent Memory positioning musings](/features/agent-memory/knowledge/ref-adel-agent-memory-positioning-musings.md) — Adel's positioning thesis for RHOAI agent memory — "alongside harness not instead of," lock-in vector framing, developer journey, anti-patterns, and a phased build plan. Internal strategy-sponsor perspective, not gospel.
 - [Agent Memory Team Notes (ongoing)](/features/agent-memory/knowledge/ref-agent-memory-team-notes-ongoing.md) — Living meeting-notes doc for the agent memory workstream — task list, attendees, action items, key links.
 - [Agent Memory Team Sync Transcript (2026-06-09)](/features/agent-memory/knowledge/ref-agent-memory-team-sync-20260609.md) — The first formal agent memory team sync — sponsorship, tracking, cadence, and 2026 Phase 1 deliverables.
 - [From Context to Dreams — Architecting Memory for AI Agents (ET blog)](/features/agent-memory/knowledge/ref-context-to-dreams-et-blog.md) — Red Hat Emerging Technology's published position on agent memory architecture, co-authored by the agent memory team.
