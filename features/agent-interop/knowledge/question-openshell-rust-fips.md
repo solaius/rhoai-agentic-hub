@@ -5,7 +5,7 @@ description: OpenShell uses rustls + ring (not FIPS-validated); no known Rust FI
 status: open
 timestamp: 2026-07-17
 tags: [agent-interop, openshell, fips, compliance]
-source: OpenShell Weekly Update Jun 15-19; updated from Jul 13-17 weekly
+source: OpenShell Weekly Update Jun 15-19; updated from Jul 13-17 weekly; GDoc "OpenShell on OpenShift" FIPS cluster observation
 ---
 
 OpenShell is written in Rust. It uses **rustls + ring** for TLS — these
@@ -18,3 +18,9 @@ federal).
 Investigation ongoing. One approach: ask NVIDIA what they are doing for
 FIPS. The Jul 13-17 weekly report confirmed the specific gap (rustls +
 ring) and the need for a dedicated FIPS build path.
+
+Concrete symptom observed on FIPS-enabled OpenShift clusters: after
+adding an egress policy for github.com, `curl -L https://github.com`
+inside the sandbox returns `curl: (35) Insufficient randomness`.
+Suspected to be a FIPS-related problem in the base container image
+used by OpenShell (Dockerfile).
