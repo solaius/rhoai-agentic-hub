@@ -14,15 +14,17 @@ review_after: 2026-09-10
 
 **Author:** Peter Double (Principal PM — MCP & AI Asset Registries)
 
-**Status:** SYNTHESIS — this document summarizes both research phases. Phase 1 findings (docs 01–08) are DECIDED per [REVIEW-NOTES](REVIEW-NOTES.md). Phase 2 findings (docs 09–15) are EXPLORATORY — deep dives commissioned at the first Agent Memory Team Sync (2026-06-09). See [RHAISTRAT-1345](https://redhat.atlassian.net/browse/RHAISTRAT-1345). Refreshed 2026-07-27 — see the refresh notes below and [doc 20](20-market-refresh-2026-07-27.md).
+**Status:** SYNTHESIS — this document summarizes both research phases. Phase 1 findings (docs 01–08) are DECIDED per [REVIEW-NOTES](REVIEW-NOTES.md). Phase 2 findings (docs 09–15) are EXPLORATORY — deep dives commissioned at the first Agent Memory Team Sync (2026-06-09). See [RHAISTRAT-1345](https://redhat.atlassian.net/browse/RHAISTRAT-1345). Refreshed 2026-07-27 — see the refresh notes below and [doc 21](21-competitive-landscape-2026-07.md).
 
 ## Refresh note — 2026-07-27
 
-The second quick refresh ([20 — Market refresh (late July 2026)](20-market-refresh-2026-07-27.md)) adds three changes against this synthesis; the decided Phase-1 baseline (D1–D6) is unchanged:
+The second quick refresh ([20 — Market refresh (late July 2026)](20-market-refresh-2026-07-27.md)) and standard-depth competitive lens ([21 — Competitive landscape analysis](21-competitive-landscape-2026-07.md)) add these changes; the decided Phase-1 baseline (D1–D6) is unchanged:
 
 5. **Microsoft Foundry Memory added**: the missing third hyperscaler. Public preview (NOT GA as Adel's positioning doc claimed). First hyperscaler with procedural memory (+7-14% Tau-bench). MemoryGuard is application-level guidance, not a product feature. No versioning/rollback. Finding 4 (governance whitespace) strengthened — nobody checks all four boxes.
-6. **OSS governance gap narrowing**: Zep now has SOC 2 Type 2 + HIPAA + GDPR — the only memory framework with enterprise compliance certifications. Mem0 SDK v2.0 drops Neo4j dependency (entity linking replaces graph store). Letta raises $10M seed. Finding 5 (consolidation risk) evolving — leaders stabilizing but market still fragmented.
+6. **OSS governance gap narrowing**: Zep now has SOC 2 Type 2 + HIPAA + GDPR — the only memory framework with enterprise compliance certifications. Mem0 SDK v2.0 drops Neo4j dependency (entity linking replaces graph store). Letta raises $10M seed. Cognee 1.0 ships ontology-based permissions, air-gap deployment, and MCP server — the most governance-aware self-hostable OSS option. Finding 5 (consolidation risk) evolving — leaders stabilizing but market still fragmented.
 7. **Anthropic Dreaming shipped**: research preview since May 6, 2026. Non-destructive (inspect/accept/discard). Harvey 6x result confirmed. Finding 17 (dream consolidation validated) now confirmed shipped.
+8. **Sandbox-integrated memory governance identified as unserved gap**: no platform distinguishes memory writes by execution context (sandboxed vs. normal). RHOAI's OpenShell integration creates a structural first-mover opportunity. See doc 21 §3.5, §4.3.
+9. **Governance is now a ladder, not binary**: access controls are table stakes; versioning is emerging (Google only); rollback, per-memory audit trail, retention/erasure, trust-aware retrieval, and sandbox-aware governance remain unserved. See doc 21 §3.3.
 
 ## Refresh note — 2026-07-10
 
@@ -33,7 +35,7 @@ The quick refresh ([19 — Market & direction refresh](19-market-direction-refre
 3. **Compliance timing nuanced**: GPAI enforcement starts 2026-08-02 as expected, but the Annex III high-risk deadline is provisionally deferred to 2027-12-02 (Digital Omnibus, adoption pending) — Q-G7's audit-trail urgency is now customer-driven more than date-driven.
 4. **Interim landscape settled for now**: Feast out as interim memory; OGX memory tool (interim DP) + MemoryHub (governance leader) are the candidate pair; official workstream repo is opendatahub-io/agent-memory.
 
-**Series — Agent Memory & Knowledge Research (21 documents + review notes):**
+**Series — Agent Memory & Knowledge Research (22 documents + review notes):**
 **Phase 1 (completed 2026-05-17):**
 - 00 Executive Summary (this document)
 - [01 Landscape & Definitions](01-landscape-and-definitions.md)
@@ -59,6 +61,7 @@ The quick refresh ([19 — Market & direction refresh](19-market-direction-refre
 **Refresh (2026-07-10, 2026-07-27):**
 - [19 Market & Direction Refresh](19-market-direction-refresh-2026-07.md)
 - [20 Market Refresh (late July 2026)](20-market-refresh-2026-07-27.md)
+- [21 Competitive Landscape Analysis (July 2026)](21-competitive-landscape-2026-07.md)
 - [REVIEW-NOTES](REVIEW-NOTES.md)
 
 ---
