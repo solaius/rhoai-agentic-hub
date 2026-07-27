@@ -1,10 +1,11 @@
 ---
 type: reference
 title: RHAISTRAT-1740 — Agent Catalog
-description: The Agent Catalog strategic feature — In Progress, fixversion 3.5 GA; owner Alessio Pragliola (AI Hub), assigned 2026-06-04.
+description: The Agent Catalog strategic feature — Release Pending (Done), fixversion 3.5 GA; owner Alessio Pragliola (AI Hub), assigned 2026-06-04.
 resource: https://redhat.atlassian.net/browse/RHAISTRAT-1740
 tags: [agent-catalog, jira]
-timestamp: 2026-07-16
+timestamp: 2026-07-27
+review_after: 2026-10-27
 ---
 
 The catalog's anchor STRAT. Sat without fix version or assignee until
@@ -13,3 +14,7 @@ mid-June (Adel Zaalouk chasing); Ramesh Reddy assigned Alessio Pragliola
 Hub UI outcome), -1742 (deploy/catalog integration), -1758 (render
 deployments), -1349 (off-the-shelf harnesses), -1792 (validated
 agents/evals). Field ingestion + feature snapshot: run hub.jira-sweep.
+
+**2026-07-27**: Resolved — status moved to Release Pending, resolution Done.
+The 3.5 read-only agent catalog (starter-kit templates + harness kits,
+YAML-sourced, link-out to GitHub) has shipped.

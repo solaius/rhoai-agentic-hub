@@ -4,14 +4,14 @@ jql: (project = RHAISTRAT AND (summary ~ "\"Agent Catalog\"" OR key in (RHAISTRA
   RHAISTRAT-1697, RHAISTRAT-1742, RHAISTRAT-1758, RHAISTRAT-1349, RHAISTRAT-1792)))
   OR key = RHAIRFE-2443 OR (project = RHOAIENG AND component = "AI Hub" AND (summary
   ~ "\"Agent Catalog\"" OR summary ~ "agent-catalog"))
-swept: '2026-07-16'
+swept: '2026-07-27'
 issues:
 - key: RHAIRFE-2443
   type: Feature Request
   status: Approved
   resolution: null
   fix_versions: []
-  updated: '2026-07-16'
+  updated: '2026-07-27'
   summary: null
 - key: RHAISTRAT-1349
   type: Outcome
@@ -25,15 +25,15 @@ issues:
   status: In Progress
   resolution: null
   fix_versions: []
-  updated: '2026-06-19'
+  updated: '2026-07-20'
   summary: null
 - key: RHAISTRAT-1740
   type: Feature
-  status: In Progress
-  resolution: null
+  status: Release Pending
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-07-15'
+  updated: '2026-07-27'
   summary: null
 - key: RHAISTRAT-1742
   type: Feature
@@ -41,23 +41,23 @@ issues:
   resolution: null
   fix_versions:
   - 3.6 EA1 RHOAI RELEASE
-  updated: '2026-07-15'
+  updated: '2026-07-27'
   summary: null
 - key: RHAISTRAT-1758
+  type: Feature
+  status: Review
+  resolution: null
+  fix_versions:
+  - 3.5 GA RHOAI RELEASE
+  updated: '2026-07-22'
+  summary: null
+- key: RHAISTRAT-1792
   type: Feature
   status: In Progress
   resolution: null
   fix_versions:
-  - 3.5 GA RHOAI RELEASE
-  updated: '2026-07-16'
-  summary: null
-- key: RHAISTRAT-1792
-  type: Feature
-  status: Refinement
-  resolution: null
-  fix_versions:
   - 3.6 EA1 RHOAI RELEASE
-  updated: '2026-07-16'
+  updated: '2026-07-27'
   summary: null
 - key: RHOAIENG-66140
   type: Task
@@ -68,115 +68,115 @@ issues:
   summary: null
 - key: RHOAIENG-70656
   type: Epic
-  status: In Progress
-  resolution: null
+  status: Resolved
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-07-13'
+  updated: '2026-07-27'
   summary: null
 - key: RHOAIENG-70657
   type: Task
-  status: New
-  resolution: null
+  status: Resolved
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-27'
   summary: null
 - key: RHOAIENG-70659
   type: Sub-task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-27'
   summary: null
 - key: RHOAIENG-70661
   type: Sub-task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-24'
   summary: null
 - key: RHOAIENG-70662
   type: Sub-task
-  status: New
-  resolution: null
+  status: Resolved
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-24'
   summary: null
 - key: RHOAIENG-70663
   type: Sub-task
-  status: New
-  resolution: null
+  status: Resolved
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-24'
   summary: null
 - key: RHOAIENG-70666
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Won't Do
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70668
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Won't Do
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70669
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Won't Do
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70670
   type: Task
-  status: New
-  resolution: null
+  status: Resolved
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-24'
   summary: null
 - key: RHOAIENG-70673
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Won't Do
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70675
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Won't Do
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70676
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Won't Do
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70679
   type: Task
-  status: New
-  resolution: null
+  status: Resolved
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-06-28'
+  updated: '2026-07-22'
   summary: null
 - key: RHOAIENG-70680
   type: Epic
@@ -184,7 +184,7 @@ issues:
   resolution: null
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-07-15'
+  updated: '2026-07-20'
   summary: null
 - key: RHOAIENG-70682
   type: Task
@@ -220,11 +220,11 @@ issues:
   summary: null
 - key: RHOAIENG-70686
   type: Task
-  status: New
-  resolution: null
+  status: Closed
+  resolution: Done
   fix_versions:
   - 3.5 GA RHOAI RELEASE
-  updated: '2026-07-13'
+  updated: '2026-07-23'
   summary: null
 - key: RHOAIENG-75429
   type: Task
@@ -277,15 +277,29 @@ issues:
   summary: null
 - key: RHOAIENG-76762
   type: Story
-  status: Testing
-  resolution: null
+  status: Closed
+  resolution: Done
   fix_versions: []
-  updated: '2026-07-16'
+  updated: '2026-07-20'
   summary: null
 - key: RHOAIENG-76987
   type: Story
-  status: Testing
+  status: Closed
+  resolution: Done
+  fix_versions: []
+  updated: '2026-07-20'
+  summary: null
+- key: RHOAIENG-78205
+  type: Task
+  status: Review
   resolution: null
   fix_versions: []
-  updated: '2026-07-16'
+  updated: '2026-07-23'
+  summary: null
+- key: RHOAIENG-78210
+  type: Bug
+  status: Closed
+  resolution: Done
+  fix_versions: []
+  updated: '2026-07-22'
   summary: null
