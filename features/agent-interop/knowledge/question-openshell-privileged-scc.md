@@ -24,4 +24,19 @@ permissions to set up its own isolated network and security controls.
 For GA, plan is to replace with a custom, narrowly-scoped permission
 set before removing the experimental label.
 
+Three concrete mitigation paths identified (deployment lens, 2026-07-27):
+
+1. **Topology B (sidecar)**: proxy sidecar in root network namespace
+   does NOT need elevated privileges; agent runs in its own namespace
+   with Landlock/seccomp. Helm chart now ships
+   `supervisor.topology=sidecar` with strict/relaxed sub-modes.
+2. **User namespaces** (K8s 1.33+): `server.enableUserNamespaces=true`
+   maps container UID 0 to unprivileged host UID, making CAP_SYS_ADMIN
+   namespaced to container-local resources. OpenShift support WIP.
+3. **Layered sandboxing**: OpenShell inside Kata micro-VM (Topology B
+   with RuntimeClass). Validated on OpenShift 4.21 (Red Hat Developer
+   article Jul 2026) -- stops both app-layer and kernel-level attacks.
+
+OpenShell #899 tracks restricted SCC support specifically.
+
 Related: sandbox user elimination tracked in OpenShell issue #1959.

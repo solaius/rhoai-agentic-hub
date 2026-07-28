@@ -1,18 +1,20 @@
 ---
 title: "Agent Interop Research: Executive Summary"
-description: Living synthesis across competitive, upstream, architecture, requirements, and landscape lenses for agent interoperability on Red Hat AI.
+description: Living synthesis across competitive, upstream, architecture, requirements, landscape, jira-gap, deployment, and operations lenses for agent interoperability on Red Hat AI.
 timestamp: 2026-07-11
-updated: 2026-07-11
+updated: 2026-07-27
 review_after: 2026-09-11
 ---
 
 # Agent Interop Research: Executive Summary
 
 This is the living synthesis for the agent-interop research series. It
-summarizes findings across five lenses conducted 2026-07-11, covering
-agent sandboxing (OpenShell/NVIDIA), identity (SPIFFE/SPIRE), A2A
-communication, agent cards, BYO agent onboarding, discovery, and
-declarative harness configuration.
+summarizes findings across six strategic lenses conducted 2026-07-11
+and two practical lenses (deployment, operations) added 2026-07-27,
+covering agent sandboxing (OpenShell/NVIDIA), identity (SPIFFE/SPIRE),
+A2A communication, agent cards, BYO agent onboarding, discovery,
+declarative harness configuration, deployment patterns, and day-2
+operations.
 
 ## Series index
 
@@ -24,6 +26,8 @@ declarative harness configuration.
 | [04-requirements](04-requirements.md) | requirements | ~30 | 2026-07-11 |
 | [05-landscape](05-landscape.md) | landscape | 45 | 2026-07-11 |
 | [06-jira-gap](06-jira-gap.md) | jira-gap | internal cross-ref | 2026-07-11 |
+| [07-deployment](07-deployment.md) | deployment | 30+ | 2026-07-27 |
+| [08-operations](08-operations.md) | operations | 40+ | 2026-07-27 |
 
 ## Key findings
 
@@ -165,15 +169,77 @@ MCP agent layer, CRD design, service binding), and 5 for roadmap
 backlog. See [06-jira-gap](06-jira-gap.md) for the full coverage matrix
 and RFE specifications.
 
+### Deployment is achievable but fragile (deployment lens, 2026-07-27)
+
+The deployment lens (07) maps OpenShell's three topologies to concrete
+environments with prerequisites, Helm values, and operational profiles.
+Nine findings extend strategic-lens knowledge:
+
+- **Sidecar topology (B) is shipping.** The Helm chart exposes
+  `supervisor.topology=sidecar` with strict/relaxed sub-modes. This was
+  described as future in the architecture lens but is now a configurable
+  Helm value.
+- **User namespace support is implemented**
+  (`server.enableUserNamespaces=true`). On K8s 1.33+ this maps container
+  UID 0 to an unprivileged host UID, creating a concrete path to
+  eliminating the privileged SCC -- not just a theoretical mitigation.
+  OpenShift support is a work in progress.
+- **Layered sandboxing validated on OpenShift 4.21.** Red Hat Developer
+  article (Jul 2026) confirms OpenShell + Kata dual protection stops
+  both application-layer and kernel-level attacks. Neither layer
+  interferes with the other.
+- **No official air-gap deployment path exists** (NemoClaw #2218).
+  Practical approach (image/chart/manifest mirroring + internal model
+  endpoints) works but is undocumented.
+- **Gateway API GRPCRoute is the ingress standard**, not K8s Ingress
+  resources or OpenShift Routes. Envoy Gateway OIDC must NOT be
+  enabled alongside OpenShell OIDC (browser-redirect vs bearer-token
+  conflict).
+- **FIPS Phase 1 design specified** (OpenShell #900): feature-flagged
+  aws-lc-rs backend, algorithm restrictions, SSH validation gap deferred
+  to Phase 2. Build toolchain impact: CMake + Go required.
+- **RHOAI integration path**: DP = Helm only, TP = operator for lifecycle,
+  GA = DSC integration. Separate OLM operator is viable (parallels
+  cert-manager/Serverless prerequisite pattern).
+
+### Day-2 operations are immature (operations lens, 2026-07-27)
+
+The operations lens (08) surveys the entire day-2 surface. The gateway
+is functional for evaluation but has significant gaps for production:
+
+- **No HA / leader election** (GitHub #1012 open). The gateway is a
+  single point of failure. Multi-replica with external Postgres works
+  but has no documented HA pattern.
+- **No automated sandbox garbage collection.** Orphaned sandboxes must
+  be cleaned up manually. No TTL-based cleanup or per-tenant quotas.
+- **Gateway log buffer is in-memory only** -- lost on restart. OCSF
+  v1.7.0 structured logging with SIEM export is well-designed but the
+  persistence gap is an operational surprise.
+- **Warm pool feasibility study completed** (#2199) but not yet
+  integrated. Six+ upstream issues track the implementation. Cold start
+  benchmarks not published.
+- **No Vault/KMS integration** for provider credentials. Rotation is
+  manual (`provider update`) or automated for OAuth2/Google/AWS STS
+  only.
+- **No compliance policy templates.** OPA policy authoring, hot-reload,
+  and Policy Advisor (RFC 0002) are well-documented, but no SOC2/HIPAA/
+  FedRAMP template library exists.
+- **OTEL not auto-wired** (#1758, #1818 open). Prometheus metrics
+  endpoint exists but instrumentation is minimal (#909 open).
+
+The operational gaps summary (08 section 11) identifies 12 gaps, 3
+critical (HA, multi-tenancy, FIPS) and 4 high (Vault integration,
+garbage collection, compliance templates, Grafana dashboards).
+
 ## Open question status updates
 
 | Question | Research finding | New status |
 |----------|-----------------|------------|
-| Rust FIPS path | aws-lc-rs provides FIPS 140-3 path; OpenShell #900 proposes it; SSH gap remains | partial-answer |
-| Privileged SCC | Topology B (gVisor/Kata boundary) eliminates CAP_SYS_ADMIN; enterprise consensus: VM boundary is baseline for untrusted code | open (mitigation path confirmed) |
-| Multi-tenancy | Three models (silo/pool/bridge); namespace + per-agent sandbox + shared gateway recommended; no implementation yet | open |
+| Rust FIPS path | aws-lc-rs provides FIPS 140-3 path; OpenShell #900 proposes it; SSH gap remains. Phase 1 design specified with feature flag. | partial-answer |
+| Privileged SCC | Three concrete paths: Topology B (gVisor/Kata), user namespaces (K8s 1.33+, `enableUserNamespaces=true`), sidecar relaxed mode. OpenShell #899 tracks restricted SCC specifically. Layered sandboxing (OpenShell+Kata) validated on OCP 4.21. | open (multiple mitigation paths confirmed) |
+| Multi-tenancy | Three models (silo/pool/bridge); namespace + per-agent sandbox + shared gateway recommended; no implementation yet. Helm chart namespace split (#2485) is prerequisite. Interim: separate gateways per tenant. | open |
 | Declarative config | CRD consensus clear (Agent Sandbox + kagent patterns); layered approach recommended | open (direction clarified) |
-| SKU decision | No new external data; internal decision | open |
+| SKU decision | No new external data; separate OLM operator (paralleling cert-manager) is viable alternative to DSC component. Internal decision. | open |
 
 ## White space opportunities
 
@@ -208,3 +274,17 @@ and RFE specifications.
   model as reference for OpenShell governance layer
 - **ARD specification tracking**: Microsoft's Agentic Resource Discovery
   may become the federated discovery standard
+- ~~**deployment lens**~~: DONE (2026-07-27) -- see
+  [07-deployment](07-deployment.md). 9 new findings: sidecar topology
+  shipping, user namespace SCC path, layered sandboxing validated, no
+  air-gap path, GRPCRoute ingress standard.
+- ~~**operations lens**~~: DONE (2026-07-27) -- see
+  [08-operations](08-operations.md). 12 operational gaps identified,
+  3 critical. HA gap (#1012) and lack of garbage collection are net-new
+  findings not in the prior series.
+- **HA architecture for gateway**: upstream engagement needed (OpenShell
+  #1012) -- single point of failure is a GA blocker
+- **Air-gap deployment guide**: no official path exists -- downstream
+  engineering needed for RHOAI disconnected installs
+- **Warm pool integration tracking**: feasibility study complete
+  (#2199), implementation in progress across 6+ upstream issues
