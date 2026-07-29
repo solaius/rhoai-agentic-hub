@@ -10,6 +10,6 @@ Prompt/agent iteration studio — playground UX, usability research, studio inte
 - [work/](/features/gen-ai-studio/work/)
 
 ## Connections
-- artifact · [MCP 2026-07-28 RC — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
+- artifact · [MCP 2026-07-28 — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator. Originally written against the RC; spec finalized July 28, 2026 with no material changes from RC.
 - jtbd · [Build your first agent with Red Hat AI](/narrative/knowledge/jtbd-onboard-first-agent.md) — When I'm exploring agentic AI, I want to build my first agent with Red Hat AI, so I can validate the platform for my use case — GenAI Studio, Starter Kits, agent templates.
 - story · [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.

@@ -10,3 +10,11 @@ Related: [MCP Gateway](/features/mcp-gateway/index.md) · [MCP Catalog](/feature
 - [strategy/](/features/mcp-lifecycle-operator/strategy/)
 - [enablement/](/features/mcp-lifecycle-operator/enablement/)
 - [work/](/features/mcp-lifecycle-operator/work/)
+
+## Connections
+- fact · [MCP adopts formal feature lifecycle and deprecation policy](/features/mcp-ecosystem/knowledge/fact-mcp-deprecation-policy.md) — MCP 2026-07-28 introduces a formal feature lifecycle (Active/Deprecated/Removed) with a minimum 12-month deprecation window and a deprecated features registry. First batch: Roots, Sampling, Logging, HTTP+SSE transport, includeContext values, DCR.
+- fact · [Multi Round-Trip Requests (MRTR) replaces server-initiated requests in MCP](/features/mcp-ecosystem/knowledge/fact-mcp-mrtr-pattern.md) — MRTR (SEP-2322) eliminates server-to-client requests (sampling, elicitation, roots). Servers return resultType "input_required" with inputRequests; clients retry the original call with inputResponses. Stateless-compatible.
+- fact · [MCP 2026-07-28 specification released -- protocol goes stateless](/features/mcp-ecosystem/knowledge/fact-mcp-spec-2026-07-28-release.md) — The MCP 2026-07-28 spec is final (published July 28, 2026). Transforms MCP from a bidirectional stateful protocol into a stateless request/response protocol. Biggest release since remote MCP launched.
+- reference · [Blog: The 2026-07-28 Specification](/features/mcp-ecosystem/knowledge/ref-mcp-spec-2026-07-28-blog.md) — Anthropic/LF blog post announcing the MCP 2026-07-28 spec release -- stateless protocol, MRTR, header routing, auth hardening, extensions framework, SDK adoption numbers, ecosystem endorsements.
+- reference · [MCP 2026-07-28 Changelog](/features/mcp-ecosystem/knowledge/ref-mcp-spec-2026-07-28-changelog.md) — Full changelog from MCP 2025-11-25 to 2026-07-28 -- 9 major changes, 12 minor changes, 4 deprecations, governance updates.
+- reference · [MCP Specification 2026-07-28](/features/mcp-ecosystem/knowledge/ref-mcp-spec-2026-07-28.md) — The authoritative MCP protocol specification, version 2026-07-28 -- stateless request/response protocol over JSON-RPC 2.0, Streamable HTTP + STDIO transports.
