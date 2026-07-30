@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-07-30
+- **Creation** — fact-rosa-mcp-server-guidance: customer guidance to use Red Hat build of Kubernetes MCP server (not upstream) for ROSA/OCP AI tool connections; confirmed by Calum Murray.
+
 ## 2026-07-16
 - **Update** -- roadmap profile: Agent Registry re-timed (owner) -- work starts 3.6 EA2 at the earliest, multi-release path to DP (~3.7 EA1 directional, no committed GA); deployment clarified as its own workstream consumed by catalog + registry. Published deep-dive corrected same day (64598a8); agent-registry research 00/09 sequencing tables + agent-catalog strategy.md registry row flagged for supersede-note follow-up.
 - **Creation** -- jira(agent-registry): first sweep -- 19-issue scope stored in features.yaml (registry cluster + 1436's RHAI epics + 3 RFEs; ref_types extended with Feature Request), snapshot fully redacted (19/19 summaries withheld), 2 new refs (RHAIRFE-1313 registry UI in stakeholder review; RHAIRFE-2388 surviving metadata-extraction RFE), 2019 spread to agent-registry, restricted account map widened (~6 more named accounts). Cross-partition ref duplication avoided: 6 cluster refs stay under agent-interop with features: spread.

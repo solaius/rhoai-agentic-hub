@@ -17,6 +17,7 @@
 - [MCP 2026-07-28 specification released -- protocol goes stateless](/features/mcp-ecosystem/knowledge/fact-mcp-spec-2026-07-28-release.md) — The MCP 2026-07-28 spec is final (published July 28, 2026). Transforms MCP from a bidirectional stateful protocol into a stateless request/response protocol. Biggest release since remote MCP launched.
 - [OCP MCP Server](/features/mcp-ecosystem/knowledge/fact-ocp-mcp-server.md) — MCP server exposing OpenShift cluster management to AI agents/tools, deployed via the MCP Lifecycle Operator.
 - [Partner MCP Catalog (3.4 DP — completed)](/features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md) — A partner + community MCP server catalog shipped in the RHOAI 3.4 DP catalog for Summit; the business onboarding pipeline, technical bar, and disqualification criteria behind it.
+- [ROSA/OCP MCP Server — Customer Guidance](/features/mcp-ecosystem/knowledge/fact-rosa-mcp-server-guidance.md) — Point customers to the Red Hat build of the Kubernetes MCP server (not upstream) for connecting AI tools to ROSA or any OCP cluster.
 
 ## person
 - [Calum Murray](/features/mcp-ecosystem/knowledge/person-calum-murray.md) — Engineering — Gen MCP / MCP Checker; recurring, pointed voice on RHOAI restricted use entitlement for OpenShift FAQ gaps.
