@@ -6,6 +6,12 @@ lens: requirements
 review_after: 2026-10-23
 ---
 
+> **Superseded by [07-requirements-refresh](/features/skills-catalog/research/07-requirements-refresh.md)
+> (2026-07-30)** for initial content list, partner verification, installation
+> UX, skill cards, evaluations, signature verification, marketplace
+> syndication, and metadata governance. 3.6 scope feasibility, SkillsBench
+> evidence, persona requirements, and golden-path checklist below remain current.
+
 # Skills Catalog research -- requirements and 3.6 scope
 
 ## 1. 3.6 scope feasibility

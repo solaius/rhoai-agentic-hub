@@ -1,126 +1,126 @@
 ---
 title: "Skills Catalog research -- executive summary"
-description: Living synthesis of the 4-lens standard sweep (2026-07-23) -- extend kubeflow/hub not new service, browse-only 3.6 TP feasible, curation beats volume, RHAISTRAT-1940 is existential risk, NVIDIA trust pipeline is the model, no upstream skills catalog exists (first-mover).
-timestamp: 2026-07-23
-review_after: 2026-10-23
+description: Living synthesis of the 7-doc research series (standard 4-lens 2026-07-23 + competitive/architecture/requirements refresh 2026-07-30) -- Konflux SLSA L3 + OCI + MLflow is unique stack; governance-first positioning; 5 competitive gaps to close; supply chain pipeline epic-sized and unplanned; initial content list is Peter's action item; EU AI Act Article 50 enforcement imminent.
+timestamp: 2026-07-30
+review_after: 2026-10-30
 ---
 
 # Skills Catalog research -- executive summary
 
-First research run for the partition: **standard, 4 lenses, 2026-07-23**,
-all lenses completed. No lens gaps to retry.
-
 ## The series
+
+Initial run: **standard, 4 lenses, 2026-07-23** (all completed).
+Refresh: **standard, 3 lenses, 2026-07-30** (competitive new + architecture
+and requirements refreshed after Ann Marie Fred's architectural strategy
+GDoc intake).
 
 | Doc | Lens | One line |
 |---|---|---|
 | [01-upstream](/features/skills-catalog/research/01-upstream.md) | upstream | Kubeflow hub 3-catalog pattern, agentskills.io/AAIF governance, SKILL.md cross-agent matrix, npx CLI, MLflow RFC handoff, ODH ai-helpers |
 | [02-landscape](/features/skills-catalog/research/02-landscape.md) | landscape | 3-layer taxonomy, Git-backed curation, SkillsBench quality data, trust pipelines, ARD v0.9, EU AI Act, supply-chain attacks, governance gap |
-| [03-architecture](/features/skills-catalog/research/03-architecture.md) | architecture | Extend hub vs new service, BFF reuse, disconnected pipeline, source federation, metadata normalization, trust tiers, catalog-to-registry orchestration |
-| [04-requirements](/features/skills-catalog/research/04-requirements.md) | requirements | 3.6 browse-only TP feasible, RHAISTRAT-1940 risk, SkillsBench evidence, RH seed content, instructional install, disconnected constraint, EU AI Act Article 50 |
+| [03-architecture](/features/skills-catalog/research/03-architecture.md) | architecture | Extend hub vs new service, BFF reuse, disconnected pipeline, source federation, metadata normalization, trust tiers, catalog-to-registry orchestration. **Superseded by 06 for supply chain, installer, metadata, OpenShell, and disconnected topics.** |
+| [04-requirements](/features/skills-catalog/research/04-requirements.md) | requirements | 3.6 browse-only TP feasible, RHAISTRAT-1940 risk, SkillsBench evidence, RH seed content, instructional install, disconnected constraint, EU AI Act Article 50. **Superseded by 07 for content list, partner verification, installation UX, skill cards, evals, signing, syndication, metadata governance.** |
+| [05-competitive](/features/skills-catalog/research/05-competitive.md) | competitive | Supply chain security positioning (Konflux vs NVIDIA/JFrog/Snyk/Cisco), feature matrices (14 vendors, 13 dimensions), installer ecosystems, pricing, blind spots, win/loss analysis |
+| [06-architecture-refresh](/features/skills-catalog/research/06-architecture-refresh.md) | architecture | Supply chain pipeline (Konflux CI/CD, three-layer scanning), OCI artifact distribution (strategic convergence), installer architecture, metadata source-of-truth resolution, OpenShell layered sandboxing, NVIDIA trust pipeline reference, disconnected delivery (OCI mirror vs Go git-pull service) |
+| [07-requirements-refresh](/features/skills-catalog/research/07-requirements-refresh.md) | requirements | Initial content list (Peter's action), partner verification program (NVIDIA 8-stage reference), installation UX (7 methods, OCI strategic), skill cards, evaluations, signature verification (Sigstore), marketplace syndication (3.7+), metadata governance (OCI resolves debate), EU AI Act Article 50 (3 days away at time of writing) |
 
 ## What the sweep establishes
 
-**1. No upstream skills catalog exists -- this is a first-mover opportunity
-and risk.** Unlike models (Hugging Face Hub, NVIDIA NGC) or MCP servers
-(Docker MCP Catalog, mcp.directory), there is no established upstream
-catalog for agent skills. skills.sh (Vercel, 669K+ indexed) is a
-lightweight directory, not a governed enterprise catalog. RHOAI's skills
-catalog would be the first enterprise-grade, self-hosted skills
-storefront. The opportunity is differentiation; the risk is no pattern to
-inherit (01, 02).
+**1-3 carry over from the initial sweep (01-04, 2026-07-23).**
+
+**1. No upstream skills catalog exists -- first-mover opportunity and
+risk.** Unlike models or MCP servers, there is no established upstream
+catalog for agent skills. RHOAI's skills catalog would be the first
+enterprise-grade, self-hosted skills storefront. The opportunity is
+differentiation; the risk is no pattern to inherit (01, 02).
 
 **2. Extend kubeflow/hub rather than building a new service.** The hub
-already supports three catalog types (models, MCP servers, agents) with a
-proven extensibility model: OpenAPI-first Go REST server, PostgreSQL
-backend, pluggable CatalogSourceProvider, BFF module in odh-dashboard.
-Adding skills as the fourth type is structurally identical to how MCP
-servers and agents were added. A separate Go + PostgreSQL service (per
-RHAISTRAT-1780) duplicates infrastructure without clear architectural
-justification. The hub extension path is lower risk, lower effort, and
-aligned with upstream trajectory (03).
+already supports three catalog types with a proven extensibility model.
+Adding skills as the fourth type is lower risk, lower effort, and
+aligned with upstream trajectory. Settled (03).
 
-**3. The 3.6 timeline is tight but feasible for a browse-only TP.** 6-7
-two-week sprints to the October 23 code freeze fits the low end of the
-6-9 sprint estimate, but only if scope is held to read-only browse/search
-with pre-loaded content. Installation automation and registry integration
-must be deferred. The MCP Catalog (DP 3.4, TP/GA 3.6) and Agent Catalog
-(DP 3.5, deploy added 3.6 EA1) both shipped MVP as link-out, read-only
-experiences first. Bill Murdock rates catalog confidence at ~90% for 3.6
-(04).
+**3. The 3.6 timeline is tight but feasible for a browse-only TP.**
+6-7 sprints to code freeze, ~90% confidence if scope stays at read-only
+browse/search with pre-loaded content. Installation automation and
+registry integration deferred (04).
 
-**4. RHAISTRAT-1940 (pre-loaded content) is the existential risk.** No PM
-is assigned. Without 15-20 working, curated skills at launch, the catalog
-ships empty. Marketplace research is unanimous: empty catalogs train users
-to bypass them permanently (Port 2025: 3% full trust in portal metadata,
-permanent routing-around on stale data). Red Hat already has seed content
-at redhat.com/skills (Summit 2026 launch: subscription-backed skill packs
-for RHEL, OpenShift, Ansible with live API connections). Converting these
-to catalog entries is the minimum viable content path. PM assignment by
-August 2026 is critical (04).
+**4-10 are new or updated from the 2026-07-30 refresh (05-07).**
 
-**5. Curation beats volume by a measured margin.** SkillsBench
-(Stanford/CMU/Berkeley/Oxford) scored 47,150 public skills: average
-quality 6.2/12, 73% carry elevated safety risk. Curated skills raise
-agent pass rates by +16.2 percentage points; self-generated skills
-provide negligible benefit (-1.3pp). Focused skills with 2-3 modules
-outperform larger bundles (+18.6pp vs +5.9pp). Ship 15-20 high-quality
-working skills, not hundreds of unverified entries (02, 04).
+**4. RHAISTRAT-1940 (pre-loaded content) remains the existential risk,
+and the initial content list is now Peter's action item.** Ann Marie Fred
+tagged Peter Double: "What is the initial list of skills for the
+Catalog?" Catherine Weeks asked who defines what goes public. The
+content decision authority and the RHAISTRAT-1940 PM gap both remain
+unresolved. Without 15-20 working skills at launch, the catalog ships
+empty. Cold-start research confirms: marketplaces that skip single-player
+utility fail 4x more often (04, 07).
 
-**6. SKILL.md is the standard; agentskills.io/AAIF is the governance.**
-The Agent Skills specification is AAIF-governed (Linux Foundation, 170+
-members including Anthropic, OpenAI, Google, Microsoft, AWS). 40+ tools
-support SKILL.md natively. Six major agents parse it (Claude Code, Codex,
-Cursor, Gemini CLI, Cline, OpenCode). Core SKILL.md is fully portable;
-divergence exists only in experimental features (allowed-tools, hooks).
-The catalog should build on this standard (01, 02).
+**5. The Konflux + OCI + MLflow combination is unique -- no competitor
+matches it.** No vendor combines SLSA Level 3 provenance attestation,
+OCI artifact distribution, and open-source ML lifecycle governance in a
+single stack. This is Red Hat's moat. The feature matrix across 14
+vendors and 13 dimensions confirms: AWS has strong RBAC but no
+scanning/signing; Google has governance but no air-gapped story; NVIDIA
+has the best trust pipeline but is not a registry; JFrog has scanning +
+signing but not a catalog UX (05).
 
-**7. Git-backed is the right catalog model for enterprise.** NVIDIA,
-Microsoft, and Kubeflow Hub all use Git-backed catalogs for vendor-curated
-content. GitOps-native, auditable history, works in disconnected
-environments (mirror the repo). The kubeflow/hub YAML catalog source
-pattern is the direct implementation vehicle. Day-1 source types: YAML
-(disconnected-safe) and admin-uploaded ConfigMap. Day-2: Git repo polling
-(connected-only). Future: ARD registries, Hugging Face skills (01, 03).
+**6. Supply chain security is table stakes -- Red Hat's differentiation
+is SLSA L3 provenance, not scanning.** Every serious vendor now scans,
+signs, or both. NVIDIA (SkillSpector, 68 patterns), JFrog (scan-verify-
+sign, Gartner Leader), Snyk (agent-scan, MDM mode), and Cisco
+(DefenseClaw, 5 OSS components) all have production-ready offerings.
+Red Hat's Konflux adds what nobody else has: SLSA Level 3 provenance
+via Tekton Chains, hermetic builds, multi-arch (x86/ARM/PPC/Z), and
+Conforma policy gating. **But the Konflux skills pipeline is not yet
+planned -- it is epic-sized.** Close the scanning gap immediately by
+integrating SkillSpector or Snyk agent-scan as a Tekton task (05, 06).
 
-**8. Trust pipeline is table stakes for enterprise.** ClawHavoc (1,184
-malicious skills on ClawHub, 8.5% infection rate), Snyk ToxicSkills (36%
-of skills had security flaws, 76 confirmed credential-stealing payloads),
-and SkillsBench (73% elevated safety risk) prove the cost of no
-governance. NVIDIA's trust pipeline (SkillSpector scanning, OMS signing,
-skill cards, Skill Evaluator) is the reference implementation. JFrog
-partnered with NVIDIA at GTC 2026. Trust tiers (Red Hat/Partner/
-Organization/Community) with visible verification status are a hard
-enterprise requirement (02, 03).
+**7. OCI artifact distribution is the strategic convergence point.** It
+reuses existing container infrastructure (Quay stores, oc-mirror mirrors,
+cosign signs, Konflux builds). It eliminates the need for a separate Go
+git-pull service for disconnected delivery. It resolves the metadata
+governance debate: inherent metadata (SKILL.md frontmatter) inside the
+artifact, external metadata (signatures, attestations, eval scores) via
+OCI Referrers API. The OCI spec for skills exists (Thomas Vitale v0.1.0,
+April 2026) with reference implementations (Arconia CLI, skills-oci,
+skillctl). RHOAI should build on this (06, 07).
 
-**9. EU AI Act compliance is a tailwind.** Article 50 transparency
-obligations take effect August 2, 2026. Skills that generate user-facing
-outputs trigger disclosure requirements. Catalog metadata should flag
-user-interaction scope per skill for downstream compliance. The high-risk
-deadline was deferred to December 2027 (Annex III), but traceability,
-risk management, and human oversight requirements are unchanged. A catalog
-with skill cards, signing, and load-time logging directly supports
-compliance (02, 04).
+**8. The installer question is partially resolved.** Two paths: admin
+installs via OCI pull from Quay/mirror (RHOAI-managed), developer
+installs via npx/git (unmanaged). The hard question remains: where does
+the installed skill land in the agent runtime filesystem? For 3.6 TP,
+instructional UX (copy-paste commands) is correct. LOLA has no active
+maintainers and should be deprioritized. APM (Microsoft) is the package
+manager to watch for enterprise adoption (06, 07).
 
-**10. The governance gap is the market opportunity.** 96% of enterprises
-run AI agents in production; only 12% can govern them (OutSystems 2026).
-82% have agent workflows their security teams did not know about. Every
-major cloud shipped governance tooling in 2026 (AWS AgentCore, Azure
-Agent 365, Google Gemini Enterprise, Databricks Unity AI). A skills
-catalog with built-in trust signals, curation, and integration with the
-MLflow governance registry addresses the gap limiting enterprise agent
-adoption (02, 04).
+**9. Governance-first positioning wins.** 96% of enterprises run agents;
+12% can govern them. Position the skills catalog as governance-first,
+not discovery-first. This means trust tiers, signing status, and
+compliance metadata are the primary UI elements, not just search and
+browse. EU AI Act Article 50 transparency obligations took effect
+August 2, 2026 -- skills generating user-facing outputs are in scope.
+Catalog metadata should flag `eu_ai_act_scope` (05, 07).
+
+**10. Five competitive gaps to close before TP.**
+1. Skills-specific scanning (integrate SkillSpector or agent-scan into
+   Konflux as a Tekton task)
+2. Skill cards / compliance metadata (define a Red Hat Skill Card format
+   with SLSA provenance, scan results, quality metrics, compliance tags)
+3. Developer install UX (`npx skills add` is one command; RHOAI's
+   OCI-based install needs a CLI wrapper)
+4. Runtime policy enforcement (AWS Cedar, Google semantic governance, and
+   Databricks service policies enforce at runtime; RHOAI needs equivalent
+   gates, potentially through MCP Gateway)
+5. Ecosystem breadth (Red Hat's catalog is small vs Azure 193, AWS 43
+   packs, community 600K+; the content list action item is critical)
 
 ## Recommended follow-ups (not auto-run)
 
-- **competitive lens** -- the intake competitive landscape is solid but
-  a focused competitive analysis could go deeper on pricing, feature
-  matrices, and win/loss positioning. Retry:
-  `hub.research skills-catalog competitive`.
 - **jira-gap lens** -- once a Jira scope is stored for skills-catalog
   (via hub.jira-sweep), crossing active work against these findings
   would surface blind spots. Retry:
   `hub.research skills-catalog jira-gap`.
 - **hub.strategy skills-catalog** -- the living strategy doc synthesizes
   this research series + knowledge + Jira scope into the WHAT/WHY, gaps
-  and risks, and watchlist.
+  and risks, and watchlist. The series is now deep enough to support a
+  strong strategy doc.

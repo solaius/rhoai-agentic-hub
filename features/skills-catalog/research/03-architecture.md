@@ -6,6 +6,12 @@ lens: architecture
 review_after: 2026-10-23
 ---
 
+> **Superseded by [06-architecture-refresh](/features/skills-catalog/research/06-architecture-refresh.md)
+> (2026-07-30)** for supply chain pipeline, installer architecture,
+> metadata source-of-truth, OpenShell integration, NVIDIA reference impl,
+> and disconnected delivery. Hub extension pattern, BFF reuse, source
+> federation, and trust tier analysis below remain current.
+
 # Skills Catalog research -- architecture and integration patterns
 
 ## 1. RHOAI platform baseline
