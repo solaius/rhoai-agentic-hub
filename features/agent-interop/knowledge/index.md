@@ -20,7 +20,7 @@
 
 ## person
 - [Adel Zaalouk](/features/agent-interop/knowledge/person-adel-zaalouk.md) — Product Manager, Agentic AI, AI BU -- driving OpenShell convergence, owns agent-interop strategy and field alignment.
-- [Ann Marie Fred](/features/agent-interop/knowledge/person-ann-marie-fred.md) — AAET Chief Architect -- driving OpenShell alignment, cross-BU coordination.
+- [Ann Marie Fred](/features/agent-interop/knowledge/person-ann-marie-fred.md) — AAET Chief Architect -- driving OpenShell alignment, cross-BU coordination, and skills ecosystem architectural strategy.
 - [Derek Carr](/features/agent-interop/knowledge/person-derek-carr.md) — Red Hat OpenShell Lead -- upstream community alignment, contribution coordination.
 - [Dimitri Saridakis](/features/agent-interop/knowledge/person-dimitri-saridakis.md) — AgentOps Engineering Manager -- pragmatic, team was on Kagenti but pivoting to OpenShell.
 - [Gordon Sim](/features/agent-interop/knowledge/person-gordon-sim.md) — Staff Engineer, Agent Identity -- contributing SPIFFE/identity work to OpenShell, closing the identity gap from Kagenti.

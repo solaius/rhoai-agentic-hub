@@ -12,4 +12,5 @@ Related: [Skills Registry](/features/skills-registry/index.md) · [Agent Catalog
 - [work/](/features/skills-catalog/work/)
 
 ## Connections
+- person · [Ann Marie Fred](/features/agent-interop/knowledge/person-ann-marie-fred.md) — AAET Chief Architect -- driving OpenShell alignment, cross-BU coordination, and skills ecosystem architectural strategy.
 - fact · [Ramesh's position -- skills need no governance; governance at agent level](/features/skills-registry/knowledge/fact-ramesh-skills-governance-position.md) — Ramesh argues skills are static resources with no behavior/deployment, needing no governance layer; governance belongs at agent create/deploy/execute level; registry value is lower than catalog value for skills specifically.
