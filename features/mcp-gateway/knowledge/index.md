@@ -16,6 +16,8 @@
 - [John Graham](/features/mcp-gateway/knowledge/person-john-graham.md) — Engineering Director, RHAI — signatory of the RHOAI-RHCL internal support agreement.
 
 ## question
+- [Should EMA (Enterprise Managed Authorization) be added to the Gateway roadmap?](/features/mcp-gateway/knowledge/question-ema-enterprise-auth-roadmap.md) — EMA is now a stable MCP extension for centralized IdP-managed MCP access (ID-JAG tokens, RFC 8693). Not on any RHOAI roadmap. AWS AgentCore and ToolHive Enterprise already support centralized IdP. Decision D5 by Oct 2026.
+- [Which Gateway GA line items need re-scoping after MCP 2026-07-28?](/features/mcp-gateway/knowledge/question-gateway-ga-deprecated-capabilities.md) — Three Gateway GA roadmap items reference capabilities that are deprecated or removed in MCP 2026-07-28 -- resumable session management (sessions removed), sampling (deprecated, 12-month window), and elicitation (replaced by MRTR). Decisions D1-D3 needed by Aug 2026.
 - [How should registry state inform gateway behavior?](/features/mcp-gateway/knowledge/question-registry-state-gateway-behavior.md) — Open question on how MCP Registry governance state (e.g. approval/certification) should feed into MCP Gateway routing/enforcement decisions.
 
 ## reference
