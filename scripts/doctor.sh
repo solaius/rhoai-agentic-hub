@@ -14,13 +14,73 @@ note() { echo "        $1"; }   # follow-on detail; no counter
 
 echo "== hub.doctor ($MODE) — $ROOT"
 
-echo "[1] python + deps"
-if python -c "import yaml, pytest, httpx" 2>/dev/null; then
-  ok "python + pyyaml + pytest + httpx"
-elif [ "$MODE" = "setup" ]; then
-  pip install -r "$ROOT/scripts/requirements.txt" && ok "deps installed" || fail "pip install failed"
+detect_platform() {
+  case "$OSTYPE" in
+    darwin*)  PLATFORM="macos" ;;
+    linux*)
+      if [ -f /etc/fedora-release ]; then PLATFORM="fedora"
+      elif [ -f /etc/redhat-release ]; then PLATFORM="rhel"
+      else PLATFORM="linux"
+      fi ;;
+    msys*|cygwin*|mingw*) PLATFORM="windows" ;;
+    *)        PLATFORM="unknown" ;;
+  esac
+}
+detect_platform
+
+echo "[0] venv bootstrap"
+SYS_PY=""
+# On Windows, `python` is the real binary; `python3` is often the Microsoft
+# Store alias stub that prints a "not found" error despite command -v passing.
+# On macOS/Linux, `python3` is the standard name. Try the right one first,
+# and verify it actually runs (the Store stub passes command -v but fails --version).
+if [ "$PLATFORM" = "windows" ]; then
+  for _try in python python3; do
+    if command -v "$_try" >/dev/null 2>&1 && "$_try" --version >/dev/null 2>&1; then
+      SYS_PY="$_try"; break
+    fi
+  done
 else
-  fail "missing python deps — run: pip install -r scripts/requirements.txt (or doctor setup)"
+  for _try in python3 python; do
+    if command -v "$_try" >/dev/null 2>&1 && "$_try" --version >/dev/null 2>&1; then
+      SYS_PY="$_try"; break
+    fi
+  done
+fi
+if [ -z "$SYS_PY" ]; then
+  case "$PLATFORM" in
+    macos)           fail "python3 not found, install: brew install python3" ;;
+    fedora|rhel)     fail "python3 not found, install: sudo dnf install python3" ;;
+    windows)         fail "python not found, install: winget install Python.Python.3.12" ;;
+    *)               fail "python3/python not found, install python 3.10+" ;;
+  esac
+else
+  if [ ! -d "$ROOT/.venv" ]; then
+    "$SYS_PY" -m venv "$ROOT/.venv" && ok "created .venv/ (using $SYS_PY)" || fail "could not create .venv/"
+  fi
+  case "$PLATFORM" in
+    windows) PYTHON="$ROOT/.venv/Scripts/python" ;;
+    *)       PYTHON="$ROOT/.venv/bin/python" ;;
+  esac
+  if ! "$PYTHON" -c "import yaml, pytest, httpx" 2>/dev/null; then
+    if "$PYTHON" -m pip install -q -r "$ROOT/scripts/requirements.txt"; then
+      ok "venv deps installed"
+    else
+      fail "pip install into .venv/ failed"
+    fi
+  else
+    ok "venv ready ($PYTHON)"
+  fi
+fi
+# Guard: if SYS_PY was empty we could not create a venv, so PYTHON is unset.
+# Sections below reference $PYTHON, so default it to avoid set -u failures.
+PYTHON="${PYTHON:-python}"
+
+echo "[1] python + deps"
+if "$PYTHON" -c "import yaml, pytest, httpx" 2>/dev/null; then
+  ok "python + pyyaml + pytest + httpx"
+else
+  fail "python deps not importable (venv bootstrap may have failed above)"
 fi
 
 echo "[2] marketplace wiring + plugin installs"
@@ -44,16 +104,7 @@ PLUGROOT="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins"
 INSTALLED_JSON="$PLUGROOT/installed_plugins.json"
 MISSING_PLUGINS=""
 if [ -f "$SETTINGS" ]; then
-  while IFS= read -r plug; do
-    plug="${plug%$'\r'}"   # Windows python prints \r\n; a kept \r breaks the grep
-    [ -z "$plug" ] && continue
-    if [ -f "$INSTALLED_JSON" ] && grep -qF "\"$plug\"" "$INSTALLED_JSON"; then
-      ok "plugin installed: $plug"
-    else
-      MISSING_PLUGINS="$MISSING_PLUGINS $plug"
-      fail "plugin enabled but NOT installed: $plug (its skills won't exist in Claude Code)"
-    fi
-  done < <(python - "$SETTINGS" <<'PY'
+  PLUGIN_LIST=$("$PYTHON" - "$SETTINGS" <<'PY'
 import json, sys
 try:
     d = json.load(open(sys.argv[1]))
@@ -64,6 +115,16 @@ for name, enabled in (d.get("enabledPlugins") or {}).items():
         print(name)
 PY
 )
+  while IFS= read -r plug; do
+    plug="${plug%$'\r'}"   # Windows python prints \r\n; a kept \r breaks the grep
+    [ -z "$plug" ] && continue
+    if [ -f "$INSTALLED_JSON" ] && grep -qF "\"$plug\"" "$INSTALLED_JSON"; then
+      ok "plugin installed: $plug"
+    else
+      MISSING_PLUGINS="$MISSING_PLUGINS $plug"
+      fail "plugin enabled but NOT installed: $plug (its skills won't exist in Claude Code)"
+    fi
+  done <<< "$PLUGIN_LIST"
 fi
 if [ -n "$MISSING_PLUGINS" ]; then
   # Precondition for the interactive install: can this machine clone from
@@ -90,7 +151,7 @@ fi
 echo "[3] auto-memory scratch redirect"
 SCRATCH="$ROOT/memory/.scratch"
 LOCAL="$ROOT/.claude/settings.local.json"
-if [ -f "$LOCAL" ] && python - "$LOCAL" "$SCRATCH" <<'PY'
+if [ -f "$LOCAL" ] && "$PYTHON" - "$LOCAL" "$SCRATCH" <<'PY'
 import json, sys, pathlib
 data = json.load(open(sys.argv[1]))
 cur = data.get("autoMemoryDirectory", "")
@@ -100,7 +161,7 @@ then
   ok "autoMemoryDirectory -> memory/.scratch"
 elif [ "$MODE" = "setup" ]; then
   mkdir -p "$SCRATCH"
-  if python - "$LOCAL" "$SCRATCH" <<'PY'
+  if "$PYTHON" - "$LOCAL" "$SCRATCH" <<'PY'
 import json, os, sys
 path, want = sys.argv[1], sys.argv[2]
 data = {}
@@ -148,7 +209,7 @@ elif [ -f "$ENV_FILE" ]; then
   # Capture output + exit status (stderr merged in) instead of streaming a
   # discarded-stderr process substitution: a crashing CLI must WARN, not
   # silently move zero counters while doctor still prints 0 fail.
-  ENV_OUT="$(python "$ROOT/scripts/hub_env.py" $ENV_MODE 2>&1)"
+  ENV_OUT="$("$PYTHON" "$ROOT/scripts/hub_env.py" $ENV_MODE 2>&1)"
   ENV_STATUS=$?
   if [ $ENV_STATUS -ne 0 ] || [ -z "$ENV_OUT" ]; then
     warn "hub_env.py $ENV_MODE did not run (exit $ENV_STATUS) - run by hand to diagnose: python scripts/hub_env.py $ENV_MODE"
@@ -177,7 +238,7 @@ elif [ -f "$ENV_FILE" ]; then
   # Live probe (backlog #19's Jira slice): presence is not validity. WARN,
   # not FAIL - offline machines must still pass the doctor.
   if [ -n "${JIRA_SERVER:-}" ] && [ -n "${JIRA_TOKEN:-}" ]; then
-    if python "$ROOT/scripts/hub_jira.py" --check >/dev/null 2>&1; then
+    if "$PYTHON" "$ROOT/scripts/hub_jira.py" --check >/dev/null 2>&1; then
       ok "jira reachable (hub_jira --check)"
     else
       warn "jira unreachable or auth failed - run: python scripts/hub_jira.py --check (expired JIRA_TOKEN? offline?)"
@@ -195,8 +256,8 @@ else
 fi
 
 echo "[6] structure"
-if python "$ROOT/scripts/hub_lint.py" >/dev/null; then ok "hub_lint: 0 errors"; else fail "hub_lint errors — run: python scripts/hub_lint.py"; fi
-if python "$ROOT/scripts/hub_index.py" --check >/dev/null; then ok "indexes fresh"; else warn "indexes stale — run: python scripts/hub_index.py"; fi
+if "$PYTHON" "$ROOT/scripts/hub_lint.py" >/dev/null; then ok "hub_lint: 0 errors"; else fail "hub_lint errors — run: python scripts/hub_lint.py"; fi
+if "$PYTHON" "$ROOT/scripts/hub_index.py" --check >/dev/null; then ok "indexes fresh"; else warn "indexes stale — run: python scripts/hub_index.py"; fi
 
 echo "[7] customer tracker (rhai-tracker MCP)"
 # Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 5
@@ -235,7 +296,7 @@ fi
 # the .mcp.json line in .gitignore). Idempotent: an unchanged path is a
 # no-op OK, never a rewrite.
 if [ -f "$SERVER_JS" ]; then
-  RESULT=$(python - "$ROOT/.mcp.json" "$SERVER_JS" "$MODE" <<'PY'
+  RESULT=$("$PYTHON" - "$ROOT/.mcp.json" "$SERVER_JS" "$MODE" <<'PY'
 import json, os, shutil, sys
 p, server, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 try:
@@ -268,7 +329,7 @@ PY
   esac
   # Also register in Cursor's project-scoped config if .cursor/ exists
   if [ -d "$ROOT/.cursor" ]; then
-    CURSOR_RESULT=$(python - "$ROOT/.cursor/mcp.json" "$SERVER_JS" "$MODE" <<'PY'
+    CURSOR_RESULT=$("$PYTHON" - "$ROOT/.cursor/mcp.json" "$SERVER_JS" "$MODE" <<'PY'
 import json, os, shutil, sys
 p, server, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 try:
@@ -340,15 +401,7 @@ echo "[8] Claude MCP servers (slack + google-workspace)"
 CFG="${CLAUDE_CONFIG_DIR:+$CLAUDE_CONFIG_DIR/}"; CFG="${CFG:-$HOME/}.claude.json"
 [ -f "$CFG" ] || CFG="$HOME/.claude.json"
 note "target config: $CFG (profile-dependent — see docs/mcp-servers.md)"
-while IFS=$'\t' read -r kind msg; do
-  case "$kind" in
-    ok)    ok "$msg" ;;
-    wrote) ok "$msg (restart Claude Code)" ;;
-    warn)  warn "$msg" ;;
-    fail)  fail "$msg" ;;
-    *)     [ -n "${kind:-}" ] && warn "could not evaluate Claude config (python error?)" ;;
-  esac
-done < <(ROOT="$ROOT" python - "$CFG" "$MODE" <<'PY'
+MCP_RESULT=$(ROOT="$ROOT" "$PYTHON" - "$CFG" "$MODE" <<'PY'
 import json, os, shutil, sys
 cfg, mode = sys.argv[1], sys.argv[2]
 try:
@@ -416,6 +469,15 @@ if os.path.isdir(cursor_dir):
 for kind, msg in report: print(f"{kind}\t{msg}")
 PY
 )
+while IFS=$'\t' read -r kind msg; do
+  case "$kind" in
+    ok)    ok "$msg" ;;
+    wrote) ok "$msg (restart Claude Code)" ;;
+    warn)  warn "$msg" ;;
+    fail)  fail "$msg" ;;
+    *)     [ -n "${kind:-}" ] && warn "could not evaluate Claude config (python error?)" ;;
+  esac
+done <<< "$MCP_RESULT"
 
 echo "[9] slack MCP runtime (podman) + auth probe"
 # Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 7.
@@ -434,7 +496,7 @@ IMG="quay.io/redhat-ai-tools/slack-mcp"
 SLACK_WANTED=0
 [ -n "${SLACK_XOXC_TOKEN:-}" ] && SLACK_WANTED=1
 if [ "$SLACK_WANTED" = 0 ] && [ -f "$CFG" ]; then
-  python -c 'import json,sys;d=json.load(open(sys.argv[1]));sys.exit(0 if "slack" in d.get("mcpServers",{}) else 1)' "$CFG" 2>/dev/null && SLACK_WANTED=1
+  "$PYTHON" -c 'import json,sys;d=json.load(open(sys.argv[1]));sys.exit(0 if "slack" in d.get("mcpServers",{}) else 1)' "$CFG" 2>/dev/null && SLACK_WANTED=1
 fi
 if [ "$SLACK_WANTED" = 0 ]; then
   note "slack MCP not configured and no SLACK_XOXC_TOKEN — skipping podman checks"
@@ -448,11 +510,11 @@ else
     warn "no SLACK_XOXC_TOKEN in this shell/restricted/.env — slack needs fresh session tokens (docs/mcp-servers.md)"
   fi
 
-  # Locate the engine CLI: PATH first, then the known Windows install path
-  # so a stale shell PATH doesn't masquerade as "not installed".
+  # Locate the engine CLI: PATH first, then (on Windows only) the known
+  # install path so a stale shell PATH doesn't masquerade as "not installed".
   PODMAN=""; PODMAN_ONPATH=0
   if command -v podman >/dev/null 2>&1; then PODMAN="podman"; PODMAN_ONPATH=1
-  else
+  elif [ "$PLATFORM" = "windows" ]; then
     for cand in "/c/Program Files/RedHat/Podman/podman.exe" \
                 "${PROGRAMFILES:-/c/Program Files}/RedHat/Podman/podman.exe" \
                 "${ProgramW6432:-}/RedHat/Podman/podman.exe"; do
@@ -461,46 +523,66 @@ else
   fi
 
   if [ -z "$PODMAN" ]; then
-    DESKTOP=""
-    for dsk in "/c/Program Files/Podman Desktop/Podman Desktop.exe" \
-               "${PROGRAMFILES:-/c/Program Files}/Podman Desktop/Podman Desktop.exe"; do
-      [ -f "$dsk" ] && { DESKTOP="$dsk"; break; }
-    done
-    if [ -n "$DESKTOP" ]; then
-      fail "Podman Desktop is installed but the podman ENGINE (CLI) is not — the GUI alone can't run the slack MCP"
+    # On Windows, check for Podman Desktop without the engine (common trap).
+    if [ "$PLATFORM" = "windows" ]; then
+      DESKTOP=""
+      for dsk in "/c/Program Files/Podman Desktop/Podman Desktop.exe" \
+                 "${PROGRAMFILES:-/c/Program Files}/Podman Desktop/Podman Desktop.exe"; do
+        [ -f "$dsk" ] && { DESKTOP="$dsk"; break; }
+      done
+      if [ -n "$DESKTOP" ]; then
+        fail "Podman Desktop is installed but the podman ENGINE (CLI) is not, the GUI alone can't run the slack MCP"
+      else
+        fail "podman not installed (the slack MCP runs 'podman run ... $IMG')"
+      fi
     else
-      fail "podman not installed (the slack MCP runs 'podman run … $IMG')"
+      fail "podman not installed (the slack MCP runs 'podman run ... $IMG')"
     fi
-    note "install the engine in an ADMIN shell (winget's UAC prompt fails silently from here):"
-    note "  winget install --id RedHat.Podman -e --accept-source-agreements --accept-package-agreements"
-    note "then re-run 'bash scripts/doctor.sh setup' to start the machine and pre-pull the image"
+    case "$PLATFORM" in
+      macos)
+        note "install: brew install podman && podman machine init && podman machine start" ;;
+      fedora|rhel|linux)
+        note "install: sudo dnf install podman (runs rootless, no machine needed)" ;;
+      *)
+        note "install the engine in an ADMIN shell (winget's UAC prompt fails silently from here):"
+        note "  winget install --id RedHat.Podman -e --accept-source-agreements --accept-package-agreements"
+        note "then re-run 'bash scripts/doctor.sh setup' to start the machine and pre-pull the image" ;;
+    esac
   else
     if [ "$PODMAN_ONPATH" = 1 ]; then
       ok "podman engine on PATH ($("$PODMAN" --version 2>/dev/null))"
     else
-      ok "podman engine installed ($("$PODMAN" --version 2>/dev/null)) — not on THIS shell's PATH yet (a restarted Claude Code will resolve it)"
+      ok "podman engine installed ($("$PODMAN" --version 2>/dev/null)), not on THIS shell's PATH yet (a restarted Claude Code will resolve it)"
     fi
 
-    # Machine state: running is ideal; stopped -> start it in setup; none ->
-    # 'machine init' is interactive/heavy (downloads a WSL VM image), manual.
+    # Machine state: on Linux (fedora/rhel/linux), podman runs rootless
+    # natively with no machine needed, so skip straight to the image check.
+    # On macOS and Windows, a VM-backed machine is required.
     MACHINE_UP=0
-    RUNNING=$("$PODMAN" machine list --format '{{.Running}}' 2>/dev/null | grep -ci true || true)
-    HAVE_MACHINE=$("$PODMAN" machine list --format '{{.Name}}' 2>/dev/null | grep -c . || true)
-    if [ "${RUNNING:-0}" -ge 1 ]; then
-      ok "podman machine running"; MACHINE_UP=1
-    elif [ "${HAVE_MACHINE:-0}" -ge 1 ]; then
-      if [ "$MODE" = "setup" ]; then
-        if "$PODMAN" machine start >/dev/null 2>&1; then
-          ok "podman machine started (restart Claude Code)"; MACHINE_UP=1
+    case "$PLATFORM" in
+      fedora|rhel|linux)
+        ok "podman runs rootless natively (no machine needed)"; MACHINE_UP=1 ;;
+      *)
+        # Machine state: running is ideal; stopped -> start it in setup; none ->
+        # 'machine init' is interactive/heavy (downloads a VM image), manual.
+        RUNNING=$("$PODMAN" machine list --format '{{.Running}}' 2>/dev/null | grep -ci true || true)
+        HAVE_MACHINE=$("$PODMAN" machine list --format '{{.Name}}' 2>/dev/null | grep -c . || true)
+        if [ "${RUNNING:-0}" -ge 1 ]; then
+          ok "podman machine running"; MACHINE_UP=1
+        elif [ "${HAVE_MACHINE:-0}" -ge 1 ]; then
+          if [ "$MODE" = "setup" ]; then
+            if "$PODMAN" machine start >/dev/null 2>&1; then
+              ok "podman machine started (restart Claude Code)"; MACHINE_UP=1
+            else
+              fail "podman machine start failed (run '$PODMAN machine start' by hand to see why)"
+            fi
+          else
+            fail "podman machine is stopped, run: bash scripts/doctor.sh setup (or: podman machine start)"
+          fi
         else
-          fail "podman machine start failed (run '$PODMAN machine start' by hand to see why)"
-        fi
-      else
-        fail "podman machine is stopped — run: bash scripts/doctor.sh setup (or: podman machine start)"
-      fi
-    else
-      fail "no podman machine exists — run interactively: podman machine init && podman machine start"
-    fi
+          fail "no podman machine exists, run interactively: podman machine init && podman machine start"
+        fi ;;
+    esac
 
     # Image: pre-pull in setup so the first Slack call isn't a slow pull.
     if "$PODMAN" image exists "$IMG" 2>/dev/null; then
@@ -530,7 +612,7 @@ if [ "$SLACK_WANTED" = 1 ]; then
   # Capture output + exit status (stderr merged in) instead of streaming a
   # discarded-stderr process substitution: a crashing CLI must WARN, not
   # silently move zero counters while doctor still prints 0 fail.
-  SLACK_OUT="$(python "$ROOT/scripts/hub_slack.py" --check 2>&1)"
+  SLACK_OUT="$("$PYTHON" "$ROOT/scripts/hub_slack.py" --check 2>&1)"
   SLACK_STATUS=$?
   if [ $SLACK_STATUS -ne 0 ] || [ -z "$SLACK_OUT" ]; then
     warn "hub_slack.py --check did not run (exit $SLACK_STATUS) - run by hand to diagnose: python scripts/hub_slack.py --check"
@@ -558,17 +640,23 @@ case "$HOOKS_DIR" in
   *) HOOKS_DIR="$ROOT/$HOOKS_DIR" ;;
 esac
 HOOK="${HOOKS_DIR:+$HOOKS_DIR/pre-commit}"
-HOOK_MARKER="# hub-doctor pre-commit v1"
+HOOK_MARKER="# hub-doctor pre-commit v2"
 write_hook() {
   mkdir -p "$HOOKS_DIR" && cat > "$HOOK" <<'HOOKEOF' && chmod +x "$HOOK"
 #!/bin/sh
-# hub-doctor pre-commit v1 — installed by scripts/doctor.sh setup
-python scripts/hub_lint.py && python scripts/hub_index.py --check
+# hub-doctor pre-commit v2 — installed by scripts/doctor.sh setup
+# Use the venv python if available (cross-platform), fall back to python3/python.
+if [ -x .venv/bin/python ]; then PY=.venv/bin/python
+elif [ -x .venv/Scripts/python ]; then PY=.venv/Scripts/python
+elif command -v python3 >/dev/null 2>&1; then PY=python3
+else PY=python
+fi
+$PY scripts/hub_lint.py && $PY scripts/hub_index.py --check
 status=$?
 if [ $status -ne 0 ]; then
   echo ""
   echo "pre-commit: hub gate failed."
-  echo "  stale indexes     -> python scripts/hub_index.py"
+  echo "  stale indexes     -> $PY scripts/hub_index.py"
   echo "  deliberate bypass -> git commit --no-verify"
 fi
 exit $status
@@ -636,8 +724,12 @@ if command -v git-crypt >/dev/null 2>&1; then
     warn "restricted/ is locked — run: bash scripts/doctor.sh setup (needs key at $KEYFILE)"
   fi
 else
-  warn "git-crypt not installed — restricted/ files cannot be decrypted on this machine"
-  note "install: choco install git-crypt (or scoop install git-crypt)"
+  warn "git-crypt not installed, restricted/ files cannot be decrypted on this machine"
+  case "$PLATFORM" in
+    macos)   note "install: brew install git-crypt" ;;
+    fedora|rhel|linux) note "install: sudo dnf install git-crypt" ;;
+    *)       note "install: choco install git-crypt (or scoop install git-crypt)" ;;
+  esac
 fi
 
 echo "== result: $PASS ok, $WARN warn, $FAIL fail"

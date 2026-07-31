@@ -88,6 +88,42 @@ authenticate once per machine. Persistent auth errors → delete that
 directory and re-authenticate. "API not enabled" / "forbidden" on one tool →
 enable the corresponding API in the Google Cloud console.
 
+### GCP OAuth setup from scratch
+
+If you do not have access to the existing shared OAuth client (its
+credentials live in `restricted/.env` on any set-up machine), create your
+own:
+
+1. Go to [console.cloud.google.com](https://console.cloud.google.com) and
+   create a new project (or reuse an existing one).
+2. Navigate to **APIs & Services > Credentials** and create an **OAuth
+   Client ID** with application type **Desktop Application**.
+3. Enable the following APIs for your project (APIs & Services > Library):
+   - [Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+   - [Drive API](https://console.cloud.google.com/apis/library/drive.googleapis.com)
+   - [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+   - [Docs API](https://console.cloud.google.com/apis/library/docs.googleapis.com)
+   - [Sheets API](https://console.cloud.google.com/apis/library/sheets.googleapis.com)
+   - [Slides API](https://console.cloud.google.com/apis/library/slides.googleapis.com)
+   - [Forms API](https://console.cloud.google.com/apis/library/forms.googleapis.com)
+   - [Tasks API](https://console.cloud.google.com/apis/library/tasks.googleapis.com)
+   - [People API](https://console.cloud.google.com/apis/library/people.googleapis.com) (used for Chat/Contacts)
+   - [Apps Script API](https://console.cloud.google.com/apis/library/script.googleapis.com)
+4. Configure the **OAuth consent screen** (APIs & Services > OAuth consent
+   screen):
+   - **Internal** if your Google account belongs to a Workspace organization
+     (e.g. `@redhat.com`). This skips the verification requirement.
+   - **External** if using a personal Gmail account. You will need to add
+     your email as a test user until the app is verified.
+5. Copy the **Client ID** and **Client Secret** from the Credentials page,
+   then add them to `restricted/.env`:
+   ```
+   GOOGLE_OAUTH_CLIENT_ID=<your client id>
+   GOOGLE_OAUTH_CLIENT_SECRET=<your client secret>
+   ```
+6. Re-run `bash scripts/doctor.sh setup` to write the updated credentials
+   into the Claude config, then restart Claude Code.
+
 ## Slack MCP
 
 [slack-mcp](https://github.com/redhat-ai-tools/slack-mcp) runs as a
@@ -114,12 +150,35 @@ the Claude config use the `SLACK_MCP_`-less names `SLACK_XOXC_TOKEN` /
 `bash scripts/doctor.sh setup` (or edit the Claude config by hand) and
 restart Claude Code.
 
-### 2. Podman engine (Desktop is not enough)
+### 2. Podman engine
 
-Podman **Desktop** (the GUI) does not ship `podman.exe` — with only the
-Desktop app installed, the config looks fine and the MCP silently never
-loads. Install the **engine** from an **Administrator** terminal (the UAC
-prompt fails silently from a non-elevated shell):
+The Slack MCP container needs the podman **engine** (the CLI), not just
+Podman Desktop. Install per platform:
+
+**macOS (Homebrew):**
+
+```bash
+brew install podman
+podman machine init && podman machine start
+podman pull quay.io/redhat-ai-tools/slack-mcp     # optional: pre-pull so first use is fast
+```
+
+**Fedora/RHEL:**
+
+Podman is usually pre-installed. No `podman machine` is needed (podman runs
+rootless natively on Linux).
+
+```bash
+sudo dnf install podman                           # only if not already present
+podman pull quay.io/redhat-ai-tools/slack-mcp     # optional: pre-pull so first use is fast
+```
+
+**Windows:**
+
+Podman **Desktop** (the GUI) does not ship `podman.exe`. With only Desktop
+installed, the config looks fine and the MCP silently never loads. Install the
+**engine** from an **Administrator** terminal (the UAC prompt fails silently
+from a non-elevated shell):
 
 ```powershell
 winget install --id RedHat.Podman -e --accept-source-agreements --accept-package-agreements
@@ -129,9 +188,9 @@ podman pull quay.io/redhat-ai-tools/slack-mcp     # optional: pre-pull so first 
 
 Doctor section 9 checks all three states (engine vs Desktop-only, machine
 running, image pulled), and `setup` starts the machine and pre-pulls the
-image; only the engine install itself stays manual (needs the admin shell).
-After installing the engine, restart Claude Code — it lands on the
-*persisted* PATH, which running sessions don't see.
+image; only the engine install itself stays manual (needs the admin shell on
+Windows). After installing the engine, restart Claude Code, as it lands on
+the *persisted* PATH, which running sessions don't see.
 
 ### 3. Config
 

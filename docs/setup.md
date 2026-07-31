@@ -1,7 +1,25 @@
 # Machine setup
 
-Target: a working machine in ≤30 minutes with no help. Prereqs: git, GitHub
-CLI (`gh auth status` must pass), Python 3.11+, Claude Code.
+Target: a working machine in ≤30 minutes with no help.
+
+## Prerequisites by platform
+
+**All platforms:** Git, GitHub CLI (`gh auth status` must pass), Python 3.11+,
+Claude Code.
+
+- **macOS:** Homebrew is the easiest path.
+  `brew install python git-crypt podman`
+- **Fedora/RHEL:** `python3` is pre-installed.
+  `sudo dnf install git-crypt podman`
+- **Windows:** Python from [python.org](https://python.org) or
+  `winget install Python.Python.3`; `choco install git-crypt`
+  (or `scoop install git-crypt`).
+
+Google Workspace MCP requires a GCP OAuth client for Calendar, Drive, Gmail,
+Docs, Sheets, Slides, Forms, and Tasks access. If you do not have access to
+the shared OAuth credentials in `restricted/.env`, see
+[/docs/mcp-servers.md](/docs/mcp-servers.md) for setup-from-scratch
+instructions.
 
 1. Clone:
    `git clone https://github.com/solaius/rhoai-agentic-hub.git` (put it under
@@ -17,13 +35,17 @@ and Slack MCP servers are covered by steps 6–7 below plus
 [/docs/mcp-servers.md](/docs/mcp-servers.md).
 
 4. Run the doctor's fix mode: `bash scripts/doctor.sh setup`
-   (installs Python deps, creates `memory/.scratch/`, writes
-   `.claude/settings.local.json` with the auto-memory redirect).
+   (creates a `.venv/`, installs Python deps, creates `memory/.scratch/`,
+   writes `.claude/settings.local.json` with the auto-memory redirect).
+   No manual `pip install` is needed; the doctor handles it.
 5. **Restart Claude Code** so the auto-memory redirect takes effect.
 6. Unlock the encrypted `restricted/` tree. All restricted content is tracked
    in git, encrypted via git-crypt -- it syncs automatically on `git pull`,
    but needs a one-time key unlock per machine.
-   - Install git-crypt: `choco install git-crypt` (or `scoop install git-crypt`)
+   - Install git-crypt:
+     - macOS: `brew install git-crypt`
+     - Fedora/RHEL: `sudo dnf install git-crypt`
+     - Windows: `choco install git-crypt` (or `scoop install git-crypt`)
    - Copy the key file from an existing machine to
      `~/.git-crypt-keys/rhoai-agentic-hub.key`
    - Run `git-crypt unlock ~/.git-crypt-keys/rhoai-agentic-hub.key`
