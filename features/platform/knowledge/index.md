@@ -12,8 +12,6 @@
 ## fact
 - [Agentic AI pod v2 (meeting transcript, 2026-04-14)](/features/platform/knowledge/fact-agentic-ai-pod-v2-transcript.md) — IBM/Red Hat agentic positioning, MCP catalog blog planning, and Summit content coordination.
 - [AI Asset Registries Sync (meeting transcript, 2026-04-07)](/features/platform/knowledge/fact-ai-asset-registries-sync-transcript.md) — The sync where the "Registry = MLflow, Catalog = Kubeflow" decision was made, plus early skills registry discussion.
-- [AI Gateway execution risks — Llama Stack bridge and SGLang/vLLM divergence](/features/platform/knowledge/fact-ai-gateway-execution-risks.md) — Two execution risks flagged at the AI Gateway F2F beyond the six binding architecture decisions — a dual-track maintenance burden and a possible vLLM ecosystem fork.
-- [AI Gateway / Inference Gateway](/features/platform/knowledge/fact-ai-gateway.md) — The unified gateway for all AI traffic (inference, tool calling, A2A, egress) — distinct from MCP Gateway, architecture decided April 2026.
 - [AI Hub (UI surface)](/features/platform/knowledge/fact-ai-hub-ui.md) — The unified RHOAI UI surface — Catalog/Registry/Deployments tabs per asset type, built on PatternFly.
 - [AI Hub vs Gen AI Studio: surfaces and personas](/features/platform/knowledge/fact-ai-hub-vs-gen-ai-studio-surfaces.md) — AI Hub serves cluster admins and platform engineers (governance/registry surfaces, no playground); Gen AI Studio serves AI engineers (AI asset consumption plus the playground, the odh-dashboard gen-ai module).
 - [Databricks/MLflow upstream collaboration — process & current status](/features/platform/knowledge/fact-databricks-mlflow-upstream-process.md) — How Red Hat's upstream contribution process to MLflow works, and a snapshot of what MLflow is doing natively for GenAI/registry capabilities.
@@ -41,18 +39,12 @@
 
 ## question
 - [Agent identity model — SPIFFE/SPIRE or an alternative?](/features/platform/knowledge/question-agent-identity-model-spiffe.md) — Whether SPIFFE/SPIRE is confirmed as the agent identity mechanism or still an open alternative-vs-SPIFFE call.
-- [Agentic loop microservice x IPP plugin framework integration](/features/platform/knowledge/question-ai-gateway-agentic-loop-ipp.md) — How the new tool-invocation/inference-cycle "agentic loop" microservice should integrate with the broader IPP plugin framework, given different plugin orderings per context.
-- [Conversation state management for the Responses API](/features/platform/knowledge/question-ai-gateway-conversation-state.md) — How to detect and approximate OpenAI's auto-compaction behavior for conversation state in the gateway-native Responses API.
-- [Cross-datacenter rate limit enforcement](/features/platform/knowledge/question-ai-gateway-cross-dc-rate-limiting.md) — How to enforce a single user's token-rate limit across multiple datacenters without unacceptable latency or complexity.
-- [Model selection x rate limiting x ITS fan-out — cost multiplication gap](/features/platform/knowledge/question-ai-gateway-model-selection-cost.md) — Intelligent model-selection failover could pick a more expensive model while inference-time-scaling fan-out multiplies the request count, compounding cost.
-- [AI Gateway group-based tenancy x MCP Registry governance — implementation details](/features/platform/knowledge/question-ai-gateway-tenancy-mcp-registry.md) — The F2F decided group-based tenancy extends to MCP tool catalogs; how that interacts with the MCP Registry's own governance model is still TBD.
 - [What belongs in the MLflow upstream proposal now vs. later?](/features/platform/knowledge/question-mlflow-upstream-scope-now-vs-later.md) — Open scoping question across all of Red Hat's upstream MLflow work — what to submit now vs. defer to a later proposal.
 - [OCP 5.0 OLM 1.0 dependency removal — installation strategy](/features/platform/knowledge/question-ocp5-olm-dependency-removal.md) — OLM 1.0 dependency mechanisms are going away in OCP 5.0; no alternative installation strategy defined yet for registry/gateway/operator components that rely on them.
 
 ## reference
 - [Messaging guide: Agentic AI by Red Hat AI](/features/platform/knowledge/ref-agentic-messaging-guide.md) — Internal marketing messaging guide — customer challenges, solution pillars, RHOAI 3.4 capability statuses, simplified personas.
 - [AI Asset Registries (product requirements)](/features/platform/knowledge/ref-ai-asset-registries-prd.md) — The single most important source doc — full product requirements, core concepts, capabilities, and asset coverage for the whole registry proposal.
-- [opendatahub-io/ai-gateway-payload-processing (GitHub)](/features/platform/knowledge/ref-ai-gateway-payload-processing-repo.md) — The IPP (Inference Payload Processor) plugin implementation — model-provider-resolver, api-translation, apikey-injection, NeMo guardrails.
 - [Cursor MCP documentation](/features/platform/knowledge/ref-cursor-mcp-docs.md) — Cursor MCP docs — project .cursor/mcp.json servers require enable; user-level ~/.cursor/mcp.json auto-approves (April 2026+).
 - [kubeflow/model-registry (GitHub)](/features/platform/knowledge/ref-kubeflow-model-registry-repo.md) — Model registry repo with plugin extensibility work (PR
 - [opendatahub-io/architecture-decision-records (GitHub)](/features/platform/knowledge/ref-odh-architecture-decision-records-repo.md) — ADR companion to the architecture-context repo — the recorded "why" behind ODH/RHOAI architecture choices (e.g., the MLflow ADRs cited by gen-ai-studio research).

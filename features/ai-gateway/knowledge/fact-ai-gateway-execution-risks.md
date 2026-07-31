@@ -3,7 +3,7 @@ type: fact
 title: AI Gateway execution risks — Llama Stack bridge and SGLang/vLLM divergence
 description: Two execution risks flagged at the AI Gateway F2F beyond the six binding architecture decisions — a dual-track maintenance burden and a possible vLLM ecosystem fork.
 timestamp: 2026-07-06
-tags: [platform, ai-gateway, risk, llm-d, vllm]
+tags: [ai-gateway, risk, llm-d, vllm]
 review_after: 2026-08-05
 source: ai-asset-registry/docs/knowledge-registry.md §13 (as of 2026-07-05)
 ---

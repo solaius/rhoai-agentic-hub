@@ -100,7 +100,7 @@ Grouped rather than given individual `person-` entries — see the R2 batch 4 MA
 | Sam Batschelet | llm-d, adaptive routing implementation |
 | Ann Marie Fred | Agent sandbox, OpenShell integration |
 
-See [fact-ai-gateway.md](/features/platform/knowledge/fact-ai-gateway.md) and [decision-ai-gateway-f2f-architecture.md](/restricted/features/platform/knowledge/decision-ai-gateway-f2f-architecture.md).
+See [fact-ai-gateway.md](/features/ai-gateway/knowledge/fact-ai-gateway.md) and [decision-ai-gateway-f2f-architecture.md](/restricted/features/platform/knowledge/decision-ai-gateway-f2f-architecture.md).
 
 ### RICE rubric reviewers
 | Name | Role/Area | Notes |

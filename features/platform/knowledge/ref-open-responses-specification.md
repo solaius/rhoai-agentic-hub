@@ -7,4 +7,4 @@ tags: [platform, ai-gateway, open-standard]
 timestamp: 2026-07-06
 source: ai-asset-registry/docs/knowledge-registry.md §12 (as of 2026-07-05)
 ---
-Industry-wide Responses API standard; Red Hat is a contributing org alongside OpenAI, NVIDIA, vLLM, Llama Stack, HuggingFace, AWS, Databricks, and is proposing a stateless variant for vLLM optimization. Backs [fact-ai-gateway.md](/features/platform/knowledge/fact-ai-gateway.md).
+Industry-wide Responses API standard; Red Hat is a contributing org alongside OpenAI, NVIDIA, vLLM, Llama Stack, HuggingFace, AWS, Databricks, and is proposing a stateless variant for vLLM optimization. Backs [fact-ai-gateway.md](/features/ai-gateway/knowledge/fact-ai-gateway.md).
