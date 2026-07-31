@@ -2,6 +2,7 @@
 title: "AI Gateway Research: Executive Summary"
 description: Living synthesis across architecture, competitive, requirements, and upstream lenses for the AI Gateway / Praxis convergence.
 timestamp: 2026-07-31
+updated: 2026-07-31
 review_after: 2026-10-31
 ---
 
@@ -20,6 +21,7 @@ landscape, enterprise requirements, and upstream standards alignment.
 | [02-competitive](02-competitive.md) | competitive | 30+ | 2026-07-31 |
 | [03-requirements](03-requirements.md) | requirements | 21 | 2026-07-31 |
 | [04-upstream](04-upstream.md) | upstream | 33 | 2026-07-31 |
+| [05-jira-gap](05-jira-gap.md) | jira-gap | internal cross-ref | 2026-07-31 |
 
 ## Key findings
 
@@ -151,20 +153,41 @@ All five hub-tracked open questions received research input:
   tool authorization; implementation details need the ABAC spike
   (RHAISTRAT-2409) to land first.
 
+### Jira-gap highlights (Direction B)
+
+Two blind spots need immediate attention:
+
+1. **Automatic multi-provider failover** — named in the Architecture &
+   Direction doc as Praxis-enabled, listed as "not available" in
+   customer requirements, shipped by competitors. No Jira issue.
+2. **Cost attribution and chargeback** — table-stakes per every
+   enterprise AI governance framework. Metering architecture exists but
+   no Jira work on reporting/attribution/chargeback.
+
+Two time-sensitive emerging opportunities:
+
+1. **Streaming guardrails in agentic loops** — first-mover advantage;
+   existing guardrails Jira work covers pre/post but not in-stream.
+2. **Agent identity and governance** — NIST, CSA, Gartner all published
+   frameworks in 2026. No Jira scopes agent identity as distinct from
+   human identity.
+
+Two items need upstream strategy work (no Jira): CNCF sandbox
+preparation (GPLv3 risk) and Istio data-plane integration (agentgateway
+race).
+
 ## Lenses not run
 
 - **landscape** — retry with `hub.research ai-gateway landscape`
-- **jira-gap** — retry with `hub.research ai-gateway jira-gap` (requires
-  the stored Jira scope, which now exists)
 
 ## Recommended follow-ups
 
-1. **`hub.research ai-gateway jira-gap`** — cross the 38-issue Jira
-   scope against the competitive and requirements findings to identify
-   strategic blind spots
-2. **`hub.strategy ai-gateway`** — synthesize this research + knowledge
+1. **`hub.strategy ai-gateway`** — synthesize this research + knowledge
    + Jira scope into the living strategy document
-3. **Competitive deep-dive on agentgateway** — the Istio integration
+2. **Competitive deep-dive on agentgateway** — the Istio integration
    race is the most time-sensitive competitive risk; a focused analysis
    of agentgateway's Istio integration path would inform Praxis's
    upstream contribution timeline
+3. **RFE creation** for the two blind spots (automatic failover, cost
+   attribution/chargeback) and two emerging opportunities (streaming
+   guardrails in loops, agent identity)
