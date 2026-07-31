@@ -8,6 +8,7 @@
 - [MCP Ecosystem](/features/mcp-ecosystem/index.md) — MCP server building, partner/community onboarding pipeline, evaluation, and ecosystem tooling.
 - [MCP Catalog](/features/mcp-catalog/index.md) — The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
 - [Agent Registry](/features/agent-registry/index.md) — Post-deployment agent registry, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop; catalog/starter kits moved to agent-catalog).
+- [AI Gateway](/features/ai-gateway/index.md) — AI-native proxy/gateway for all AI traffic — Praxis runtime replacing Envoy's AI layer, MaaS integration, Responses/Messages API, API translation, guardrails, agentic loop orchestration.
 - [Platform](/features/platform/index.md) — Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
 - [Agent Memory](/features/agent-memory/index.md) — Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.
 - [Agent Ops](/features/agent-ops/index.md) — Agent operations — observability, SDLC oversight, AgentOps positioning and talk tracks.

@@ -3,7 +3,7 @@
 
 Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
 
-Related: [MCP Catalog](/features/mcp-catalog/index.md) · [MCP Lifecycle Operator](/features/mcp-lifecycle-operator/index.md) · [MCP Registry](/features/mcp-registry/index.md) · [MCP Ecosystem](/features/mcp-ecosystem/index.md)
+Related: [MCP Catalog](/features/mcp-catalog/index.md) · [MCP Lifecycle Operator](/features/mcp-lifecycle-operator/index.md) · [MCP Registry](/features/mcp-registry/index.md) · [MCP Ecosystem](/features/mcp-ecosystem/index.md) · [AI Gateway](/features/ai-gateway/index.md)
 
 - [knowledge/](/features/mcp-gateway/knowledge/)
 - [research/](/features/mcp-gateway/research/)

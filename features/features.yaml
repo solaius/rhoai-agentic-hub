@@ -4,8 +4,6 @@
 # related: — boundary siblings (feature families), closed vocabulary,
 # lint-checked symmetric; see conventions/layout.md. Consumers: generated
 # feature indexes, hub.research context load, hub.sweep drift check.
-# ai-gateway (pending intake) joins BOTH the agent and mcp families'
-# related: lists once its partition exists.
 features:
 - id: skills-registry
   title: Skills Registry
@@ -18,7 +16,7 @@ features:
 - id: mcp-gateway
   title: MCP Gateway
   description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
-  related: [mcp-catalog, mcp-lifecycle-operator, mcp-registry, mcp-ecosystem]
+  related: [mcp-catalog, mcp-lifecycle-operator, mcp-registry, mcp-ecosystem, ai-gateway]
   jira:
     jql: 'project = RHAISTRAT AND summary ~ "\"MCP Gateway\""'
     ref_types: [Outcome, Feature]
@@ -47,6 +45,10 @@ features:
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"Agent Registry\"" OR key in (RHAISTRAT-1355, RHAISTRAT-1436, RHAISTRAT-1697, RHAISTRAT-1955, RHAISTRAT-1956, RHAISTRAT-2019, RHAISTRAT-1758))) OR parent = RHAISTRAT-1436 OR key in (RHAIRFE-2443, RHAIRFE-2388, RHAIRFE-1313) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"Agent Registry\"")'
     ref_types: [Outcome, Feature, Feature Request]
+- id: ai-gateway
+  title: AI Gateway
+  description: AI-native proxy/gateway for all AI traffic — Praxis runtime replacing Envoy's AI layer, MaaS integration, Responses/Messages API, API translation, guardrails, agentic loop orchestration.
+  related: [mcp-gateway, agent-interop]
 - id: platform
   title: Platform
   description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
@@ -69,7 +71,7 @@ features:
 - id: agent-interop
   title: Agent Interop
   description: Agent interoperability — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A communication, agent cards, BYO agent onboarding, discovery, and declarative harness configuration.
-  related: [agent-registry, agent-catalog]
+  related: [agent-registry, agent-catalog, ai-gateway]
   jira:
     jql: '(project = RHOAIENG AND component = "AgentOps") OR (project IN (RHOAIENG, RHAISTRAT) AND labels IN (agentic, agentic-theme))'
     ref_types: [Outcome, Feature]

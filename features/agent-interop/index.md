@@ -3,7 +3,7 @@
 
 Agent interoperability — sandboxing (OpenShell), identity (SPIFFE/SPIRE), A2A communication, agent cards, BYO agent onboarding, discovery, and declarative harness configuration.
 
-Related: [Agent Registry](/features/agent-registry/index.md) · [Agent Catalog](/features/agent-catalog/index.md)
+Related: [Agent Registry](/features/agent-registry/index.md) · [Agent Catalog](/features/agent-catalog/index.md) · [AI Gateway](/features/ai-gateway/index.md)
 
 - [knowledge/](/features/agent-interop/knowledge/)
 - [research/](/features/agent-interop/research/)

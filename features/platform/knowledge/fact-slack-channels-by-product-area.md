@@ -43,7 +43,9 @@ Convention: `#team-` = team-specific, `#wg-` = working group (cross-team),
 
 | Channel | Link | Purpose |
 |---|---|---|
-| `#team-ai-gateway` | [open](https://redhat-internal.slack.com/archives/C0B6RE27M0S) | AI Gateway engineering (IPP, Praxis, Responses API, routing) |
+| `#forum-ai-gateway` | — | General AI Gateway questions, discussions, cross-team |
+| `#team-ai-gateway` | [open](https://redhat-internal.slack.com/archives/C0B6RE27M0S) | AI Gateway engineering (Praxis, Responses API, routing, scrum) |
+| `#wg-ai-gateway-internal` | — | AI Gateway internal working group |
 | `#forum-agentic-api` | — | OGX / Llama Stack API discussions |
 | `#wg-maas` | [open](https://redhat-internal.slack.com/archives/C094HF5KD6E) | Model-as-a-Service working group (token metering, subscriptions) |
 
