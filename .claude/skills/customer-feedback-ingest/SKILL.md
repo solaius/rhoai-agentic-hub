@@ -147,6 +147,12 @@ These are the exact columns in the tracker. Map extracted interests to these:
    customer attribution in `restricted/`; the captured knowledge entry should
    only carry customer specifics if it is itself filed under `restricted/`
    (apply the same public/restricted call `hub.capture` would make).
+8. **Sync handoff** — after completing the local write, offer to run
+   `customer-feedback-sync` to push the new or updated customer to the
+   shared cross-PM Google Sheet via the `rhai-tracker` MCP. New customers
+   are invisible to other PMs until synced, so this matters most for new
+   entries. The sync skill has its own gate (Phase 3/4) so offering here
+   does not bypass any confirmation — the user still approves the push.
 
 ## Related skills
 
