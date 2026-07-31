@@ -49,6 +49,9 @@ features:
   title: AI Gateway
   description: AI-native proxy/gateway for all AI traffic — Praxis runtime replacing Envoy's AI layer, MaaS integration, Responses/Messages API, API translation, guardrails, agentic loop orchestration.
   related: [mcp-gateway, agent-interop]
+  jira:
+    jql: '(project = RHAISTRAT AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR (project = RHAIRFE AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR key in (RHAISTRAT-2452, RHAISTRAT-2241, RHAISTRAT-2240, RHAISTRAT-2018, RHAISTRAT-1812, RHAISTRAT-1073, RHAIRFE-2258, RHAIRFE-2920)'
+    ref_types: [Outcome, Feature]
 - id: platform
   title: Platform
   description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.

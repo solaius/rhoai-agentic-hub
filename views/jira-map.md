@@ -68,7 +68,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-932 · Outcome · In Progress · —
 - RHAISTRAT-947 · Outcome · Closed · —
 - RHAISTRAT-1049 · Outcome · In Progress · —
-- RHAISTRAT-1073 · Outcome · In Progress · —
+- RHAISTRAT-1073 · Outcome · In Progress · — → [[Outcome] Implementation of Consistent Agentic APIs](/features/ai-gateway/knowledge/ref-rhaistrat-1073-consistent-agentic-apis.md)
 - RHAISTRAT-1101 · Outcome · Closed · —
 - RHAISTRAT-1102 · Outcome · In Progress · —
 - RHAISTRAT-1149 · Feature · Release Pending · 3.5 EA1 RHOAI RELEASE
@@ -282,6 +282,49 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/features/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
 - RHAISTRAT-1956 · Feature · Closed · — → [RHAISTRAT-1956: Agent Metadata Extraction](/features/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
 - RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/features/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
+
+## ai-gateway
+_swept 2026-07-31 · `(project = RHAISTRAT AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR (project = RHAIRFE AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR key in (RHAISTRAT-2452, RHAISTRAT-2241, RHAISTRAT-2240, RHAISTRAT-2018, RHAISTRAT-1812, RHAISTRAT-1073, RHAIRFE-2258, RHAIRFE-2920)`_
+_summaries withheld — the source Jira is not anonymously readable_
+
+- RHAIRFE-2256 · Feature Request · Approved · —
+- RHAIRFE-2258 · Feature Request · Approved · —
+- RHAIRFE-2374 · Feature Request · Approved · —
+- RHAIRFE-2625 · Feature Request · Closed · —
+- RHAIRFE-2711 · Feature Request · Approved · —
+- RHAIRFE-2797 · Feature Request · Closed · —
+- RHAIRFE-2798 · Feature Request · Closed · —
+- RHAIRFE-2799 · Feature Request · New · —
+- RHAIRFE-2856 · Feature Request · New · —
+- RHAIRFE-2858 · Feature Request · New · —
+- RHAIRFE-2896 · Feature Request · Approved · —
+- RHAIRFE-2919 · Feature Request · Approved · —
+- RHAIRFE-2920 · Feature Request · Stakeholder review · —
+- RHAIRFE-2933 · Feature Request · Closed · —
+- RHAIRFE-2934 · Feature Request · Closed · —
+- RHAIRFE-2935 · Feature Request · Closed · —
+- RHAIRFE-2953 · Feature Request · Approved · —
+- RHAIRFE-2954 · Feature Request · New · —
+- RHAIRFE-2955 · Feature Request · New · —
+- RHAISTRAT-178 · Feature · In Progress · 3.6 GA RHOAI RELEASE → [[Feat] Enable its_hub to run as an AI Gateway component](/features/ai-gateway/knowledge/ref-rhaistrat-178-its-hub-gateway-component.md)
+- RHAISTRAT-1073 · Outcome · In Progress · — → [[Outcome] Implementation of Consistent Agentic APIs](/features/ai-gateway/knowledge/ref-rhaistrat-1073-consistent-agentic-apis.md)
+- RHAISTRAT-1210 · Outcome · In Progress · — → [[Outcome] Integration Safety/Guardrails for MCP/AI Gateway](/features/ai-gateway/knowledge/ref-rhaistrat-1210-guardrails-mcp-ai-gateway.md)
+- RHAISTRAT-1456 · Feature · New · 3.6 GA RHOAI RELEASE → [AI Gateway Support for OpenAI Codex Agent SDK](/features/ai-gateway/knowledge/ref-rhaistrat-1456-codex-agent-sdk.md)
+- RHAISTRAT-1777 · Outcome · In Progress · — → [[Outcome] AI Gateway Guardrails](/features/ai-gateway/knowledge/ref-rhaistrat-1777-ai-gateway-guardrails.md)
+- RHAISTRAT-1810 · Feature · New · — → [AI Gateway: Full API Fidelity for Tool-Calling Clients](/features/ai-gateway/knowledge/ref-rhaistrat-1810-api-fidelity-tool-calling.md)
+- RHAISTRAT-1812 · Feature · New · — → [MaaS Responses/Messages API Conformance and Tool-Calling Validation](/features/ai-gateway/knowledge/ref-rhaistrat-1812-conformance-validation.md)
+- RHAISTRAT-1935 · Feature · New · — → [Gen AI Studio playground must support AI Gateway as alternative to OGX](/features/ai-gateway/knowledge/ref-rhaistrat-1935-gen-ai-studio-gateway.md)
+- RHAISTRAT-2018 · Feature · In Progress · 3.6 EA2 RHAII RELEASE, 3.6 EA2 RHOAI RELEASE → [Messages API Support on llm-d](/features/ai-gateway/knowledge/ref-rhaistrat-2018-messages-api-llmd.md)
+- RHAISTRAT-2240 · Feature · New · — → [OpenAI Responses API endpoint for NeMo Guardrails server](/features/ai-gateway/knowledge/ref-rhaistrat-2240-responses-guardrails.md)
+- RHAISTRAT-2241 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [Anthropic Messages API endpoint for NeMo Guardrails server](/features/ai-gateway/knowledge/ref-rhaistrat-2241-messages-guardrails.md)
+- RHAISTRAT-2277 · Feature · New · 3.6 EA1 RHOAI RELEASE → [Seamless OGX-to-Praxis Migration for Responses, Conversations, and RAG APIs in 3.6](/features/ai-gateway/knowledge/ref-rhaistrat-2277-ogx-to-praxis-migration.md)
+- RHAISTRAT-2378 · Feature · New · — → [GA Support for NeMo Guardrails for AI Gateway Traffic via Praxis](/features/ai-gateway/knowledge/ref-rhaistrat-2378-nemo-guardrails-ga.md)
+- RHAISTRAT-2409 · Feature · New · — → [Tenant isolation and ABAC enforcement across Praxis-to-OGX boundary](/features/ai-gateway/knowledge/ref-rhaistrat-2409-tenant-isolation-praxis-ogx.md)
+- RHAISTRAT-2442 · Feature · New · — → [ITS Routing via AI Gateway IPP Plugin](/features/ai-gateway/knowledge/ref-rhaistrat-2442-its-ipp-plugin.md)
+- RHAISTRAT-2443 · Feature · New · — → [Praxis ITS Routing Filter with Dynamic Budget Allocation](/features/ai-gateway/knowledge/ref-rhaistrat-2443-praxis-its-filter.md)
+- RHAISTRAT-2444 · Feature · New · — → [Native-Performance ITS Orchestration and Service Layers for Praxis Gateway Integration](/features/ai-gateway/knowledge/ref-rhaistrat-2444-its-native-orchestration.md)
+- RHAISTRAT-2449 · Initiative · New · 3.6 GA RHOAI RELEASE
+- RHAISTRAT-2452 · Feature · New · — → [Componentize IPP (Inference Payload Processing)](/features/ai-gateway/knowledge/ref-rhaistrat-2452-componentize-ipp.md)
 
 ## mcp-catalog
 _swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")`_
