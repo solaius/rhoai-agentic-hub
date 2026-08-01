@@ -1,9 +1,11 @@
-# The feature routing table. One entry per feature partition.
+# The component routing table. One entry per component partition.
 # hub.file appends here when creating a partition. components/index.md is
 # generated from this file.
-# related: — boundary siblings (feature families), closed vocabulary,
+# related: — boundary siblings (component families), closed vocabulary,
 # lint-checked symmetric; see conventions/layout.md. Consumers: generated
-# feature indexes, hub.research context load, hub.sweep drift check.
+# component indexes, hub.research context load, hub.sweep drift check.
+# jira_component: (optional) Jira component name for this component's issues.
+# jira_labels: (optional) Jira labels (lowercase list) for this component's issues.
 components:
 - id: skills-registry
   title: Skills Registry
@@ -17,6 +19,7 @@ components:
   title: MCP Gateway
   description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.
   related: [mcp-catalog, mcp-lifecycle-operator, mcp-registry, mcp-ecosystem, ai-gateway]
+  jira_labels: [mcp-gateway]
   jira:
     jql: 'project = RHAISTRAT AND summary ~ "\"MCP Gateway\""'
     ref_types: [Outcome, Feature]
@@ -24,6 +27,8 @@ components:
   title: MCP Registry
   description: The governance/system-of-record layer for MCP servers — identity, version, lifecycle state, certification, trust, and auditability.
   related: [mcp-gateway, mcp-catalog, mcp-lifecycle-operator, mcp-ecosystem]
+  jira_component: AI Hub
+  jira_labels: [mcp-registry]
   jira:
     jql: '(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")'
     ref_types: [Outcome, Feature]
@@ -35,6 +40,8 @@ components:
   title: MCP Catalog
   description: The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
   related: [mcp-gateway, mcp-lifecycle-operator, mcp-registry, mcp-ecosystem]
+  jira_component: AI Hub
+  jira_labels: [mcp-catalog]
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")'
     ref_types: [Outcome, Feature]
@@ -42,6 +49,7 @@ components:
   title: Agent Registry
   description: Post-deployment agent registry, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop; catalog/starter kits moved to agent-catalog).
   related: [agent-interop, agent-catalog]
+  jira_component: AI Hub
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"Agent Registry\"" OR key in (RHAISTRAT-1355, RHAISTRAT-1436, RHAISTRAT-1697, RHAISTRAT-1955, RHAISTRAT-1956, RHAISTRAT-2019, RHAISTRAT-1758))) OR parent = RHAISTRAT-1436 OR key in (RHAIRFE-2443, RHAIRFE-2388, RHAIRFE-1313) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"Agent Registry\"")'
     ref_types: [Outcome, Feature, Feature Request]
@@ -82,6 +90,7 @@ components:
   title: Agent Catalog
   description: The agent storefront in RHOAI AI Hub — RH-curated starter-kit templates in 3.5 (link-out, no deploy), agent deployment with supported harness images in 3.6 EA1; built on Kubeflow hub alongside the MCP and Model catalogs.
   related: [agent-registry, agent-interop, skills-catalog]
+  jira_component: AI Hub
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"Agent Catalog\"" OR key in (RHAISTRAT-1740, RHAISTRAT-1697, RHAISTRAT-1742, RHAISTRAT-1758, RHAISTRAT-1349, RHAISTRAT-1792))) OR key = RHAIRFE-2443 OR (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"Agent Catalog\"" OR summary ~ "agent-catalog"))'
     ref_types: [Outcome, Feature]
