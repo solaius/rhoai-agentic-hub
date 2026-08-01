@@ -45,7 +45,7 @@ Cross-reference with recent emails (Google Workspace MCP) or Jira tickets if ava
 ### 4. Interest Accuracy
 
 Check tracker interest levels against product roadmap changes:
-- If a feature shipped (moved to GA), note that in the detail section
+- If a requested capability shipped (moved to GA), note that in the detail section
 - If a customer's requirement was addressed by a new release, update the detail notes
 - Check `memory/profiles/roadmap.md` and the relevant component's
   `components/<c>/knowledge/index.md` (mcp-gateway, mcp-registry, mcp-ecosystem,

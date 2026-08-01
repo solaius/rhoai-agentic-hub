@@ -311,7 +311,7 @@ def test_generate_landing_group_order(tmp_path):
           "- source: narrative/enablement/story/\n  dest: narrative/story/\n"
           "  audience: public\n  title: Story\n  description: narr\n"
           "- source: components/zed/enablement/deck/\n  dest: zed/deck/\n"
-          "  audience: public\n  title: Zed\n  description: unknown feature\n")
+          "  audience: public\n  title: Zed\n  description: unknown component\n")
     out = generate_landing(root, build_plan(root), "")
     assert (out.index("<h2>X Feature</h2>") < out.index("<h2>zed</h2>")
             < out.index("<h2>Narrative</h2>"))
