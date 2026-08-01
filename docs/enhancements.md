@@ -20,15 +20,67 @@ macOS/Fedora machine. Full R5 outcome:
 [/docs/enhancements-complete.md](/docs/enhancements-complete.md).
 
 **#37 Outcome Creator integration.** Integrate with Engineering's Jira
-outcome creation skill(s). Connects the hub's feature/strategy layer to
-the outcome artifacts that Engineering produces in Jira, enabling
-PM-to-Engineering outcome handoff and tracking.
+outcome creation skill(s) -- `andybraren/outcome-creator`. Connects the
+hub's component/strategy layer to the outcome artifacts that Engineering
+produces in Jira, enabling PM-to-Engineering outcome handoff and
+tracking.
+
+*Upstream review 2026-07-31:*
+
+- **No packaging.** No `.claude-plugin/` at all -- no `marketplace.json`,
+  no `plugin.json`; its `.claude/settings.json` is a permissions
+  allowlist only. Not in `opendatahub-io/skills-registry` (which carries
+  rfe-creator, strat-creator, assess-rfe), and `opendatahub-io/
+  outcome-creator` does not exist. No instructions for consuming it from
+  another repo -- the README's only guidance is "fork this repo as
+  private" (for JTBD). It is built to be cloned and run from inside.
+- **Flat skill layout.** Its 14 skills are flat files
+  (`.claude/skills/outcome.create.md`), not `<name>/SKILL.md`. A plugin
+  manifest's `skills:` field means "directories containing
+  `<name>/SKILL.md`"; flat `.md` is what `commands:` takes. Copying the
+  rfe-creator registry entry verbatim would load zero skills. Verify
+  empirically (clone, open Claude, type `/outcome`) before anything else.
+- **Bare repo-relative paths.** Skills reference `config/rubric.yaml`,
+  `templates/`, `docs/`, `scripts/`, `make sync-jtbd` -- all assume
+  cwd == repo root, so they break under plugin install. rfe-creator
+  already has this wart here: `artifacts/rfe-tasks/` is populated while
+  `scripts/next_rfe_id.py` does not exist in this repo. Jira keys are
+  placeholders too (`config/pipeline-settings.yaml` ships `PROJSTRAT`/
+  `PROJGOALS`), and that file sits in the plugin cache -- wiped on
+  update, so real keys need a hub-side override.
+- **Disclosure risk (blocking).** `make sync-jtbd` clones the
+  confidential internal JTBD Knowledge Registry into
+  `knowledge/jtbd-registry/`, and `/outcome.create` fires that sync
+  automatically when the directory is missing. Upstream gitignores it;
+  this repo is public. Route to `restricted/` with a defensive
+  `.gitignore` entry. Shared dependency with #38 -- decide once.
+
+*Recommended shape:* marketplace plugin -- not vendoring (owns the drift)
+and not a submodule (Windows symlink friction, still cwd-bound). Matches
+how rfe-creator/assess-rfe already install here: two lines in
+`.claude/settings.json`, `hub.doctor` already verifies plugin installs,
+updates via `/plugin marketplace update`. Three layers: (1) fork,
+restructure to `skills/<name>/SKILL.md`, add `.claude-plugin/` (a repo
+can be its own single-plugin marketplace via `source: "./"`), then PR the
+packaging upstream and/or a registry entry to `opendatahub-io/
+skills-registry` -- its schema accepts `source: {type: github, repo:
+andybraren/outcome-creator}`, no re-hosting needed -- so the fork becomes
+disposable; (2) rewrite plugin-internal paths to `${CLAUDE_PLUGIN_ROOT}`
+/ `${CLAUDE_SKILL_DIR}`, leaving `artifacts/` and `local/` cwd-relative
+so output lands in the hub; (3) a thin `hub.outcome` wrapper -- component
+knowledge/research/strategy + stored Jira scope -> `/outcome.derive` ->
+gated `ref-` entry under `components/<id>/work/` + strategy Jira coverage
+map. Layer 3 is the actual enhancement; 1 and 2 are prerequisites.
 
 **#38 UX Research Insights integration.** Integrate with the UX team's
 (Andy Braren) UX Research Insights solution to enhance `hub.research`
 capabilities. Surfaces UX research findings (usability studies, user
 interviews, heuristic evaluations) alongside the hub's existing research
-lenses.
+lenses. Shares the JTBD Knowledge Registry dependency surfaced by the #37
+review (confidential, internal GitLab) -- settle the `restricted/` path
+story once and reuse it. `rh-uxd/ai-helpers` (see #32) also ships
+`uxd-research-heuristic-eval` and `uxd-evaluate-design-heuristics`, which
+may cover part of this scope.
 
 **#32 Prototyping skills.** Port pm-toolkit's `prototype-set-up` (find or
 clone the RHOAI prototype repo from `gitlab.cee.redhat.com/uxd/prototypes/
@@ -53,7 +105,7 @@ propose jtbd candidates from recurring qa entries + tracker interests
 (gated). Needs qa volume first.
 
 **#20 Agent context pack.** `python scripts/hub_index.py --brief` emits a
-single size-budgeted markdown pack: memory index + features table +
+single size-budgeted markdown pack: memory index + components table +
 narrative map + open questions + stale queue, trimmed to ~N tokens.
 Sessions (especially non-Claude harnesses) bootstrap with one read instead
 of five.
@@ -66,7 +118,7 @@ meanwhile.
 
 **#22 Narrative growth (content).** The narrative map renders
 `_no stories yet_` for Inference, Data, and Safety & Governance. As real
-cross-feature work touches those pillars, write the story entry. Candidate
+cross-component work touches those pillars, write the story entry. Candidate
 third story from the original design discussion: "from prompt to governed
 asset" (gen-ai-studio + skills-registry + mcp-registry).
 
