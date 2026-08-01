@@ -110,20 +110,30 @@ def _lint_routing_table(root, errors, warnings):
     ids = {f.get("id") for f in comps}
     related = {}
     for f in comps:
-        rel_ids = f.get("related")
-        if rel_ids is None:
-            continue
         where = f"components/components.yaml[{f.get('id')}]"
-        if not isinstance(rel_ids, list) or not all(isinstance(x, str) for x in rel_ids):
-            errors.append(f"{where}: related must be a list of component ids")
-            continue
-        related[f.get("id")] = rel_ids
-        for rid in rel_ids:
-            if rid == f.get("id"):
-                errors.append(f"{where}: related must not include the component itself")
-            elif rid not in ids:
-                errors.append(f"{where}: unknown related component id '{rid}' "
-                              f"(not in components/components.yaml)")
+        rel_ids = f.get("related")
+        if rel_ids is not None:
+            if not isinstance(rel_ids, list) or not all(isinstance(x, str) for x in rel_ids):
+                errors.append(f"{where}: related must be a list of component ids")
+            else:
+                related[f.get("id")] = rel_ids
+                for rid in rel_ids:
+                    if rid == f.get("id"):
+                        errors.append(f"{where}: related must not include the component itself")
+                    elif rid not in ids:
+                        errors.append(f"{where}: unknown related component id '{rid}' "
+                                      f"(not in components/components.yaml)")
+        jc = f.get("jira_component")
+        if jc is not None and not isinstance(jc, str):
+            errors.append(f"{where}: jira_component must be a string")
+        jl = f.get("jira_labels")
+        if jl is not None:
+            if not isinstance(jl, list) or not all(isinstance(x, str) for x in jl):
+                errors.append(f"{where}: jira_labels must be a list of strings")
+            else:
+                for lab in jl:
+                    if lab != lab.lower():
+                        errors.append(f"{where}: jira_labels '{lab}' must be lowercase")
     for fid, rel_ids in related.items():
         for rid in rel_ids:
             if rid in ids and rid != fid and fid not in related.get(rid, []):

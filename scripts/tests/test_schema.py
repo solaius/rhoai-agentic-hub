@@ -551,3 +551,39 @@ def test_restricted_tree_handles_mixed_plaintext_leftover_and_encrypted_blob(tmp
     assert any("fact-b.md" in e and "missing required field 'type'" in e
                 for e in errors)
     assert not any("fact-a.md" in e for e in errors)
+
+
+def test_jira_component_and_labels_valid(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-catalog\n  title: C\n  description: d\n"
+          "  jira_component: AI Hub\n  jira_labels: [mcp-catalog]\n")
+    errors, _ = lint_repo(root)
+    assert errors == []
+
+
+def test_jira_component_must_be_string(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-catalog\n  title: C\n  description: d\n"
+          "  jira_component: [AI Hub]\n")
+    errors, _ = lint_repo(root)
+    assert any("jira_component must be a string" in e for e in errors)
+
+
+def test_jira_labels_must_be_list(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-catalog\n  title: C\n  description: d\n"
+          "  jira_labels: mcp-catalog\n")
+    errors, _ = lint_repo(root)
+    assert any("jira_labels must be a list of strings" in e for e in errors)
+
+
+def test_jira_labels_uppercase_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-catalog\n  title: C\n  description: d\n"
+          "  jira_labels: [MCP-Catalog]\n")
+    errors, _ = lint_repo(root)
+    assert any("jira_labels 'MCP-Catalog' must be lowercase" in e for e in errors)
