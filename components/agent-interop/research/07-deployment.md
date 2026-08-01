@@ -343,8 +343,8 @@ prerequisites for RHOAI but not DSC-managed.
 
 ### Integration with MCP Lifecycle Operator
 
-The MCP Lifecycle Operator (an agent-catalog capability) manages MCP server
-lifecycle. In the RHOAI 3.6 timeframe, agent-catalog deploys agents via
+The MCP Lifecycle Operator (its own component, mcp-lifecycle-operator)
+manages MCP server lifecycle. In the RHOAI 3.6 timeframe, agent-catalog deploys agents via
 the OpenShell Go SDK and supported harness images. The integration point
 is the sandbox creation API -- the catalog operator would call the
 OpenShell gateway to create sandboxes for agent deployments, with
