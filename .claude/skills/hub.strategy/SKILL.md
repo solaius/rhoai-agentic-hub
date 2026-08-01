@@ -1,17 +1,17 @@
 ---
 name: hub.strategy
-description: Synthesize or refresh a feature's living strategy document (features/<id>/strategy/strategy.md) from its knowledge, research series, and Jira scope - the WHAT/WHY, gaps and risks, Jira coverage map plus candidate jiras, and watchlist - through the inline gate. Use when the user says "write the strategy for <feature>", "generate the strategy doc", "create the strategy", "refresh the strategy", or after hub.intake / hub.research offer it. One living doc per feature, rewritten in place - never a series.
+description: Synthesize or refresh a feature's living strategy document (components/<id>/strategy/strategy.md) from its knowledge, research series, and Jira scope - the WHAT/WHY, gaps and risks, Jira coverage map plus candidate jiras, and watchlist - through the inline gate. Use when the user says "write the strategy for <feature>", "generate the strategy doc", "create the strategy", "refresh the strategy", or after hub.intake / hub.research offer it. One living doc per feature, rewritten in place - never a series.
 ---
 
 # hub.strategy
 
-Input: a feature id (features/features.yaml). Contract:
+Input: a feature id (components/components.yaml). Contract:
 /conventions/strategy.md — ONE living document, eight fixed sections, PM
 working register, rewritten in place with a ## History entry per refresh.
 Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
 
-1. RESOLVE: feature id → features/<id>/strategy/strategy.md. No home in
-   features.yaml → offer hub.intake (research needs a home), stop there
+1. RESOLVE: feature id → components/<id>/strategy/strategy.md. No home in
+   components.yaml → offer hub.intake (research needs a home), stop there
    if declined. The file already exists ⇒ this is a REFRESH run.
 2. PRECONDITIONS: knowledge/index.md must exist — none → hand off to
    hub.intake and stop. Empty research/ → warn that Why/market will be
@@ -24,7 +24,7 @@ Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
    00-executive-summary.md, then each lens doc; work/jira-snapshot.yaml
    and the partition's Jira ref- entries; memory/profiles/roadmap.md and
    memory/profiles/strategy.md; each related: sibling's overview fact
-   (features.yaml). A missing input shrinks the document, never sinks
+   (components.yaml). A missing input shrinks the document, never sinks
    the run — name it in Gaps & risks.
 4. DRAFT in the session scratchpad per the /conventions/strategy.md
    section contract — no repo writes. Register: PM working doc (dense,
@@ -35,7 +35,7 @@ Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
    jiras: one line each — gap → problem statement → suggested project
    (RHAIRFE/RHAISTRAT) — written to hand straight to /rfe.create.
 5. GATE: show The brief inline plus one write line —
-   `features/<id>/strategy/strategy.md: <description> [new|update]` —
+   `components/<id>/strategy/strategy.md: <description> [new|update]` —
    full document on request. REFRESH runs show a per-section
    what-changed summary (unchanged/updated/new) instead of the full doc,
    plus the proposed History line. Nothing touches the repo before OK.

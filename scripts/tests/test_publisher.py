@@ -15,25 +15,25 @@ def write(root: Path, rel: str, text: str):
 
 
 MANIFEST = """\
-- source: features/x/enablement/site/
+- source: components/x/enablement/site/
   dest: x/site/
   audience: public
   title: A <Site>
   description: demo & test
-- source: features/x/enablement/one-pager.html
+- source: components/x/enablement/one-pager.html
   dest: x/one-pager.html
   audience: public
   title: One pager
   description: single file
-- source: features/x/enablement/internal/
+- source: components/x/enablement/internal/
   dest: x/internal/
   audience: internal
   title: Internal only
   description: must not publish in v1
 """
 
-FEATURES_YAML = """\
-features:
+COMPONENTS_YAML = """\
+components:
 - id: x
   title: X Feature
 - id: y
@@ -43,12 +43,12 @@ features:
 
 def make_repo(tmp_path: Path) -> Path:
     root = tmp_path / "hub"
-    write(root, "features/x/enablement/site/index.html", "<html>site</html>")
-    write(root, "features/x/enablement/site/style.css", "body{}")
-    write(root, "features/x/enablement/one-pager.html", "<html>one</html>")
-    write(root, "features/x/enablement/internal/index.html", "<html>secret</html>")
+    write(root, "components/x/enablement/site/index.html", "<html>site</html>")
+    write(root, "components/x/enablement/site/style.css", "body{}")
+    write(root, "components/x/enablement/one-pager.html", "<html>one</html>")
+    write(root, "components/x/enablement/internal/index.html", "<html>secret</html>")
     write(root, "publish/manifest.yaml", MANIFEST)
-    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "components/components.yaml", COMPONENTS_YAML)
     (root / "publish").mkdir(parents=True, exist_ok=True)
     shutil.copy(REPO_ROOT / "publish" / "landing-template.html",
                 root / "publish" / "landing-template.html")
@@ -91,7 +91,7 @@ def test_apply_copies_and_snapshots(tmp_path):
     snap = json.loads((pages / SNAPSHOT).read_text())
     assert set(snap) == {"x/one-pager.html", "x/site"}
     site = snap["x/site"]
-    assert site["source"] == "features/x/enablement/site"
+    assert site["source"] == "components/x/enablement/site"
     assert site["badge"] == "new"
     assert site["published"] is not None
     assert len(site["hash"]) == 64
@@ -114,7 +114,7 @@ def test_manifest_rejects_traversal_dest(tmp_path):
     from hublib.schema import validate_manifest
     root = make_repo(tmp_path)
     write(root, "publish/manifest.yaml",
-          "- source: features/x/enablement/one-pager.html\n  dest: ../evil.html\n"
+          "- source: components/x/enablement/one-pager.html\n  dest: ../evil.html\n"
           "  audience: public\n  title: T\n  description: D\n")
     errors = validate_manifest(root)
     assert any("without '..'" in e for e in errors)
@@ -127,9 +127,9 @@ def test_apply_handles_dest_type_swap(tmp_path):
     apply(root, pages)
     # same dest strings, swapped source types: dir dest -> file source, file dest -> dir source
     write(root, "publish/manifest.yaml",
-          "- source: features/x/enablement/one-pager.html\n  dest: x/site/\n"
+          "- source: components/x/enablement/one-pager.html\n  dest: x/site/\n"
           "  audience: public\n  title: T\n  description: D\n"
-          "- source: features/x/enablement/site/\n  dest: x/one-pager.html\n"
+          "- source: components/x/enablement/site/\n  dest: x/one-pager.html\n"
           "  audience: public\n  title: T2\n  description: D2\n")
     copied, warnings = apply(root, pages)
     assert (pages / "x/site").is_file()
@@ -141,7 +141,7 @@ def test_manifest_rejects_dot_dest(tmp_path):
     from hublib.schema import validate_manifest
     root = make_repo(tmp_path)
     write(root, "publish/manifest.yaml",
-          "- source: features/x/enablement/one-pager.html\n  dest: .\n"
+          "- source: components/x/enablement/one-pager.html\n  dest: .\n"
           "  audience: public\n  title: T\n  description: D\n")
     errors = validate_manifest(root)
     assert any("must be a relative path" in e for e in errors)
@@ -248,11 +248,11 @@ def test_build_plan_groups_by_source_area(tmp_path):
     assert by_dest["narrative/story"]["group_key"] == (2, "")
 
 
-def test_build_plan_unknown_feature_id_falls_back(tmp_path):
+def test_build_plan_unknown_component_id_falls_back(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/zed/enablement/deck/index.html", "<html></html>")
+    write(root, "components/zed/enablement/deck/index.html", "<html></html>")
     write(root, "publish/manifest.yaml",
-          "- source: features/zed/enablement/deck/\n  dest: zed/deck/\n"
+          "- source: components/zed/enablement/deck/\n  dest: zed/deck/\n"
           "  audience: public\n  title: Z\n  description: D\n")
     plan = build_plan(root)
     assert plan[0]["group"] == "zed"
@@ -269,7 +269,7 @@ def test_apply_badge_lifecycle(tmp_path):
     apply(root, pages)  # unchanged: carried forward verbatim
     snap2 = json.loads((pages / SNAPSHOT).read_text())
     assert snap2["x/site"] == snap1["x/site"]
-    write(root, "features/x/enablement/site/index.html", "<html>site v2</html>")
+    write(root, "components/x/enablement/site/index.html", "<html>site v2</html>")
     apply(root, pages)  # content change: flips to updated
     snap3 = json.loads((pages / SNAPSHOT).read_text())
     assert snap3["x/site"]["badge"] == "updated"
@@ -284,8 +284,8 @@ def test_apply_migrates_v1_snapshot_without_false_badges(tmp_path):
     pages = tmp_path / "pages"
     pages.mkdir()
     (pages / SNAPSHOT).write_text(json.dumps(
-        {"x/one-pager.html": "features/x/enablement/one-pager.html",
-         "x/site": "features/x/enablement/site"}), encoding="utf-8")
+        {"x/one-pager.html": "components/x/enablement/one-pager.html",
+         "x/site": "components/x/enablement/site"}), encoding="utf-8")
     apply(root, pages)
     snap = json.loads((pages / SNAPSHOT).read_text())
     assert snap["x/site"]["badge"] is None
@@ -296,21 +296,21 @@ def test_apply_migrates_v1_snapshot_without_false_badges(tmp_path):
 def test_hash_source_dir_is_deterministic_and_content_sensitive(tmp_path):
     from hublib.publisher import _hash_source
     root = make_repo(tmp_path)
-    src = root / "features/x/enablement/site"
+    src = root / "components/x/enablement/site"
     h1 = _hash_source(src)
     assert h1 == _hash_source(src)
-    write(root, "features/x/enablement/site/style.css", "body{color:red}")
+    write(root, "components/x/enablement/site/style.css", "body{color:red}")
     assert _hash_source(src) != h1
 
 
 def test_generate_landing_group_order(tmp_path):
     root = make_repo(tmp_path)
     write(root, "narrative/enablement/story/index.html", "<html></html>")
-    write(root, "features/zed/enablement/deck/index.html", "<html></html>")
+    write(root, "components/zed/enablement/deck/index.html", "<html></html>")
     write(root, "publish/manifest.yaml", MANIFEST +
           "- source: narrative/enablement/story/\n  dest: narrative/story/\n"
           "  audience: public\n  title: Story\n  description: narr\n"
-          "- source: features/zed/enablement/deck/\n  dest: zed/deck/\n"
+          "- source: components/zed/enablement/deck/\n  dest: zed/deck/\n"
           "  audience: public\n  title: Zed\n  description: unknown feature\n")
     out = generate_landing(root, build_plan(root), "")
     assert (out.index("<h2>X Feature</h2>") < out.index("<h2>zed</h2>")
@@ -336,13 +336,13 @@ def test_badge_ages_out_after_window(tmp_path):
     from hublib.publisher import _hash_source
     root = make_repo(tmp_path)
     write(root, "publish/manifest.yaml",
-          "- source: features/x/enablement/site/\n  dest: x/site/\n"
+          "- source: components/x/enablement/site/\n  dest: x/site/\n"
           "  audience: public\n  title: Old Site\n  description: D\n")
     pages = tmp_path / "pages"
     pages.mkdir()
-    digest = _hash_source(root / "features/x/enablement/site")
+    digest = _hash_source(root / "components/x/enablement/site")
     (pages / SNAPSHOT).write_text(json.dumps(
-        {"x/site": {"source": "features/x/enablement/site", "hash": digest,
+        {"x/site": {"source": "components/x/enablement/site", "hash": digest,
                     "published": "2020-01-01", "badge": "new"}}),
         encoding="utf-8")
     apply(root, pages)
@@ -373,7 +373,7 @@ def test_apply_internal_target(tmp_path):
 
 def test_check_audience_links_flags_public_to_internal(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/enablement/site/index.html",
+    write(root, "components/x/enablement/site/index.html",
           '<a href="../internal/">peek</a>')
     errors = check_audience_links(root)
     assert len(errors) == 1
@@ -382,6 +382,6 @@ def test_check_audience_links_flags_public_to_internal(tmp_path):
 
 def test_check_audience_links_clean_and_internal_to_public_ok(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/enablement/internal/index.html",
+    write(root, "components/x/enablement/internal/index.html",
           '<a href="../site/">fine</a> <a href="https://example.com/x">ext</a>')
     assert check_audience_links(root) == []

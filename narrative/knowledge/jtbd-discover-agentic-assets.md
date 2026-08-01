@@ -6,7 +6,7 @@ persona: ai-engineer
 status: candidate
 timestamp: 2026-07-10
 source: ref-agentic-strategy-diagram.md
-features: [mcp-catalog, mcp-registry, skills-registry]
+components: [mcp-catalog, mcp-registry, skills-registry]
 tags: [narrative, jtbd, discovery]
 ---
 **When** I'm building or configuring agents,

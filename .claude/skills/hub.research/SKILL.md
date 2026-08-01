@@ -36,25 +36,25 @@ second is the payload:
    (this repo is PUBLIC and Jira serves nothing anonymously): cite the key and
    describe the work in your own words.
 
-1. RESOLVE HOME: feature id → features/<id>/research/; story-shaped →
+1. RESOLVE HOME: feature id → components/<id>/research/; story-shaped →
    narrative/research/. Free topic with no home in
-   features/features.yaml → offer hub.intake first (research needs a home
+   components/components.yaml → offer hub.intake first (research needs a home
    to write into); stop there if declined.
 2. CONTEXT LOAD: read <home>/knowledge/index.md (if present), every doc
    in the existing <home>/research/ series, and open question- entries
    for the home. Open questions become research inputs. RELATED FEATURES:
-   if the feature has a `related:` list in features/features.yaml (its
+   if the feature has a `related:` list in components/components.yaml (its
    boundary siblings — e.g. the agent family agent-registry/agent-interop/
    agent-catalog, or the mcp family), read each sibling's
    knowledge/index.md, research/00-executive-summary.md, strategy/ docs,
    and work/jira-snapshot.yaml where present (skeleton dirs appear on
    first use — skip what does not exist), plus the home's own
-   ## Connections section in features/<id>/index.md. Sibling context is
+   ## Connections section in components/<id>/index.md. Sibling context is
    STANDING CONTEXT in every lens brief; the split boundary is where
    drift lives, so scope conflicts between the home's docs and a
    sibling's (either direction) go into 00 and become step-5 knowledge
    drafts. RHOAI feature topics: the RHOAI architecture repo
-   (/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
+   (/components/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
    is STANDING CONTEXT — include its matching release snapshot in every
    lens agent's brief. A non-empty series ⇒ this is a REFRESH run.
 3. PLAN GATE: propose lenses × depth and expected output BEFORE any
@@ -73,7 +73,7 @@ second is the payload:
    available → run lenses sequentially inline). Each brief: the step-2
    context summary + the lens definition + (competitive and jira-gap only)
    the domain config from domains/*.yaml — pick by explicit ask, then by
-   `features:` match, then `default: true`. Sources: web search/fetch, GitHub, Google
+   `components:` match, then `default: true`. Sources: web search/fetch, GitHub, Google
    Drive MCP, Slack MCP, context7. The customer tracker
    (rhai-tracker/restricted) MAY be read as input, but any finding citing
    it is restricted (step 6). A failed lens shrinks the run, never sinks

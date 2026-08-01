@@ -1,23 +1,23 @@
 ---
 name: hub.jira-sweep
-description: Sweep Jira into the hub for one feature — conversational scope discovery (JQL stored in features.yaml), a curated public snapshot under <feature>/work/, and gated ref- entries for strategic issues (default Outcome/Feature types). Use when the user says "sweep jira for <feature>", "pull the jiras for <feature>", "set up jira tracking for <feature>", or when filed Jira links deserve field ingestion. Read-only against Jira; every repo write is gated.
+description: Sweep Jira into the hub for one feature — conversational scope discovery (JQL stored in components.yaml), a curated public snapshot under <feature>/work/, and gated ref- entries for strategic issues (default Outcome/Feature types). Use when the user says "sweep jira for <feature>", "pull the jiras for <feature>", "set up jira tracking for <feature>", or when filed Jira links deserve field ingestion. Read-only against Jira; every repo write is gated.
 ---
 
 # hub.jira-sweep
 
-Input: a feature id (features/features.yaml) + optional JQL/scope hints.
+Input: a feature id (components/components.yaml) + optional JQL/scope hints.
 Spec: /docs/specs/2026-07-09-jira-hub-skills-design.md. Read-only against
 Jira — never comment, transition, or edit issues.
 
 1. PRE-FLIGHT: `python scripts/hub_jira.py --check`. Failure → stop and
    point at `bash scripts/doctor.sh check` (section 4) — no retry loops.
-2. SCOPE: a `jira:` block on the feature in features/features.yaml → use
+2. SCOPE: a `jira:` block on the feature in components/components.yaml → use
    it. None → scope discovery: ask ONCE for hints (project? component?
    labels? a known issue key?), then iterate
    `python scripts/hub_jira.py --try-jql '<candidate>'` showing counts +
    sample rows until the user approves the JQL. The approved block
    (`jql:` + optional `ref_types:`, default [Outcome, Feature]) becomes a
-   features.yaml edit proposed AT THE GATE (step 5) — nothing is written
+   components.yaml edit proposed AT THE GATE (step 5) — nothing is written
    now. Component↔label mapping is messy by nature; JQL is the one stored
    scope language.
 3. FETCH: `python scripts/hub_jira.py --sweep <feature> [--jql '<jql>']
@@ -39,8 +39,8 @@ Jira — never comment, transition, or edit issues.
    draft their refs from the key and your own words only.
 5. GATE: one batch table — every proposed write, one line:
    `path: description [new|update]` — the snapshot
-   (features/<id>/work/jira-snapshot.yaml, redacted count called out),
-   each ref-, and the features.yaml scope edit when new/changed. Full
+   (components/<id>/work/jira-snapshot.yaml, redacted count called out),
+   each ref-, and the components.yaml scope edit when new/changed. Full
    content on request. Approve/edit/reject per line; nothing touches the
    repo before OK.
 6. On OK: write the approved files, `python scripts/hub_index.py`, then

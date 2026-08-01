@@ -2,7 +2,7 @@
 
 ## Boundary rule
 `memory/` = **working context**: current state, preferences, what changed,
-what's in flight. `features/<f>/knowledge/` = **domain knowledge**: what a
+what's in flight. `components/<f>/knowledge/` = **domain knowledge**: what a
 colleague would look up. "The 3.5 date moved" → `memory/profiles/roadmap.md`.
 "How the gateway does authz" → knowledge entry.
 

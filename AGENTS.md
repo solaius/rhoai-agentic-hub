@@ -11,8 +11,8 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 ## Map
 | path | holds |
 |---|---|
-| `features/<id>/` | all content for one feature area — identical skeleton: `knowledge/ research/ strategy/ enablement/ work/` |
-| `features/features.yaml` | the routing table (which features exist) |
+| `components/<id>/` | all content for one feature area — identical skeleton: `knowledge/ research/ strategy/ enablement/ work/` |
+| `components/components.yaml` | the routing table (which features exist) |
 | `narrative/` | the story layer: pillars, cross-feature stories, strategy spine — same skeleton as a feature |
 | `memory/` | working context: profiles (current state), facts, log |
 | `conventions/` | THE RULEBOOK — read before writing any content |
@@ -23,12 +23,12 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 
 ## Writing rules (summary — details in /conventions/)
 - Filing = which home — narrative/ (story-shaped) or which feature
-  (features.yaml) — × which type (/conventions/type-vocabulary.md).
-  Cross-feature spread: `features:` list. Working context vs domain
+  (components.yaml) — × which type (/conventions/type-vocabulary.md).
+  Cross-feature spread: `components:` list. Working context vs domain
   knowledge boundary: /conventions/memory.md.
 - Every entry: frontmatter with `type`, one-line `description`, `timestamp`.
   Filenames: `decision- fact- ref- person- question-` prefixes.
-- NEVER hand-edit generated files (features/index.md, */index.md, views/*,
+- NEVER hand-edit generated files (components/index.md, */index.md, views/*,
   memory/index.md) — run `python scripts/hub_index.py`.
 - NEVER write to the tracked memory store without the inline gate — use the
   hub.capture / hub.consolidate skills.

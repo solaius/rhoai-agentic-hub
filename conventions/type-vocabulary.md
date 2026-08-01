@@ -1,6 +1,6 @@
 # Type vocabulary
 
-## Knowledge entries (`features/*/knowledge/`)
+## Knowledge entries (`components/*/knowledge/`)
 
 | `type` | filename prefix | it is | extra required fields |
 |---|---|---|---|
@@ -15,7 +15,7 @@
 `question-` = **our** open product questions, tracked to resolution.
 `qa-` = **the field's** answered questions, tracked for reuse/recurrence.
 Don't merge them. `persona` locked list (source of truth:
-[fact-personas.md](/features/platform/knowledge/fact-personas.md); extend both
+[fact-personas.md](/components/platform/knowledge/fact-personas.md); extend both
 together): `ai-engineer` · `platform-engineer` · `agentops-admin` ·
 `business-consumer` · `data-scientist` · `cluster-admin` · `rhoai-admin`.
 
@@ -32,11 +32,11 @@ Narrative knowledge also accepts the standard vocabulary above.
 
 | `type` | filename | it is |
 |---|---|---|
-| `artifact` | exactly `artifact.md`, inside the slug dir | makes a deck/write-up indexable (`views/artifacts.md`); optional `features:`; publish state is derived from the manifest, never stored |
+| `artifact` | exactly `artifact.md`, inside the slug dir | makes a deck/write-up indexable (`views/artifacts.md`); optional `components:`; publish state is derived from the manifest, never stored |
 
-## Cross-references (`features:`)
-Any knowledge entry or artifact descriptor may declare `features: [ids…]` —
-validated against `features/features.yaml` (unknown id = lint **error**; the
+## Cross-references (`components:`)
+Any knowledge entry or artifact descriptor may declare `components: [ids…]` —
+validated against `components/components.yaml` (unknown id = lint **error**; the
 routing table is closed, unlike dangling links). The indexer renders the
 backlinks: per-feature `## Connections` sections plus the views.
 

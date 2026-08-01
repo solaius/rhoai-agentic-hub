@@ -1,6 +1,6 @@
 ---
 name: hub.reindex
-description: Regenerate all generated indexes and views (features/index.md, per-feature indexes, memory/index.md, views/*) and run the structure linter. Use after adding or editing entries, when CI reports stale indexes, or when the user says "reindex", "rebuild the indexes", or "run the linter".
+description: Regenerate all generated indexes and views (components/index.md, per-feature indexes, memory/index.md, views/*) and run the structure linter. Use after adding or editing entries, when CI reports stale indexes, or when the user says "reindex", "rebuild the indexes", or "run the linter".
 ---
 
 # hub.reindex
@@ -13,8 +13,8 @@ description: Regenerate all generated indexes and views (features/index.md, per-
 4. Report: files rewritten, remaining warnings (broken links are allowed).
 5. Commit: stage only the regenerated files, NEVER `git add -A` (shared
    checkout, see fact-concurrent-session-git-hygiene):
-   `git add memory/index.md features/index.md "features/*/index.md"
-   "features/*/knowledge/index.md" narrative/index.md
+   `git add memory/index.md components/index.md "components/*/index.md"
+   "components/*/knowledge/index.md" narrative/index.md
    narrative/knowledge/index.md views/`, check `git diff --cached --stat`,
    then commit with pathspecs:
    `git commit -m "chore: reindex" -- <those same generated paths>` — but

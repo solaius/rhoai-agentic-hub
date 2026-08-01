@@ -22,10 +22,10 @@ The published-site trust batch (2026-07-10) widened the net to entry
 frontmatter and generated views; its 3 new warnings were triaged benign on
 2026-07-11:
 
-- `features/agent-memory/knowledge/person-jonathan-zarecki.md` (frontmatter)
+- `components/agent-memory/knowledge/person-jonathan-zarecki.md` (frontmatter)
   and its propagation `views/people.md:7`: signed-agreement phrasing in a
   person entry describing a public-in-repo signoff role.
-- `features/mcp-ecosystem/enablement/management-hub/govern/entitlement.html:91`:
+- `components/mcp-ecosystem/enablement/management-hub/govern/entitlement.html:91`:
   the heuristic matches the owner's own supersession-caveat wording
   ("signed agreement still says"), added at the owner's direction.
 

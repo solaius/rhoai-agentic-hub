@@ -6,12 +6,12 @@ _swept 2026-07-27 · `(project = RHAISTRAT AND (summary ~ "\"Agent Catalog\"" OR
 _summaries withheld — the source Jira is not anonymously readable_
 
 - RHAIRFE-2443 · Feature Request · Approved · —
-- RHAISTRAT-1349 · Outcome · In Progress · — → [RHAISTRAT-1349: Work with General Purpose Agents -- Runtime Compatibility](/features/agent-interop/knowledge/ref-rhaistrat-1349-agent-runtime-compat.md)
-- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/features/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
-- RHAISTRAT-1740 · Feature · Release Pending · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1740 — Agent Catalog](/features/agent-catalog/knowledge/ref-rhaistrat-1740.md)
-- RHAISTRAT-1742 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [RHAISTRAT-1742 — deploy agents from AI Hub](/features/agent-catalog/knowledge/ref-rhaistrat-1742-deploy-from-ai-hub.md)
-- RHAISTRAT-1758 · Feature · Review · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/features/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
-- RHAISTRAT-1792 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [RHAISTRAT-1792 — agent evaluation starter kit](/features/agent-catalog/knowledge/ref-rhaistrat-1792-agent-eval-starter-kit.md)
+- RHAISTRAT-1349 · Outcome · In Progress · — → [RHAISTRAT-1349: Work with General Purpose Agents -- Runtime Compatibility](/components/agent-interop/knowledge/ref-rhaistrat-1349-agent-runtime-compat.md)
+- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/components/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
+- RHAISTRAT-1740 · Feature · Release Pending · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1740 — Agent Catalog](/components/agent-catalog/knowledge/ref-rhaistrat-1740.md)
+- RHAISTRAT-1742 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [RHAISTRAT-1742 — deploy agents from AI Hub](/components/agent-catalog/knowledge/ref-rhaistrat-1742-deploy-from-ai-hub.md)
+- RHAISTRAT-1758 · Feature · Review · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/components/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
+- RHAISTRAT-1792 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [RHAISTRAT-1792 — agent evaluation starter kit](/components/agent-catalog/knowledge/ref-rhaistrat-1792-agent-eval-starter-kit.md)
 - RHOAIENG-66140 · Task · Resolved · —
 - RHOAIENG-70656 · Epic · Resolved · 3.5 GA RHOAI RELEASE
 - RHOAIENG-70657 · Task · Resolved · 3.5 GA RHOAI RELEASE
@@ -55,7 +55,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-84 · Initiative · Closed · —
 - RHAISTRAT-123 · Feature · Closed · —
 - RHAISTRAT-133 · Feature · In Progress · 3.5 GA RHOAI RELEASE
-- RHAISTRAT-138 · Feature · Closed · — → [MCP Registry Centralized Governance (RHAISTRAT-138)](/features/mcp-registry/knowledge/ref-rhaistrat-138-centralized-governance.md)
+- RHAISTRAT-138 · Feature · Closed · — → [MCP Registry Centralized Governance (RHAISTRAT-138)](/components/mcp-registry/knowledge/ref-rhaistrat-138-centralized-governance.md)
 - RHAISTRAT-155 · Outcome · In Progress · —
 - RHAISTRAT-197 · Outcome · Closed · —
 - RHAISTRAT-206 · Feature · In Progress · 3.5 GA RHOAI RELEASE
@@ -68,32 +68,32 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-932 · Outcome · In Progress · —
 - RHAISTRAT-947 · Outcome · Closed · —
 - RHAISTRAT-1049 · Outcome · In Progress · —
-- RHAISTRAT-1073 · Outcome · In Progress · — → [[Outcome] Implementation of Consistent Agentic APIs](/features/ai-gateway/knowledge/ref-rhaistrat-1073-consistent-agentic-apis.md)
+- RHAISTRAT-1073 · Outcome · In Progress · — → [[Outcome] Implementation of Consistent Agentic APIs](/components/ai-gateway/knowledge/ref-rhaistrat-1073-consistent-agentic-apis.md)
 - RHAISTRAT-1101 · Outcome · Closed · —
 - RHAISTRAT-1102 · Outcome · In Progress · —
 - RHAISTRAT-1149 · Feature · Release Pending · 3.5 EA1 RHOAI RELEASE
-- RHAISTRAT-1211 · Outcome · In Progress · — → [RHAISTRAT-1211: BYOA AgentOps Journey](/features/agent-interop/knowledge/ref-rhaistrat-1211-byoa-agentops.md)
+- RHAISTRAT-1211 · Outcome · In Progress · — → [RHAISTRAT-1211: BYOA AgentOps Journey](/components/agent-interop/knowledge/ref-rhaistrat-1211-byoa-agentops.md)
 - RHAISTRAT-1261 · Outcome · In Progress · —
 - RHAISTRAT-1263 · Outcome · Closed · —
 - RHAISTRAT-1264 · Outcome · Refinement · —
-- RHAISTRAT-1269 · Outcome · New · — → [RHAISTRAT-1269: Platform-Level Safety Enforcement for Agent Tool Calls](/features/agent-interop/knowledge/ref-rhaistrat-1269-agent-safety-enforcement.md)
+- RHAISTRAT-1269 · Outcome · New · — → [RHAISTRAT-1269: Platform-Level Safety Enforcement for Agent Tool Calls](/components/agent-interop/knowledge/ref-rhaistrat-1269-agent-safety-enforcement.md)
 - RHAISTRAT-1312 · Outcome · In Progress · —
-- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
 - RHAISTRAT-1344 · Outcome · In Progress · —
-- RHAISTRAT-1345 · Outcome · New · — → [Outcome: Agent Memory Primitives (RHAISTRAT-1345)](/features/agent-memory/knowledge/ref-rhaistrat-1345-outcome.md)
+- RHAISTRAT-1345 · Outcome · New · — → [Outcome: Agent Memory Primitives (RHAISTRAT-1345)](/components/agent-memory/knowledge/ref-rhaistrat-1345-outcome.md)
 - RHAISTRAT-1346 · Outcome · Closed · —
 - RHAISTRAT-1347 · Feature · Closed · —
 - RHAISTRAT-1348 · Feature · New · —
-- RHAISTRAT-1349 · Outcome · In Progress · — → [RHAISTRAT-1349: Work with General Purpose Agents -- Runtime Compatibility](/features/agent-interop/knowledge/ref-rhaistrat-1349-agent-runtime-compat.md)
+- RHAISTRAT-1349 · Outcome · In Progress · — → [RHAISTRAT-1349: Work with General Purpose Agents -- Runtime Compatibility](/components/agent-interop/knowledge/ref-rhaistrat-1349-agent-runtime-compat.md)
 - RHAISTRAT-1350 · Outcome · Closed · —
 - RHAISTRAT-1351 · Outcome · Closed · —
 - RHAISTRAT-1352 · Feature · In Progress · —
 - RHAISTRAT-1353 · Outcome · In Progress · —
 - RHAISTRAT-1354 · Outcome · In Progress · —
-- RHAISTRAT-1355 · Outcome · In Progress · — → [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md)
-- RHAISTRAT-1356 · Outcome · In Progress · — → [RHAISTRAT-1356: A2A Protocol and Agent-to-Agent Orchestration](/features/agent-interop/knowledge/ref-rhaistrat-1356-a2a-protocol.md)
+- RHAISTRAT-1355 · Outcome · In Progress · — → [RHAISTRAT-1355: Governance of Agentic Assets](/components/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md)
+- RHAISTRAT-1356 · Outcome · In Progress · — → [RHAISTRAT-1356: A2A Protocol and Agent-to-Agent Orchestration](/components/agent-interop/knowledge/ref-rhaistrat-1356-a2a-protocol.md)
 - RHAISTRAT-1357 · Outcome · In Progress · —
-- RHAISTRAT-1436 · Feature · New · — → [RHAISTRAT-1436: Agent Registry Backend (MLflow-native)](/features/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md)
+- RHAISTRAT-1436 · Feature · New · — → [RHAISTRAT-1436: Agent Registry Backend (MLflow-native)](/components/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md)
 - RHAISTRAT-1527 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1561 · Feature · Backlog · —
 - RHAISTRAT-1572 · Feature · Closed · —
@@ -101,21 +101,21 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1574 · Feature · New · —
 - RHAISTRAT-1575 · Feature · New · —
 - RHAISTRAT-1576 · Feature · Backlog · 3.6 EA1 RHOAI RELEASE
-- RHAISTRAT-1585 · Feature · Closed · — → [RHAISTRAT-1585: Sandboxed Execution Environments for Autonomous Agents](/features/agent-interop/knowledge/ref-rhaistrat-1585-sandboxed-execution.md)
+- RHAISTRAT-1585 · Feature · Closed · — → [RHAISTRAT-1585: Sandboxed Execution Environments for Autonomous Agents](/components/agent-interop/knowledge/ref-rhaistrat-1585-sandboxed-execution.md)
 - RHAISTRAT-1630 · Feature · New · —
-- RHAISTRAT-1677 · Feature · New · — → [OGX MCP Registry Integration (RHAISTRAT-1677)](/features/mcp-registry/knowledge/ref-rhaistrat-1677-ogx-integration.md)
+- RHAISTRAT-1677 · Feature · New · — → [OGX MCP Registry Integration (RHAISTRAT-1677)](/components/mcp-registry/knowledge/ref-rhaistrat-1677-ogx-integration.md)
 - RHAISTRAT-1678 · Feature · Backlog · 3.6 EA1 RHOAI RELEASE
-- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/features/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
-- RHAISTRAT-1730 · Feature · New · — → [RHAISTRAT-1730: Policy-Based Authorization and Access Control for Agents](/features/agent-interop/knowledge/ref-rhaistrat-1730-agent-authorization.md)
-- RHAISTRAT-1740 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1740 — Agent Catalog](/features/agent-catalog/knowledge/ref-rhaistrat-1740.md)
-- RHAISTRAT-1742 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1742 — deploy agents from AI Hub](/features/agent-catalog/knowledge/ref-rhaistrat-1742-deploy-from-ai-hub.md)
+- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/components/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
+- RHAISTRAT-1730 · Feature · New · — → [RHAISTRAT-1730: Policy-Based Authorization and Access Control for Agents](/components/agent-interop/knowledge/ref-rhaistrat-1730-agent-authorization.md)
+- RHAISTRAT-1740 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1740 — Agent Catalog](/components/agent-catalog/knowledge/ref-rhaistrat-1740.md)
+- RHAISTRAT-1742 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1742 — deploy agents from AI Hub](/components/agent-catalog/knowledge/ref-rhaistrat-1742-deploy-from-ai-hub.md)
 - RHAISTRAT-1748 · Feature · Backlog · —
 - RHAISTRAT-1749 · Feature · In Progress · —
-- RHAISTRAT-1751 · Feature · Closed · — → [RHAISTRAT-1751: OpenShell Integration for Agent Sandboxing](/features/agent-interop/knowledge/ref-rhaistrat-1751-openshell-sandboxing.md)
-- RHAISTRAT-1752 · Feature · New · — → [RHAISTRAT-1752: Productize OpenShell Operator](/features/agent-interop/knowledge/ref-rhaistrat-1752-openshell-operator.md)
-- RHAISTRAT-1753 · Feature · New · — → [RHAISTRAT-1753: Kagenti and OpenShell Coexistence Spike](/features/agent-interop/knowledge/ref-rhaistrat-1753-kagenti-openshell-coexistence.md)
-- RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/features/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
-- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
+- RHAISTRAT-1751 · Feature · Closed · — → [RHAISTRAT-1751: OpenShell Integration for Agent Sandboxing](/components/agent-interop/knowledge/ref-rhaistrat-1751-openshell-sandboxing.md)
+- RHAISTRAT-1752 · Feature · New · — → [RHAISTRAT-1752: Productize OpenShell Operator](/components/agent-interop/knowledge/ref-rhaistrat-1752-openshell-operator.md)
+- RHAISTRAT-1753 · Feature · New · — → [RHAISTRAT-1753: Kagenti and OpenShell Coexistence Spike](/components/agent-interop/knowledge/ref-rhaistrat-1753-kagenti-openshell-coexistence.md)
+- RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/components/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
+- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
 - RHAISTRAT-1780 · Feature · New · —
 - RHAISTRAT-1791 · Outcome · New · —
 - RHAISTRAT-1859 · Feature · In Progress · 3.5 GA RHOAI RELEASE
@@ -123,12 +123,12 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1938 · Feature · Closed · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1940 · Feature · New · —
 - RHAISTRAT-1952 · Feature · Closed · —
-- RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/features/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
-- RHAISTRAT-1956 · Feature · New · — → [RHAISTRAT-1956: Agent Metadata Extraction](/features/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
-- RHAISTRAT-1993 · Feature · New · — → [MCP Registry General Availability (RHAISTRAT-1993)](/features/mcp-registry/knowledge/ref-rhaistrat-1993-ga.md)
+- RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/components/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
+- RHAISTRAT-1956 · Feature · New · — → [RHAISTRAT-1956: Agent Metadata Extraction](/components/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
+- RHAISTRAT-1993 · Feature · New · — → [MCP Registry General Availability (RHAISTRAT-1993)](/components/mcp-registry/knowledge/ref-rhaistrat-1993-ga.md)
 - RHAISTRAT-1994 · Feature · New · —
-- RHAISTRAT-1995 · Feature · New · — → [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md)
-- RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/features/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
+- RHAISTRAT-1995 · Feature · New · — → [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md)
+- RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/components/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
 - RHAISTRAT-2027 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE
 - RHAISTRAT-2028 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-2053 · Outcome · New · —
@@ -138,8 +138,8 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-2088 · Feature · New · —
 - RHAISTRAT-2089 · Feature · New · —
 - RHAISTRAT-2131 · Feature · New · —
-- RHAISTRAT-2132 · Feature · New · — → [STDIO MCP Server Registration (RHAISTRAT-2132)](/features/mcp-registry/knowledge/ref-rhaistrat-2132-stdio-registration.md)
-- RHAISTRAT-2133 · Feature · New · — → [IDE-Native MCP Registry API (RHAISTRAT-2133)](/features/mcp-registry/knowledge/ref-rhaistrat-2133-ide-native-api.md)
+- RHAISTRAT-2132 · Feature · New · — → [STDIO MCP Server Registration (RHAISTRAT-2132)](/components/mcp-registry/knowledge/ref-rhaistrat-2132-stdio-registration.md)
+- RHAISTRAT-2133 · Feature · New · — → [IDE-Native MCP Registry API (RHAISTRAT-2133)](/components/mcp-registry/knowledge/ref-rhaistrat-2133-ide-native-api.md)
 - RHAISTRAT-2192 · Feature · New · —
 - RHAISTRAT-2215 · Feature · New · —
 - RHAISTRAT-2216 · Feature · New · —
@@ -272,16 +272,16 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAI-14 · Epic · New · —
 - RHAI-15 · Epic · New · —
 - RHAI-16 · Epic · New · —
-- RHAIRFE-1313 · Feature Request · Stakeholder review · — → [RHAIRFE-1313: Agent Registry UI](/features/agent-registry/knowledge/ref-rhairfe-1313-agent-registry-ui.md)
-- RHAIRFE-2388 · Feature Request · Approved · — → [RHAIRFE-2388: Agent Metadata Extraction (surviving RFE)](/features/agent-registry/knowledge/ref-rhairfe-2388-agent-metadata-extraction.md)
+- RHAIRFE-1313 · Feature Request · Stakeholder review · — → [RHAIRFE-1313: Agent Registry UI](/components/agent-registry/knowledge/ref-rhairfe-1313-agent-registry-ui.md)
+- RHAIRFE-2388 · Feature Request · Approved · — → [RHAIRFE-2388: Agent Metadata Extraction (surviving RFE)](/components/agent-registry/knowledge/ref-rhairfe-2388-agent-metadata-extraction.md)
 - RHAIRFE-2443 · Feature Request · Approved · —
-- RHAISTRAT-1355 · Outcome · In Progress · — → [RHAISTRAT-1355: Governance of Agentic Assets](/features/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md)
-- RHAISTRAT-1436 · Feature · New · — → [RHAISTRAT-1436: Agent Registry Backend (MLflow-native)](/features/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md)
-- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/features/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
-- RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/features/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
-- RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/features/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
-- RHAISTRAT-1956 · Feature · Closed · — → [RHAISTRAT-1956: Agent Metadata Extraction](/features/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
-- RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/features/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
+- RHAISTRAT-1355 · Outcome · In Progress · — → [RHAISTRAT-1355: Governance of Agentic Assets](/components/agent-interop/knowledge/ref-rhaistrat-1355-governance-agentic-assets.md)
+- RHAISTRAT-1436 · Feature · New · — → [RHAISTRAT-1436: Agent Registry Backend (MLflow-native)](/components/agent-registry/knowledge/ref-rhaistrat-1436-agent-registry-backend.md)
+- RHAISTRAT-1697 · Outcome · In Progress · — → [RHAISTRAT-1697: Agent Hub UI -- Discovery, Registry, and Deployment Views](/components/agent-interop/knowledge/ref-rhaistrat-1697-agent-hub-ui.md)
+- RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/components/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
+- RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/components/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
+- RHAISTRAT-1956 · Feature · Closed · — → [RHAISTRAT-1956: Agent Metadata Extraction](/components/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
+- RHAISTRAT-2019 · Feature · New · — → [RHAISTRAT-2019: Agent Runtime Contract](/components/agent-interop/knowledge/ref-rhaistrat-2019-agent-runtime-contract.md)
 
 ## ai-gateway
 _swept 2026-07-31 · `(project = RHAISTRAT AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR (project = RHAIRFE AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR key in (RHAISTRAT-2452, RHAISTRAT-2241, RHAISTRAT-2240, RHAISTRAT-2018, RHAISTRAT-1812, RHAISTRAT-1073, RHAIRFE-2258, RHAIRFE-2920)`_
@@ -306,25 +306,25 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAIRFE-2953 · Feature Request · Approved · —
 - RHAIRFE-2954 · Feature Request · New · —
 - RHAIRFE-2955 · Feature Request · New · —
-- RHAISTRAT-178 · Feature · In Progress · 3.6 GA RHOAI RELEASE → [[Feat] Enable its_hub to run as an AI Gateway component](/features/ai-gateway/knowledge/ref-rhaistrat-178-its-hub-gateway-component.md)
-- RHAISTRAT-1073 · Outcome · In Progress · — → [[Outcome] Implementation of Consistent Agentic APIs](/features/ai-gateway/knowledge/ref-rhaistrat-1073-consistent-agentic-apis.md)
-- RHAISTRAT-1210 · Outcome · In Progress · — → [[Outcome] Integration Safety/Guardrails for MCP/AI Gateway](/features/ai-gateway/knowledge/ref-rhaistrat-1210-guardrails-mcp-ai-gateway.md)
-- RHAISTRAT-1456 · Feature · New · 3.6 GA RHOAI RELEASE → [AI Gateway Support for OpenAI Codex Agent SDK](/features/ai-gateway/knowledge/ref-rhaistrat-1456-codex-agent-sdk.md)
-- RHAISTRAT-1777 · Outcome · In Progress · — → [[Outcome] AI Gateway Guardrails](/features/ai-gateway/knowledge/ref-rhaistrat-1777-ai-gateway-guardrails.md)
-- RHAISTRAT-1810 · Feature · New · — → [AI Gateway: Full API Fidelity for Tool-Calling Clients](/features/ai-gateway/knowledge/ref-rhaistrat-1810-api-fidelity-tool-calling.md)
-- RHAISTRAT-1812 · Feature · New · — → [MaaS Responses/Messages API Conformance and Tool-Calling Validation](/features/ai-gateway/knowledge/ref-rhaistrat-1812-conformance-validation.md)
-- RHAISTRAT-1935 · Feature · New · — → [Gen AI Studio playground must support AI Gateway as alternative to OGX](/features/ai-gateway/knowledge/ref-rhaistrat-1935-gen-ai-studio-gateway.md)
-- RHAISTRAT-2018 · Feature · In Progress · 3.6 EA2 RHAII RELEASE, 3.6 EA2 RHOAI RELEASE → [Messages API Support on llm-d](/features/ai-gateway/knowledge/ref-rhaistrat-2018-messages-api-llmd.md)
-- RHAISTRAT-2240 · Feature · New · — → [OpenAI Responses API endpoint for NeMo Guardrails server](/features/ai-gateway/knowledge/ref-rhaistrat-2240-responses-guardrails.md)
-- RHAISTRAT-2241 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [Anthropic Messages API endpoint for NeMo Guardrails server](/features/ai-gateway/knowledge/ref-rhaistrat-2241-messages-guardrails.md)
-- RHAISTRAT-2277 · Feature · New · 3.6 EA1 RHOAI RELEASE → [Seamless OGX-to-Praxis Migration for Responses, Conversations, and RAG APIs in 3.6](/features/ai-gateway/knowledge/ref-rhaistrat-2277-ogx-to-praxis-migration.md)
-- RHAISTRAT-2378 · Feature · New · — → [GA Support for NeMo Guardrails for AI Gateway Traffic via Praxis](/features/ai-gateway/knowledge/ref-rhaistrat-2378-nemo-guardrails-ga.md)
-- RHAISTRAT-2409 · Feature · New · — → [Tenant isolation and ABAC enforcement across Praxis-to-OGX boundary](/features/ai-gateway/knowledge/ref-rhaistrat-2409-tenant-isolation-praxis-ogx.md)
-- RHAISTRAT-2442 · Feature · New · — → [ITS Routing via AI Gateway IPP Plugin](/features/ai-gateway/knowledge/ref-rhaistrat-2442-its-ipp-plugin.md)
-- RHAISTRAT-2443 · Feature · New · — → [Praxis ITS Routing Filter with Dynamic Budget Allocation](/features/ai-gateway/knowledge/ref-rhaistrat-2443-praxis-its-filter.md)
-- RHAISTRAT-2444 · Feature · New · — → [Native-Performance ITS Orchestration and Service Layers for Praxis Gateway Integration](/features/ai-gateway/knowledge/ref-rhaistrat-2444-its-native-orchestration.md)
+- RHAISTRAT-178 · Feature · In Progress · 3.6 GA RHOAI RELEASE → [[Feat] Enable its_hub to run as an AI Gateway component](/components/ai-gateway/knowledge/ref-rhaistrat-178-its-hub-gateway-component.md)
+- RHAISTRAT-1073 · Outcome · In Progress · — → [[Outcome] Implementation of Consistent Agentic APIs](/components/ai-gateway/knowledge/ref-rhaistrat-1073-consistent-agentic-apis.md)
+- RHAISTRAT-1210 · Outcome · In Progress · — → [[Outcome] Integration Safety/Guardrails for MCP/AI Gateway](/components/ai-gateway/knowledge/ref-rhaistrat-1210-guardrails-mcp-ai-gateway.md)
+- RHAISTRAT-1456 · Feature · New · 3.6 GA RHOAI RELEASE → [AI Gateway Support for OpenAI Codex Agent SDK](/components/ai-gateway/knowledge/ref-rhaistrat-1456-codex-agent-sdk.md)
+- RHAISTRAT-1777 · Outcome · In Progress · — → [[Outcome] AI Gateway Guardrails](/components/ai-gateway/knowledge/ref-rhaistrat-1777-ai-gateway-guardrails.md)
+- RHAISTRAT-1810 · Feature · New · — → [AI Gateway: Full API Fidelity for Tool-Calling Clients](/components/ai-gateway/knowledge/ref-rhaistrat-1810-api-fidelity-tool-calling.md)
+- RHAISTRAT-1812 · Feature · New · — → [MaaS Responses/Messages API Conformance and Tool-Calling Validation](/components/ai-gateway/knowledge/ref-rhaistrat-1812-conformance-validation.md)
+- RHAISTRAT-1935 · Feature · New · — → [Gen AI Studio playground must support AI Gateway as alternative to OGX](/components/ai-gateway/knowledge/ref-rhaistrat-1935-gen-ai-studio-gateway.md)
+- RHAISTRAT-2018 · Feature · In Progress · 3.6 EA2 RHAII RELEASE, 3.6 EA2 RHOAI RELEASE → [Messages API Support on llm-d](/components/ai-gateway/knowledge/ref-rhaistrat-2018-messages-api-llmd.md)
+- RHAISTRAT-2240 · Feature · New · — → [OpenAI Responses API endpoint for NeMo Guardrails server](/components/ai-gateway/knowledge/ref-rhaistrat-2240-responses-guardrails.md)
+- RHAISTRAT-2241 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [Anthropic Messages API endpoint for NeMo Guardrails server](/components/ai-gateway/knowledge/ref-rhaistrat-2241-messages-guardrails.md)
+- RHAISTRAT-2277 · Feature · New · 3.6 EA1 RHOAI RELEASE → [Seamless OGX-to-Praxis Migration for Responses, Conversations, and RAG APIs in 3.6](/components/ai-gateway/knowledge/ref-rhaistrat-2277-ogx-to-praxis-migration.md)
+- RHAISTRAT-2378 · Feature · New · — → [GA Support for NeMo Guardrails for AI Gateway Traffic via Praxis](/components/ai-gateway/knowledge/ref-rhaistrat-2378-nemo-guardrails-ga.md)
+- RHAISTRAT-2409 · Feature · New · — → [Tenant isolation and ABAC enforcement across Praxis-to-OGX boundary](/components/ai-gateway/knowledge/ref-rhaistrat-2409-tenant-isolation-praxis-ogx.md)
+- RHAISTRAT-2442 · Feature · New · — → [ITS Routing via AI Gateway IPP Plugin](/components/ai-gateway/knowledge/ref-rhaistrat-2442-its-ipp-plugin.md)
+- RHAISTRAT-2443 · Feature · New · — → [Praxis ITS Routing Filter with Dynamic Budget Allocation](/components/ai-gateway/knowledge/ref-rhaistrat-2443-praxis-its-filter.md)
+- RHAISTRAT-2444 · Feature · New · — → [Native-Performance ITS Orchestration and Service Layers for Praxis Gateway Integration](/components/ai-gateway/knowledge/ref-rhaistrat-2444-its-native-orchestration.md)
 - RHAISTRAT-2449 · Initiative · New · 3.6 GA RHOAI RELEASE
-- RHAISTRAT-2452 · Feature · New · — → [Componentize IPP (Inference Payload Processing)](/features/ai-gateway/knowledge/ref-rhaistrat-2452-componentize-ipp.md)
+- RHAISTRAT-2452 · Feature · New · — → [Componentize IPP (Inference Payload Processing)](/components/ai-gateway/knowledge/ref-rhaistrat-2452-componentize-ipp.md)
 
 ## mcp-catalog
 _swept 2026-07-11 · `(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")`_
@@ -333,7 +333,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1084 · Feature · Closed · rhoai-3.4
 - RHAISTRAT-1149 · Feature · Release Pending · 3.5 EA1 RHOAI RELEASE
 - RHAISTRAT-1306 · Feature · Release Pending · —
-- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
 - RHAISTRAT-1859 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1938 · Feature · Closed · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1994 · Feature · New · —
@@ -392,11 +392,11 @@ _summaries withheld — the source Jira is not anonymously readable_
 _swept 2026-07-12 · `(project = RHAISTRAT AND (summary ~ "\"MCP Lifecycle Operator\"" OR summary ~ "MCPLO" OR key = RHAISTRAT-1339)) OR (project = RHOAIENG AND (summary ~ "\"lifecycle operator\"" OR summary ~ "MCPLO" OR summary ~ "MCPServer")) OR (project = OCPSTRAT AND summary ~ "\"MCP lifecycle operator\"")`_
 _summaries withheld — the source Jira is not anonymously readable_
 
-- OCPSTRAT-2879 · Feature · In Progress · — — MCP lifecycle operator : GA   → [OCPSTRAT-2879: MCP lifecycle operator GA (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-2879-mcplo-ga.md)
-- OCPSTRAT-3263 · Feature · In Progress · — — MCP lifecycle operator : TP - Mid July 2026 → [OCPSTRAT-3263: MCP lifecycle operator TP (OCP-side)](/features/mcp-lifecycle-operator/knowledge/ref-ocpstrat-3263-mcplo-tp.md)
-- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
-- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
-- RHAISTRAT-1995 · Feature · New · — → [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/features/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md)
+- OCPSTRAT-2879 · Feature · In Progress · — — MCP lifecycle operator : GA   → [OCPSTRAT-2879: MCP lifecycle operator GA (OCP-side)](/components/mcp-lifecycle-operator/knowledge/ref-ocpstrat-2879-mcplo-ga.md)
+- OCPSTRAT-3263 · Feature · In Progress · — — MCP lifecycle operator : TP - Mid July 2026 → [OCPSTRAT-3263: MCP lifecycle operator TP (OCP-side)](/components/mcp-lifecycle-operator/knowledge/ref-ocpstrat-3263-mcplo-tp.md)
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
+- RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
+- RHAISTRAT-1995 · Feature · New · — → [RHAISTRAT-1995: MCP Lifecycle Operator General Availability](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1995-mcplo-ga.md)
 - RHOAIENG-27566 · Sub-task · Closed · —
 - RHOAIENG-49762 · Epic · Closed · —
 - RHOAIENG-52641 · Task · Closed · —
@@ -407,7 +407,7 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-54732 · Story · Closed · —
 - RHOAIENG-54985 · Task · Closed · —
 - RHOAIENG-59053 · Story · Closed · —
-- RHOAIENG-65512 · Epic · In Progress · — → [RHOAIENG-65512: MCPLO RHOAI productization epic](/features/mcp-lifecycle-operator/knowledge/ref-rhoaieng-65512-productization-epic.md)
+- RHOAIENG-65512 · Epic · In Progress · — → [RHOAIENG-65512: MCPLO RHOAI productization epic](/components/mcp-lifecycle-operator/knowledge/ref-rhoaieng-65512-productization-epic.md)
 - RHOAIENG-65524 · Task · Closed · —
 - RHOAIENG-65530 · Task · In Progress · —
 - RHOAIENG-65532 · Task · New · 3.5 GA RHOAI RELEASE
@@ -436,12 +436,12 @@ _summaries withheld — the source Jira is not anonymously readable_
 _swept 2026-07-12 · `(project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"MCP Registry\"" OR summary ~ "mcp-registry")) OR (project = RHAISTRAT AND summary ~ "\"MCP Registry\"")`_
 _summaries withheld — the source Jira is not anonymously readable_
 
-- RHAISTRAT-138 · Feature · Closed · — → [MCP Registry Centralized Governance (RHAISTRAT-138)](/features/mcp-registry/knowledge/ref-rhaistrat-138-centralized-governance.md)
-- RHAISTRAT-1677 · Feature · New · — → [OGX MCP Registry Integration (RHAISTRAT-1677)](/features/mcp-registry/knowledge/ref-rhaistrat-1677-ogx-integration.md)
-- RHAISTRAT-1762 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [MCP Registry Operational Governance (RHAISTRAT-1762)](/features/mcp-registry/knowledge/ref-rhaistrat-1762-operational-governance.md)
-- RHAISTRAT-1993 · Feature · New · — → [MCP Registry General Availability (RHAISTRAT-1993)](/features/mcp-registry/knowledge/ref-rhaistrat-1993-ga.md)
-- RHAISTRAT-2132 · Feature · New · — → [STDIO MCP Server Registration (RHAISTRAT-2132)](/features/mcp-registry/knowledge/ref-rhaistrat-2132-stdio-registration.md)
-- RHAISTRAT-2133 · Feature · New · — → [IDE-Native MCP Registry API (RHAISTRAT-2133)](/features/mcp-registry/knowledge/ref-rhaistrat-2133-ide-native-api.md)
+- RHAISTRAT-138 · Feature · Closed · — → [MCP Registry Centralized Governance (RHAISTRAT-138)](/components/mcp-registry/knowledge/ref-rhaistrat-138-centralized-governance.md)
+- RHAISTRAT-1677 · Feature · New · — → [OGX MCP Registry Integration (RHAISTRAT-1677)](/components/mcp-registry/knowledge/ref-rhaistrat-1677-ogx-integration.md)
+- RHAISTRAT-1762 · Feature · In Progress · 3.6 EA1 RHOAI RELEASE → [MCP Registry Operational Governance (RHAISTRAT-1762)](/components/mcp-registry/knowledge/ref-rhaistrat-1762-operational-governance.md)
+- RHAISTRAT-1993 · Feature · New · — → [MCP Registry General Availability (RHAISTRAT-1993)](/components/mcp-registry/knowledge/ref-rhaistrat-1993-ga.md)
+- RHAISTRAT-2132 · Feature · New · — → [STDIO MCP Server Registration (RHAISTRAT-2132)](/components/mcp-registry/knowledge/ref-rhaistrat-2132-stdio-registration.md)
+- RHAISTRAT-2133 · Feature · New · — → [IDE-Native MCP Registry API (RHAISTRAT-2133)](/components/mcp-registry/knowledge/ref-rhaistrat-2133-ide-native-api.md)
 - RHOAIENG-36901 · Task · Closed · —
 - RHOAIENG-36902 · Task · Closed · —
 - RHOAIENG-36903 · Task · Closed · —
@@ -473,6 +473,6 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-75459 · Task · New · —
 
 ## Referenced elsewhere
-- HATSTRAT-314 → [HATSTRAT-314](/features/agent-interop/knowledge/ref-hatstrat-314.md)
-- OCPMCP-347 → [OCPMCP-347: MCP Gateway integration (GA scope)](/features/mcp-lifecycle-operator/knowledge/ref-ocpmcp-347-gateway-integration.md)
-- RHAIENG-6156 → [RHAIENG-6156 -- Agent catalog metadata](/features/agent-catalog/knowledge/ref-rhaieng-6156-agent-metadata.md)
+- HATSTRAT-314 → [HATSTRAT-314](/components/agent-interop/knowledge/ref-hatstrat-314.md)
+- OCPMCP-347 → [OCPMCP-347: MCP Gateway integration (GA scope)](/components/mcp-lifecycle-operator/knowledge/ref-ocpmcp-347-gateway-integration.md)
+- RHAIENG-6156 → [RHAIENG-6156 -- Agent catalog metadata](/components/agent-catalog/knowledge/ref-rhaieng-6156-agent-metadata.md)

@@ -9,18 +9,18 @@ Extracts customer interests from a source and adds/updates the customer in the r
 
 ## Tracker Location
 
-`restricted/features/platform/work/customer-tracker/customer-interest-tracker.html`
+`restricted/components/platform/work/customer-tracker/customer-interest-tracker.html`
 
 This file lives in the `restricted/` mirror (gitignored, NDA content — see
 [memory.md gate item 5](/conventions/memory.md) and the
 [restricted/ convention](/conventions/layout.md#restricted)). All source
 transcriptions live in
-`restricted/features/platform/work/customer-tracker/transcripts/` (named
+`restricted/components/platform/work/customer-tracker/transcripts/` (named
 `transcripts/`, not `transcriptions/`, to match the hub-wide `work/transcripts/`
 convention used by every other feature).
 
 The public pointer to this content —
-[features/platform/work/customer-tracker/README.md](/features/platform/work/customer-tracker/README.md)
+[components/platform/work/customer-tracker/README.md](/components/platform/work/customer-tracker/README.md)
 — explains what the tracker is and where the real data lives, for anyone who
 finds the empty path in the public tree. It has no customer data in it.
 
@@ -31,7 +31,7 @@ than treating a missing file as an error.
 ## Source Types
 
 1. **Transcription file** — read from
-   `restricted/features/platform/work/customer-tracker/transcripts/`
+   `restricted/components/platform/work/customer-tracker/transcripts/`
 2. **Email thread** — fetch via Google Workspace MCP (`search_gmail_messages` +
    `get_gmail_thread_content`)
 3. **Pasted text** — user pastes content directly
@@ -125,7 +125,7 @@ These are the exact columns in the tracker. Map extracted interests to these:
    - Add to Cross-Customer Themes rows where applicable
    - Add action items to the Action Items table
    - If the tracker file or its parent directories don't exist yet, create
-     `restricted/features/platform/work/customer-tracker/` (and
+     `restricted/components/platform/work/customer-tracker/` (and
      `transcripts/` alongside it) first — this is expected on a fresh machine,
      not an error condition
 5. **If existing customer:**

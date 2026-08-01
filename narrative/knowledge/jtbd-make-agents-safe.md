@@ -6,7 +6,7 @@ persona: platform-engineer
 status: candidate
 timestamp: 2026-07-10
 source: ref-agentic-strategy-diagram.md
-features: [agent-ops]
+components: [agent-ops]
 tags: [narrative, jtbd, safety]
 ---
 **When** I deploy agents to production,

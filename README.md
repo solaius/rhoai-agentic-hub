@@ -21,7 +21,7 @@ explicit allowlist entry — see the trust model in
 
 ## Layout in one breath
 
-`features/<feature>/` holds all content for one feature area in an identical
+`components/<feature>/` holds all content for one feature area in an identical
 skeleton (`knowledge/ research/ strategy/ enablement/ work/`); `narrative/`
 is the story layer above them (pillars, cross-feature stories, the strategy
 spine — same skeleton); `memory/` holds working context (current state,

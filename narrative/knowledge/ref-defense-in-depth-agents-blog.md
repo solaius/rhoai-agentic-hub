@@ -5,7 +5,7 @@ description: Red Hat developer article on layered security for AI agents — har
 resource: https://developers.redhat.com/articles/2026/05/14/every-layer-counts-defense-depth-ai-agents-red-hat-ai
 timestamp: 2026-05-14
 tags: [narrative, security, agent-ops]
-features: [agent-ops]
+components: [agent-ops]
 ---
 Red Hat developers article covering the defense-in-depth security model
 for AI agents on Red Hat AI. Layers: hardened OpenShift platform → sandbox

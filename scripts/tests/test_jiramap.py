@@ -42,7 +42,7 @@ def test_build_snapshot_byte_stable_numeric_key_order():
 
 def test_validate_ok_and_load_all(tmp_path):
     text = build_snapshot("x", "project = X", [issue_row(ISSUE_A, True)], "2026-07-09")
-    write(tmp_path, "features/x/work/jira-snapshot.yaml", text)
+    write(tmp_path, "components/x/work/jira-snapshot.yaml", text)
     errors, warnings = validate(tmp_path)
     assert errors == [] and warnings == []
     [(fid, data)] = load_all(tmp_path)
@@ -50,25 +50,25 @@ def test_validate_ok_and_load_all(tmp_path):
 
 
 def test_validate_missing_marker_is_error(tmp_path):
-    write(tmp_path, "features/x/work/jira-snapshot.yaml",
-          "feature: x\njql: q\nswept: 2026-07-09\nissues: []\n")
+    write(tmp_path, "components/x/work/jira-snapshot.yaml",
+          "component: x\njql: q\nswept: 2026-07-09\nissues: []\n")
     errors, _ = validate(tmp_path)
     assert any("missing generated-file marker" in e for e in errors)
 
 
-def test_validate_feature_dir_mismatch_is_error(tmp_path):
+def test_validate_component_dir_mismatch_is_error(tmp_path):
     text = build_snapshot("y", "project = X", [], "2026-07-09")
-    write(tmp_path, "features/x/work/jira-snapshot.yaml", text)
+    write(tmp_path, "components/x/work/jira-snapshot.yaml", text)
     errors, _ = validate(tmp_path)
-    assert any("feature 'y' does not match its directory 'x'" in e for e in errors)
+    assert any("component 'y' does not match its directory 'x'" in e for e in errors)
 
 
 def test_validate_bad_yaml_and_bad_row(tmp_path):
-    write(tmp_path, "features/x/work/jira-snapshot.yaml", MARKER + "\n{unclosed\n")
+    write(tmp_path, "components/x/work/jira-snapshot.yaml", MARKER + "\n{unclosed\n")
     errors, _ = validate(tmp_path)
     assert any("invalid YAML" in e for e in errors)
-    write(tmp_path, "features/x/work/jira-snapshot.yaml",
-          MARKER + "\nfeature: x\njql: q\nswept: 2026-07-09\nissues:\n- type: Bug\n")
+    write(tmp_path, "components/x/work/jira-snapshot.yaml",
+          MARKER + "\ncomponent: x\njql: q\nswept: 2026-07-09\nissues:\n- type: Bug\n")
     errors, _ = validate(tmp_path)
     assert any("issue row 0 missing 'key'" in e for e in errors)
 
@@ -85,7 +85,7 @@ def test_diff_changed_new_vanished():
 
 
 def test_watched_keys_refs_and_jtbd(tmp_path):
-    write(tmp_path, "features/x/knowledge/ref-a.md",
+    write(tmp_path, "components/x/knowledge/ref-a.md",
           "---\ntype: reference\ndescription: d\ntimestamp: 2026-07-09\n"
           "resource: https://redhat.atlassian.net/browse/RHAISTRAT-1345\n---\nb\n")
     write(tmp_path, "narrative/knowledge/jtbd-b.md",

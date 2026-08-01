@@ -56,14 +56,14 @@ is never scanned — that is where such content is supposed to live):
 
 1. **Restricted-pattern pass** (errors; only when the pattern file exists).
    Scan surface:
-   - `features/*/enablement/**/*.html` and `narrative/enablement/**/*.html`
-   - knowledge entries: `features/*/knowledge/*.md` and
+   - `components/*/enablement/**/*.html` and `narrative/enablement/**/*.html`
+   - knowledge entries: `components/*/knowledge/*.md` and
      `narrative/knowledge/*.md` (raw file text, so frontmatter is covered too)
 
    Error format references the pattern by **line number, not text** — lint
    output can get pasted into public places (CI logs, issues), the pattern
    text must not travel:
-   `ERROR features/x/enablement/deck/index.html:212: matches restricted pattern (lint-patterns.txt:3)`
+   `ERROR components/x/enablement/deck/index.html:212: matches restricted pattern (lint-patterns.txt:3)`
 
 2. **Generic-heuristic pass** (warnings; always runs, CI-visible). Applies
    `schema.RESTRICTED_HINTS` to the same enablement HTML surface — today the

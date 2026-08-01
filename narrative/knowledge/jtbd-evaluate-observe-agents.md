@@ -6,7 +6,7 @@ persona: platform-engineer
 status: candidate
 timestamp: 2026-07-10
 source: ref-power-90-agentic-ai-20260708.md
-features: [agent-ops]
+components: [agent-ops]
 tags: [narrative, jtbd, observability, evaluation]
 ---
 **When** I run agents in production,

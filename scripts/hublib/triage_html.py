@@ -96,7 +96,7 @@ document.addEventListener('change', e => {
 function exportDecisions() {
   const payload = {
     exported_at: document.body.dataset.today,
-    feature: document.body.dataset.feature,
+    feature: document.body.dataset.comp,
     decisions: decisions()
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)],
@@ -174,7 +174,7 @@ def _row_html(row, base_url):
 </tr>"""
 
 
-def render(feature, jql, rows, today, base_url):
+def render(component, jql, rows, today, base_url):
     """A complete, self-contained HTML document. No network, no repo writes."""
     buckets = {name: [] for name, _ in SECTIONS}
     for row in rows:
@@ -203,11 +203,11 @@ def render(feature, jql, rows, today, base_url):
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Triage: {_esc(feature)}</title>
+<title>Triage: {_esc(component)}</title>
 <style>{CSS}</style>
 </head>
-<body data-feature="{_esc(feature)}" data-today="{_esc(today.isoformat())}">
-<h1>RFE triage: {_esc(feature)}</h1>
+<body data-comp="{_esc(component)}" data-today="{_esc(today.isoformat())}">
+<h1>RFE triage: {_esc(component)}</h1>
 <div class="scope">{_esc(jql)}</div>
 <div class="bar">
   <button class="primary" onclick="exportDecisions()">Export Decisions</button>

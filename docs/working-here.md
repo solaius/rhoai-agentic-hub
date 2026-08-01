@@ -20,13 +20,13 @@
 | the thing | where it goes |
 |---|---|
 | "3.5 DP moved to July" | `memory/profiles/roadmap.md` (profile edit + History) |
-| gateway authz decision | `features/mcp-gateway/knowledge/decision-…md` |
-| new PRD Google Doc | `features/mcp-registry/knowledge/ref-…md` (canonical `resource:`) |
-| new stakeholder | `features/platform/knowledge/person-…md` |
-| meeting transcript | `features/<f>/work/transcripts/` (gitignored) + a `ref-` entry |
-| SKU/pricing detail | `restricted/features/…` — NEVER tracked |
-| "does the registry work air-gapped?" (asked by an SSA) | `features/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
-| a user job for UX/Docs | `features/<f>/knowledge/jtbd-…md` (persona from the locked list) |
+| gateway authz decision | `components/mcp-gateway/knowledge/decision-…md` |
+| new PRD Google Doc | `components/mcp-registry/knowledge/ref-…md` (canonical `resource:`) |
+| new stakeholder | `components/platform/knowledge/person-…md` |
+| meeting transcript | `components/<f>/work/transcripts/` (gitignored) + a `ref-` entry |
+| SKU/pricing detail | `restricted/components/…` — NEVER tracked |
+| "does the registry work air-gapped?" (asked by an SSA) | `components/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
+| a user job for UX/Docs | `components/<f>/knowledge/jtbd-…md` (persona from the locked list) |
 | cross-feature strategy deck or write-up | `narrative/enablement/<slug>/` (+ `artifact.md`) or `narrative/{research,strategy}/` |
 | a strategic pillar or connective story | `narrative/knowledge/pillar-…md` / `story-…md` |
 
@@ -36,7 +36,7 @@ short.
 
 ## Adding a feature partition
 Don't mkdir by hand — file the first piece of content with `hub.file` and
-approve its "create partition" proposal (it updates `features/features.yaml`
+approve its "create partition" proposal (it updates `components/components.yaml`
 and creates only the needed subdirectories).
 
 ## Keeping it healthy

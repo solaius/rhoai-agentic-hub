@@ -31,8 +31,8 @@
 | `scripts/hublib/publisher.py` | modify | #8: groups, snapshot v2, template render |
 | `publish/landing-template.html` | create | #8: the branded landing template |
 | `scripts/hublib/refresh.py` | create | #4: refresh-config find/load/validate |
-| `features/mcp-gateway/work/refresh-rhcl-hub.yaml` | create | #4: RHCL hub source config |
-| `features/mcp-ecosystem/work/refresh-management-hub.yaml` | create | #4: Management hub source config |
+| `components/mcp-gateway/work/refresh-rhcl-hub.yaml` | create | #4: RHCL hub source config |
+| `components/mcp-ecosystem/work/refresh-management-hub.yaml` | create | #4: Management hub source config |
 | `.claude/skills/hub.refresh-site/SKILL.md` | create | #4: the gated refresh skill |
 | `scripts/tests/test_schema.py` | modify | #34 tests |
 | `scripts/tests/test_disclosure.py` | modify | #34 tests |
@@ -60,7 +60,7 @@ Append to `scripts/tests/test_schema.py`:
 ```python
 def test_restricted_hint_in_frontmatter_only_is_warning(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/fact-a.md",
+    write(root, "components/x/knowledge/fact-a.md",
           "---\ntype: fact\ndescription: internal-only pricing detail\n"
           "timestamp: 2026-07-05\n---\nclean body\n")
     _, warnings = lint_repo(root)
@@ -70,7 +70,7 @@ def test_restricted_hint_in_frontmatter_only_is_warning(tmp_path):
 
 def test_restricted_hint_in_frontmatter_skipped_under_restricted(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "restricted/features/x/knowledge/fact-a.md",
+    write(root, "restricted/components/x/knowledge/fact-a.md",
           "---\ntype: fact\ndescription: internal-only pricing detail\n"
           "timestamp: 2026-07-05\n---\nclean body\n")
     _, warnings = lint_repo(root)
@@ -161,8 +161,8 @@ def test_pattern_match_in_views_is_error(tmp_path):
 def test_generic_hints_warn_on_generated_md(tmp_path):
     write(tmp_path, "views/faq.md", "# faq\nthis answer is internal-only\n")
     write(tmp_path, "memory/index.md", "# m\ndo not share this\n")
-    write(tmp_path, "features/index.md", "# f\ncovered by NDA\n")
-    write(tmp_path, "features/x/index.md", "# x\npricing tier detail\n")
+    write(tmp_path, "components/index.md", "# f\ncovered by NDA\n")
+    write(tmp_path, "components/x/index.md", "# x\npricing tier detail\n")
     write(tmp_path, "narrative/index.md", "# n\nSKU-123 detail\n")
     errors, warnings = scan_repo(tmp_path)
     assert errors == []
@@ -172,21 +172,21 @@ def test_generic_hints_warn_on_generated_md(tmp_path):
 
 def test_pattern_match_in_refresh_config_is_error(tmp_path):
     write(tmp_path, "restricted/lint-patterns.txt", "acme\n")
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\nsources:\n  gdocs:\n"
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\nsources:\n  gdocs:\n"
           "  - {id: abc, title: Acme deal deck}\n")
     write(tmp_path, "narrative/work/refresh-nsite.yaml",
           "site: narrative/enablement/nsite/\nsources:\n  github:\n  - acme/repo\n")
     errors, _ = scan_repo(tmp_path)
-    assert errors == ["features/x/work/refresh-site.yaml:4: "
+    assert errors == ["components/x/work/refresh-site.yaml:4: "
                       "matches restricted pattern (lint-patterns.txt:1)",
                       "narrative/work/refresh-nsite.yaml:3: "
                       "matches restricted pattern (lint-patterns.txt:1)"]
 
 
 def test_refresh_config_gets_no_heuristic_warning(tmp_path):
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\nnotes: internal-only sweep list\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\nnotes: internal-only sweep list\n")
     _, warnings = scan_repo(tmp_path)
     assert warnings == []
 ```
@@ -210,17 +210,17 @@ def _scan_files(root):
     full text. YAML surfaces get the patterns pass only."""
     root = Path(root)
     surfaces = (
-        ("features/*/enablement/**/*.html", True),
+        ("components/*/enablement/**/*.html", True),
         ("narrative/enablement/**/*.html", True),
-        ("features/*/knowledge/*.md", False),
+        ("components/*/knowledge/*.md", False),
         ("narrative/knowledge/*.md", False),
-        ("features/*/work/jira-snapshot.yaml", False),
-        ("features/*/work/refresh-*.yaml", False),
+        ("components/*/work/jira-snapshot.yaml", False),
+        ("components/*/work/refresh-*.yaml", False),
         ("narrative/work/refresh-*.yaml", False),
         ("views/*.md", True),
         ("memory/index.md", True),
-        ("features/index.md", True),
-        ("features/*/index.md", True),
+        ("components/index.md", True),
+        ("components/*/index.md", True),
         ("narrative/index.md", True),
     )
     for pattern, heuristic in surfaces:
@@ -271,7 +271,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 - Test: `scripts/tests/test_publisher.py`
 
 **Interfaces:**
-- Consumes: `features/features.yaml` (`features: [{id, title, ...}]`, routing-table order).
+- Consumes: `components/components.yaml` (`features: [{id, title, ...}]`, routing-table order).
 - Produces: plan entries gain `"group": str` (display name) and `"group_key": tuple` sorting `(0, idx)` known features < `(1, raw_id)` unknown < `(2, "")` Narrative. Task 5 consumes both.
 
 - [ ] **Step 1: Write the failing tests**
@@ -280,7 +280,7 @@ In `scripts/tests/test_publisher.py`, add after the `MANIFEST` constant:
 
 ```python
 FEATURES_YAML = """\
-features:
+components:
 - id: x
   title: X Feature
 - id: y
@@ -291,7 +291,7 @@ features:
 In `make_repo`, add this line before `return root`:
 
 ```python
-    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "components/components.yaml", FEATURES_YAML)
 ```
 
 Append tests:
@@ -313,9 +313,9 @@ def test_build_plan_groups_by_source_area(tmp_path):
 
 def test_build_plan_unknown_feature_id_falls_back(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/zed/enablement/deck/index.html", "<html></html>")
+    write(root, "components/zed/enablement/deck/index.html", "<html></html>")
     write(root, "publish/manifest.yaml",
-          "- source: features/zed/enablement/deck/\n  dest: zed/deck/\n"
+          "- source: components/zed/enablement/deck/\n  dest: zed/deck/\n"
           "  audience: public\n  title: Z\n  description: D\n")
     plan = build_plan(root)
     assert plan[0]["group"] == "zed"
@@ -333,9 +333,9 @@ In `scripts/hublib/publisher.py`, add above `build_plan`:
 
 ```python
 def _feature_titles(root):
-    """id -> display title from features/features.yaml, preserving the
+    """id -> display title from components/components.yaml, preserving the
     routing-table order (drives landing-page section order)."""
-    p = Path(root) / "features" / "features.yaml"
+    p = Path(root) / "features" / "components.yaml"
     if not p.is_file():
         return {}
     try:
@@ -392,7 +392,7 @@ Run: `python -m pytest scripts/tests -v` -> all PASS.
 
 ```bash
 git add scripts/hublib/publisher.py scripts/tests/test_publisher.py
-git commit -m "publish: landing plan gains area groups from features.yaml (#8)
+git commit -m "publish: landing plan gains area groups from components.yaml (#8)
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ```
@@ -418,7 +418,7 @@ In `scripts/tests/test_publisher.py`, REPLACE the snapshot assertion block at th
     snap = json.loads((pages / SNAPSHOT).read_text())
     assert set(snap) == {"x/one-pager.html", "x/site"}
     site = snap["x/site"]
-    assert site["source"] == "features/x/enablement/site"
+    assert site["source"] == "components/x/enablement/site"
     assert site["badge"] == "new"
     assert site["published"] is not None
     assert len(site["hash"]) == 64
@@ -437,7 +437,7 @@ def test_apply_badge_lifecycle(tmp_path):
     apply(root, pages)  # unchanged: carried forward verbatim
     snap2 = json.loads((pages / SNAPSHOT).read_text())
     assert snap2["x/site"] == snap1["x/site"]
-    write(root, "features/x/enablement/site/index.html", "<html>site v2</html>")
+    write(root, "components/x/enablement/site/index.html", "<html>site v2</html>")
     apply(root, pages)  # content change: flips to updated
     snap3 = json.loads((pages / SNAPSHOT).read_text())
     assert snap3["x/site"]["badge"] == "updated"
@@ -449,8 +449,8 @@ def test_apply_migrates_v1_snapshot_without_false_badges(tmp_path):
     pages = tmp_path / "pages"
     pages.mkdir()
     (pages / SNAPSHOT).write_text(json.dumps(
-        {"x/one-pager.html": "features/x/enablement/one-pager.html",
-         "x/site": "features/x/enablement/site"}), encoding="utf-8")
+        {"x/one-pager.html": "components/x/enablement/one-pager.html",
+         "x/site": "components/x/enablement/site"}), encoding="utf-8")
     apply(root, pages)
     snap = json.loads((pages / SNAPSHOT).read_text())
     assert snap["x/site"]["badge"] is None
@@ -461,10 +461,10 @@ def test_apply_migrates_v1_snapshot_without_false_badges(tmp_path):
 def test_hash_source_dir_is_deterministic_and_content_sensitive(tmp_path):
     from hublib.publisher import _hash_source
     root = make_repo(tmp_path)
-    src = root / "features/x/enablement/site"
+    src = root / "components/x/enablement/site"
     h1 = _hash_source(src)
     assert h1 == _hash_source(src)
-    write(root, "features/x/enablement/site/style.css", "body{color:red}")
+    write(root, "components/x/enablement/site/style.css", "body{color:red}")
     assert _hash_source(src) != h1
 ```
 
@@ -692,11 +692,11 @@ Append:
 def test_generate_landing_group_order(tmp_path):
     root = make_repo(tmp_path)
     write(root, "narrative/enablement/story/index.html", "<html></html>")
-    write(root, "features/zed/enablement/deck/index.html", "<html></html>")
+    write(root, "components/zed/enablement/deck/index.html", "<html></html>")
     write(root, "publish/manifest.yaml", MANIFEST +
           "- source: narrative/enablement/story/\n  dest: narrative/story/\n"
           "  audience: public\n  title: Story\n  description: narr\n"
-          "- source: features/zed/enablement/deck/\n  dest: zed/deck/\n"
+          "- source: components/zed/enablement/deck/\n  dest: zed/deck/\n"
           "  audience: public\n  title: Zed\n  description: unknown feature\n")
     out = generate_landing(root, build_plan(root), "")
     assert (out.index("<h2>X Feature</h2>") < out.index("<h2>zed</h2>")
@@ -722,13 +722,13 @@ def test_badge_ages_out_after_window(tmp_path):
     from hublib.publisher import _hash_source
     root = make_repo(tmp_path)
     write(root, "publish/manifest.yaml",
-          "- source: features/x/enablement/site/\n  dest: x/site/\n"
+          "- source: components/x/enablement/site/\n  dest: x/site/\n"
           "  audience: public\n  title: Old Site\n  description: D\n")
     pages = tmp_path / "pages"
     pages.mkdir()
-    digest = _hash_source(root / "features/x/enablement/site")
+    digest = _hash_source(root / "components/x/enablement/site")
     (pages / SNAPSHOT).write_text(json.dumps(
-        {"x/site": {"source": "features/x/enablement/site", "hash": digest,
+        {"x/site": {"source": "components/x/enablement/site", "hash": digest,
                     "published": "2020-01-01", "badge": "new"}}),
         encoding="utf-8")
     apply(root, pages)
@@ -853,7 +853,7 @@ def write(root: Path, rel: str, text: str):
 
 
 VALID = """\
-site: features/x/enablement/site/
+site: components/x/enablement/site/
 sources:
   gdocs:
   - {id: abc123, title: Overview}
@@ -865,66 +865,66 @@ sources:
     channels: [general]
     window_days: 14
   local:
-  - features/x/knowledge/
+  - components/x/knowledge/
 """
 
 
 def make_site(root):
-    write(root, "features/x/enablement/site/index.html", "<html></html>")
+    write(root, "components/x/enablement/site/index.html", "<html></html>")
 
 
 def test_valid_config_passes(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml", VALID)
+    write(tmp_path, "components/x/work/refresh-site.yaml", VALID)
     assert validate(tmp_path) == ([], [])
 
 
 def test_find_configs_covers_features_and_narrative(tmp_path):
-    write(tmp_path, "features/x/work/refresh-a.yaml", "site: s\n")
+    write(tmp_path, "components/x/work/refresh-a.yaml", "site: s\n")
     write(tmp_path, "narrative/work/refresh-b.yaml", "site: s\n")
     rels = [p.relative_to(tmp_path).as_posix() for p in find_configs(tmp_path)]
-    assert rels == ["features/x/work/refresh-a.yaml", "narrative/work/refresh-b.yaml"]
+    assert rels == ["components/x/work/refresh-a.yaml", "narrative/work/refresh-b.yaml"]
 
 
 def test_missing_site_is_error(tmp_path):
-    write(tmp_path, "features/x/work/refresh-site.yaml", "sources:\n  github: [a/b]\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml", "sources:\n  github: [a/b]\n")
     errors, _ = validate(tmp_path)
     assert any("missing 'site'" in e for e in errors)
 
 
 def test_bad_site_shape_is_error(tmp_path):
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/site/\nsources:\n  github: [a/b]\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/site/\nsources:\n  github: [a/b]\n")
     errors, _ = validate(tmp_path)
     assert any("site must be" in e for e in errors)
 
 
 def test_nonexistent_site_is_error(tmp_path):
-    write(tmp_path, "features/x/work/refresh-site.yaml", VALID)
+    write(tmp_path, "components/x/work/refresh-site.yaml", VALID)
     errors, _ = validate(tmp_path)
     assert any("site does not exist" in e for e in errors)
 
 
 def test_unknown_source_type_is_error(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\nsources:\n  webscrape: [a]\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\nsources:\n  webscrape: [a]\n")
     errors, _ = validate(tmp_path)
     assert any("unknown source type 'webscrape'" in e for e in errors)
 
 
 def test_empty_source_type_is_error(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\nsources:\n  github: []\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\nsources:\n  github: []\n")
     errors, _ = validate(tmp_path)
     assert any("source type 'github' is empty" in e for e in errors)
 
 
 def test_gdoc_without_id_is_error(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\nsources:\n  gdocs:\n"
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\nsources:\n  gdocs:\n"
           "  - {title: No Id}\n")
     errors, _ = validate(tmp_path)
     assert any("gdocs[0] needs an 'id'" in e for e in errors)
@@ -932,8 +932,8 @@ def test_gdoc_without_id_is_error(tmp_path):
 
 def test_slack_without_channels_is_error(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\nsources:\n  slack:\n"
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\nsources:\n  slack:\n"
           "    window_days: 7\n")
     errors, _ = validate(tmp_path)
     assert any("slack needs a 'channels' list" in e for e in errors)
@@ -941,14 +941,14 @@ def test_slack_without_channels_is_error(tmp_path):
 
 def test_missing_sources_is_error(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
-          "site: features/x/enablement/site/\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml",
+          "site: components/x/enablement/site/\n")
     errors, _ = validate(tmp_path)
     assert any("'sources' must be a non-empty mapping" in e for e in errors)
 
 
 def test_invalid_yaml_is_error(tmp_path):
-    write(tmp_path, "features/x/work/refresh-site.yaml", "site: [unclosed\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml", "site: [unclosed\n")
     errors, _ = validate(tmp_path)
     assert any("invalid YAML" in e for e in errors)
 
@@ -956,7 +956,7 @@ def test_invalid_yaml_is_error(tmp_path):
 def test_lint_repo_wires_refresh_validation(tmp_path):
     from hublib.schema import lint_repo
     write(tmp_path, "AGENTS.md", "# a\n")
-    write(tmp_path, "features/x/work/refresh-site.yaml", "sources:\n  github: [a/b]\n")
+    write(tmp_path, "components/x/work/refresh-site.yaml", "sources:\n  github: [a/b]\n")
     errors, _ = lint_repo(tmp_path)
     assert any("refresh-site.yaml" in e and "missing 'site'" in e for e in errors)
 ```
@@ -980,7 +980,7 @@ from pathlib import Path
 import yaml
 
 SOURCE_TYPES = {"gdocs", "github", "jira", "slack", "local"}
-CONFIG_GLOBS = ("features/*/work/refresh-*.yaml", "narrative/work/refresh-*.yaml")
+CONFIG_GLOBS = ("components/*/work/refresh-*.yaml", "narrative/work/refresh-*.yaml")
 
 
 def find_configs(root):
@@ -1019,7 +1019,7 @@ def validate(root):
         if not site:
             errors.append(f"{rel}: missing 'site'")
         elif not _site_ok(site):
-            errors.append(f"{rel}: site must be features/<f>/enablement/<slug>/ "
+            errors.append(f"{rel}: site must be components/<f>/enablement/<slug>/ "
                           f"or narrative/enablement/<slug>/")
         elif not (root / site.strip("/")).is_dir():
             errors.append(f"{rel}: site does not exist: {site}")
@@ -1069,8 +1069,8 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 7: #4 the two site configs
 
 **Files:**
-- Create: `features/mcp-gateway/work/refresh-rhcl-hub.yaml`
-- Create: `features/mcp-ecosystem/work/refresh-management-hub.yaml`
+- Create: `components/mcp-gateway/work/refresh-rhcl-hub.yaml`
+- Create: `components/mcp-ecosystem/work/refresh-management-hub.yaml`
 
 **Interfaces:**
 - Consumes: the Task 6 schema (validated by `hub_lint` on commit).
@@ -1078,13 +1078,13 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 - [ ] **Step 1: Write the RHCL config**
 
-Create `features/mcp-gateway/work/refresh-rhcl-hub.yaml`:
+Create `components/mcp-gateway/work/refresh-rhcl-hub.yaml`:
 
 ```yaml
 # Source list for hub.refresh-site (see .claude/skills/hub.refresh-site/).
 # Tracked and PUBLIC by owner ruling 2026-07-10; scanned by the disclosure
 # lint. Seeded from the old repo's update-gateway-hub skill.
-site: features/mcp-gateway/enablement/rhcl-hub/
+site: components/mcp-gateway/enablement/rhcl-hub/
 sources:
   gdocs:
   - {id: 14ekB7bfRxvpZNl1SLBoD_MUQ7T4Ot5Tes3xvyftFOW0, title: RHCL Overview Deck}
@@ -1104,19 +1104,19 @@ sources:
     channels: [mcp-gateway, mcp-gateway-dev]
     window_days: 14
   local:
-  - features/mcp-gateway/knowledge/
-  - features/mcp-gateway/research/
+  - components/mcp-gateway/knowledge/
+  - components/mcp-gateway/research/
 ```
 
 - [ ] **Step 2: Write the Management config**
 
-Create `features/mcp-ecosystem/work/refresh-management-hub.yaml`:
+Create `components/mcp-ecosystem/work/refresh-management-hub.yaml`:
 
 ```yaml
 # Source list for hub.refresh-site (see .claude/skills/hub.refresh-site/).
 # Tracked and PUBLIC by owner ruling 2026-07-10; scanned by the disclosure
 # lint. Seeded from the old repo's update-ecosystem-hub skill.
-site: features/mcp-ecosystem/enablement/management-hub/
+site: components/mcp-ecosystem/enablement/management-hub/
 sources:
   gdocs:
   - {id: 1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y, title: Ecosystem Strategy}
@@ -1137,10 +1137,10 @@ sources:
     channels: [forum-ai-asset-management, forum-mcp-lifecycle-operator]
     window_days: 14
   local:
-  - features/mcp-ecosystem/knowledge/
-  - features/mcp-ecosystem/research/
-  - features/mcp-registry/knowledge/
-  - features/mcp-catalog/knowledge/
+  - components/mcp-ecosystem/knowledge/
+  - components/mcp-ecosystem/research/
+  - components/mcp-registry/knowledge/
+  - components/mcp-catalog/knowledge/
 ```
 
 - [ ] **Step 3: Validate**
@@ -1151,7 +1151,7 @@ Run: `python -m pytest scripts/tests -v` -> all PASS.
 - [ ] **Step 4: Commit**
 
 ```bash
-git add features/mcp-gateway/work/refresh-rhcl-hub.yaml features/mcp-ecosystem/work/refresh-management-hub.yaml
+git add components/mcp-gateway/work/refresh-rhcl-hub.yaml components/mcp-ecosystem/work/refresh-management-hub.yaml
 git commit -m "refresh: rhcl-hub + management-hub source configs (#4)
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
@@ -1182,13 +1182,13 @@ description: Refresh a published enablement hub site (RHCL hub, Management hub, 
 # hub.refresh-site
 
 Config-driven successor to the old repo's update-*-hub skills. One config per
-site: `features/<f>/work/refresh-<slug>.yaml` (or `narrative/work/...`),
+site: `components/<f>/work/refresh-<slug>.yaml` (or `narrative/work/...`),
 validated by hub_lint. Never auto-commits. THE DISCLOSURE CONTRACT (step 6)
 is what the old skills lacked: they swept customer names IN; this skill
 keeps them OUT.
 
 1. TARGET. Resolve the site from the request; if ambiguous, list configs
-   (`features/*/work/refresh-*.yaml`, `narrative/work/refresh-*.yaml`) and
+   (`components/*/work/refresh-*.yaml`, `narrative/work/refresh-*.yaml`) and
    ask. Read the config, the site's artifact.md, and the current pages.
 2. STALENESS. Grep `data-verified` across the site's HTML; report per page,
    oldest first. The oldest date is the sweep-since baseline.
@@ -1262,7 +1262,7 @@ In `conventions/publishing.md`, append a short section:
 
 The pages-site landing page is rendered from `publish/landing-template.html`
 (tracked; self-contained inline CSS): artifacts grouped by area (feature
-`title` from features/features.yaml, routing-table order, Narrative last),
+`title` from components/components.yaml, routing-table order, Narrative last),
 one card per artifact, NEW/UPDATED badges for artifacts published or changed
 in the last 14 days. Badge state lives in `.publish-snapshot.json` (v2:
 `{dest: {source, hash, published, badge}}`); v1 snapshots migrate on the
@@ -1356,7 +1356,7 @@ approved with 5 owner rulings (future hub slugs confirmed; individuals
 genericized; partner name anonymized; RHCL reverse links; structural
 B-items deferred to the recorded plan). 22 pages + nav.js + styles.css
 updated; RHCL hub gained reverse links; umbrella devolution plan recorded
-at features/mcp-ecosystem/work/management-hub-umbrella-plan.md; backlog #35
+at components/mcp-ecosystem/work/management-hub-umbrella-plan.md; backlog #35
 filed. Both hub cards now carry UPDATED badges. Friction fixed in-run:
 gdocs token-limit overruns handled by forked persisted-file extraction; the
 Slack channel-cache workaround folded into the skill; 4 more inherited

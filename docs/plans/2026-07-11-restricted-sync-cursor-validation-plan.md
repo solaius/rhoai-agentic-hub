@@ -273,7 +273,7 @@ Replace the current step 6 content. Find:
    `xoxc`/`xoxd` tokens travel with that file and authenticate on the new
    machine (R5 verified this; they are session tokens, so when they do expire
    the doctor's section 9 probe tells you).
-   Copy the rest of the `restricted/` tree (`restricted/features/`,
+   Copy the rest of the `restricted/` tree (`restricted/components/`,
    `restricted/memory/`) **only if you will run the customer-feedback
    workflows on this machine**. R5 measured a second machine doing normal
    hub work and it never needed them, so do not spread NDA content to a
@@ -304,7 +304,7 @@ Replace with:
 In `docs/architecture.md`, find the trust model section's restricted layer description:
 
 ```
-2. **`restricted/`** — a gitignored local mirror (`restricted/features/…`,
+2. **`restricted/`** — a gitignored local mirror (`restricted/components/…`,
    `restricted/memory/…`) with the same shapes and conventions. The
    restricted bar (what must go there) is codified in
    [/conventions/memory.md](/conventions/memory.md). The linter also runs a
@@ -315,7 +315,7 @@ Replace with:
 
 ```
 2. **`restricted/`** — tracked but encrypted via git-crypt
-   (`restricted/features/…`, `restricted/memory/…`, `restricted/.env`) with
+   (`restricted/components/…`, `restricted/memory/…`, `restricted/.env`) with
    the same shapes and conventions. Files are plaintext locally when
    unlocked, opaque blobs on GitHub and in CI. The restricted bar (what must
    go there) is codified in [/conventions/memory.md](/conventions/memory.md).
@@ -389,7 +389,7 @@ git add restricted/
 git commit -m "feat: encrypt and track restricted/ via git-crypt (#14)"
 git push
 
-# 6. Verify on GitHub: browse to restricted/features/ -- files should show
+# 6. Verify on GitHub: browse to restricted/components/ -- files should show
 #    as binary/encrypted content
 ```
 

@@ -22,9 +22,9 @@ Three related gaps in the public surface:
    f-string in `publisher.py`. The manifest already carries title +
    description per artifact; nothing groups by area or signals freshness.
    This is the highest-visibility page the hub produces.
-3. **#4:** the RHCL hub (23 pages, `features/mcp-gateway/enablement/rhcl-hub/`,
+3. **#4:** the RHCL hub (23 pages, `components/mcp-gateway/enablement/rhcl-hub/`,
    all pages `data-verified="2026-06-21"`) and the Management hub (22 pages,
-   `features/mcp-ecosystem/enablement/management-hub/`, `2026-06-22`) are the
+   `components/mcp-ecosystem/enablement/management-hub/`, `2026-06-22`) are the
    live copies and have **no update path**: the old repo's `update-*-hub`
    skills target retired copies. Critically, those old skills had **no
    disclosure rules at all**; they actively swept real customer names in.
@@ -34,7 +34,7 @@ Three related gaps in the public surface:
 ## Decisions made during brainstorming
 
 1. **Refresh source config is fully tracked** (owner call): per-site YAML at
-   `features/<feature>/work/refresh-<slug>.yaml`. Exposes opaque GDoc IDs and
+   `components/<feature>/work/refresh-<slug>.yaml`. Exposes opaque GDoc IDs and
    internal Slack channel names in a world-readable repo; accepted. The new
    file joins the restricted-patterns scan surface as mitigation.
 2. **Landing page gets the full-branded front-door treatment** (owner call):
@@ -69,13 +69,13 @@ Changes in `scripts/hublib/schema.py` and `scripts/hublib/disclosure.py`:
    `"restricted"` is in the path parts.
 2. **Generated-surface coverage:** `disclosure._scan_files` adds the
    generated markdown surfaces: `views/*.md`, `memory/index.md`,
-   `features/index.md`, `features/*/index.md`, `narrative/index.md`. They
+   `components/index.md`, `components/*/index.md`, `narrative/index.md`. They
    get both passes: restricted patterns (errors, local-only file) and the
    generic `RESTRICTED_HINTS` heuristic (warnings, CI-visible). Markdown
    entries keep getting their heuristic from `lint_entry`; the new heuristic
    pass in `disclosure.py` applies only to these generated files (they have
    no entry frontmatter and are not linted as entries).
-3. **New-surface coverage:** `features/*/work/refresh-*.yaml` and
+3. **New-surface coverage:** `components/*/work/refresh-*.yaml` and
    `narrative/work/refresh-*.yaml` (Part 3) join the restricted-patterns
    pass, exactly as `jira-snapshot.yaml` does.
 4. **Accepted duplication:** a hit can now warn twice (source entry + the
@@ -97,9 +97,9 @@ refresh YAML with a pattern hit (error), generated index files scanned.
    commit) then one section per area, cards per artifact (linked title,
    description, optional badge).
 3. **Grouping:** group key derived from the manifest `source` path:
-   `features/<id>/…` maps to the feature `title` in `features/features.yaml`;
+   `components/<id>/…` maps to the feature `title` in `components/components.yaml`;
    `narrative/…` maps to "Narrative". Group order: known features in
-   features.yaml routing-table order, then unknown feature ids (defensive,
+   components.yaml routing-table order, then unknown feature ids (defensive,
    grouped under their raw id, alphabetical), then Narrative last. Cards
    sort by title within a group.
 4. **Badges:** snapshot v2 is `{dest: {source, hash, published, badge}}` where
@@ -117,22 +117,22 @@ refresh YAML with a pattern hit (error), generated index files scanned.
    after this ships shows zero false badges; hashes populate on that run.
 5. `generate_landing(root, plan, hub_sha)` gains root (it loads the template) and
    `plan` entries gain a `group` field (computed in `build_plan`, which reads
-   features.yaml) and a `badge` field (computed in `apply`, which owns the
+   components.yaml) and a `badge` field (computed in `apply`, which owns the
    snapshot). Escaping discipline unchanged (`html.escape` everywhere user
    data lands).
 6. The landing page remains subject to the existing CI link gate.
 
-Tests: grouping + ordering (features.yaml order, Narrative last, unknown id
+Tests: grouping + ordering (components.yaml order, Narrative last, unknown id
 fallback), badge lifecycle (new, updated, aged-out, carried-forward date),
 v1-snapshot migration (no false badges, hashes appear), template render
 escaping, dir-hash determinism.
 
 ## Part 3: #4 `hub.refresh-site`
 
-### Config: `features/<feature>/work/refresh-<slug>.yaml`
+### Config: `components/<feature>/work/refresh-<slug>.yaml`
 
 ```yaml
-site: features/mcp-gateway/enablement/rhcl-hub/
+site: components/mcp-gateway/enablement/rhcl-hub/
 sources:
   gdocs:
     - {id: <doc-id>, title: RHCL Overview Deck}
@@ -145,8 +145,8 @@ sources:
     channels: [mcp-gateway, mcp-gateway-dev]
     window_days: 14
   local:
-    - features/mcp-gateway/knowledge/
-    - features/mcp-gateway/research/
+    - components/mcp-gateway/knowledge/
+    - components/mcp-gateway/research/
 ```
 
 Two configs ship in this batch, seeded from the old `update-gateway-hub` /
@@ -160,7 +160,7 @@ source). The Management config's Jira scope keeps the old
 
 A small `scripts/hublib/refresh.py` provides `load_config` + `validate`,
 wired into `lint_repo`: `site` must exist and be an
-`features/*/enablement/<slug>/` or `narrative/enablement/<slug>/` directory,
+`components/*/enablement/<slug>/` or `narrative/enablement/<slug>/` directory,
 `sources` must be non-empty with known source types only, gdocs entries
 need `id`, slack needs `channels`. Malformed YAML or violations are errors;
 an empty optional block is fine.

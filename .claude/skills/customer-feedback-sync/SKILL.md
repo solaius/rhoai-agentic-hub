@@ -9,7 +9,7 @@ Compares the local HTML customer interest tracker against the shared Google Shee
 
 ## Data Sources
 
-- **Local**: `restricted/features/platform/work/customer-tracker/customer-interest-tracker.html`
+- **Local**: `restricted/components/platform/work/customer-tracker/customer-interest-tracker.html`
   — static HTML file with interest matrices, customer details, themes, and
   action items. Restricted/gitignored (NDA content) — see
   [memory.md gate item 5](/conventions/memory.md).

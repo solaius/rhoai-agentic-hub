@@ -22,7 +22,7 @@ Generate a Red Hat branded HTML preview of any blog content. This is a quick, si
 
 The skill accepts blog content from any of these sources:
 
-1. **A markdown file path** (e.g., `features/mcp-registry/enablement/blog-mcp-catalog/final.md`)
+1. **A markdown file path** (e.g., `components/mcp-registry/enablement/blog-mcp-catalog/final.md`)
 2. **A Google Doc link** (fetch via `mcp__google-workspace__get_doc_as_markdown` with user `pedouble@redhat.com`)
 3. **Pasted text** directly in the conversation
 4. **A URL** (fetch via Playwright for JS-rendered pages, WebFetch otherwise)
@@ -36,8 +36,8 @@ Read or fetch the blog content from whatever source the user provides.
 ### Step 2: Determine the output location
 
 - **If the source is already inside a feature's `enablement/` directory** (e.g., a `final.md` from a prior `blog-create` run), write the preview as `index.html` alongside it — no further questions needed.
-- **Otherwise** (pasted text, a URL, a Google Doc, or a markdown file that isn't yet filed anywhere), determine which feature partition in `features/features.yaml` this content belongs to — infer from the topic and confirm, or ask if it's unclear. Output goes to `features/<feature>/enablement/blog-<topic-short>/index.html`, creating the directory if it doesn't exist yet. When creating the directory, also scaffold an `artifact.md` descriptor (`type: artifact`, `title`, one-line `description`, `timestamp`, `features:` spread) — `views/artifacts.md` flags descriptor-less directories. If no existing feature fits, don't invent one — hand off to `hub.file`, then resume once it exists.
-- **If the user explicitly wants a throwaway preview with no repo footprint** (a quick one-off look, nothing meant to be filed or kept), honor that and ask where to save it instead of filing it under `features/`.
+- **Otherwise** (pasted text, a URL, a Google Doc, or a markdown file that isn't yet filed anywhere), determine which feature partition in `components/components.yaml` this content belongs to — infer from the topic and confirm, or ask if it's unclear. Output goes to `components/<feature>/enablement/blog-<topic-short>/index.html`, creating the directory if it doesn't exist yet. When creating the directory, also scaffold an `artifact.md` descriptor (`type: artifact`, `title`, one-line `description`, `timestamp`, `components:` spread) — `views/artifacts.md` flags descriptor-less directories. If no existing feature fits, don't invent one — hand off to `hub.file`, then resume once it exists.
+- **If the user explicitly wants a throwaway preview with no repo footprint** (a quick one-off look, nothing meant to be filed or kept), honor that and ask where to save it instead of filing it under `components/`.
 
 ### Step 3: Extract metadata
 

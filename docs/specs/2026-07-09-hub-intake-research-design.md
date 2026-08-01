@@ -72,7 +72,7 @@ Pins the series contract so both skills, the linter, and future skills agree:
 - Refresh/supersede rules: contradictions get a supersede note in the old
   doc, never deletion; `00` is rewritten each refresh.
 
-The existing `features/agent-memory/research/` series is the reference model
+The existing `components/agent-memory/research/` series is the reference model
 and the richest refresh-test fixture.
 
 ### Relationship to the built-in /deep-research
@@ -89,7 +89,7 @@ first) are the point. `/deep-research` remains for non-hub questions.
 1. **Gather** — topic + sources from the prompt (URLs, GDocs, Slack
    permalinks, Jira/RFE links, transcript files, pasted text). Ask once for
    anything obviously missing.
-2. **Route home** — match against `features/features.yaml` and narrative/;
+2. **Route home** — match against `components/components.yaml` and narrative/;
    if nothing fits, propose a new partition (id, title, one-line
    description) exactly as `hub.file` step 1. A new partition also gets a
    starter `fact-<id>-overview.md` (what it is, status, key links).
@@ -212,7 +212,7 @@ competitive lens, (b) jira-gap mode gated on #2).
 4. `hub.research` scoped run — "competitive only" on an existing feature
    with `redhat-ai.yaml` — verifies prompt scoping + domain configs.
 5. Stretch (run early — richest fixture): refresh on
-   `features/agent-memory/research/` — numbering continues at 19, `00`
+   `components/agent-memory/research/` — numbering continues at 19, `00`
    refresh proposed through the gate.
 
 ## Out of scope

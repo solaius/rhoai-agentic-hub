@@ -30,7 +30,7 @@
 | `conventions/layout.md`, `conventions/type-vocabulary.md`, `conventions/memory.md` | the normative rulebook (extend) |
 | `docs/architecture.md`, `AGENTS.md`, `README.md`, `docs/working-here.md`, `docs/skills.md` | guides (extend) |
 | `.claude/skills/{hub.capture,hub.file,hub.consolidate,hub.migrate}/SKILL.md` | routing/classifier text (extend) |
-| `narrative/knowledge/*.md`, `features/platform/knowledge/*`, `features/features.yaml`, `memory/log.md` | Task 10 seed content (owner-gated) |
+| `narrative/knowledge/*.md`, `components/platform/knowledge/*`, `components/components.yaml`, `memory/log.md` | Task 10 seed content (owner-gated) |
 
 ---
 
@@ -53,14 +53,14 @@ QA = ("---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: answered\n"
 
 def test_qa_entry_valid(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/qa-airgap.md", QA)
+    write(root, "components/x/knowledge/qa-airgap.md", QA)
     errors, _ = lint_repo(root)
     assert errors == []
 
 
 def test_qa_missing_asks_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/qa-airgap.md",
+    write(root, "components/x/knowledge/qa-airgap.md",
           "---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: answered\n---\nb\n")
     errors, _ = lint_repo(root)
     assert any("requires field 'asks'" in e for e in errors)
@@ -68,7 +68,7 @@ def test_qa_missing_asks_is_error(tmp_path):
 
 def test_qa_bad_ask_by_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/qa-airgap.md",
+    write(root, "components/x/knowledge/qa-airgap.md",
           "---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: answered\n"
           "asks:\n- date: 2026-07-08\n  by: random-person\n---\nb\n")
     errors, _ = lint_repo(root)
@@ -77,7 +77,7 @@ def test_qa_bad_ask_by_is_error(tmp_path):
 
 def test_qa_status_uses_question_enum(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/qa-airgap.md",
+    write(root, "components/x/knowledge/qa-airgap.md",
           "---\ntype: qa\ndescription: d\ntimestamp: 2026-07-08\nstatus: current\n"
           "asks:\n- date: 2026-07-08\n  by: sales\n---\nb\n")
     errors, _ = lint_repo(root)
@@ -86,7 +86,7 @@ def test_qa_status_uses_question_enum(tmp_path):
 
 def test_jtbd_entry_valid(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/jtbd-find-approved-servers.md",
+    write(root, "components/x/knowledge/jtbd-find-approved-servers.md",
           "---\ntype: jtbd\ndescription: d\ntimestamp: 2026-07-08\n"
           "persona: ai-engineer\nstatus: candidate\n---\n## Job\nWhen …\n")
     errors, _ = lint_repo(root)
@@ -95,7 +95,7 @@ def test_jtbd_entry_valid(tmp_path):
 
 def test_jtbd_bad_persona_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/jtbd-a.md",
+    write(root, "components/x/knowledge/jtbd-a.md",
           "---\ntype: jtbd\ndescription: d\ntimestamp: 2026-07-08\n"
           "persona: wizard\nstatus: candidate\n---\nb\n")
     errors, _ = lint_repo(root)
@@ -104,7 +104,7 @@ def test_jtbd_bad_persona_is_error(tmp_path):
 
 def test_jtbd_status_enum(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/jtbd-a.md",
+    write(root, "components/x/knowledge/jtbd-a.md",
           "---\ntype: jtbd\ndescription: d\ntimestamp: 2026-07-08\n"
           "persona: data-scientist\nstatus: open\n---\nb\n")
     errors, _ = lint_repo(root)
@@ -113,7 +113,7 @@ def test_jtbd_status_enum(tmp_path):
 
 def test_pillar_and_story_invalid_under_features(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
+    write(root, "components/x/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
     errors, _ = lint_repo(root)
     assert any("type 'pillar' not in vocabulary" in e for e in errors)
 ```
@@ -127,7 +127,7 @@ Expected: the 8 new tests FAIL (`type 'qa' not in vocabulary …` errors making 
 
 ```python
 KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question", "qa", "jtbd"}
-# pillar/story are narrative-layer-only (spec D12/D14) — invalid under features/.
+# pillar/story are narrative-layer-only (spec D12/D14) — invalid under components/.
 NARRATIVE_TYPES = KNOWLEDGE_TYPES | {"pillar", "story"}
 MEMORY_TYPES = {"profile", "fact", "preference", "feedback"}
 PREFIX_TO_TYPE = {
@@ -161,7 +161,7 @@ STATUS_ENUMS = {
 }
 DEFAULT_STATUS_ENUM = ("current", "superseded")
 # Locked JTBD persona vocabulary — source of truth:
-# features/platform/knowledge/fact-personas.md. Extend BOTH together (gated).
+# components/platform/knowledge/fact-personas.md. Extend BOTH together (gated).
 PERSONAS = ("ai-engineer", "platform-engineer", "agentops-admin",
             "business-consumer", "data-scientist", "cluster-admin", "rhoai-admin")
 # qa asks[].by role buckets (spec §5.3, owner-confirmed).
@@ -238,8 +238,8 @@ FEATURES_YAML = ("features:\n- id: mcp-registry\n  title: R\n  description: d\n"
 
 def test_known_feature_ids_pass(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
-    write(root, "features/mcp-registry/knowledge/fact-a.md",
+    write(root, "components/components.yaml", FEATURES_YAML)
+    write(root, "components/mcp-registry/knowledge/fact-a.md",
           ENTRY.format(t="fact", extra="features: [mcp-registry, mcp-gateway]\n"))
     errors, _ = lint_repo(root)
     assert errors == []
@@ -247,8 +247,8 @@ def test_known_feature_ids_pass(tmp_path):
 
 def test_unknown_feature_id_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
-    write(root, "features/mcp-registry/knowledge/fact-a.md",
+    write(root, "components/components.yaml", FEATURES_YAML)
+    write(root, "components/mcp-registry/knowledge/fact-a.md",
           ENTRY.format(t="fact", extra="features: [mcp-registry, made-up]\n"))
     errors, _ = lint_repo(root)
     assert any("unknown feature id 'made-up'" in e for e in errors)
@@ -256,8 +256,8 @@ def test_unknown_feature_id_is_error(tmp_path):
 
 def test_features_must_be_a_list(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
-    write(root, "features/mcp-registry/knowledge/fact-a.md",
+    write(root, "components/components.yaml", FEATURES_YAML)
+    write(root, "components/mcp-registry/knowledge/fact-a.md",
           ENTRY.format(t="fact", extra="features: mcp-registry\n"))
     errors, _ = lint_repo(root)
     assert any("features must be a list" in e for e in errors)
@@ -283,8 +283,8 @@ Add after `_check_resource` (module level):
 
 ```python
 def _feature_ids(base):
-    """Known feature ids from features/features.yaml (the closed routing table)."""
-    p = base / "features" / "features.yaml"
+    """Known feature ids from components/components.yaml (the closed routing table)."""
+    p = base / "features" / "components.yaml"
     if not p.is_file():
         return set()
     try:
@@ -309,7 +309,7 @@ def _check_features(rel, meta, feature_ids, errors):
     for fid in feats:
         if fid not in feature_ids:
             errors.append(f"{rel}: unknown feature id '{fid}' "
-                          f"(not in features/features.yaml)")
+                          f"(not in components/components.yaml)")
 ```
 
 Change `lint_entry`'s signature line to:
@@ -363,7 +363,7 @@ git push origin main
 ```python
 def test_narrative_story_and_pillar_valid(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "components/components.yaml", FEATURES_YAML)
     write(root, "narrative/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
     write(root, "narrative/knowledge/story-governed-mcp.md",
           ENTRY.format(t="story",
@@ -383,7 +383,7 @@ def test_story_requires_features(tmp_path):
 
 def test_story_dangling_pillar_is_warning(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "components/components.yaml", FEATURES_YAML)
     write(root, "narrative/knowledge/story-a.md",
           ENTRY.format(t="story", extra="features: [mcp-registry]\n"
                                         "pillar: /narrative/knowledge/pillar-gone.md\n"))
@@ -408,9 +408,9 @@ def test_stray_file_under_narrative_is_error(tmp_path):
 
 def test_artifact_descriptor_valid(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
-    write(root, "features/mcp-registry/enablement/deck/index.html", "<html></html>")
-    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+    write(root, "components/components.yaml", FEATURES_YAML)
+    write(root, "components/mcp-registry/enablement/deck/index.html", "<html></html>")
+    write(root, "components/mcp-registry/enablement/deck/artifact.md",
           ENTRY.format(t="artifact", extra="features: [mcp-gateway]\n"))
     errors, _ = lint_repo(root)
     assert errors == []
@@ -418,7 +418,7 @@ def test_artifact_descriptor_valid(tmp_path):
 
 def test_artifact_wrong_type_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+    write(root, "components/mcp-registry/enablement/deck/artifact.md",
           ENTRY.format(t="fact", extra=""))
     errors, _ = lint_repo(root)
     assert any("type 'fact' not in vocabulary ['artifact']" in e for e in errors)
@@ -426,7 +426,7 @@ def test_artifact_wrong_type_is_error(tmp_path):
 
 def test_artifact_directly_under_enablement_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/artifact.md",
+    write(root, "components/mcp-registry/enablement/artifact.md",
           ENTRY.format(t="artifact", extra=""))
     errors, _ = lint_repo(root)
     assert any("must live inside an enablement/<slug>/ directory" in e for e in errors)
@@ -434,7 +434,7 @@ def test_artifact_directly_under_enablement_is_error(tmp_path):
 
 def test_artifact_assets_are_not_linted(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/deck/README.md", "no frontmatter here\n")
+    write(root, "components/mcp-registry/enablement/deck/README.md", "no frontmatter here\n")
     errors, _ = lint_repo(root)
     assert errors == []
 ```
@@ -670,7 +670,7 @@ git push origin main
 
 **Interfaces:**
 - Consumes: hoisted `entries` (Task 4).
-- Produces: `_load_artifacts(root)` yielding `(rootpath, meta)` for every `*/enablement/*/artifact.md` (Task 7 reuses it); `connections` dict (feature id → list) built right after the hoisted load; a `## Connections` section in `features/<id>/index.md` listing cross-referencing entries/artifacts from OTHER homes.
+- Produces: `_load_artifacts(root)` yielding `(rootpath, meta)` for every `*/enablement/*/artifact.md` (Task 7 reuses it); `connections` dict (feature id → list) built right after the hoisted load; a `## Connections` section in `components/<id>/index.md` listing cross-referencing entries/artifacts from OTHER homes.
 
 - [ ] **Step 1: Write the failing tests** — append to `scripts/tests/test_indexer.py`:
 
@@ -678,7 +678,7 @@ git push origin main
 def test_feature_connections_section(tmp_path):
     root = add_narrative(make_repo(tmp_path))
     built = build_all(root, today=TODAY)
-    idx = built["features/mcp-registry/index.md"]
+    idx = built["components/mcp-registry/index.md"]
     assert "## Connections" in idx
     assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in idx
 
@@ -686,23 +686,23 @@ def test_feature_connections_section(tmp_path):
 def test_connections_exclude_own_home_and_absent_when_empty(tmp_path):
     root = make_repo(tmp_path)
     # entry in mcp-registry listing itself must NOT create a self-backlink
-    write(root, "features/mcp-registry/knowledge/fact-self.md",
+    write(root, "components/mcp-registry/knowledge/fact-self.md",
           "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-01\n"
           "features: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert "## Connections" not in idx
 
 
 def test_artifact_descriptor_creates_connection(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
+    write(root, "components/components.yaml",
           "features:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n"
           "- id: mcp-gateway\n  title: MCP Gateway\n  description: d\n")
-    write(root, "features/mcp-gateway/enablement/deck/artifact.md",
+    write(root, "components/mcp-gateway/enablement/deck/artifact.md",
           "---\ntype: artifact\ntitle: Big Deck\ndescription: cross deck\n"
           "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
-    assert "[Big Deck](/features/mcp-gateway/enablement/deck/artifact.md)" in idx
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
+    assert "[Big Deck](/components/mcp-gateway/enablement/deck/artifact.md)" in idx
 ```
 
 - [ ] **Step 2: Run tests to verify they fail**
@@ -717,7 +717,7 @@ Add after `_meta_of`:
 ```python
 def _load_artifacts(root):
     """Yield (rootpath, meta) for enablement artifact descriptors."""
-    for pattern in ("features/*/enablement/*/artifact.md",
+    for pattern in ("components/*/enablement/*/artifact.md",
                     "narrative/enablement/*/artifact.md"):
         for desc in sorted(root.glob(pattern)):
             meta = _meta_of(desc)
@@ -739,11 +739,11 @@ In `build_all`, directly after the hoisted `entries` load (Task 4), add:
             connections.setdefault(fid, []).append((rp, m))
 ```
 
-In the per-feature index block, after the five `lines.append(f"- [{sub}/]...")` lines and before `built[f"features/{f['id']}/index.md"] = ...`, add:
+In the per-feature index block, after the five `lines.append(f"- [{sub}/]...")` lines and before `built[f"components/{f['id']}/index.md"] = ...`, add:
 
 ```python
         conns = [(rp, m) for rp, m in connections.get(f["id"], [])
-                 if not rp.startswith(f"/features/{f['id']}/")]
+                 if not rp.startswith(f"/components/{f['id']}/")]
         if conns:
             lines.append("")
             lines.append("## Connections")
@@ -788,18 +788,18 @@ def test_narrative_map_view(tmp_path):
     v = build_all(root, today=TODAY)["views/narrative-map.md"]
     assert "## [Agents](/narrative/knowledge/pillar-agents.md)" in v
     assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in v
-    assert "connects: [mcp-registry](/features/mcp-registry/index.md)" in v
+    assert "connects: [mcp-registry](/components/mcp-registry/index.md)" in v
     assert "## Stories without a pillar" in v and "Orphan" in v
 
 
 def test_faq_view(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/qa-airgap.md",
+    write(root, "components/mcp-registry/knowledge/qa-airgap.md",
           "---\ntype: qa\ntitle: Airgap?\ndescription: does it airgap\n"
           "timestamp: 2026-07-01\nstatus: answered\n"
           "asks:\n- date: 2026-07-01\n  by: customer\n- date: 2026-07-03\n  by: ssa\n"
           "---\nb\n")
-    write(root, "features/mcp-registry/knowledge/qa-open.md",
+    write(root, "components/mcp-registry/knowledge/qa-open.md",
           "---\ntype: qa\ntitle: Quotas?\ndescription: open one\n"
           "timestamp: 2026-07-02\nstatus: open\n"
           "asks:\n- date: 2026-07-02\n  by: sales\n---\nb\n")
@@ -811,21 +811,21 @@ def test_faq_view(tmp_path):
 
 def test_stale_view_includes_overdue_qa(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/qa-old.md",
+    write(root, "components/mcp-registry/knowledge/qa-old.md",
           "---\ntype: qa\ntitle: Old\ndescription: aging answer\n"
           "timestamp: 2026-01-01\nstatus: answered\nreview_after: 2026-06-01\n"
           "asks:\n- date: 2026-01-01\n  by: pm\n---\nb\n")
     v = build_all(root, today=TODAY)["views/stale-facts.md"]
-    assert "/features/mcp-registry/knowledge/qa-old.md" in v
+    assert "/components/mcp-registry/knowledge/qa-old.md" in v
 
 
 def test_jtbd_view(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/jtbd-find.md",
+    write(root, "components/mcp-registry/knowledge/jtbd-find.md",
           "---\ntype: jtbd\ntitle: Find approved\ndescription: find servers\n"
           "timestamp: 2026-07-01\npersona: ai-engineer\nstatus: candidate\n"
-          "evidence:\n- /features/mcp-registry/knowledge/qa-airgap.md\n---\nb\n")
-    write(root, "features/mcp-registry/knowledge/jtbd-bare.md",
+          "evidence:\n- /components/mcp-registry/knowledge/qa-airgap.md\n---\nb\n")
+    write(root, "components/mcp-registry/knowledge/jtbd-bare.md",
           "---\ntype: jtbd\ntitle: Bare job\ndescription: no proof\n"
           "timestamp: 2026-07-01\npersona: rhoai-admin\nstatus: validated\n---\nb\n")
     v = build_all(root, today=TODAY)["views/jtbd.md"]
@@ -853,7 +853,7 @@ Expected: all three FAIL with `KeyError: 'views/narrative-map.md'` (etc.).
         for rp, m in owned:
             used.add(rp)
             lines.append(f"- [{_title(m, rp)}]({rp}) — {m.get('description', '')}")
-            feats_str = ", ".join(f"[{fid}](/features/{fid}/index.md)"
+            feats_str = ", ".join(f"[{fid}](/components/{fid}/index.md)"
                                   for fid in (m.get("features") or []))
             if feats_str:
                 lines.append(f"  - connects: {feats_str}")
@@ -967,16 +967,16 @@ git push origin main
 ```python
 def test_artifacts_view(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/deck/index.html", "<html></html>")
-    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+    write(root, "components/mcp-registry/enablement/deck/index.html", "<html></html>")
+    write(root, "components/mcp-registry/enablement/deck/artifact.md",
           "---\ntype: artifact\ntitle: Catalog Deck\ndescription: the deck\n"
           "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
-    write(root, "features/mcp-registry/enablement/bare/index.html", "<html></html>")
+    write(root, "components/mcp-registry/enablement/bare/index.html", "<html></html>")
     write(root, "publish/manifest.yaml",
-          "- source: features/mcp-registry/enablement/deck/\n  dest: mcp-registry/deck/\n"
+          "- source: components/mcp-registry/enablement/deck/\n  dest: mcp-registry/deck/\n"
           "  audience: public\n  title: T\n  description: D\n")
     v = build_all(root, today=TODAY)["views/artifacts.md"]
-    assert "[Catalog Deck](/features/mcp-registry/enablement/deck/)" in v
+    assert "[Catalog Deck](/components/mcp-registry/enablement/deck/)" in v
     assert "published → mcp-registry/deck/" in v
     assert "connects: mcp-registry" in v
     assert "_no artifact.md descriptor yet_" in v and "(unpublished)" in v
@@ -1003,7 +1003,7 @@ Expected: FAIL with `KeyError: 'views/artifacts.md'`.
             pass
     lines = [MARKER + "# Artifacts", ""]
     slug_dirs = []
-    for pattern in ("features/*/enablement/*", "narrative/enablement/*"):
+    for pattern in ("components/*/enablement/*", "narrative/enablement/*"):
         slug_dirs += [p for p in sorted(root.glob(pattern)) if p.is_dir()]
     for slug in slug_dirs:
         rel = slug.relative_to(root).as_posix()
@@ -1062,7 +1062,7 @@ After the "## Feature skeleton contract" section, insert:
 
 ```markdown
 ## The narrative layer
-`narrative/` is a peer of `features/` holding the connective story — pillars,
+`narrative/` is a peer of `components/` holding the connective story — pillars,
 cross-feature stories, the strategy spine, cross-feature artifacts. Same
 five-dir skeleton and rules as a feature. Route here only when content would
 be *wrong* under any single feature; otherwise pick the primary feature and
@@ -1074,7 +1074,7 @@ entries live only here.
 In "## Generated files — never hand-edit", change the file list line to:
 
 ```markdown
-`features/index.md`, `features/*/index.md`, `features/*/knowledge/index.md`,
+`components/index.md`, `components/*/index.md`, `components/*/knowledge/index.md`,
 `narrative/index.md`, `narrative/knowledge/index.md`, `memory/index.md`,
 `views/*` — regenerate with `python scripts/hub_index.py`.
 ```
@@ -1092,7 +1092,7 @@ After that table, insert:
 `question-` = **our** open product questions, tracked to resolution.
 `qa-` = **the field's** answered questions, tracked for reuse/recurrence.
 Don't merge them. `persona` locked list (source of truth:
-[fact-personas.md](/features/platform/knowledge/fact-personas.md); extend both
+[fact-personas.md](/components/platform/knowledge/fact-personas.md); extend both
 together): `ai-engineer` · `platform-engineer` · `agentops-admin` ·
 `business-consumer` · `data-scientist` · `cluster-admin` · `rhoai-admin`.
 
@@ -1113,7 +1113,7 @@ Narrative knowledge also accepts the standard vocabulary above.
 
 ## Cross-references (`features:`)
 Any knowledge entry or artifact descriptor may declare `features: [ids…]` —
-validated against `features/features.yaml` (unknown id = lint **error**; the
+validated against `components/components.yaml` (unknown id = lint **error**; the
 routing table is closed, unlike dangling links). The indexer renders the
 backlinks: per-feature `## Connections` sections plus the views.
 ```
@@ -1128,13 +1128,13 @@ backlinks: per-feature `## Connections` sections plus the views.
 
 - [ ] **Step 4: `docs/architecture.md`** — four edits:
 
-(a) Anatomy table: after the `features/features.yaml` row add:
+(a) Anatomy table: after the `components/components.yaml` row add:
 
 ```markdown
 | `narrative/<skeleton>` | the story layer: pillars, cross-feature stories, strategy spine | humans + skills |
 ```
 
-(b) "## The two filing questions" — rename heading to `## The filing questions` and change item 1's opening to: `1. **Which home?** Story-shaped content (pillars, cross-feature stories, the strategy spine) → \`narrative/\`; everything else picks its feature: \`features/features.yaml\` is the routing table. Current partitions: …` (keep the rest of the item verbatim).
+(b) "## The two filing questions" — rename heading to `## The filing questions` and change item 1's opening to: `1. **Which home?** Story-shaped content (pillars, cross-feature stories, the strategy spine) → \`narrative/\`; everything else picks its feature: \`components/components.yaml\` is the routing table. Current partitions: …` (keep the rest of the item verbatim).
 
 (c) Views table: append rows:
 
@@ -1148,8 +1148,8 @@ backlinks: per-feature `## Connections` sections plus the views.
 (d) Decisions table: append rows (one line each):
 
 ```markdown
-| D12 | the connection layer is a top-level `narrative/` tree (peer of `features/`, same skeleton), never a pseudo-feature |
-| D13 | `features:` cross-reference field, validated against `features.yaml`; connections are declared then generated, never hand-maintained |
+| D12 | the connection layer is a top-level `narrative/` tree (peer of `components/`, same skeleton), never a pseudo-feature |
+| D13 | `features:` cross-reference field, validated against `components.yaml`; connections are declared then generated, never hand-maintained |
 | D14 | type vocabulary extension: `pillar`/`story` (narrative-only), `qa`/`jtbd` (any knowledge), `artifact` descriptors + four views |
 | D15 | execution status stays in Jira — `jtbd` tracks the job's truth (`candidate→validated→delivered`, `retired`), `jira:` points at delivery |
 | D16 | capture-first, publish-later: FAQ/JTBD views repo-internal; curated publishing and the Slack sweep are Phase 2, pulled by demand |
@@ -1159,7 +1159,7 @@ Also update the intro sentence of that section from "The design spec settled the
 
 - [ ] **Step 5: `AGENTS.md`** — two edits (budget: stays ≤ 150 lines; currently 70):
 
-Map table, after the `features/features.yaml` row:
+Map table, after the `components/components.yaml` row:
 
 ```markdown
 | `narrative/` | the story layer: pillars, cross-feature stories, strategy spine — same skeleton as a feature |
@@ -1167,19 +1167,19 @@ Map table, after the `features/features.yaml` row:
 
 Writing-rules first bullet, old:
 ```markdown
-- Filing = two questions: which feature (features.yaml) × which type
+- Filing = two questions: which feature (components.yaml) × which type
   (/conventions/type-vocabulary.md). Working context vs domain knowledge
   boundary: /conventions/memory.md.
 ```
 new:
 ```markdown
 - Filing = which home — narrative/ (story-shaped) or which feature
-  (features.yaml) — × which type (/conventions/type-vocabulary.md).
+  (components.yaml) — × which type (/conventions/type-vocabulary.md).
   Cross-feature spread: `features:` list. Working context vs domain
   knowledge boundary: /conventions/memory.md.
 ```
 
-- [ ] **Step 6: `README.md`** — "Layout in one breath" paragraph, after the `features/<feature>/` clause insert: `` `narrative/` is the story layer above them (pillars, cross-feature stories, the strategy spine — same skeleton); `` so the sentence reads `…skeleton (\`knowledge/ research/ strategy/ enablement/ work/\`); \`narrative/\` is the story layer above them (pillars, cross-feature stories, the strategy spine — same skeleton); \`memory/\` holds working context…`
+- [ ] **Step 6: `README.md`** — "Layout in one breath" paragraph, after the `components/<feature>/` clause insert: `` `narrative/` is the story layer above them (pillars, cross-feature stories, the strategy spine — same skeleton); `` so the sentence reads `…skeleton (\`knowledge/ research/ strategy/ enablement/ work/\`); \`narrative/\` is the story layer above them (pillars, cross-feature stories, the strategy spine — same skeleton); \`memory/\` holds working context…`
 
 - [ ] **Step 7: `docs/working-here.md`** — two edits:
 
@@ -1195,8 +1195,8 @@ In "## The loop", insert after step 1:
 In "## Filing by example", append rows:
 
 ```markdown
-| "does the registry work air-gapped?" (asked by an SSA) | `features/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
-| a user job for UX/Docs | `features/<f>/knowledge/jtbd-…md` (persona from the locked list) |
+| "does the registry work air-gapped?" (asked by an SSA) | `components/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
+| a user job for UX/Docs | `components/<f>/knowledge/jtbd-…md` (persona from the locked list) |
 | cross-feature strategy deck or write-up | `narrative/enablement/<slug>/` (+ `artifact.md`) or `narrative/{research,strategy}/` |
 | a strategic pillar or connective story | `narrative/knowledge/pillar-…md` / `story-…md` |
 ```
@@ -1225,7 +1225,7 @@ git push origin main
 ```markdown
 1. Classify with the boundary rule (/conventions/memory.md): working context
    (state, preference, feedback, process fact) → memory store; domain
-   knowledge (a colleague would look it up) → features/<f>/knowledge/;
+   knowledge (a colleague would look it up) → components/<f>/knowledge/;
    story-shaped (pillar, cross-feature narrative — wrong under any single
    feature) → narrative/knowledge/; a field question someone asked us →
    qa- entry (dedupe rule in step 2); a user job for UX/Docs → jtbd- entry
@@ -1250,9 +1250,9 @@ and in step 2, after the "Knowledge entries: first check the feature partition e
 ```markdown
 1. Pick the home: story-shaped sources (pillars, cross-feature narrative,
    strategy-spine material) → narrative/knowledge/. Otherwise pick the
-   feature: read features/features.yaml. If nothing fits, propose a
+   feature: read components/components.yaml. If nothing fits, propose a
    new partition (id, title, one-line description); on approval append it to
-   features.yaml and create ONLY the subdirectories this filing needs — never
+   components.yaml and create ONLY the subdirectories this filing needs — never
    all five empty (see /conventions/layout.md). Multi-feature sources keep a
    primary home and declare `features:` cross-refs.
 ```
@@ -1266,11 +1266,11 @@ and in step 2, after the "Knowledge entries: first check the feature partition e
    | discard.
 ```
 
-- [ ] **Step 4: `hub.migrate/SKILL.md`** — in "Migrate-on-touch" step 2, after "…move whole documents into features/<f>/{research|strategy|enablement}/ when they have standalone value as documents", append: `Story-shaped old-repo content (strategy, pillars, connective write-ups) routes to narrative/{knowledge|strategy}/.` And in step 5, change the first sentence to:
+- [ ] **Step 4: `hub.migrate/SKILL.md`** — in "Migrate-on-touch" step 2, after "…move whole documents into components/<f>/{research|strategy|enablement}/ when they have standalone value as documents", append: `Story-shaped old-repo content (strategy, pillars, connective write-ups) routes to narrative/{knowledge|strategy}/.` And in step 5, change the first sentence to:
 
 ```markdown
 5. Published HTML artifacts: copy sources into
-   features/<f>/enablement/<artifact>/ (or narrative/enablement/ for
+   components/<f>/enablement/<artifact>/ (or narrative/enablement/ for
    cross-feature ones), add an artifact.md descriptor (type: artifact,
    features: spread), and add the manifest entry via hub.publish.
 ```
@@ -1294,9 +1294,9 @@ git push origin main
 ### Task 10: Seed batch — OWNER GATE
 
 **Files:**
-- Create: `narrative/knowledge/pillar-inference.md`, `pillar-agents.md`, `pillar-data.md`, `pillar-safety-governance.md`, `ref-rhai-cy2027-product-strategy.md`, `ref-pillar-component-mapping.md`, `story-governed-mcp-access.md`, `story-agent-lifecycle.md`; `features/mcp-registry/enablement/mcp-registry-catalog-deck/artifact.md`
-- Move: `features/platform/knowledge/{fact-agentic-ai-four-pillars,fact-agentic-ai-messaging-position,ref-agentic-ai-strategy-2026}.md` → `narrative/knowledge/`
-- Modify: `features/features.yaml` (platform description), `features/platform/knowledge/fact-personas.md` (JTBD vocabulary section), `memory/log.md`
+- Create: `narrative/knowledge/pillar-inference.md`, `pillar-agents.md`, `pillar-data.md`, `pillar-safety-governance.md`, `ref-rhai-cy2027-product-strategy.md`, `ref-pillar-component-mapping.md`, `story-governed-mcp-access.md`, `story-agent-lifecycle.md`; `components/mcp-registry/enablement/mcp-registry-catalog-deck/artifact.md`
+- Move: `components/platform/knowledge/{fact-agentic-ai-four-pillars,fact-agentic-ai-messaging-position,ref-agentic-ai-strategy-2026}.md` → `narrative/knowledge/`
+- Modify: `components/components.yaml` (platform description), `components/platform/knowledge/fact-personas.md` (JTBD vocabulary section), `memory/log.md`
 - Regenerate: all indexes/views
 
 **Gate protocol:** draft everything, present the numbered batch to the owner (hub.consolidate-style: approve all / pick numbers / edit / reject), apply only approved items. Do not push without the owner's OK on the batch.
@@ -1457,7 +1457,7 @@ type: story
 title: Governed MCP access, end to end
 description: "How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime."
 timestamp: 2026-07-08
-features: [mcp-registry, mcp-gateway, mcp-ecosystem]
+components: [mcp-registry, mcp-gateway, mcp-ecosystem]
 pillar: /narrative/knowledge/pillar-agents.md
 status: current
 tags: [narrative, story]
@@ -1491,7 +1491,7 @@ type: story
 title: "The agent lifecycle: build, run, operate"
 description: "How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI."
 timestamp: 2026-07-08
-features: [gen-ai-studio, agent-registry, agent-memory, agent-ops]
+components: [gen-ai-studio, agent-registry, agent-memory, agent-ops]
 pillar: /narrative/knowledge/pillar-agents.md
 status: current
 tags: [narrative, story]
@@ -1522,9 +1522,9 @@ each feature's `knowledge/` index.
 
 ```bash
 mkdir -p narrative/knowledge
-git mv features/platform/knowledge/fact-agentic-ai-four-pillars.md narrative/knowledge/
-git mv features/platform/knowledge/fact-agentic-ai-messaging-position.md narrative/knowledge/
-git mv features/platform/knowledge/ref-agentic-ai-strategy-2026.md narrative/knowledge/
+git mv components/platform/knowledge/fact-agentic-ai-four-pillars.md narrative/knowledge/
+git mv components/platform/knowledge/fact-agentic-ai-messaging-position.md narrative/knowledge/
+git mv components/platform/knowledge/ref-agentic-ai-strategy-2026.md narrative/knowledge/
 ```
 
 Then, in each moved file: change `tags:` value `platform` → `narrative` (leave other tags), leave body/timestamp otherwise unchanged. Repoint inbound links:
@@ -1533,15 +1533,15 @@ Then, in each moved file: change `tags:` value `platform` → `narrative` (leave
 grep -rn "platform/knowledge/fact-agentic-ai-four-pillars\|platform/knowledge/fact-agentic-ai-messaging-position\|platform/knowledge/ref-agentic-ai-strategy-2026" --include="*.md" --exclude-dir=.git .
 ```
 
-For every hit in a NON-generated file, rewrite the path prefix `/features/platform/knowledge/` → `/narrative/knowledge/` (generated files fix themselves at reindex).
+For every hit in a NON-generated file, rewrite the path prefix `/components/platform/knowledge/` → `/narrative/knowledge/` (generated files fix themselves at reindex).
 
-- [ ] **Step 5: Narrow the platform description.** In `features/features.yaml`, replace the platform entry's description line with:
+- [ ] **Step 5: Narrow the platform description.** In `components/components.yaml`, replace the platform entry's description line with:
 
 ```yaml
   description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
 ```
 
-- [ ] **Step 6: Backfill the artifact descriptor.** Create `features/mcp-registry/enablement/mcp-registry-catalog-deck/artifact.md`:
+- [ ] **Step 6: Backfill the artifact descriptor.** Create `components/mcp-registry/enablement/mcp-registry-catalog-deck/artifact.md`:
 
 ```markdown
 ---
@@ -1549,7 +1549,7 @@ type: artifact
 title: MCP Registry & Catalog
 description: Slide deck covering MCP Registry and Catalog capabilities, lifecycle governance, pre-loaded MCP servers, and the roadmap from Dev Preview through GA.
 timestamp: 2026-07-08
-features: [mcp-registry]
+components: [mcp-registry]
 source: migrated from ai-asset-registry (R4 wave 1)
 ---
 Self-contained HTML slide deck; published to the pages site via
@@ -1560,7 +1560,7 @@ publish/manifest.yaml (dest mcp-registry/catalog-deck/).
 ships to the pages site alongside the deck — harmless, and the repo is
 public anyway.)
 
-- [ ] **Step 7: Record the persona vocabulary.** In `features/platform/knowledge/fact-personas.md`: bump `timestamp:` to `2026-07-08`, and append to the body:
+- [ ] **Step 7: Record the persona vocabulary.** In `components/platform/knowledge/fact-personas.md`: bump `timestamp:` to `2026-07-08`, and append to the body:
 
 ```markdown
 
@@ -1594,7 +1594,7 @@ python -m pytest scripts/tests -q
 
 Manual verification of the rendered axis:
 - `views/narrative-map.md` shows all four pillars; both stories under Agents; Inference/Data/Safety & Governance show `_no stories yet_`.
-- `features/mcp-registry/index.md` has a `## Connections` section listing both the story and nothing self-referential.
+- `components/mcp-registry/index.md` has a `## Connections` section listing both the story and nothing self-referential.
 - `views/artifacts.md` shows the catalog deck with its descriptor + `published → mcp-registry/catalog-deck/`.
 - `views/faq.md` / `views/jtbd.md` exist with empty-state content (headline only).
 

@@ -4,7 +4,7 @@ title: "Harness vs framework: manual vs automatic transmission"
 description: "Adel's framing: frameworks (LangChain, CrewAI, Strands) = manual transmission with full developer control; harnesses (OpenClaw, Claude Code) = automatic transmission, off-the-shelf agent runtimes."
 timestamp: 2026-07-08
 source: Power 90 session 2026-07-08
-features: [agent-registry]
+components: [agent-registry]
 tags: [narrative, definitions]
 ---
 From the Power 90 (2026-07-08), Adel's positioning for the field:

@@ -34,7 +34,7 @@ No new Python code. No new dependencies.
 - All file writes: `encoding="utf-8", newline="\n"`.
 - After every task: `python scripts/hub_lint.py` reports **0 errors** and the
   warning count has not increased over the pre-task baseline (currently **95**).
-- Never hand-edit generated files (`features/index.md`, `*/index.md`,
+- Never hand-edit generated files (`components/index.md`, `*/index.md`,
   `views/*`, `memory/index.md`). Run `python scripts/hub_index.py`.
 - `AGENTS.md` has a 150-line CI budget. Three new skill rows must fit.
 - Links in markdown use the leading-slash repo-root form.
@@ -230,7 +230,7 @@ otherwise. No gate, no index, no lint, no commit.
 
 Issues in the user's feature areas that lack a "Product Manager" assignment
 are invisible to this brief. A future improvement could cross-reference
-against `features/features.yaml` JQL scopes and flag issues in those scopes
+against `components/components.yaml` JQL scopes and flag issues in those scopes
 without a PM.
 ```
 
@@ -488,11 +488,11 @@ description: Feature staleness sweep -- per-feature "what's outdated?" audit. Co
 
 # hub.sweep
 
-Input: a feature id (from features/features.yaml), or `--all` to sweep
+Input: a feature id (from components/components.yaml), or `--all` to sweep
 every feature.
 
 1. PRE-FLIGHT:
-   - Validate the feature id against `features/features.yaml`. If `--all`,
+   - Validate the feature id against `components/components.yaml`. If `--all`,
      load all feature ids from that file.
    - Read `conventions/staleness.yaml` for the type defaults:
      `profile_default_days` (30) and `fact_default_days` (90).
@@ -506,7 +506,7 @@ every feature.
 2. PHASE 1 -- DATE-ARITHMETIC STALENESS (hub-local, no API calls):
 
    For each target feature, use `Glob` to list all `*.md` files in
-   `features/<id>/knowledge/`. For `--all`, also check
+   `components/<id>/knowledge/`. For `--all`, also check
    `narrative/knowledge/` and `memory/facts/` and `memory/profiles/`.
 
    Read each file and parse its YAML frontmatter. Skip files that:
@@ -619,8 +619,8 @@ every feature.
       updated entries (not the scripts) if it reports errors.
    d. Commit with explicit paths, NEVER `git add -A`:
       `git add <updated entries> memory/log.md memory/index.md
-      features/index.md "features/*/index.md"
-      "features/*/knowledge/index.md" narrative/index.md
+      components/index.md "components/*/index.md"
+      "components/*/knowledge/index.md" narrative/index.md
       narrative/knowledge/index.md views/`
       Check `git diff --cached --stat` for anything the sweep did not
       write, then commit WITH PATHSPECS:
@@ -745,14 +745,14 @@ Expected: 0 errors, warnings <= 95
 - [ ] **Step 7: Commit**
 
 ```bash
-git add AGENTS.md docs/enhancements.md memory/log.md memory/index.md features/index.md "features/*/index.md" "features/*/knowledge/index.md" narrative/index.md narrative/knowledge/index.md views/
+git add AGENTS.md docs/enhancements.md memory/log.md memory/index.md components/index.md "components/*/index.md" "components/*/knowledge/index.md" narrative/index.md narrative/knowledge/index.md views/
 git diff --cached --stat
 git commit -m "docs(#28,#3): register standup/sweep skills, move to Done
 
 AGENTS.md gains 3 skill rows. Enhancements #28 and #3 move to Done.
 Log line added.
 
-Co-Authored-By: <model> <noreply@anthropic.com>" -- AGENTS.md docs/enhancements.md memory/log.md memory/index.md features/index.md "features/*/index.md" "features/*/knowledge/index.md" narrative/index.md narrative/knowledge/index.md views/
+Co-Authored-By: <model> <noreply@anthropic.com>" -- AGENTS.md docs/enhancements.md memory/log.md memory/index.md components/index.md "components/*/index.md" "components/*/knowledge/index.md" narrative/index.md narrative/knowledge/index.md views/
 ```
 
 ---

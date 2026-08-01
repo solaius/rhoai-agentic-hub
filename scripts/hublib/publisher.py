@@ -48,10 +48,10 @@ def load_manifest(root):
     return [e for e in data if isinstance(e, dict)]
 
 
-def _feature_titles(root):
-    """id -> display title from features/features.yaml, preserving the
+def _component_titles(root):
+    """id -> display title from components/components.yaml, preserving the
     routing-table order (drives landing-page section order)."""
-    p = Path(root) / "features" / "features.yaml"
+    p = Path(root) / "components" / "components.yaml"
     if not p.is_file():
         return {}
     try:
@@ -59,13 +59,13 @@ def _feature_titles(root):
     except yaml.YAMLError:
         return {}
     return {f["id"]: (f.get("title") or f["id"])
-            for f in (data.get("features") or [])
+            for f in (data.get("components") or [])
             if isinstance(f, dict) and f.get("id")}
 
 
 def build_plan(root, audience="public"):
     root = Path(root)
-    titles = _feature_titles(root)
+    titles = _component_titles(root)
     order = list(titles)
     plan = []
     for e in load_manifest(root):
@@ -75,7 +75,7 @@ def build_plan(root, audience="public"):
         dest = e["dest"].strip("/")
         is_dir = src.is_dir()
         parts = [p for p in str(e["source"]).replace("\\", "/").split("/") if p]
-        if parts and parts[0] == "features" and len(parts) > 1:
+        if parts and parts[0] == "components" and len(parts) > 1:
             fid = parts[1]
             group = titles.get(fid, fid)
             group_key = (0, order.index(fid)) if fid in order else (1, fid)

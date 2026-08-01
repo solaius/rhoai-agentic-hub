@@ -36,7 +36,7 @@
 ```python
 def test_dollar_figure_hint_is_warning(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/fact-a.md",
+    write(root, "components/x/knowledge/fact-a.md",
           ENTRY.format(t="fact", extra="") + "Deal size was $2.4M for year one.\n")
     errors, warnings = lint_repo(root)
     assert errors == []
@@ -45,7 +45,7 @@ def test_dollar_figure_hint_is_warning(tmp_path):
 
 def test_signed_agreement_hint_is_warning(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/knowledge/fact-a.md",
+    write(root, "components/x/knowledge/fact-a.md",
           ENTRY.format(t="fact", extra="")
           + "They signed a strategic collaboration agreement last week.\n")
     _, warnings = lint_repo(root)
@@ -103,7 +103,7 @@ git commit -m "feat(lint): RESTRICTED_HINTS learns dollar figures and signed-agr
 ```python
 def test_story_pillar_without_leading_slash_is_warning(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml", FEATURES_YAML)
+    write(root, "components/components.yaml", FEATURES_YAML)
     write(root, "narrative/knowledge/pillar-agents.md", ENTRY.format(t="pillar", extra=""))
     write(root, "narrative/knowledge/story-a.md",
           ENTRY.format(t="story", extra="features: [mcp-registry]\n"
@@ -180,27 +180,27 @@ def write(root: Path, rel: str, text: str):
 
 
 def test_no_pattern_file_no_errors(tmp_path):
-    write(tmp_path, "features/x/enablement/deck/index.html", "<p>Acme Corp content</p>")
+    write(tmp_path, "components/x/enablement/deck/index.html", "<p>Acme Corp content</p>")
     errors, _ = scan_repo(tmp_path)
     assert errors == []
 
 
 def test_pattern_match_in_html_is_error_with_both_linenos(tmp_path):
     write(tmp_path, "restricted/lint-patterns.txt", "# customer names\nacme\n")
-    write(tmp_path, "features/x/enablement/deck/index.html",
+    write(tmp_path, "components/x/enablement/deck/index.html",
           "<html>\n<p>ACME Corp deal</p>\n</html>")
     errors, _ = scan_repo(tmp_path)
-    assert errors == ["features/x/enablement/deck/index.html:2: "
+    assert errors == ["components/x/enablement/deck/index.html:2: "
                       "matches restricted pattern (lint-patterns.txt:2)"]
 
 
 def test_pattern_match_in_knowledge_md_including_frontmatter(tmp_path):
     write(tmp_path, "restricted/lint-patterns.txt", "globex\n")
-    write(tmp_path, "features/x/knowledge/fact-a.md",
+    write(tmp_path, "components/x/knowledge/fact-a.md",
           "---\ntype: fact\ndescription: Globex asked for it\ntimestamp: 2026-07-09\n"
           "---\nbody\n")
     errors, _ = scan_repo(tmp_path)
-    assert errors == ["features/x/knowledge/fact-a.md:3: "
+    assert errors == ["components/x/knowledge/fact-a.md:3: "
                       "matches restricted pattern (lint-patterns.txt:1)"]
 
 
@@ -214,7 +214,7 @@ def test_narrative_surfaces_scanned(tmp_path):
 
 def test_invalid_regex_warns_and_rest_still_applies(tmp_path):
     write(tmp_path, "restricted/lint-patterns.txt", "[unclosed\nacme\n")
-    write(tmp_path, "features/x/enablement/deck/index.html", "<p>acme</p>")
+    write(tmp_path, "components/x/enablement/deck/index.html", "<p>acme</p>")
     errors, warnings = scan_repo(tmp_path)
     assert any(w.startswith("restricted/lint-patterns.txt:1: invalid regex")
                for w in warnings)
@@ -230,24 +230,24 @@ def test_comments_and_blank_lines_skipped(tmp_path):
 
 def test_restricted_tree_never_scanned(tmp_path):
     write(tmp_path, "restricted/lint-patterns.txt", "acme\n")
-    write(tmp_path, "restricted/features/x/enablement/deck/index.html", "<p>acme</p>")
-    write(tmp_path, "restricted/features/x/knowledge/fact-a.md", "acme\n")
+    write(tmp_path, "restricted/components/x/enablement/deck/index.html", "<p>acme</p>")
+    write(tmp_path, "restricted/components/x/knowledge/fact-a.md", "acme\n")
     errors, _ = scan_repo(tmp_path)
     assert errors == []
 
 
 def test_generic_hints_warn_on_enablement_html(tmp_path):
-    write(tmp_path, "features/x/enablement/deck/index.html",
+    write(tmp_path, "components/x/enablement/deck/index.html",
           "<html>\n<p>this deck is internal-only, do not share</p>\n</html>")
     errors, warnings = scan_repo(tmp_path)
     assert errors == []
-    assert any(w.startswith("features/x/enablement/deck/index.html:2: "
+    assert any(w.startswith("components/x/enablement/deck/index.html:2: "
                             "restricted-content heuristic") for w in warnings)
 
 
 def test_generic_hints_do_not_double_report_knowledge_md(tmp_path):
     # lint_entry (schema.py) already warns on md bodies; disclosure must not repeat it
-    write(tmp_path, "features/x/knowledge/fact-a.md",
+    write(tmp_path, "components/x/knowledge/fact-a.md",
           "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-09\n---\ninternal-only\n")
     _, warnings = scan_repo(tmp_path)
     assert warnings == []
@@ -297,9 +297,9 @@ def load_patterns(root):
 def _scan_files(root):
     """The public scan surface: enablement HTML + knowledge entries."""
     root = Path(root)
-    for pattern in ("features/*/enablement/**/*.html",
+    for pattern in ("components/*/enablement/**/*.html",
                     "narrative/enablement/**/*.html",
-                    "features/*/knowledge/*.md",
+                    "components/*/knowledge/*.md",
                     "narrative/knowledge/*.md"):
         yield from sorted(root.glob(pattern))
 
@@ -425,32 +425,32 @@ Then append the three recorded-gap tests:
 ```python
 def test_connections_sorted_multi_item(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
+    write(root, "components/components.yaml",
           "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
           "- id: mcp-gateway\n  title: G\n  description: d\n")
-    write(root, "features/mcp-gateway/knowledge/fact-zeta.md",
+    write(root, "components/mcp-gateway/knowledge/fact-zeta.md",
           "---\ntype: fact\ntitle: Zeta\ndescription: d\ntimestamp: 2026-07-01\n"
           "features: [mcp-registry]\n---\nb\n")
-    write(root, "features/mcp-gateway/knowledge/fact-alpha.md",
+    write(root, "components/mcp-gateway/knowledge/fact-alpha.md",
           "---\ntype: fact\ntitle: Alpha\ndescription: d\ntimestamp: 2026-07-02\n"
           "features: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert "## Connections" in idx
     assert idx.index("Alpha") < idx.index("Zeta")  # sorted by rootpath
 
 
 def test_connections_combine_entries_and_artifacts(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
+    write(root, "components/components.yaml",
           "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
           "- id: mcp-gateway\n  title: G\n  description: d\n")
-    write(root, "features/mcp-gateway/knowledge/fact-conn.md",
+    write(root, "components/mcp-gateway/knowledge/fact-conn.md",
           "---\ntype: fact\ntitle: Conn Fact\ndescription: d\ntimestamp: 2026-07-01\n"
           "features: [mcp-registry]\n---\nb\n")
-    write(root, "features/mcp-gateway/enablement/deck/artifact.md",
+    write(root, "components/mcp-gateway/enablement/deck/artifact.md",
           "---\ntype: artifact\ntitle: Conn Deck\ndescription: d\ntimestamp: 2026-07-01\n"
           "features: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert "Conn Fact" in idx and "Conn Deck" in idx
 
 
@@ -591,7 +591,7 @@ TODAY = datetime.date(2026, 7, 5)
 def make_repo(tmp_path: Path) -> Path:
     write(tmp_path, "conventions/staleness.yaml",
           "profile_default_days: 30\nfact_default_days: 90\n")
-    write(tmp_path, "features/features.yaml",
+    write(tmp_path, "components/components.yaml",
           "features:\n- id: mcp-registry\n  title: R\n  description: d\n")
     write(tmp_path, "memory/log.md",
           "---\ntype: fact\ndescription: log\ntimestamp: 2026-07-05\n---\n"
@@ -611,7 +611,7 @@ def test_minimal_repo_header_only(tmp_path):
 
 def test_open_questions_counted_by_home(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/question-a.md",
+    write(root, "components/mcp-registry/knowledge/question-a.md",
           "---\ntype: question\ntitle: A?\ndescription: d\ntimestamp: 2026-07-01\n"
           "status: open\n---\nb\n")
     write(root, "narrative/knowledge/question-b.md",
@@ -624,10 +624,10 @@ def test_open_questions_counted_by_home(tmp_path):
 
 def test_unanswered_qa_and_bare_jtbd_listed(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/qa-open.md",
+    write(root, "components/mcp-registry/knowledge/qa-open.md",
           "---\ntype: qa\ntitle: Quotas?\ndescription: d\ntimestamp: 2026-07-02\n"
           "status: open\nasks:\n- date: 2026-07-02\n  by: sales\n---\nb\n")
-    write(root, "features/mcp-registry/knowledge/jtbd-bare.md",
+    write(root, "components/mcp-registry/knowledge/jtbd-bare.md",
           "---\ntype: jtbd\ntitle: Bare job\ndescription: d\ntimestamp: 2026-07-01\n"
           "persona: rhoai-admin\nstatus: validated\n---\nb\n")
     brief = build_brief(root, today=TODAY)
@@ -646,10 +646,10 @@ def test_stale_section_uses_shared_rows(tmp_path):
 
 def test_undescriptored_enablement_dir_listed(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/bare/index.html", "<html></html>")
+    write(root, "components/mcp-registry/enablement/bare/index.html", "<html></html>")
     brief = build_brief(root, today=TODAY)
     assert "## Enablement dirs missing artifact.md (1)" in brief
-    assert "/features/mcp-registry/enablement/bare" in brief
+    assert "/components/mcp-registry/enablement/bare" in brief
 
 
 def test_rotation_reminder_only_with_old_years(tmp_path):
@@ -738,7 +738,7 @@ def build_brief(root, today=None):
         sections.append(f"## JTBD lacking evidence ({len(bare)})\n" + "\n".join(lines))
 
     undesc = []
-    for pattern in ("features/*/enablement/*", "narrative/enablement/*"):
+    for pattern in ("components/*/enablement/*", "narrative/enablement/*"):
         for slug in sorted(root.glob(pattern)):
             if slug.is_dir() and not (slug / "artifact.md").is_file():
                 undesc.append("/" + slug.relative_to(root).as_posix())
@@ -1426,7 +1426,7 @@ to:
 the right home (feature partition or `narrative/`) instead.
 ```
 
-- [ ] **Step 4: presentation-create.** In `.claude/skills/presentation-create/SKILL.md`, after the paragraph beginning `Write the HTML file to \`features/<feature>/enablement/<artifact-slug>/index.html\`` (≈line 238), add a new paragraph:
+- [ ] **Step 4: presentation-create.** In `.claude/skills/presentation-create/SKILL.md`, after the paragraph beginning `Write the HTML file to \`components/<feature>/enablement/<artifact-slug>/index.html\`` (≈line 238), add a new paragraph:
 
 ```
 If this run created a new `enablement/<artifact-slug>/` directory, also
@@ -1437,7 +1437,7 @@ scaffold an `artifact.md` descriptor alongside the HTML — frontmatter
 reads the descriptor when the artifact ships.
 ```
 
-- [ ] **Step 5: blog-create.** After the `mkdir -p features/<feature>/enablement/blog-<topic-short>/drafts/reviews` step (≈line 89), add:
+- [ ] **Step 5: blog-create.** After the `mkdir -p components/<feature>/enablement/blog-<topic-short>/drafts/reviews` step (≈line 89), add:
 
 ```
 If this created a new `enablement/blog-<topic-short>/` directory, scaffold an
@@ -1488,7 +1488,7 @@ git commit -m "docs(skills): artifact.md scaffolding, migrate repoint carve-out,
 
 - **Restricted patterns (errors, local-first).** An OPTIONAL, gitignored
   `restricted/lint-patterns.txt` — one case-insensitive regex per line, `#`
-  comments allowed — is scanned over `features/*/enablement/**/*.html`,
+  comments allowed — is scanned over `components/*/enablement/**/*.html`,
   `narrative/enablement/**/*.html`, and all public knowledge entries. A match
   is an ERROR naming the file:line and the pattern's line number (never its
   text). CI never sees the pattern file, so this net only exists on machines

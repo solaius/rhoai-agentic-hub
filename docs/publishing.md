@@ -16,7 +16,7 @@ private or move hosts without breaking a single published URL.
 ## End to end
 
 1. **Build** the artifact as a self-contained directory:
-   `features/<feature>/enablement/<slug>/` with `index.html` as the entry
+   `components/<feature>/enablement/<slug>/` with `index.html` as the entry
    point and all assets inside it (usually via `presentation-create`).
 2. **Allowlist** it with the `hub.publish` skill — publishing is a
    disclosure decision, so the skill restates exactly what becomes public
@@ -51,7 +51,7 @@ private or move hosts without breaking a single published URL.
 ## The manifest
 
 ```yaml
-- source: features/mcp-registry/enablement/mcp-registry-catalog-deck/  # repo-relative; dir or file
+- source: components/mcp-registry/enablement/mcp-registry-catalog-deck/  # repo-relative; dir or file
   dest: mcp-registry/catalog-deck/       # URL path on the pages site
   audience: public                       # public | internal
   title: MCP Registry & Catalog          # landing-page card title

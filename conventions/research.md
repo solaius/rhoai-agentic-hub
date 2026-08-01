@@ -45,4 +45,4 @@ provenance) ·
 `hub.research` (primary), `hub.intake` (offers the kickoff),
 `hub.migrate` (imports old-repo series; `source:` marks provenance).
 The reference series:
-[agent-memory research](/features/agent-memory/research/00-executive-summary.md).
+[agent-memory research](/components/agent-memory/research/00-executive-summary.md).

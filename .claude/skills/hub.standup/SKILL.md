@@ -161,5 +161,5 @@ otherwise. No gate, no index, no lint, no commit.
 
 Issues in the user's feature areas that lack a "Product Manager" assignment
 are invisible to this brief. A future improvement could cross-reference
-against `features/features.yaml` JQL scopes and flag issues in those scopes
+against `components/components.yaml` JQL scopes and flag issues in those scopes
 without a PM.

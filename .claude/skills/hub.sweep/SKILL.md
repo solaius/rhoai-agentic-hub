@@ -5,11 +5,11 @@ description: Feature staleness sweep -- per-feature "what's outdated?" audit. Co
 
 # hub.sweep
 
-Input: a feature id (from features/features.yaml), or `--all` to sweep
+Input: a feature id (from components/components.yaml), or `--all` to sweep
 every feature.
 
 1. PRE-FLIGHT:
-   - Validate the feature id against `features/features.yaml`. If `--all`,
+   - Validate the feature id against `components/components.yaml`. If `--all`,
      load all feature ids from that file.
    - Read `conventions/staleness.yaml` for the type defaults:
      `profile_default_days` (30) and `fact_default_days` (90).
@@ -23,9 +23,9 @@ every feature.
 2. PHASE 1 -- DATE-ARITHMETIC STALENESS (hub-local, no API calls):
 
    For each target feature, use `Glob` to list all `*.md` files in
-   `features/<id>/knowledge/`. For `--all`, also check
+   `components/<id>/knowledge/`. For `--all`, also check
    `narrative/knowledge/` and `memory/facts/` and `memory/profiles/`.
-   Also check `features/<id>/strategy/strategy.md` for a `review_after`
+   Also check `components/<id>/strategy/strategy.md` for a `review_after`
    overdue check only -- strategy docs have no type-based staleness default.
 
    Read each file and parse its YAML frontmatter. Skip files that:
@@ -46,7 +46,7 @@ every feature.
    status, description, staleness_reason}` for each flagged entry.
 
    RELATED-FEATURE DRIFT (hub-local): if the feature has a `related:`
-   list in `features/features.yaml` (its boundary siblings), find the
+   list in `components/components.yaml` (its boundary siblings), find the
    target's newest entry timestamp, then list sibling entries
    (knowledge/ + research/) with timestamps newer than it. Carry these
    into phase 3 (PRESENT FINDINGS) as an informational "boundary drift
@@ -148,8 +148,8 @@ every feature.
       updated entries (not the scripts) if it reports errors.
    d. Commit with explicit paths, NEVER `git add -A`:
       `git add <updated entries> memory/log.md memory/index.md
-      features/index.md "features/*/index.md"
-      "features/*/knowledge/index.md" narrative/index.md
+      components/index.md "components/*/index.md"
+      "components/*/knowledge/index.md" narrative/index.md
       narrative/knowledge/index.md views/`
       Check `git diff --cached --stat` for anything the sweep did not
       write, then commit WITH PATHSPECS:

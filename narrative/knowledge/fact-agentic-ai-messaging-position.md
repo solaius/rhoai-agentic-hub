@@ -7,7 +7,7 @@ tags: [narrative, messaging, positioning, personas]
 review_after: 2026-08-05
 source: ai-asset-registry/docs/knowledge-registry.md §10 (as of 2026-07-05)
 ---
-From the Messaging Guide (Apr 2026) — see [ref-agentic-messaging-guide.md](/features/platform/knowledge/ref-agentic-messaging-guide.md) for the doc itself; this entry captures the specifics its terse description doesn't spell out. The RHOAI 3.4 capability-status table from the same guide is its own entry: [fact-rhoai-34-agentic-capabilities.md](/features/platform/knowledge/fact-rhoai-34-agentic-capabilities.md).
+From the Messaging Guide (Apr 2026) — see [ref-agentic-messaging-guide.md](/components/platform/knowledge/ref-agentic-messaging-guide.md) for the doc itself; this entry captures the specifics its terse description doesn't spell out. The RHOAI 3.4 capability-status table from the same guide is its own entry: [fact-rhoai-34-agentic-capabilities.md](/components/platform/knowledge/fact-rhoai-34-agentic-capabilities.md).
 
 **Three customer challenges anchoring the messaging**: (1) agent identity — agents need secure per-agent access to tools/endpoints under least-privilege; (2) ungoverned autonomy — unconstrained agents create security risk, need isolation + observability; (3) scalability — multi-agent architectures generate concurrent spikes traditional infra can't handle.
 
@@ -22,6 +22,6 @@ From the Messaging Guide (Apr 2026) — see [ref-agentic-messaging-guide.md](/fe
 | Builders (agent devs, AI engineers) | Fast model access; framework freedom; on-demand infra | MaaS self-service; BYOA flexibility; governed prompt management |
 | Operators (platform engineers, admins) | Secure ops dev-to-prod; controlled access; self-service for builders | Agent Sandbox; identity management; autoscaling; MaaS admin UI |
 
-This is the same Builders/Operators marketing pair referenced (but not detailed) by [fact-personas.md](/features/platform/knowledge/fact-personas.md), which documents a separate, more granular 4-persona product/UX set (AI Engineers, Platform Engineers, AgentOps Admins, Business Consumers) mapped to registry interaction patterns rather than messaging pillars — see that entry for the disambiguation. (Reconciled 2026-07-06 against batch 3, which landed `fact-personas.md` after this entry was originally staged.)
+This is the same Builders/Operators marketing pair referenced (but not detailed) by [fact-personas.md](/components/platform/knowledge/fact-personas.md), which documents a separate, more granular 4-persona product/UX set (AI Engineers, Platform Engineers, AgentOps Admins, Business Consumers) mapped to registry interaction patterns rather than messaging pillars — see that entry for the disambiguation. (Reconciled 2026-07-06 against batch 3, which landed `fact-personas.md` after this entry was originally staged.)
 
-Named customer pain points tied to these challenges are restricted — see [fact-agentic-ai-customer-pain-points.md](/restricted/features/platform/knowledge/fact-agentic-ai-customer-pain-points.md).
+Named customer pain points tied to these challenges are restricted — see [fact-agentic-ai-customer-pain-points.md](/restricted/components/platform/knowledge/fact-agentic-ai-customer-pain-points.md).

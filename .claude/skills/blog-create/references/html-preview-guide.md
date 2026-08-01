@@ -8,7 +8,7 @@ This guide explains how to convert a finalized blog post (`final.md`) into a bra
 2. Extract metadata from `final.md` (title, subtitle, author, etc.)
 3. Convert the markdown body content to HTML elements
 4. Replace all `{{PLACEHOLDER}}` tokens with actual values
-5. Write the result to `features/<feature>/enablement/blog-<topic-short>/index.html`
+5. Write the result to `components/<feature>/enablement/blog-<topic-short>/index.html`
 
 ## Template Placeholders
 

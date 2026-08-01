@@ -6,7 +6,7 @@
   umbrella devolution, full plan A+B) and #13 in its interim form (`audience:
   internal` publish target; the protected-GitLab tail stays open).
 - **Supersedes in part:** the publish placement in
-  [/features/mcp-ecosystem/work/management-hub-umbrella-plan.md](/features/mcp-ecosystem/work/management-hub-umbrella-plan.md)
+  [/components/mcp-ecosystem/work/management-hub-umbrella-plan.md](/components/mcp-ecosystem/work/management-hub-umbrella-plan.md)
   (hubs are now internal-audience, not public); its devolution map and
   sequenced build plan are adopted unchanged and detailed here.
 
@@ -51,7 +51,7 @@ crystallized since the ruling:
   public tree and keep following public-tree sanitization rules.
 - **Skill:** `hub.refresh-site` (not a new skill) gains the JTBD and Jira
   Tracker section contracts.
-- **features.yaml:** checked 2026-07-11, all 12 partitions routed; no
+- **components.yaml:** checked 2026-07-11, all 12 partitions routed; no
   routing additions needed. It DOES need `jira:` scope blocks added for
   `mcp-catalog` and `mcp-gateway` so their tracker pages have stored scopes
   (see Jira Tracker below).
@@ -60,11 +60,11 @@ crystallized since the ruling:
 
 | Hub | Source (repo) | Published dest (internal target) | Role after this effort |
 |---|---|---|---|
-| Management (umbrella) | `features/mcp-ecosystem/enablement/management-hub/` | `mcp-ecosystem/hub/` | Cross-component story, ~12-14 pages, links out to component hubs |
-| Gateway | `features/mcp-gateway/enablement/rhcl-hub/` | `mcp-gateway/rhcl/` | Unchanged role; govern component pages thinned to gateway-vantage summaries; gains HUB_NETWORK |
-| Catalog (new) | `features/mcp-catalog/enablement/catalog-hub/` | `mcp-catalog/hub/` | Component depth: discovery/storefront |
-| MCPLO (new) | `features/mcp-lifecycle-operator/enablement/mcplo-hub/` | `mcp-lifecycle-operator/hub/` | Component depth: deployment/lifecycle operator |
-| Registry (new) | `features/mcp-registry/enablement/registry-hub/` | `mcp-registry/hub/` | Component depth: governance/system-of-record; launches lean, grows toward 3.6 EA1 |
+| Management (umbrella) | `components/mcp-ecosystem/enablement/management-hub/` | `mcp-ecosystem/hub/` | Cross-component story, ~12-14 pages, links out to component hubs |
+| Gateway | `components/mcp-gateway/enablement/rhcl-hub/` | `mcp-gateway/rhcl/` | Unchanged role; govern component pages thinned to gateway-vantage summaries; gains HUB_NETWORK |
+| Catalog (new) | `components/mcp-catalog/enablement/catalog-hub/` | `mcp-catalog/hub/` | Component depth: discovery/storefront |
+| MCPLO (new) | `components/mcp-lifecycle-operator/enablement/mcplo-hub/` | `mcp-lifecycle-operator/hub/` | Component depth: deployment/lifecycle operator |
+| Registry (new) | `components/mcp-registry/enablement/registry-hub/` | `mcp-registry/hub/` | Component depth: governance/system-of-record; launches lean, grows toward 3.6 EA1 |
 
 Dest slugs are contracts and match the coming-soon paths already staged in
 the Management HUB_NETWORK. Each hub is self-contained (own `nav.js`,
@@ -175,10 +175,10 @@ files (sources are in the public tree). `data-verified` footer as usual.
 The Management hub's existing `plan/jira-tracker.html` becomes the
 cross-component Strats outcome rollup (increment 4), same machinery.
 
-Prerequisite: `features.yaml` `jira:` blocks exist for `mcp-registry`,
+Prerequisite: `components.yaml` `jira:` blocks exist for `mcp-registry`,
 `mcp-lifecycle-operator`, `agent-interop` only. Add scoped blocks for
 `mcp-catalog` (increment 1; seed keys from
-`features/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md`:
+`components/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md`:
 RHAISTRAT-1339 umbrella, 1084/1306/1149/1859/1994) and `mcp-gateway`
 (increment 4; scope discovery during implementation, hub.jira-sweep
 conversation shape). The Management rollup derives from the component
@@ -208,7 +208,7 @@ network. Worst interruption case: a component still marked coming-soon.
   roadmap sub-table to matrix row; competitive: the catalog/registry
   landscape table moves to the Catalog hub, both parents keep a pointer);
   thin RHCL `govern/catalog.html` to a gateway-vantage summary + link; ship
-  `features/mcp-catalog/work/refresh-catalog-hub.yaml`.
+  `components/mcp-catalog/work/refresh-catalog-hub.yaml`.
 - **Increment 2 · MCPLO.** Same shape: build, publish, convert. Thins the
   MCPLO card; `operator-installation` (MCPLO install out; two-tier model
   and cross-component version matrix stay); `configuration-reference`
@@ -228,7 +228,7 @@ network. Worst interruption case: a component still marked coming-soon.
   component-integration into one umbrella architecture page; reshape the IA
   to Ecosystem / Components / Choose & Integrate / Sell / Plan & Govern
   with the "which component do I need?" decision guide; add the
-  mcp-gateway `jira:` block to features.yaml; rescope the Management
+  mcp-gateway `jira:` block to components.yaml; rescope the Management
   jira-tracker to the cross-component Strats outcome rollup; rebalance
   `refresh-management-hub.yaml` to the umbrella page set. Management lands
   at ~12-14 pages.
@@ -260,15 +260,15 @@ opt in to both. Skill README documents the contract.
 
 ### Refresh configs shipped
 
-- `features/mcp-catalog/work/refresh-catalog-hub.yaml`: GDocs (MCP Catalog,
+- `components/mcp-catalog/work/refresh-catalog-hub.yaml`: GDocs (MCP Catalog,
   Partners MCP Catalog), GitHub (kubeflow/hub, model-metadata-collection),
   Jira (catalog scope), Slack (forum-ai-asset-management), local
   knowledge + research.
-- `features/mcp-lifecycle-operator/work/refresh-mcplo-hub.yaml`: GDocs
+- `components/mcp-lifecycle-operator/work/refresh-mcplo-hub.yaml`: GDocs
   (MCPLO Weekly Meeting Notes), GitHub (kubernetes-sigs/mcp-lifecycle-operator
   + the opendatahub-io module repo), Jira (stored MCPLO jql), Slack
   (forum-mcp-lifecycle-operator), local knowledge + research.
-- `features/mcp-registry/work/refresh-registry-hub.yaml`: GDocs (MCP
+- `components/mcp-registry/work/refresh-registry-hub.yaml`: GDocs (MCP
   Registry MVP Requirements, MCP Registry Data Model Proposal), Jira
   (stored registry jql), Slack (forum-ai-asset-management), local knowledge.
 - `refresh-management-hub.yaml`: rebalanced in increment 4 (component-deep

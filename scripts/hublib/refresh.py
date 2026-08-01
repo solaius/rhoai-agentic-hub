@@ -9,7 +9,7 @@ import yaml
 
 SOURCE_TYPES = {"gdocs", "github", "jira", "slack", "local"}
 SECTION_KEYS = {"jtbd", "jira_tracker"}
-CONFIG_GLOBS = ("features/*/work/refresh-*.yaml", "narrative/work/refresh-*.yaml")
+CONFIG_GLOBS = ("components/*/work/refresh-*.yaml", "narrative/work/refresh-*.yaml")
 
 
 def find_configs(root):
@@ -26,7 +26,7 @@ def load_config(path):
 
 def _site_ok(site):
     parts = [p for p in site.replace("\\", "/").split("/") if p]
-    return ((len(parts) == 4 and parts[0] == "features" and parts[2] == "enablement")
+    return ((len(parts) == 4 and parts[0] == "components" and parts[2] == "enablement")
             or (len(parts) == 3 and parts[0] == "narrative" and parts[1] == "enablement"))
 
 
@@ -48,7 +48,7 @@ def validate(root):
         if not site:
             errors.append(f"{rel}: missing 'site'")
         elif not _site_ok(site):
-            errors.append(f"{rel}: site must be features/<f>/enablement/<slug>/ "
+            errors.append(f"{rel}: site must be components/<c>/enablement/<slug>/ "
                           f"or narrative/enablement/<slug>/")
         elif not (root / site.strip("/")).is_dir():
             errors.append(f"{rel}: site does not exist: {site}")

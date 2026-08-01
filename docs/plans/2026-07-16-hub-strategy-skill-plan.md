@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship the `hub.strategy` skill — a gated, prompt-only skill that synthesizes one living strategy document per feature (`features/<id>/strategy/strategy.md`) from the partition's knowledge, research series, and Jira scope — plus its conventions contract and offer hooks, then pilot on agent-catalog.
+**Goal:** Ship the `hub.strategy` skill — a gated, prompt-only skill that synthesizes one living strategy document per feature (`components/<id>/strategy/strategy.md`) from the partition's knowledge, research series, and Jira scope — plus its conventions contract and offer hooks, then pilot on agent-catalog.
 
 **Architecture:** Prompt-only skill in the hub.sweep pattern (spec D4): no scripts, no fan-out; context-load → scratchpad draft → inline gate → write/reindex/lint/pathspec-commit. The document contract lives in `conventions/strategy.md` (mirrors `conventions/research.md`); the skill references it rather than embedding the template.
 
@@ -14,7 +14,7 @@
 
 - This repo is PUBLIC. No customer names, no deal context, nothing Jira does not serve anonymously, in any tracked file.
 - SHARED CHECKOUT with concurrent sessions: NEVER `git add -A` or bare `git add .`; stage and commit with explicit pathspecs only; run `git diff --cached --stat` before every commit and confirm only your files are staged.
-- Generated files (`features/index.md`, `features/*/index.md`, `features/*/knowledge/index.md`, `memory/index.md`, `views/*`) are never hand-edited; the pre-commit hook re-runs lint + index-freshness and blocks on errors.
+- Generated files (`components/index.md`, `components/*/index.md`, `components/*/knowledge/index.md`, `memory/index.md`, `views/*`) are never hand-edited; the pre-commit hook re-runs lint + index-freshness and blocks on errors.
 - `python scripts/hub_lint.py` must report 0 errors after any tracked write (warnings are expected — there is a pre-existing baseline of ~105).
 - Links in tracked content use leading-slash repo-root form: `[x](/conventions/strategy.md)`.
 - AGENTS.md has a 150-line CI budget — verify `wc -l` after editing it.
@@ -37,7 +37,7 @@
 ```markdown
 # Strategy document conventions
 
-`features/<id>/strategy/strategy.md` is the feature's ONE living strategy
+`components/<id>/strategy/strategy.md` is the feature's ONE living strategy
 document — the synthesis a PM plans from. Evidence stays in `knowledge/`
 and `research/`; this document cites, it never restates at length.
 Producer: `hub.strategy` (gated). Hand-edits are allowed (it is a
@@ -140,18 +140,18 @@ Do NOT push (Task 5 pushes the batch).
 ```markdown
 ---
 name: hub.strategy
-description: Synthesize or refresh a feature's living strategy document (features/<id>/strategy/strategy.md) from its knowledge, research series, and Jira scope - the WHAT/WHY, gaps and risks, Jira coverage map plus candidate jiras, and watchlist - through the inline gate. Use when the user says "write the strategy for <feature>", "generate the strategy doc", "create the strategy", "refresh the strategy", or after hub.intake / hub.research offer it. One living doc per feature, rewritten in place - never a series.
+description: Synthesize or refresh a feature's living strategy document (components/<id>/strategy/strategy.md) from its knowledge, research series, and Jira scope - the WHAT/WHY, gaps and risks, Jira coverage map plus candidate jiras, and watchlist - through the inline gate. Use when the user says "write the strategy for <feature>", "generate the strategy doc", "create the strategy", "refresh the strategy", or after hub.intake / hub.research offer it. One living doc per feature, rewritten in place - never a series.
 ---
 
 # hub.strategy
 
-Input: a feature id (features/features.yaml). Contract:
+Input: a feature id (components/components.yaml). Contract:
 /conventions/strategy.md — ONE living document, eight fixed sections, PM
 working register, rewritten in place with a ## History entry per refresh.
 Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
 
-1. RESOLVE: feature id → features/<id>/strategy/strategy.md. No home in
-   features.yaml → offer hub.intake (research needs a home), stop there
+1. RESOLVE: feature id → components/<id>/strategy/strategy.md. No home in
+   components.yaml → offer hub.intake (research needs a home), stop there
    if declined. The file already exists ⇒ this is a REFRESH run.
 2. PRECONDITIONS: knowledge/index.md must exist — none → hand off to
    hub.intake and stop. Empty research/ → warn that Why/market will be
@@ -164,7 +164,7 @@ Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
    00-executive-summary.md, then each lens doc; work/jira-snapshot.yaml
    and the partition's Jira ref- entries; memory/profiles/roadmap.md and
    memory/profiles/strategy.md; each related: sibling's overview fact
-   (features.yaml). A missing input shrinks the document, never sinks
+   (components.yaml). A missing input shrinks the document, never sinks
    the run — name it in Gaps & risks.
 4. DRAFT in the session scratchpad per the /conventions/strategy.md
    section contract — no repo writes. Register: PM working doc (dense,
@@ -175,7 +175,7 @@ Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
    jiras: one line each — gap → problem statement → suggested project
    (RHAIRFE/RHAISTRAT) — written to hand straight to /rfe.create.
 5. GATE: show The brief inline plus one write line —
-   `features/<id>/strategy/strategy.md: <description> [new|update]` —
+   `components/<id>/strategy/strategy.md: <description> [new|update]` —
    full document on request. REFRESH runs show a per-section
    what-changed summary (unchanged/updated/new) instead of the full doc,
    plus the proposed History line. Nothing touches the repo before OK.
@@ -324,15 +324,15 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>" -- .claude/skills/hub.in
 
 **Interfaces:**
 - Consumes: nothing from other tasks (read-only investigation; can run in parallel with Tasks 1–3).
-- Produces: a written verdict the pilot (Task 5) relies on: (a) how `hub_lint.py` treats `features/<id>/strategy/*.md` frontmatter (expected: same generic warning-only treatment as research docs — grep already shows the linter has NO special-casing for either); (b) whether `hub_index.py` enumerates strategy/ files in the generated feature index or only links the directory; (c) whether the existing pytest suite stays green untouched.
+- Produces: a written verdict the pilot (Task 5) relies on: (a) how `hub_lint.py` treats `components/<id>/strategy/*.md` frontmatter (expected: same generic warning-only treatment as research docs — grep already shows the linter has NO special-casing for either); (b) whether `hub_index.py` enumerates strategy/ files in the generated feature index or only links the directory; (c) whether the existing pytest suite stays green untouched.
 
 - [ ] **Step 1: Read the relevant script behavior**
 
-Read `scripts/hub_lint.py` and `scripts/hub_index.py` (plus `scripts/hublib/` if logic lives there): find where feature-subdirectory markdown is discovered, what frontmatter rules apply outside `knowledge/`, and how `features/<id>/index.md` renders the five skeleton links. Cite exact line numbers in the report.
+Read `scripts/hub_lint.py` and `scripts/hub_index.py` (plus `scripts/hublib/` if logic lives there): find where feature-subdirectory markdown is discovered, what frontmatter rules apply outside `knowledge/`, and how `components/<id>/index.md` renders the five skeleton links. Cite exact line numbers in the report.
 
 - [ ] **Step 2: Empirical check in an isolated root**
 
-The test suite (`scripts/tests/`) shows how to build a temp hub root (e.g. `test_disclosure.py` writes files under `tmp_path` and points the tool at it). Using the same mechanism (`--root` flag or test helper — whichever the scripts actually support), build a minimal fake hub in the SCRATCHPAD containing `features/x/strategy/strategy.md` with the Task-1 frontmatter shape, run lint + index against it, and record: errors? warnings? does the generated feature index list the file?
+The test suite (`scripts/tests/`) shows how to build a temp hub root (e.g. `test_disclosure.py` writes files under `tmp_path` and points the tool at it). Using the same mechanism (`--root` flag or test helper — whichever the scripts actually support), build a minimal fake hub in the SCRATCHPAD containing `components/x/strategy/strategy.md` with the Task-1 frontmatter shape, run lint + index against it, and record: errors? warnings? does the generated feature index list the file?
 
 - [ ] **Step 3: Pytest regression**
 
@@ -350,7 +350,7 @@ No commit — this task writes nothing to the repo.
 ### Task 5: pilot — hub.strategy agent-catalog (MAIN SESSION ONLY)
 
 **Files:**
-- Create: `features/agent-catalog/strategy/strategy.md` (through the skill's own gate)
+- Create: `components/agent-catalog/strategy/strategy.md` (through the skill's own gate)
 - Modify: `memory/log.md` (one shipped-skill log line under today's heading)
 
 **Interfaces:**
@@ -372,7 +372,7 @@ git push
 - Jira map reconciles all 6 strategic refs (RHAISTRAT-1740/1697/1742/1758/1349/1792) + RHAIRFE-2443.
 - Candidate jiras include the known unhomed gaps: Sandbox-naming reconciliation, upstream customProperties divergence check, owner-metadata capture at deploy time.
 - Watchlist carries: OpenShell Go SDK PR series, AIPCC ADR (MR 224), Forrester ADP Wave (Q4 2026), MLflow RFC-0008.
-- The dangling `/features/agent-catalog/strategy/` link warning disappears from lint output (or Task 4 explained why not).
+- The dangling `/components/agent-catalog/strategy/` link warning disappears from lint output (or Task 4 explained why not).
 
 - [ ] **Step 4: Log the shipped skill**
 

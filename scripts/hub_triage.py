@@ -1,8 +1,8 @@
 """CLI: the RFE triage pipeline.
 
-  --scan <feature> --out DIR                       fetch + report + rows -> DIR
+  --scan <component> --out DIR                       fetch + report + rows -> DIR
   --plan <decisions.json> --rows <rows.json>       render the gate table (no network)
-  --apply <decisions.json> --rows <rows.json> --feature <f> --out DIR
+  --apply <decisions.json> --rows <rows.json> --component <c> --out DIR
 
 WRITES TO JIRA (labels, comments, close, approve) in --apply mode only, and
 only through the gate in hub.jira-triage. --scan and --plan are read-only.
@@ -29,23 +29,23 @@ from hublib.jira import client_from_env
 from hublib.shellenv import load_env
 
 
-def _jira_cfg(root, feature):
-    """The feature's jira: block. None = unknown feature, {} = no scope."""
-    p = root / "features" / "features.yaml"
+def _jira_cfg(root, component):
+    """The component's jira: block. None = unknown component, {} = no scope."""
+    p = root / "components" / "components.yaml"
     data = yaml.safe_load(p.read_text(encoding="utf-8")) if p.is_file() else {}
-    for f in (data or {}).get("features") or []:
-        if isinstance(f, dict) and f.get("id") == feature:
+    for f in (data or {}).get("components") or []:
+        if isinstance(f, dict) and f.get("id") == component:
             return f.get("jira") or {}
     return None
 
 
-async def _scan(root, feature, out, today):
-    cfg = _jira_cfg(root, feature)
+async def _scan(root, component, out, today):
+    cfg = _jira_cfg(root, component)
     if cfg is None:
-        print(f"ERROR unknown feature '{feature}' (not in features/features.yaml)")
+        print(f"ERROR unknown component '{component}' (not in components/components.yaml)")
         return 2
     if not cfg.get("jql"):
-        print(f"ERROR no stored jira scope for '{feature}' - run hub.jira-sweep "
+        print(f"ERROR no stored jira scope for '{component}' - run hub.jira-sweep "
               f"scope discovery first")
         return 2
 
@@ -56,10 +56,10 @@ async def _scan(root, feature, out, today):
         base = client.base_url
 
     out.mkdir(parents=True, exist_ok=True)
-    report = out / f"triage-{feature}-{today.isoformat()}.html"
-    report.write_text(triage_html.render(feature, jql, rows, today, base),
+    report = out / f"triage-{component}-{today.isoformat()}.html"
+    report.write_text(triage_html.render(component, jql, rows, today, base),
                       encoding="utf-8", newline="\n")
-    rows_path = out / f"rows-{feature}.json"
+    rows_path = out / f"rows-{component}.json"
     rows_path.write_text(json.dumps(rows, indent=2), encoding="utf-8",
                          newline="\n")
 
@@ -67,7 +67,7 @@ async def _scan(root, feature, out, today):
     for row in rows:
         counts[row["classification"]] = counts.get(row["classification"], 0) + 1
     summary = " . ".join(f"{v} {k}" for k, v in sorted(counts.items()))
-    print(f"scanned {feature}: {len(rows)} open RFE(s) ({summary})")
+    print(f"scanned {component}: {len(rows)} open RFE(s) ({summary})")
     print(f"report: {report}")
     print(f"rows:   {rows_path}")
     print("NOTE the report carries live Jira summaries. It belongs under "
@@ -187,7 +187,7 @@ def _plan_from(decisions_path, rows_path):
     return triage.plan_decisions(decisions, rows), rows, None
 
 
-async def _apply(decisions_path, rows_path, feature, out, today):
+async def _apply(decisions_path, rows_path, component, out, today):
     plan, rows, error = _plan_from(decisions_path, rows_path)
     if error is not None:
         print(f"ERROR {error}")
@@ -199,9 +199,9 @@ async def _apply(decisions_path, rows_path, feature, out, today):
 
     cfg_jql = _load(decisions_path).get("jql", "")
     out.mkdir(parents=True, exist_ok=True)
-    log_path = out / f"triage-log-{feature}.yaml"
+    log_path = out / f"triage-log-{component}.yaml"
     log_path.write_text(
-        triage.build_triage_log(feature, cfg_jql, rows, plan, result, today),
+        triage.build_triage_log(component, cfg_jql, rows, plan, result, today),
         encoding="utf-8", newline="\n")
 
     print(f"\napplied {len(result['applied'])} . skipped {len(result['skipped'])}"
@@ -221,11 +221,11 @@ async def _apply(decisions_path, rows_path, feature, out, today):
 def main(argv=None):
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--scan", metavar="FEATURE")
+    ap.add_argument("--scan", metavar="COMPONENT")
     ap.add_argument("--plan", metavar="DECISIONS_JSON")
     ap.add_argument("--apply", metavar="DECISIONS_JSON")
     ap.add_argument("--rows", metavar="ROWS_JSON")
-    ap.add_argument("--feature", metavar="FEATURE")
+    ap.add_argument("--component", metavar="COMPONENT")
     ap.add_argument("--out", metavar="DIR")
     ap.add_argument("--root", help=argparse.SUPPRESS)  # tests only
     args = ap.parse_args(argv)
@@ -238,8 +238,8 @@ def main(argv=None):
                  "(proposals are written there, never into the repo)")
     if args.plan is not None and not args.rows:
         ap.error("--rows ROWS_JSON is required with --plan")
-    if args.apply is not None and not (args.rows and args.feature and args.out):
-        ap.error("--apply needs --rows ROWS_JSON, --feature FEATURE and --out DIR")
+    if args.apply is not None and not (args.rows and args.component and args.out):
+        ap.error("--apply needs --rows ROWS_JSON, --component COMPONENT and --out DIR")
 
     root = Path(args.root) if args.root else Path(__file__).resolve().parents[1]
     today = datetime.date.today()
@@ -255,7 +255,7 @@ def main(argv=None):
                 return 2
             _print_gate(plan)
             return 0
-        return asyncio.run(_apply(args.apply, args.rows, args.feature,
+        return asyncio.run(_apply(args.apply, args.rows, args.component,
                                   Path(args.out), today))
     except RuntimeError as exc:
         print(f"ERROR {exc}")

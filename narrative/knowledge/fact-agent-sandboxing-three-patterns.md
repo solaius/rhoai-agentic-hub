@@ -4,7 +4,7 @@ title: "Three patterns for agent sandboxing"
 description: "Adel's three sandboxing patterns: (1) whole-process micro-VM isolation, (2) per-session/sub-agent isolation, (3) developer SDK-level primitives. OpenShell is the upstream project."
 timestamp: 2026-07-08
 source: Power 90 session 2026-07-08
-features: [agent-ops]
+components: [agent-ops]
 tags: [narrative, security, sandboxing]
 ---
 From Adel's Power 90 presentation, agent sandboxing has three patterns:

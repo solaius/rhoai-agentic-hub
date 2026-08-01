@@ -1,0 +1,30 @@
+# Source list for hub.refresh-site (see .claude/skills/hub.refresh-site/).
+# Tracked and PUBLIC by owner ruling 2026-07-10; scanned by the disclosure
+# lint. Seeded from the old repo's update-ecosystem-hub skill.
+site: components/mcp-ecosystem/enablement/management-hub/
+sources:
+  gdocs:
+  # titles verified against the live docs during the 2026-07-10 sweep
+  - {id: 1Hkfrr6hnHJ08Y1DfTNaKTa-BY06lcjejLUwVnDz_w5Y, title: MCP Ecosystem Best Practices}
+  - {id: 1rFe_OuLw8hPtzHoV9RL8IMDtuL-iEgIfPBIj0FO3vs8, title: MCP Research Notes}
+  - {id: 1vRu8pSLi6VMrX1Cdn64RdQTOhjQZG97BIxTRZadtjVY, title: MCPLO Weekly Meeting Notes}
+  - {id: 11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y, title: MCP Registry MVP Requirements}
+  - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: MCP Catalog}
+  - {id: 1Z2rA0fiAC2Zt_AWnond_Ogi3-2cqEzElN-U76M1x740, title: Partners MCP Catalog}
+  - {id: 1KOLTSMVjdUhb06rQLSx4G5MVSQLXePToGAQ4wNn31m8, title: MCP Registry Data Model Proposal}
+  - {id: 11JTt4SHZJ1UFG9RWZsVL2t6MZqBFZ4Iuq4niXxtE59g, title: RHOAI Support Agreement with RHCL}
+  github:
+  - Kuadrant/mcp-gateway
+  - kubernetes-sigs/mcp-lifecycle-operator
+  jira:
+    keys: [RHAISTRAT-1339]
+    jql: parent = RHAISTRAT-1339
+  slack:
+    channels: [forum-ai-asset-management, forum-mcp-lifecycle-operator]
+    window_days: 14
+  local:
+  - components/mcp-ecosystem/knowledge/
+  - components/mcp-ecosystem/research/
+sections:
+  jtbd: true
+  jira_tracker: {project: RHAISTRAT}

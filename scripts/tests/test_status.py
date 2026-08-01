@@ -17,8 +17,8 @@ TODAY = datetime.date(2026, 7, 5)
 def make_repo(tmp_path: Path) -> Path:
     write(tmp_path, "conventions/staleness.yaml",
           "profile_default_days: 30\nfact_default_days: 90\n")
-    write(tmp_path, "features/features.yaml",
-          "features:\n- id: mcp-registry\n  title: R\n  description: d\n")
+    write(tmp_path, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: R\n  description: d\n")
     write(tmp_path, "memory/log.md",
           "---\ntype: fact\ndescription: log\ntimestamp: 2026-07-05\n---\n"
           "## 2026-07-05\n- **Update** — newest thing.\n"
@@ -37,7 +37,7 @@ def test_minimal_repo_header_only(tmp_path):
 
 def test_open_questions_counted_by_home(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/question-a.md",
+    write(root, "components/mcp-registry/knowledge/question-a.md",
           "---\ntype: question\ntitle: A?\ndescription: d\ntimestamp: 2026-07-01\n"
           "status: open\n---\nb\n")
     write(root, "narrative/knowledge/question-b.md",
@@ -50,10 +50,10 @@ def test_open_questions_counted_by_home(tmp_path):
 
 def test_unanswered_qa_and_bare_jtbd_listed(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/qa-open.md",
+    write(root, "components/mcp-registry/knowledge/qa-open.md",
           "---\ntype: qa\ntitle: Quotas?\ndescription: d\ntimestamp: 2026-07-02\n"
           "status: open\nasks:\n- date: 2026-07-02\n  by: sales\n---\nb\n")
-    write(root, "features/mcp-registry/knowledge/jtbd-bare.md",
+    write(root, "components/mcp-registry/knowledge/jtbd-bare.md",
           "---\ntype: jtbd\ntitle: Bare job\ndescription: d\ntimestamp: 2026-07-01\n"
           "persona: rhoai-admin\nstatus: validated\n---\nb\n")
     brief = build_brief(root, today=TODAY)
@@ -72,10 +72,10 @@ def test_stale_section_uses_shared_rows(tmp_path):
 
 def test_undescriptored_enablement_dir_listed(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/bare/index.html", "<html></html>")
+    write(root, "components/mcp-registry/enablement/bare/index.html", "<html></html>")
     brief = build_brief(root, today=TODAY)
     assert "## Enablement dirs missing artifact.md (1)" in brief
-    assert "/features/mcp-registry/enablement/bare" in brief
+    assert "/components/mcp-registry/enablement/bare" in brief
 
 
 def test_rotation_reminder_only_with_old_years(tmp_path):

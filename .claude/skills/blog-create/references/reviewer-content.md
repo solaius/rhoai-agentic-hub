@@ -164,5 +164,5 @@ Your total possible weighted score is 110 (sum of all weights × 10). Normalize 
 - Current draft (`drafts/vN.md`)
 - Abstract (`abstract.md`) — the contract for what the blog should cover
 - Blog creation guide (`.claude/skills/blog-create/references/blog-creation-guide.md`) — voice, tone, and writing patterns
-- Feature knowledge index(es) (`features/<feature>/knowledge/index.md`, plus any other feature whose products appear in the draft) and `/memory/index.md` — fact-checking reference
+- Feature knowledge index(es) (`components/<feature>/knowledge/index.md`, plus any other feature whose products appear in the draft) and `/memory/index.md` — fact-checking reference
 - Qualifying summary (embedded in abstract) — audience, products, thesis

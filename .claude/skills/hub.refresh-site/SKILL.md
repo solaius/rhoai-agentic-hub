@@ -6,13 +6,13 @@ description: Refresh a published enablement hub site (RHCL hub, Management hub, 
 # hub.refresh-site
 
 Config-driven successor to the old repo's update-*-hub skills. One config per
-site: `features/<f>/work/refresh-<slug>.yaml` (or `narrative/work/...`),
+site: `components/<f>/work/refresh-<slug>.yaml` (or `narrative/work/...`),
 validated by hub_lint. Never auto-commits. THE DISCLOSURE CONTRACT (step 6)
 is what the old skills lacked: they swept customer names IN; this skill
 keeps them OUT.
 
 1. TARGET. Resolve the site from the request; if ambiguous, list configs
-   (`features/*/work/refresh-*.yaml`, `narrative/work/refresh-*.yaml`) and
+   (`components/*/work/refresh-*.yaml`, `narrative/work/refresh-*.yaml`) and
    ask. Read the config, the site's artifact.md, and the current pages.
 2. STALENESS. Grep `data-verified` across the site's HTML; report per page,
    oldest first. The oldest date is the sweep-since baseline.
@@ -36,7 +36,7 @@ keeps them OUT.
      `get_channel_history` by ID.
    - local: the hub knowledge/research paths listed in the config.
    - jtbd: when sections.jtbd is true, re-derive the hub's job set
-     (narrative/knowledge/jtbd-*.md whose features: list contains the hub's
+     (narrative/knowledge/jtbd-*.md whose components: list contains the hub's
      feature id) and diff against the Jobs to be Done page (new jobs, changed
      status/evidence, removals).
    - jira tracker: when sections.jira_tracker is set, re-run

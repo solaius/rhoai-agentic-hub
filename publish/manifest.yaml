@@ -1,52 +1,52 @@
 # The publishing allowlist. Nothing reaches the public pages repo without an
 # entry here. Schema + rules: /conventions/publishing.md. Managed via the
 # hub.publish skill (publishing is a disclosure decision).
-- source: features/mcp-registry/enablement/mcp-registry-catalog-deck/
+- source: components/mcp-registry/enablement/mcp-registry-catalog-deck/
   dest: mcp-registry/catalog-deck/
   audience: public
   title: MCP Registry & Catalog
   description: Slide deck covering MCP Registry and Catalog capabilities, lifecycle governance, pre-loaded MCP servers, and the roadmap from Dev Preview through GA.
-- source: features/agent-memory/enablement/agent-memory-series/
+- source: components/agent-memory/enablement/agent-memory-series/
   dest: agent-memory/series/
   audience: public
   title: Agent Memory Presentation Series
   description: Six-part interlinked HTML series — starter guide, foundations, deep dives, enterprise use cases, and strategy — for agent memory & knowledge enablement.
-- source: features/agent-memory/enablement/agent-memory-architecture-options/
+- source: components/agent-memory/enablement/agent-memory-architecture-options/
   dest: agent-memory/architecture-options/
   audience: public
   title: Agent Memory Architecture — Options & Roadmap
   description: Architecture options and roadmap deck for agent memory on RHOAI.
-- source: features/mcp-gateway/enablement/mcp-gateway-overview/
+- source: components/mcp-gateway/enablement/mcp-gateway-overview/
   dest: mcp-gateway/overview/
   audience: public
   title: MCP Gateway — Enterprise Overview
   description: Scrolling one-pager positioning "The Enterprise MCP Gateway" for RHOAI.
-- source: features/mcp-gateway/enablement/mcp-gateway-presentation/
+- source: components/mcp-gateway/enablement/mcp-gateway-presentation/
   dest: mcp-gateway/presentation/
   audience: public
   title: MCP Gateway — Slide Deck
   description: Keyboard-navigated slide deck presenting MCP Gateway for RHOAI.
-- source: features/mcp-gateway/enablement/authz-audit/
+- source: components/mcp-gateway/enablement/authz-audit/
   dest: mcp-gateway/authz-audit/
   audience: public
   title: MCP Gateway — Tool-Call Authorization & Audit
   description: Deck covering tool-call authorization and audit trail design.
-- source: features/mcp-ecosystem/enablement/mcp-ecosystem-deck/
+- source: components/mcp-ecosystem/enablement/mcp-ecosystem-deck/
   dest: mcp-ecosystem/deck/
   audience: public
   title: The MCP Ecosystem on OpenShift AI
   description: Scrolling overview deck of the MCP ecosystem (Gateway, Catalog, Lifecycle Operator) with custom illustration assets.
-- source: features/mcp-registry/enablement/registry-overview/
+- source: components/mcp-registry/enablement/registry-overview/
   dest: mcp-registry/overview/
   audience: public
   title: MCP Registry — Targeted User Stories
   description: Scrolling deck framing the Registry problem/solution via targeted user stories for RHOAI 3.5 Dev Preview.
-- source: features/mcp-registry/enablement/registry-ui-prototype/
+- source: components/mcp-registry/enablement/registry-ui-prototype/
   dest: mcp-registry/ui-prototype/
   audience: public
   title: MCP Registry UI Prototype (MLflow-style)
   description: Interactive client-rendered mockups ("MLflow — MCP Servers") of the Registry list/detail/version UI; v0.2 is the more developed iteration.
-- source: features/skills-registry/enablement/strategy-presentation/
+- source: components/skills-registry/enablement/strategy-presentation/
   dest: skills-registry/strategy-presentation/
   audience: public
   title: Skills Registry Strategy
@@ -56,47 +56,47 @@
   audience: public
   title: MCP 2026-07-28 RC — RHOAI Impact Analysis
   description: Cross-cutting analysis of the MCP protocol's 2026-07-28 RC breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator.
-- source: features/mcp-ecosystem/enablement/mcp-catalog-blog-preview/
+- source: components/mcp-ecosystem/enablement/mcp-catalog-blog-preview/
   dest: mcp-ecosystem/mcp-catalog-blog-preview/
   audience: public
   title: Blog preview — "The MCP catalog is here"
   description: Red Hat blog mockup preview announcing the MCP catalog, with partner/vendor logo assets.
-- source: features/mcp-ecosystem/enablement/ingestion-pipeline/
+- source: components/mcp-ecosystem/enablement/ingestion-pipeline/
   dest: mcp-ecosystem/ingestion-pipeline/
   audience: public
   title: MCP Ingestion Pipeline
   description: Scrolling deck with an inline Cytoscape.js diagram of the end-to-end MCP ingestion pipeline.
-- source: features/mcp-gateway/enablement/rhcl-hub/
+- source: components/mcp-gateway/enablement/rhcl-hub/
   dest: mcp-gateway/rhcl/
   audience: internal
   title: MCP Gateway Knowledge Hub
   description: 23-page understand/sell/build/govern/plan enablement site for MCP Gateway on Red Hat Connectivity Link — architecture, auth setup, competitive positioning, roadmap. Customer-engagement detail anonymized for public publication.
-- source: features/mcp-ecosystem/enablement/management-hub/
+- source: components/mcp-ecosystem/enablement/management-hub/
   dest: mcp-ecosystem/hub/
   audience: internal
   title: MCP Management Knowledge Hub
   description: 22-page enablement site covering the full MCP ecosystem (Gateway, Registry, Catalog, Lifecycle Operator) across understand/sell/build/govern/plan. Customer-engagement detail anonymized for public publication.
-- source: features/agent-memory/enablement/agent-memory-rfe-narrative/
+- source: components/agent-memory/enablement/agent-memory-rfe-narrative/
   dest: agent-memory/rfe-narrative/
   audience: public
   title: Agent Memory RFE Narrative
   description: Scrolling narrative of the agent-memory RFE program - the end goal, the fourteen filed RFEs, the dependency-driven order across three proposed waves (3.6 DP, 3.7 TP, 3.8 GA directional), and the story you can tell at each stage.
-- source: features/mcp-catalog/enablement/catalog-hub/
+- source: components/mcp-catalog/enablement/catalog-hub/
   dest: mcp-catalog/hub/
   audience: internal
   title: MCP Catalog Knowledge Hub
   description: 14-page enablement site for the MCP Catalog (discovery/storefront) across understand/sell/build/govern/plan.
-- source: features/mcp-lifecycle-operator/enablement/mcplo-hub/
+- source: components/mcp-lifecycle-operator/enablement/mcplo-hub/
   dest: mcp-lifecycle-operator/hub/
   audience: internal
   title: MCP Lifecycle Operator Knowledge Hub
   description: 16-page enablement site for the MCP Lifecycle Operator (declarative MCP server deployment) across understand/sell/build/govern/plan.
-- source: features/mcp-registry/enablement/registry-hub/
+- source: components/mcp-registry/enablement/registry-hub/
   dest: mcp-registry/hub/
   audience: internal
   title: MCP Registry Knowledge Hub
   description: 12-page enablement site for the MCP Registry (governance/system-of-record, design phase) across understand/sell/build/govern/plan.
-- source: features/agent-registry/enablement/agent-registry-deep-dive/
+- source: components/agent-registry/enablement/agent-registry-deep-dive/
   dest: agent-registry/deep-dive/
   audience: internal
   title: Agent Registry — Engineer's Deep Dive

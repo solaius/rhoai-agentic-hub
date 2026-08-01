@@ -3,7 +3,7 @@ type: story
 title: Governed MCP access, end to end
 description: "How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime."
 timestamp: 2026-07-08
-features: [mcp-registry, mcp-gateway, mcp-ecosystem]
+components: [mcp-registry, mcp-gateway, mcp-ecosystem]
 pillar: /narrative/knowledge/pillar-agents.md
 status: current
 tags: [narrative, story]

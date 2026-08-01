@@ -5,7 +5,7 @@ description: Run the RFE triage ceremony for one feature - scan its open Feature
 
 # hub.jira-triage
 
-Input: a feature id (its `jira:` scope in features.yaml supplies the JQL).
+Input: a feature id (its `jira:` scope in components.yaml supplies the JQL).
 Spec: [/docs/specs/2026-07-11-jira-operating-batch-design.md](/docs/specs/2026-07-11-jira-operating-batch-design.md).
 
 This is the ONLY skill in the hub with a Jira write surface. Every other
@@ -20,7 +20,7 @@ hub.jira-* skill is read-only, and that is deliberate: keep it that way.
    Requests) before it fetches. Read it back to the human and confirm.
    Unknown feature or no stored scope: exit 2, offer hub.jira-sweep.
 3. REVIEW. Move the report to
-   `restricted/features/<feature>/work/triage-<date>.html` and tell the human
+   `restricted/components/<feature>/work/triage-<date>.html` and tell the human
    to open it. Keep `rows-<feature>.json` in scratch: the apply step needs it.
    The human clicks through the rows and hits Export Decisions, which downloads
    `triage-decisions-<date>.json`. Ask where it landed.
@@ -36,12 +36,12 @@ hub.jira-* skill is read-only, and that is deliberate: keep it that way.
    comments, then transitions. Report applied/skipped/rejected/errors and name
    every transition that fired.
 6. RECORD. Copy the proposed `triage-log-<feature>.yaml` to
-   `features/<feature>/work/triage-log.yaml`. It carries no Jira prose by
+   `components/<feature>/work/triage-log.yaml`. It carries no Jira prose by
    design: never add summaries or comment bodies to it.
    `python scripts/hub_index.py` then `python scripts/hub_lint.py` (0 errors).
 7. COMMIT. Stage explicitly, NEVER `git add -A` (shared checkout; see
    fact-concurrent-session-git-hygiene). Check `git diff --cached --stat`, then:
-   `git commit -m "triage(<feature>): <n> issues, <m> applied" -- features/<feature>/work/triage-log.yaml <regenerated indexes>`
+   `git commit -m "triage(<feature>): <n> issues, <m> applied" -- components/<feature>/work/triage-log.yaml <regenerated indexes>`
    and `git push`.
 
 NEVER: write the HTML report into the tracked tree; put a Jira summary or

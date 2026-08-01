@@ -1157,7 +1157,7 @@ Record: did anything drift, did indexes stay clean both ways.
 - [ ] **Step 4: R5 step 3, the restricted-tier reality check (this is the #14 evidence)**
 
 Answer these three questions with specifics, not impressions:
-1. Which `restricted/` files did B actually need day to day? (`.env` alone, or the `features/` and `memory/` trees too?)
+1. Which `restricted/` files did B actually need day to day? (`.env` alone, or the `components/` and `memory/` trees too?)
 2. How far had A's and B's copies drifted? Compare file lists and modification times, never contents into a tracked file.
 3. Was manual copying tolerable, or did it fail in practice?
 

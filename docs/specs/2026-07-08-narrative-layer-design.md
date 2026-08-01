@@ -40,8 +40,8 @@ documents.
 
 | # | decision |
 |---|---|
-| D12 | The connection layer is a **top-level `narrative/` tree** — a peer of `features/`, never a pseudo-feature. It reuses the identical five-dir skeleton. "Narrative" (not "strategy" — collides with the per-feature `strategy/` subdir, the `strat.*` Jira skills, and `memory/profiles/strategy.md`; not "portfolio" — Red Hat org overload). |
-| D13 | A **`features:` frontmatter field** (OKF local extension per D10) declares which features an entry connects. Values are validated against `features/features.yaml` (unknown id = lint **error**); the indexer renders reverse links. Filing stays two questions — connections are declared, then *generated*, never hand-maintained. |
+| D12 | The connection layer is a **top-level `narrative/` tree** — a peer of `components/`, never a pseudo-feature. It reuses the identical five-dir skeleton. "Narrative" (not "strategy" — collides with the per-feature `strategy/` subdir, the `strat.*` Jira skills, and `memory/profiles/strategy.md`; not "portfolio" — Red Hat org overload). |
+| D13 | A **`features:` frontmatter field** (OKF local extension per D10) declares which features an entry connects. Values are validated against `components/components.yaml` (unknown id = lint **error**); the indexer renders reverse links. Filing stays two questions — connections are declared, then *generated*, never hand-maintained. |
 | D14 | **Type vocabulary extension:** `pillar` and `story` (narrative-only), `qa` and `jtbd` (feature or narrative knowledge), `artifact` (enablement descriptor). New views: `views/narrative-map.md`, `views/faq.md`, `views/jtbd.md`, `views/artifacts.md`. |
 | D15 | **Execution status stays in Jira.** `jtbd` tracks the job's truth (`candidate → validated → delivered`, `retired`), never work-in-progress; a `jira:` field points at delivery. Same philosophy as the existing rule that roadmap dates live in one profile. |
 | D16 | **Capture-first, publish-later.** FAQ/JTBD views are repo-internal in Phase 1. Curated FAQ/JTBD artifacts may ship via `hub.publish` in Phase 2, pulled by real demand. The Slack sweep assist is Phase 2 at most; capture-at-answer via `hub.capture` is the system of record. |
@@ -69,7 +69,7 @@ Rules (mirror the feature skeleton contract exactly):
 - Subdirectories created on first use, never pre-created empty; anything else
   directly under `narrative/` is a lint **error**; only `index.md` as a file.
 - `restricted/narrative/…` mirrors it (same shapes, local-only), like
-  `restricted/features/…` today.
+  `restricted/components/…` today.
 
 **Routing rule change** — the filing question gains one word:
 
@@ -84,10 +84,10 @@ would be *wrong* under any single feature.
 
 ## 4. The `features:` cross-reference field
 
-- **Where allowed (Phase 1):** any knowledge entry (`features/*/knowledge/`,
+- **Where allowed (Phase 1):** any knowledge entry (`components/*/knowledge/`,
   `narrative/knowledge/`) and `artifact.md` descriptors. Not memory files.
   Research/strategy documents: Phase 2.
-- **Shape:** YAML list of feature ids from `features/features.yaml`.
+- **Shape:** YAML list of feature ids from `components/components.yaml`.
 - **Lint:** must be a list; every id must exist in the routing table —
   unknown id is an **error** (the feature list is closed; this is not the
   dangling-link case). An entry may list its own feature; the indexer dedupes.
@@ -122,7 +122,7 @@ outcome / business result.
 type: story
 description: one line — the story's claim
 timestamp: 2026-07-08
-features: [mcp-registry, mcp-gateway, mcp-ecosystem]   # REQUIRED, non-empty
+components: [mcp-registry, mcp-gateway, mcp-ecosystem]   # REQUIRED, non-empty
 pillar: /narrative/knowledge/pillar-<slug>.md          # optional; dangling → warning
 status: current
 ```
@@ -147,7 +147,7 @@ asks:                          # REQUIRED, ≥1 — the recurrence record
   - date: 2026-07-08
     by: customer               # customer|partner|sales|ssa|pm|eng|exec|other
     context: "RHOAI roadmap call"      # optional; public-safe wording only
-features: [mcp-registry, mcp-gateway]  # optional spread
+components: [mcp-registry, mcp-gateway]  # optional spread
 source: https://redhat-internal.slack.com/archives/…   # optional permalink
 review_after: 2026-10-08       # optional; answers age as the product moves
 ```
@@ -171,9 +171,9 @@ description: the job in one line
 timestamp: 2026-07-08
 persona: ai-engineer            # REQUIRED; locked vocabulary (§11 Q4)
 status: candidate               # candidate|validated|delivered|retired (own enum)
-features: [agent-registry, agent-memory]   # optional
+components: [agent-registry, agent-memory]   # optional
 evidence:                       # optional; repo-root links or URLs
-  - /features/mcp-registry/knowledge/qa-<slug>.md
+  - /components/mcp-registry/knowledge/qa-<slug>.md
 jira: RHAIRFE-1234              # optional; where delivery is tracked
 consumers: [ux, docs]           # optional; who uses this JTBD
 review_after: 2026-10-08        # optional staleness
@@ -199,12 +199,12 @@ type: artifact
 title: MCP Registry & Catalog
 description: what this artifact is and who it's for
 timestamp: 2026-07-08
-features: [mcp-registry]        # optional; spread for cross-feature artifacts
+components: [mcp-registry]        # optional; spread for cross-feature artifacts
 source: <origin — old-repo path, GDoc, etc.>   # optional
 ```
 
 Rules: exactly `artifact.md`, only inside an enablement slug directory (both
-`features/*/enablement/` and `narrative/enablement/`); other files in the
+`components/*/enablement/` and `narrative/enablement/`); other files in the
 slug dir stay unlinted (self-contained artifacts keep their assets). Publish
 state is **derived** — the indexer cross-references `publish/manifest.yaml`;
 it is never stored in the descriptor. Descriptors are recommended, not
@@ -224,7 +224,7 @@ artifact at migration time.
 Also:
 - `narrative/index.md` and `narrative/knowledge/index.md` generated exactly
   like a feature's.
-- Every `features/<id>/index.md` gains a **Connections** section (stories,
+- Every `components/<id>/index.md` gains a **Connections** section (stories,
   cross-referencing artifacts/qa/jtbd), derived from `features:` fields.
 - `views/stale-facts.md` picks up `qa`/`jtbd` entries via the existing
   `review_after` mechanics (no new staleness machinery).
@@ -246,12 +246,12 @@ Also:
    (owner-confirmed 2026-07-08): `ai-engineer | platform-engineer |
    agentops-admin | business-consumer | data-scientist | cluster-admin |
    rhoai-admin`.
-6. `features:` validation — list of ids present in `features/features.yaml`
-   (schema gains a features.yaml loader); unknown id = **error**. Applies to
+6. `features:` validation — list of ids present in `components/components.yaml`
+   (schema gains a components.yaml loader); unknown id = **error**. Applies to
    knowledge entries and `artifact.md`.
 7. `_lint_tree` lints `narrative/` (same skeleton contract; knowledge typed
    against `NARRATIVE_TYPES`; `pillar`/`story` automatically invalid under
-   `features/` since they're absent from `KNOWLEDGE_TYPES`).
+   `components/` since they're absent from `KNOWLEDGE_TYPES`).
 8. `artifact.md` lint: allowed only at `*/enablement/<slug>/artifact.md`,
    type must be `artifact`; no other enablement files are linted.
 9. `restricted/narrative/` linted when present (extend the existing
@@ -268,7 +268,7 @@ Also:
 **Tests (`scripts/tests/`)** — required per repo rule (regression test with any
 behavior change):
 13. Schema: happy + sad path per new type (missing required fields, bad enums,
-    bad `asks` shape, unknown `features:` id, pillar/story under `features/`,
+    bad `asks` shape, unknown `features:` id, pillar/story under `components/`,
     stray file under `narrative/`, misplaced `artifact.md`).
 14. Indexer: each new view renders from fixtures; Connections backlinks;
     convergence; descriptor-less enablement dir listed.
@@ -312,7 +312,7 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
    grouping is org infrastructure, **not** a strategy pillar — no pillar
    entry. Peter's components (Model Context Protocol, GenAI Studio) map to
    the **Agents** pillar. The agentic-strategy four-pillars fact
-   (`features/platform/knowledge/fact-agentic-ai-four-pillars.md`) is the
+   (`components/platform/knowledge/fact-agentic-ai-four-pillars.md`) is the
    *agentic sub-strategy's* pillar set — it re-homes to
    `narrative/knowledge/` unchanged (it is not superseded by the RHAI set;
    the two sets coexist, agentic pillars linked under the Agents pillar).
@@ -322,7 +322,7 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
 2. **Re-home from `platform` → `narrative/knowledge/`:**
    `ref-agentic-ai-strategy-2026.md`, `fact-agentic-ai-messaging-position.md`
    (batch-2 precedent: move, swap tags, repoint inbound links).
-3. **`platform` description narrowed** in `features/features.yaml` to
+3. **`platform` description narrowed** in `components/components.yaml` to
    components + org reference (AI Gateway, AI Hub UI, releases, people,
    personas, SKUs).
 4. **Seed stories (2–3, owner edits at gate):** proposed — "Governed MCP
@@ -330,9 +330,9 @@ All through the normal capture/migrate gates, batch-style with owner rulings:
    lifecycle: build → run → operate" (agent-registry + agent-memory +
    agent-ops + gen-ai-studio). Owner may add a third at review.
 5. **Artifact descriptor backfill:** one `artifact.md` for the existing
-   `features/mcp-registry/enablement/mcp-registry-catalog-deck/`.
+   `components/mcp-registry/enablement/mcp-registry-catalog-deck/`.
 6. **Persona vocabulary recorded:** extend
-   `features/platform/knowledge/fact-personas.md` (additive) with a "JTBD
+   `components/platform/knowledge/fact-personas.md` (additive) with a "JTBD
    persona vocabulary" section listing all seven slugs — the four
    registry/catalog UX personas plus `data-scientist`, `cluster-admin`,
    `rhoai-admin` (owner additions, 2026-07-08) — so the fact and the lint

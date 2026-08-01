@@ -17,19 +17,19 @@ TODAY = datetime.date(2026, 7, 5)
 def make_repo(tmp_path: Path) -> Path:
     write(tmp_path, "conventions/staleness.yaml",
           "profile_default_days: 30\nfact_default_days: 90\n")
-    write(tmp_path, "features/features.yaml",
-          "features:\n- id: mcp-registry\n  title: MCP Registry\n  description: Registry MVP\n")
-    write(tmp_path, "features/mcp-registry/knowledge/decision-split.md",
+    write(tmp_path, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: MCP Registry\n  description: Registry MVP\n")
+    write(tmp_path, "components/mcp-registry/knowledge/decision-split.md",
           "---\ntype: decision\ntitle: Registry vs catalog\ndescription: the split\n"
           "timestamp: 2026-07-01\ndecided: 2026-07-01\nstatus: current\n---\nb\n")
-    write(tmp_path, "features/mcp-registry/knowledge/question-skus.md",
+    write(tmp_path, "components/mcp-registry/knowledge/question-skus.md",
           "---\ntype: question\ntitle: SKU model?\ndescription: open q\n"
           "timestamp: 2026-07-01\nstatus: open\n---\nb\n")
-    write(tmp_path, "features/mcp-registry/knowledge/ref-epic.md",
+    write(tmp_path, "components/mcp-registry/knowledge/ref-epic.md",
           "---\ntype: reference\ntitle: Main epic\ndescription: epic ref\n"
           "timestamp: 2026-07-01\n"
           "resource: https://redhat.atlassian.net/browse/RHAIRFE-1370\n---\nb\n")
-    write(tmp_path, "features/mcp-registry/knowledge/person-jane.md",
+    write(tmp_path, "components/mcp-registry/knowledge/person-jane.md",
           "---\ntype: person\ntitle: Jane Doe\ndescription: PM partner\n"
           "timestamp: 2026-07-01\nrole: PM\norg: Red Hat\n---\nb\n")
     write(tmp_path, "memory/profiles/roadmap.md",
@@ -48,9 +48,9 @@ def make_repo(tmp_path: Path) -> Path:
 def test_build_all_produces_expected_files(tmp_path):
     built = build_all(make_repo(tmp_path), today=TODAY)
     assert set(built) >= {
-        "features/index.md",
-        "features/mcp-registry/index.md",
-        "features/mcp-registry/knowledge/index.md",
+        "components/index.md",
+        "components/mcp-registry/index.md",
+        "components/mcp-registry/knowledge/index.md",
         "memory/index.md",
         "views/decisions.md", "views/open-questions.md",
         "views/stale-facts.md", "views/jira-map.md", "views/people.md",
@@ -62,7 +62,7 @@ def test_build_all_produces_expected_files(tmp_path):
 
 def test_views_content(tmp_path):
     built = build_all(make_repo(tmp_path), today=TODAY)
-    assert ("[Registry vs catalog](/features/mcp-registry/knowledge/decision-split.md)"
+    assert ("[Registry vs catalog](/components/mcp-registry/knowledge/decision-split.md)"
             in built["views/decisions.md"])
     assert "SKU model?" in built["views/open-questions.md"]
     assert "RHAIRFE-1370" in built["views/jira-map.md"]
@@ -82,42 +82,42 @@ def test_memory_index_shape(tmp_path):
 def test_check_flags_stale_and_write_all_fixes(tmp_path):
     root = make_repo(tmp_path)
     stale = check(root, today=TODAY)
-    assert "features/index.md" in stale          # never generated yet
+    assert "components/index.md" in stale          # never generated yet
     write_all(root, today=TODAY)
     assert check(root, today=TODAY) == []
     (root / "views" / "decisions.md").write_text("tampered", encoding="utf-8")
     assert check(root, today=TODAY) == ["views/decisions.md"]
 
 
-def test_feature_index_ignores_untracked_content(tmp_path):
+def test_component_index_ignores_untracked_content(tmp_path):
     root = make_repo(tmp_path)
-    before = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
-    write(root, "features/mcp-registry/work/transcripts/t.md", "x\n")
-    after = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+    before = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
+    write(root, "components/mcp-registry/work/transcripts/t.md", "x\n")
+    after = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert before == after
     assert "file(s)" not in after
 
 
-def test_feature_index_related_line(tmp_path):
+def test_component_index_related_line(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
-          "features:\n"
+    write(root, "components/components.yaml",
+          "components:\n"
           "- id: mcp-registry\n  title: MCP Registry\n  description: Registry MVP\n"
           "  related: [mcp-gateway, ghost]\n"
           "- id: mcp-gateway\n  title: MCP Gateway\n  description: Gateway\n"
           "  related: [mcp-registry]\n")
-    (root / "features" / "mcp-gateway").mkdir()
+    (root / "components" / "mcp-gateway").mkdir()
     built = build_all(root, today=TODAY)
-    idx = built["features/mcp-registry/index.md"]
-    assert "Related: [MCP Gateway](/features/mcp-gateway/index.md)" in idx
+    idx = built["components/mcp-registry/index.md"]
+    assert "Related: [MCP Gateway](/components/mcp-gateway/index.md)" in idx
     assert "ghost" not in idx  # unknown id: lint's problem, never a broken link
-    assert ("Related: [MCP Registry](/features/mcp-registry/index.md)"
-            in built["features/mcp-gateway/index.md"])
+    assert ("Related: [MCP Registry](/components/mcp-registry/index.md)"
+            in built["components/mcp-gateway/index.md"])
 
 
-def test_feature_index_no_related_line_when_absent(tmp_path):
+def test_component_index_no_related_line_when_absent(tmp_path):
     built = build_all(make_repo(tmp_path), today=TODAY)
-    assert "Related:" not in built["features/mcp-registry/index.md"]
+    assert "Related:" not in built["components/mcp-registry/index.md"]
 
 
 def test_check_ignores_time_dependent_stale_view(tmp_path):
@@ -133,7 +133,7 @@ def add_narrative(root: Path):
           "timestamp: 2026-07-01\nstatus: current\n---\nb\n")
     write(root, "narrative/knowledge/story-governed-mcp.md",
           "---\ntype: story\ntitle: Governed MCP\ndescription: registry to gateway\n"
-          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n"
+          "timestamp: 2026-07-01\ncomponents: [mcp-registry]\n"
           "pillar: /narrative/knowledge/pillar-agents.md\nstatus: current\n---\nb\n")
     write(root, "narrative/knowledge/decision-narrative-home.md",
           "---\ntype: decision\ntitle: Narrative home\ndescription: top-level layer\n"
@@ -170,10 +170,10 @@ def test_convergence_with_narrative(tmp_path):
     assert check(root, today=TODAY) == []
 
 
-def test_feature_connections_section(tmp_path):
+def test_component_connections_section(tmp_path):
     root = add_narrative(make_repo(tmp_path))
     built = build_all(root, today=TODAY)
-    idx = built["features/mcp-registry/index.md"]
+    idx = built["components/mcp-registry/index.md"]
     assert "## Connections" in idx
     assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in idx
 
@@ -181,45 +181,45 @@ def test_feature_connections_section(tmp_path):
 def test_connections_exclude_own_home_and_absent_when_empty(tmp_path):
     root = make_repo(tmp_path)
     # entry in mcp-registry listing itself must NOT create a self-backlink
-    write(root, "features/mcp-registry/knowledge/fact-self.md",
+    write(root, "components/mcp-registry/knowledge/fact-self.md",
           "---\ntype: fact\ndescription: d\ntimestamp: 2026-07-01\n"
-          "features: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+          "components: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert "## Connections" not in idx
 
 
 def test_artifact_descriptor_creates_connection(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
-          "features:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n"
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n"
           "- id: mcp-gateway\n  title: MCP Gateway\n  description: d\n")
-    write(root, "features/mcp-gateway/enablement/deck/artifact.md",
+    write(root, "components/mcp-gateway/enablement/deck/artifact.md",
           "---\ntype: artifact\ntitle: Big Deck\ndescription: cross deck\n"
-          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
-    assert "[Big Deck](/features/mcp-gateway/enablement/deck/artifact.md)" in idx
+          "timestamp: 2026-07-01\ncomponents: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
+    assert "[Big Deck](/components/mcp-gateway/enablement/deck/artifact.md)" in idx
 
 
 def test_narrative_map_view(tmp_path):
     root = add_narrative(make_repo(tmp_path))
     write(root, "narrative/knowledge/story-orphan.md",
           "---\ntype: story\ntitle: Orphan\ndescription: no pillar yet\n"
-          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\nstatus: current\n---\nb\n")
+          "timestamp: 2026-07-01\ncomponents: [mcp-registry]\nstatus: current\n---\nb\n")
     v = build_all(root, today=TODAY)["views/narrative-map.md"]
     assert "## [Agents](/narrative/knowledge/pillar-agents.md)" in v
     assert "[Governed MCP](/narrative/knowledge/story-governed-mcp.md)" in v
-    assert "connects: [mcp-registry](/features/mcp-registry/index.md)" in v
+    assert "connects: [mcp-registry](/components/mcp-registry/index.md)" in v
     assert "## Stories without a pillar" in v and "Orphan" in v
 
 
 def test_faq_view(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/qa-airgap.md",
+    write(root, "components/mcp-registry/knowledge/qa-airgap.md",
           "---\ntype: qa\ntitle: Airgap?\ndescription: does it airgap\n"
           "timestamp: 2026-07-01\nstatus: answered\n"
           "asks:\n- date: 2026-07-01\n  by: customer\n- date: 2026-07-03\n  by: ssa\n"
           "---\nb\n")
-    write(root, "features/mcp-registry/knowledge/qa-open.md",
+    write(root, "components/mcp-registry/knowledge/qa-open.md",
           "---\ntype: qa\ntitle: Quotas?\ndescription: open one\n"
           "timestamp: 2026-07-02\nstatus: open\n"
           "asks:\n- date: 2026-07-02\n  by: sales\n---\nb\n")
@@ -231,39 +231,39 @@ def test_faq_view(tmp_path):
 
 def test_stale_view_includes_overdue_qa(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/qa-old.md",
+    write(root, "components/mcp-registry/knowledge/qa-old.md",
           "---\ntype: qa\ntitle: Old\ndescription: aging answer\n"
           "timestamp: 2026-01-01\nstatus: answered\nreview_after: 2026-06-01\n"
           "asks:\n- date: 2026-01-01\n  by: pm\n---\nb\n")
     v = build_all(root, today=TODAY)["views/stale-facts.md"]
-    assert "/features/mcp-registry/knowledge/qa-old.md" in v
+    assert "/components/mcp-registry/knowledge/qa-old.md" in v
 
 
 def test_stale_view_includes_overdue_strategy(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/strategy/strategy.md",
+    write(root, "components/mcp-registry/strategy/strategy.md",
           "---\ntitle: MCP Registry — strategy\ndescription: living strategy\n"
           "timestamp: 2026-01-01\nstatus: current\nreview_after: 2026-06-01\n---\nb\n")
     v = build_all(root, today=TODAY)["views/stale-facts.md"]
-    assert "/features/mcp-registry/strategy/strategy.md" in v
+    assert "/components/mcp-registry/strategy/strategy.md" in v
 
 
 def test_stale_view_excludes_future_review_strategy(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/strategy/strategy.md",
+    write(root, "components/mcp-registry/strategy/strategy.md",
           "---\ntitle: MCP Registry — strategy\ndescription: living strategy\n"
           "timestamp: 2026-07-01\nstatus: current\nreview_after: 2026-12-01\n---\nb\n")
     v = build_all(root, today=TODAY)["views/stale-facts.md"]
-    assert "/features/mcp-registry/strategy/strategy.md" not in v
+    assert "/components/mcp-registry/strategy/strategy.md" not in v
 
 
 def test_jtbd_view(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/knowledge/jtbd-find.md",
+    write(root, "components/mcp-registry/knowledge/jtbd-find.md",
           "---\ntype: jtbd\ntitle: Find approved\ndescription: find servers\n"
           "timestamp: 2026-07-01\npersona: ai-engineer\nstatus: candidate\n"
-          "evidence:\n- /features/mcp-registry/knowledge/qa-airgap.md\n---\nb\n")
-    write(root, "features/mcp-registry/knowledge/jtbd-bare.md",
+          "evidence:\n- /components/mcp-registry/knowledge/qa-airgap.md\n---\nb\n")
+    write(root, "components/mcp-registry/knowledge/jtbd-bare.md",
           "---\ntype: jtbd\ntitle: Bare job\ndescription: no proof\n"
           "timestamp: 2026-07-01\npersona: rhoai-admin\nstatus: validated\n---\nb\n")
     v = build_all(root, today=TODAY)["views/jtbd.md"]
@@ -273,16 +273,16 @@ def test_jtbd_view(tmp_path):
 
 def test_artifacts_view(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/enablement/deck/index.html", "<html></html>")
-    write(root, "features/mcp-registry/enablement/deck/artifact.md",
+    write(root, "components/mcp-registry/enablement/deck/index.html", "<html></html>")
+    write(root, "components/mcp-registry/enablement/deck/artifact.md",
           "---\ntype: artifact\ntitle: Catalog Deck\ndescription: the deck\n"
-          "timestamp: 2026-07-01\nfeatures: [mcp-registry]\n---\nb\n")
-    write(root, "features/mcp-registry/enablement/bare/index.html", "<html></html>")
+          "timestamp: 2026-07-01\ncomponents: [mcp-registry]\n---\nb\n")
+    write(root, "components/mcp-registry/enablement/bare/index.html", "<html></html>")
     write(root, "publish/manifest.yaml",
-          "- source: features/mcp-registry/enablement/deck/\n  dest: mcp-registry/deck/\n"
+          "- source: components/mcp-registry/enablement/deck/\n  dest: mcp-registry/deck/\n"
           "  audience: public\n  title: T\n  description: D\n")
     v = build_all(root, today=TODAY)["views/artifacts.md"]
-    assert "[Catalog Deck](/features/mcp-registry/enablement/deck/)" in v
+    assert "[Catalog Deck](/components/mcp-registry/enablement/deck/)" in v
     assert "published → mcp-registry/deck/" in v
     assert "connects: mcp-registry" in v
     assert "_no artifact.md descriptor yet_" in v and "(unpublished)" in v
@@ -290,32 +290,32 @@ def test_artifacts_view(tmp_path):
 
 def test_connections_sorted_multi_item(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
-          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: R\n  description: d\n"
           "- id: mcp-gateway\n  title: G\n  description: d\n")
-    write(root, "features/mcp-gateway/knowledge/fact-zeta.md",
+    write(root, "components/mcp-gateway/knowledge/fact-zeta.md",
           "---\ntype: fact\ntitle: Zeta\ndescription: d\ntimestamp: 2026-07-01\n"
-          "features: [mcp-registry]\n---\nb\n")
-    write(root, "features/mcp-gateway/knowledge/fact-alpha.md",
+          "components: [mcp-registry]\n---\nb\n")
+    write(root, "components/mcp-gateway/knowledge/fact-alpha.md",
           "---\ntype: fact\ntitle: Alpha\ndescription: d\ntimestamp: 2026-07-02\n"
-          "features: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+          "components: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert "## Connections" in idx
     assert idx.index("Alpha") < idx.index("Zeta")  # sorted by rootpath
 
 
 def test_connections_combine_entries_and_artifacts(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/features.yaml",
-          "features:\n- id: mcp-registry\n  title: R\n  description: d\n"
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: R\n  description: d\n"
           "- id: mcp-gateway\n  title: G\n  description: d\n")
-    write(root, "features/mcp-gateway/knowledge/fact-conn.md",
+    write(root, "components/mcp-gateway/knowledge/fact-conn.md",
           "---\ntype: fact\ntitle: Conn Fact\ndescription: d\ntimestamp: 2026-07-01\n"
-          "features: [mcp-registry]\n---\nb\n")
-    write(root, "features/mcp-gateway/enablement/deck/artifact.md",
+          "components: [mcp-registry]\n---\nb\n")
+    write(root, "components/mcp-gateway/enablement/deck/artifact.md",
           "---\ntype: artifact\ntitle: Conn Deck\ndescription: d\ntimestamp: 2026-07-01\n"
-          "features: [mcp-registry]\n---\nb\n")
-    idx = build_all(root, today=TODAY)["features/mcp-registry/index.md"]
+          "components: [mcp-registry]\n---\nb\n")
+    idx = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert "Conn Fact" in idx and "Conn Deck" in idx
 
 
@@ -328,7 +328,7 @@ def test_empty_narrative_dir_is_safe(tmp_path):
 
 
 SNAP = """# generated by hub.jira-sweep (scripts/hub_jira.py) — do not hand-edit
-feature: mcp-registry
+component: mcp-registry
 jql: project = X
 swept: 2026-07-05
 issues:
@@ -351,13 +351,13 @@ issues:
 
 def test_jira_map_merges_snapshot_and_refs(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/mcp-registry/work/jira-snapshot.yaml", SNAP)
+    write(root, "components/mcp-registry/work/jira-snapshot.yaml", SNAP)
     view = build_all(root, today=TODAY)["views/jira-map.md"]
     assert "## mcp-registry" in view
     # make_repo already files ref-epic.md for RHAIRFE-1370 — row links to it
     assert "RHAIRFE-1370 · Feature · In Progress · RHOAI 3.5 — Epic summary" in view
     assert "→ [Main epic](" in view
-    assert "(/features/mcp-registry/knowledge/ref-epic.md)" in view
+    assert "(/components/mcp-registry/knowledge/ref-epic.md)" in view
     # redacted row (RHAIRFE-2000): no summary text, no per-row boilerplate
     assert "- RHAIRFE-2000 · Feature · New · —" in view
     assert "(summary withheld" not in view

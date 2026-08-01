@@ -8,7 +8,7 @@ import yaml
 from . import frontmatter, gitcrypt, jiramap, publisher, refresh
 
 KNOWLEDGE_TYPES = {"decision", "fact", "reference", "person", "question", "qa", "jtbd"}
-# pillar/story are narrative-layer-only (spec D12/D14) — invalid under features/.
+# pillar/story are narrative-layer-only (spec D12/D14) — invalid under components/.
 NARRATIVE_TYPES = KNOWLEDGE_TYPES | {"pillar", "story"}
 MEMORY_TYPES = {"profile", "fact", "preference", "feedback"}
 PREFIX_TO_TYPE = {
@@ -33,7 +33,7 @@ TYPE_EXTRA_REQUIRED = {
     "question": ("status",),
     "qa": ("status", "asks"),
     "jtbd": ("persona", "status"),
-    "story": ("features",),
+    "story": ("components",),
 }
 # Per-type status enums (canonical order — used verbatim in messages).
 STATUS_ENUMS = {
@@ -43,7 +43,7 @@ STATUS_ENUMS = {
 }
 DEFAULT_STATUS_ENUM = ("current", "superseded")
 # Locked JTBD persona vocabulary — source of truth:
-# features/platform/knowledge/fact-personas.md. Extend BOTH together (gated).
+# components/platform/knowledge/fact-personas.md. Extend BOTH together (gated).
 PERSONAS = ("ai-engineer", "platform-engineer", "agentops-admin",
             "business-consumer", "data-scientist", "cluster-admin", "rhoai-admin")
 # qa asks[].by role buckets (spec §5.3, owner-confirmed).
@@ -82,75 +82,75 @@ def _check_resource(rel, value, errors, warnings):
         errors.append(f"{rel}: non-canonical resource '{value}' (see conventions/uris.md)")
 
 
-def _feature_ids(base):
-    """Known feature ids from features/features.yaml (the closed routing table)."""
-    p = base / "features" / "features.yaml"
+def _component_ids(base):
+    """Known component ids from components/components.yaml (the closed routing table)."""
+    p = base / "components" / "components.yaml"
     if not p.is_file():
         return set()
     try:
         data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
     except yaml.YAMLError:
         return set()
-    return {f.get("id") for f in (data.get("features") or []) if isinstance(f, dict)}
+    return {f.get("id") for f in (data.get("components") or []) if isinstance(f, dict)}
 
 
 def _lint_routing_table(root, errors, warnings):
-    """features.yaml related: — boundary-sibling declarations. Closed
-    vocabulary like features: (spec D13); symmetry is a warning because a
+    """components.yaml related: — boundary-sibling declarations. Closed
+    vocabulary like components: (spec D13); symmetry is a warning because a
     one-way family link is usually a typo, not a design."""
-    p = root / "features" / "features.yaml"
+    p = root / "components" / "components.yaml"
     if not p.is_file():
         return
     try:
         data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
     except yaml.YAMLError as exc:
-        errors.append(f"features/features.yaml: invalid YAML: {exc}")
+        errors.append(f"components/components.yaml: invalid YAML: {exc}")
         return
-    feats = [f for f in (data.get("features") or []) if isinstance(f, dict)]
-    ids = {f.get("id") for f in feats}
+    comps = [f for f in (data.get("components") or []) if isinstance(f, dict)]
+    ids = {f.get("id") for f in comps}
     related = {}
-    for f in feats:
+    for f in comps:
         rel_ids = f.get("related")
         if rel_ids is None:
             continue
-        where = f"features/features.yaml[{f.get('id')}]"
+        where = f"components/components.yaml[{f.get('id')}]"
         if not isinstance(rel_ids, list) or not all(isinstance(x, str) for x in rel_ids):
-            errors.append(f"{where}: related must be a list of feature ids")
+            errors.append(f"{where}: related must be a list of component ids")
             continue
         related[f.get("id")] = rel_ids
         for rid in rel_ids:
             if rid == f.get("id"):
-                errors.append(f"{where}: related must not include the feature itself")
+                errors.append(f"{where}: related must not include the component itself")
             elif rid not in ids:
-                errors.append(f"{where}: unknown related feature id '{rid}' "
-                              f"(not in features/features.yaml)")
+                errors.append(f"{where}: unknown related component id '{rid}' "
+                              f"(not in components/components.yaml)")
     for fid, rel_ids in related.items():
         for rid in rel_ids:
             if rid in ids and rid != fid and fid not in related.get(rid, []):
-                warnings.append(f"features/features.yaml[{rid}]: related is "
+                warnings.append(f"components/components.yaml[{rid}]: related is "
                                 f"asymmetric — '{fid}' lists '{rid}' but not "
                                 f"the reverse")
 
 
-def _check_features(rel, meta, feature_ids, errors):
-    """features: cross-refs — closed vocabulary, unlike dangling links (spec D13)."""
-    feats = meta.get("features")
-    if feats is None:
+def _check_components(rel, meta, component_ids, errors):
+    """components: cross-refs — closed vocabulary, unlike dangling links (spec D13)."""
+    comps = meta.get("components")
+    if comps is None:
         return
-    if feature_ids is None:
-        errors.append(f"{rel}: features: is only allowed on knowledge entries "
+    if component_ids is None:
+        errors.append(f"{rel}: components: is only allowed on knowledge entries "
                       f"and artifact descriptors")
         return
-    if not isinstance(feats, list) or not all(isinstance(x, str) for x in feats):
-        errors.append(f"{rel}: features must be a list of feature ids")
+    if not isinstance(comps, list) or not all(isinstance(x, str) for x in comps):
+        errors.append(f"{rel}: components must be a list of component ids")
         return
-    for fid in feats:
-        if fid not in feature_ids:
-            errors.append(f"{rel}: unknown feature id '{fid}' "
-                          f"(not in features/features.yaml)")
+    for cid in comps:
+        if cid not in component_ids:
+            errors.append(f"{rel}: unknown component id '{cid}' "
+                          f"(not in components/components.yaml)")
 
 
-def _lint_artifacts(root, enablement, errors, warnings, feature_ids):
+def _lint_artifacts(root, enablement, errors, warnings, component_ids):
     """artifact.md descriptors inside enablement slug dirs. All other files in
     an artifact directory are the artifact's own assets — never linted."""
     if not enablement.is_dir():
@@ -163,7 +163,7 @@ def _lint_artifacts(root, enablement, errors, warnings, feature_ids):
         desc = slug / "artifact.md"
         if desc.is_file():
             lint_entry(root, desc, {"artifact"}, False, errors, warnings,
-                       feature_ids=feature_ids)
+                       component_ids=component_ids)
 
 
 def _lint_research(root, research, warnings):
@@ -189,7 +189,7 @@ def _lint_research(root, research, warnings):
                                 f"(see conventions/research.md)")
 
 
-def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, feature_ids=None):
+def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, component_ids=None):
     rel = _rel(root, path)
     if gitcrypt.is_git_crypt_blob(path):
         return  # locked-state git-crypt blob, nothing to lint (never a crash)
@@ -250,7 +250,7 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, featur
             RESTRICTED_HINTS.search(path.read_text(encoding="utf-8")):
         warnings.append(f"{rel}: restricted-content heuristic matched — "
                         f"confirm this belongs in a public repo")
-    _check_features(rel, meta, feature_ids, errors)
+    _check_components(rel, meta, component_ids, errors)
     if etype == "story" and meta.get("pillar"):
         target = str(meta["pillar"])
         if not target.startswith("/"):
@@ -261,26 +261,26 @@ def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, featur
             warnings.append(f"{rel}: pillar target {target} does not exist (dangling)")
 
 
-def _lint_tree(root, base, errors, warnings, feature_ids):
+def _lint_tree(root, base, errors, warnings, component_ids):
     """Lint one hub tree (the repo root, or restricted/)."""
-    features = base / "features"
-    if features.is_dir():
-        for feat in sorted(p for p in features.iterdir() if p.is_dir()):
-            for child in sorted(feat.iterdir()):
+    components = base / "components"
+    if components.is_dir():
+        for comp in sorted(p for p in components.iterdir() if p.is_dir()):
+            for child in sorted(comp.iterdir()):
                 if child.is_dir() and child.name not in SKELETON_DIRS:
-                    errors.append(f"{_rel(root, child)}: not part of the feature skeleton "
+                    errors.append(f"{_rel(root, child)}: not part of the component skeleton "
                                   f"({', '.join(sorted(SKELETON_DIRS))})")
                 elif child.is_file() and child.name != "index.md":
-                    errors.append(f"{_rel(root, child)}: files directly under a feature "
+                    errors.append(f"{_rel(root, child)}: files directly under a component "
                                   f"are not allowed (only index.md)")
-            know = feat / "knowledge"
+            know = comp / "knowledge"
             if know.is_dir():
                 for entry in sorted(know.glob("*.md")):
                     if entry.name in RESERVED:
                         continue
-                    lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings, feature_ids=feature_ids)
-            _lint_artifacts(root, feat / "enablement", errors, warnings, feature_ids)
-            _lint_research(root, feat / "research", warnings)
+                    lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings, component_ids=component_ids)
+            _lint_artifacts(root, comp / "enablement", errors, warnings, component_ids)
+            _lint_research(root, comp / "research", warnings)
     narrative = base / "narrative"
     if narrative.is_dir():
         for child in sorted(narrative.iterdir()):
@@ -296,8 +296,8 @@ def _lint_tree(root, base, errors, warnings, feature_ids):
                 if entry.name in RESERVED:
                     continue
                 lint_entry(root, entry, NARRATIVE_TYPES, True, errors, warnings,
-                           feature_ids=feature_ids)
-        _lint_artifacts(root, narrative / "enablement", errors, warnings, feature_ids)
+                           component_ids=component_ids)
+        _lint_artifacts(root, narrative / "enablement", errors, warnings, component_ids)
         _lint_research(root, narrative / "research", warnings)
     memory = base / "memory"
     if memory.is_dir():
@@ -305,11 +305,11 @@ def _lint_tree(root, base, errors, warnings, feature_ids):
             parts = entry.relative_to(memory).parts
             if entry.name in RESERVED or parts[0] in ("log-archive", ".scratch"):
                 continue
-            lint_entry(root, entry, MEMORY_TYPES, False, errors, warnings, feature_ids=None)
+            lint_entry(root, entry, MEMORY_TYPES, False, errors, warnings, component_ids=None)
 
 
 def _lint_links(root, warnings):
-    scan_dirs = ["conventions", "features", "memory", "docs", "views", "narrative"]
+    scan_dirs = ["conventions", "components", "memory", "docs", "views", "narrative"]
     files = [root / "README.md", root / "AGENTS.md", root / "CLAUDE.md"]
     for d in scan_dirs:
         if (root / d).is_dir():
@@ -378,9 +378,9 @@ def validate_manifest(root):
 def lint_repo(root):
     root = Path(root)
     errors, warnings = [], []
-    feature_ids = _feature_ids(root)
+    component_ids = _component_ids(root)
     _lint_routing_table(root, errors, warnings)
-    _lint_tree(root, root, errors, warnings, feature_ids)
+    _lint_tree(root, root, errors, warnings, component_ids)
     restricted = root / "restricted"
     if restricted.is_dir():
         # No directory-wide "locked" gate here: git-crypt encrypts per file,
@@ -388,7 +388,7 @@ def lint_repo(root):
         # plaintext file. lint_entry/_lint_research skip each git-crypt blob
         # they hit individually, which naturally reduces to "skip everything"
         # on a fully locked tree and "lint the readable rest" on a mixed one.
-        _lint_tree(root, restricted, errors, warnings, feature_ids)
+        _lint_tree(root, restricted, errors, warnings, component_ids)
     snap_errors, snap_warnings = jiramap.validate(root)
     errors.extend(snap_errors)
     warnings.extend(snap_warnings)

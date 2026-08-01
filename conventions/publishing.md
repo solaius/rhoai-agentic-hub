@@ -4,7 +4,7 @@ Nothing is public unless it has an entry in `publish/manifest.yaml`
 (allowlist; the failure mode is *forgot to publish*, never *leaked by
 default*). Entries:
 
-    - source: features/mcp-gateway/enablement/rhcl-hub/   # repo-relative; dir or file
+    - source: components/mcp-gateway/enablement/rhcl-hub/   # repo-relative; dir or file
       dest: mcp-gateway/rhcl/                             # URL path in the pages repo
       audience: public                                    # public | internal
       title: MCP Gateway Knowledge Hub
@@ -34,7 +34,7 @@ Rules:
 - Use the `hub.publish` skill; publishing is a disclosure decision and gets an
   inline confirm.
 - Each enablement artifact is a self-contained directory —
-  `features/<f>/enablement/<slug>/` with index.html as its entry point;
+  `components/<f>/enablement/<slug>/` with index.html as its entry point;
   assets live inside it.
 
 Live root: https://solaius.github.io/rhoai-agentic-hub-pages/ (public) ·
@@ -44,7 +44,7 @@ https://solaius.github.io/rhoai-agentic-hub/ (internal, interim)
 
 The pages-site landing page is rendered from `publish/landing-template.html`
 (tracked; self-contained inline CSS): artifacts grouped by area (feature
-`title` from features/features.yaml, routing-table order, Narrative last),
+`title` from components/components.yaml, routing-table order, Narrative last),
 one card per artifact, NEW/UPDATED badges for artifacts published or changed
 in the last 14 days. Badge state lives in `.publish-snapshot.json` (v2:
 `{dest: {source, hash, published, badge}}`); v1 snapshots migrate on the

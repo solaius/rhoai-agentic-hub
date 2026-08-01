@@ -3,7 +3,7 @@ type: story
 title: "The agent lifecycle: build, run, operate"
 description: "How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI."
 timestamp: 2026-07-08
-features: [gen-ai-studio, agent-registry, agent-memory, agent-ops]
+components: [gen-ai-studio, agent-registry, agent-memory, agent-ops]
 pillar: /narrative/knowledge/pillar-agents.md
 status: current
 tags: [narrative, story]

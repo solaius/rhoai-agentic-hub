@@ -65,7 +65,7 @@ def build_brief(root, today=None):
         sections.append(f"## JTBD lacking evidence ({len(bare)})\n" + "\n".join(lines))
 
     undesc = []
-    for pattern in ("features/*/enablement/*", "narrative/enablement/*"):
+    for pattern in ("components/*/enablement/*", "narrative/enablement/*"):
         for slug in sorted(root.glob(pattern)):
             if slug.is_dir() and not (slug / "artifact.md").is_file():
                 undesc.append("/" + slug.relative_to(root).as_posix())

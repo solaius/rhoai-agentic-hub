@@ -43,7 +43,7 @@ here.
 6. **JQL is the single stored scope.** Feature↔Jira mapping is messy
    (e.g., a feature may map to a shared component plus labels), so no
    components/labels shorthand schema — one `jql` string per feature in
-   `features/features.yaml`, derived conversationally at first sweep.
+   `components/components.yaml`, derived conversationally at first sweep.
 7. **jtbd backlinks:** jtbd entries get an optional `jira: [KEY, …]` list
    (the indexer already renders a `jira` field on jtbd rows); sync watches
    those keys.
@@ -61,9 +61,9 @@ enhancement-batch work:
 | `scripts/hub_jira.py` | thin CLI: `--check` (connectivity probe) · `--sweep <feature> [--jql …]` · `--sync [<feature>]` |
 | `.claude/skills/hub.jira-sweep/SKILL.md` | the sweep procedure (gated) |
 | `.claude/skills/hub.jira-sync/SKILL.md` | the refresh procedure (gated) |
-| `features/<id>/work/jira-snapshot.yaml` | per-feature machine-written snapshot (tracked) |
+| `components/<id>/work/jira-snapshot.yaml` | per-feature machine-written snapshot (tracked) |
 
-### Scope config (`features/features.yaml`)
+### Scope config (`components/components.yaml`)
 
 ```yaml
 - id: mcp-registry
@@ -113,7 +113,7 @@ hand-editing is prohibited by convention like other generated files.
 
 ### Data flow
 
-`features.yaml jira:` scope → CLI fetch (+probe) → CLI emits final
+`components.yaml jira:` scope → CLI fetch (+probe) → CLI emits final
 snapshot YAML + strategic-tier ref- candidates → skill gates (batch
 table, per-line approve/edit/reject) → agent writes approved files →
 `hub_index.py` regenerates the view → `hub_lint.py` (disclosure lint sees
@@ -126,14 +126,14 @@ the snapshot too) → commit.
 1. **Scope discovery** (first run / no `jira:` block): user gives hints
    (project, component, label guesses); the skill runs candidate JQLs via
    the CLI, shows result counts + sample rows, iterates until the scope
-   looks right; the approved JQL becomes a gated `features.yaml` edit.
+   looks right; the approved JQL becomes a gated `components.yaml` edit.
 2. **Fetch:** stored JQL → snapshot build (probe rule applied) +
    `ref_types` issues picked as strategic-tier candidates.
 3. **Scope sanity:** result count wildly off vs. the last snapshot (0
    rows, big swings) → flagged, never silently written — labels drift.
 4. **Gate** (one batch table): the snapshot file (redacted-summary list
    called out), one line per proposed strategic `ref-` (description
-   drafted from the issue), the `features.yaml` edit if scope changed.
+   drafted from the issue), the `components.yaml` edit if scope changed.
 5. **On OK:** write files → `python scripts/hub_index.py` →
    `python scripts/hub_lint.py` (0 errors) → commit.
 

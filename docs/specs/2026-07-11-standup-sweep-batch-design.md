@@ -117,7 +117,7 @@ For a full hub picture, also run: `python scripts/hub_status.py`
 
 Issues in the user's feature areas that lack a "Product Manager" assignment
 are invisible. A future improvement could cross-reference against
-`features.yaml` JQL scopes and flag issues in those scopes without a PM.
+`components.yaml` JQL scopes and flag issues in those scopes without a PM.
 
 ## Skill 2: hub.weekly-plan
 

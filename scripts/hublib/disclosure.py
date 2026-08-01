@@ -46,19 +46,19 @@ def _scan_files(root):
     full text. YAML surfaces get the patterns pass only."""
     root = Path(root)
     surfaces = (
-        ("features/*/enablement/**/*.html", True),
+        ("components/*/enablement/**/*.html", True),
         ("narrative/enablement/**/*.html", True),
-        ("features/*/knowledge/*.md", False),
+        ("components/*/knowledge/*.md", False),
         ("narrative/knowledge/*.md", False),
-        ("features/*/work/jira-snapshot.yaml", False),
-        ("features/*/work/triage-log.yaml", False),
-        ("features/*/work/refresh-*.yaml", False),
+        ("components/*/work/jira-snapshot.yaml", False),
+        ("components/*/work/triage-log.yaml", False),
+        ("components/*/work/refresh-*.yaml", False),
         ("artifacts/**/*.md", False),
         ("narrative/work/refresh-*.yaml", False),
         ("views/*.md", True),
         ("memory/index.md", True),
-        ("features/index.md", True),
-        ("features/*/index.md", True),
+        ("components/index.md", True),
+        ("components/*/index.md", True),
         ("narrative/index.md", True),
     )
     for pattern, heuristic in surfaces:

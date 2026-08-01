@@ -4,7 +4,7 @@
     {
       "id": 0,
       "name": "client-slide-deck",
-      "prompt": "Create a slide deck presentation about the MCP Registry for a client audience. The goal is to explain why enterprises need governed MCP server management and how RHOAI solves it. Use features/mcp-registry/knowledge/ for context.",
+      "prompt": "Create a slide deck presentation about the MCP Registry for a client audience. The goal is to explain why enterprises need governed MCP server management and how RHOAI solves it. Use components/mcp-registry/knowledge/ for context.",
       "expected_output": "A polished slide deck HTML file with Red Hat branding, keyboard navigation, architecture diagram, multiple slides covering problem/solution/architecture/roadmap/CTA",
       "files": [],
       "assertions": []
@@ -12,7 +12,7 @@
     {
       "id": 1,
       "name": "engineering-scrolling-page",
-      "prompt": "I need a vertical scrolling overview page for the MCP Gateway targeting our engineering team. It should cover the Envoy ext_proc architecture, the broker pattern, and the Kubernetes controller. Reference features/mcp-gateway/ for technical context.",
+      "prompt": "I need a vertical scrolling overview page for the MCP Gateway targeting our engineering team. It should cover the Envoy ext_proc architecture, the broker pattern, and the Kubernetes controller. Reference components/mcp-gateway/ for technical context.",
       "expected_output": "A vertical scrolling HTML page with fixed nav, scroll animations, technical architecture diagrams, deep engineering content about ext_proc/broker/controller",
       "files": [],
       "assertions": []
@@ -20,7 +20,7 @@
     {
       "id": 2,
       "name": "update-existing-presentation",
-      "prompt": "Update the MCP Gateway presentation at features/mcp-gateway/enablement/mcp-gateway-presentation/index.html — add a new slide after the architecture slide that shows the MCP ingestion pipeline as a step-by-step flow diagram.",
+      "prompt": "Update the MCP Gateway presentation at components/mcp-gateway/enablement/mcp-gateway-presentation/index.html — add a new slide after the architecture slide that shows the MCP ingestion pipeline as a step-by-step flow diagram.",
       "expected_output": "An updated version of the existing presentation with a new ingestion pipeline slide inserted after architecture, matching existing style",
       "files": []
     }

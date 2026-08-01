@@ -9,23 +9,23 @@ Input: the item, from the user's words or session context.
 
 1. Classify with the boundary rule (/conventions/memory.md): working context
    (state, preference, feedback, process fact) → memory store; domain
-   knowledge (a colleague would look it up) → features/<f>/knowledge/;
+   knowledge (a colleague would look it up) → components/<f>/knowledge/;
    story-shaped (pillar, cross-feature narrative — wrong under any single
    feature) → narrative/knowledge/; a field question someone asked us →
    qa- entry (dedupe rule in step 2); a user job for UX/Docs → jtbd- entry
    (persona from the locked list, evidence: links); NDA-adjacent → the
    restricted/ mirror of the same location. Entries touching multiple
-   features declare `features: [ids]`.
+   features declare `components: [ids]`.
 2. Determine the write:
    - Profile-shaped (roadmap/strategy/status/preference change): EDIT the
      profile in place — new current value, prepend the old value to
      `## History` with date + source, bump `timestamp` and `valid_from`.
    - Atomic: NEW file — `memory/facts/fact-<slug>.md`,
-     `features/<f>/knowledge/<prefix><slug>.md`, or — story-shaped —
+     `components/<f>/knowledge/<prefix><slug>.md`, or — story-shaped —
      `narrative/knowledge/<prefix><slug>.md`, frontmatter per
      /conventions/type-vocabulary.md.
    - Knowledge entries: first check the feature partition exists in
-     features/features.yaml; if it doesn't → hand off to hub.file (it
+     components/components.yaml; if it doesn't → hand off to hub.file (it
      creates partitions).
    - qa entries: BEFORE creating, grep existing `qa-*` for the same
      question; on a match, append a dated item to its `asks:` list
@@ -46,8 +46,8 @@ Input: the item, from the user's words or session context.
       shared across concurrent sessions; a sweep commits their in-flight
       files, see memory/facts/fact-concurrent-session-git-hygiene.md):
       `git add <files written/edited in 4a/4b> memory/index.md
-      features/index.md "features/*/index.md"
-      "features/*/knowledge/index.md" narrative/index.md
+      components/index.md "components/*/index.md"
+      "components/*/knowledge/index.md" narrative/index.md
       narrative/knowledge/index.md views/`, check
       `git diff --cached --stat` for anything this capture did not write,
       then commit WITH PATHSPECS so another session's staged files cannot

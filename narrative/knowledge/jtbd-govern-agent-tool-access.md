@@ -6,7 +6,7 @@ persona: agentops-admin
 status: candidate
 timestamp: 2026-07-10
 source: ref-power-90-agentic-ai-20260708.md
-features: [mcp-gateway, agent-ops]
+components: [mcp-gateway, agent-ops]
 tags: [narrative, jtbd, governance, access-control]
 ---
 **When** I manage a fleet of agents,

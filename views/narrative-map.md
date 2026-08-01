@@ -4,9 +4,9 @@
 ## [Agents](/narrative/knowledge/pillar-agents.md)
 RHAI strategic pillar: the enterprise control plane for agentic AI — Bring Your Own Agent on an open, interoperable platform (MCP, A2A, agent registries, lifecycle, secure execution).
 - [The agent lifecycle: build, run, operate](/narrative/knowledge/story-agent-lifecycle.md) — How Gen AI Studio, Agent Registry, Agent Memory, and Agent Ops compose into the full lifecycle story for enterprise agents on RHOAI.
-  - connects: [gen-ai-studio](/features/gen-ai-studio/index.md), [agent-registry](/features/agent-registry/index.md), [agent-memory](/features/agent-memory/index.md), [agent-ops](/features/agent-ops/index.md)
+  - connects: [gen-ai-studio](/components/gen-ai-studio/index.md), [agent-registry](/components/agent-registry/index.md), [agent-memory](/components/agent-memory/index.md), [agent-ops](/components/agent-ops/index.md)
 - [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.
-  - connects: [mcp-registry](/features/mcp-registry/index.md), [mcp-gateway](/features/mcp-gateway/index.md), [mcp-ecosystem](/features/mcp-ecosystem/index.md)
+  - connects: [mcp-registry](/components/mcp-registry/index.md), [mcp-gateway](/components/mcp-gateway/index.md), [mcp-ecosystem](/components/mcp-ecosystem/index.md)
 
 ## [Data](/narrative/knowledge/pillar-data.md)
 RHAI strategic pillar: enterprise knowledge and evaluation as first-class platform services — RAG, customization, synthetic data, evaluation-driven development.

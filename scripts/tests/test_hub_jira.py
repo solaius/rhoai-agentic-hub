@@ -16,8 +16,8 @@ def write(root: Path, rel: str, text: str):
 
 
 def make_repo(tmp_path: Path) -> Path:
-    write(tmp_path, "features/features.yaml",
-          "features:\n- id: mcp-registry\n  title: R\n  description: d\n")
+    write(tmp_path, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: R\n  description: d\n")
     return tmp_path
 
 
@@ -33,11 +33,11 @@ def test_out_required_for_sweep(tmp_path):
         hub_jira.main(["--sweep", "mcp-registry", "--root", str(make_repo(tmp_path))])
 
 
-def test_sweep_unknown_feature_exits_2(tmp_path, capsys):
+def test_sweep_unknown_component_exits_2(tmp_path, capsys):
     rc = hub_jira.main(["--sweep", "nope", "--out", str(tmp_path / "o"),
                         "--root", str(make_repo(tmp_path))])
     assert rc == 2
-    assert "unknown feature" in capsys.readouterr().out
+    assert "unknown component" in capsys.readouterr().out
 
 
 def test_sweep_without_stored_scope_exits_2(tmp_path, capsys):
@@ -47,7 +47,7 @@ def test_sweep_without_stored_scope_exits_2(tmp_path, capsys):
     assert "no stored jira scope" in capsys.readouterr().out
 
 
-def test_sync_with_no_scoped_features_is_quiet(tmp_path, capsys):
+def test_sync_with_no_scoped_components_is_quiet(tmp_path, capsys):
     rc = hub_jira.main(["--sync", "--out", str(tmp_path / "o"),
                         "--root", str(make_repo(tmp_path))])
     assert rc == 0

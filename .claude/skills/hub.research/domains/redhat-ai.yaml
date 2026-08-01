@@ -1,9 +1,9 @@
 # Domain config for the hub.research competitive lens.
-# Selection order: explicit ask > `features:` match > `default: true`.
+# Selection order: explicit ask > `components:` match > `default: true`.
 name: "Red Hat AI"
 slug: redhat-ai
 default: true
-# features: []  # optional hub feature ids that auto-select this domain
+# components: []  # optional hub component ids that auto-select this domain
 
 key_question: >
   How is Red Hat AI positioned in the enterprise AI platform market,

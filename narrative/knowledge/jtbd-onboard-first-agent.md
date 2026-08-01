@@ -6,7 +6,7 @@ persona: ai-engineer
 status: candidate
 timestamp: 2026-07-10
 source: ref-agentic-strategy-diagram.md
-features: [gen-ai-studio, agent-registry]
+components: [gen-ai-studio, agent-registry]
 tags: [narrative, jtbd, onboarding]
 ---
 **When** I'm exploring agentic AI for my organization,

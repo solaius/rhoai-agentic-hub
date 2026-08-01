@@ -6,7 +6,7 @@ description: Add or update an entry in publish/manifest.yaml to ship an artifact
 # hub.publish
 
 1. Identify the artifact source — it must live under
-   features/<f>/enablement/… (move it there first if not).
+   components/<f>/enablement/… (move it there first if not).
 2. Draft the manifest entry: source · dest (URL slug — a CONTRACT, never
    changed after shipping; short and stable, e.g. `mcp-gateway/rhcl/`) ·
    audience (`public` ships to `rhoai-agentic-hub-pages`; `internal` ships to
@@ -27,7 +27,7 @@ description: Add or update an entry in publish/manifest.yaml to ship an artifact
 4. Append/update the entry in publish/manifest.yaml, then verify:
    `python scripts/hub_publish.py --check` (must print "manifest valid").
 5. Commit + push:
-   `git add publish/ features/ && git commit -m "publish: <title>" && git push`
+   `git add publish/ components/ && git commit -m "publish: <title>" && git push`
 6. Watch CI: `gh run watch --repo solaius/rhoai-agentic-hub --exit-status`,
    then verify live (Pages lag ~1-2 min):
    `curl -sI https://solaius.github.io/rhoai-agentic-hub-pages/<dest> | head -1`

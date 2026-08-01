@@ -549,7 +549,7 @@ def test_triage_log_is_yaml_and_carries_no_jira_prose():
     text = triage.build_triage_log("mcp-registry", "project = X", rows, plan,
                                    result, TODAY)
     assert "do not hand-edit" in text
-    assert "feature: mcp-registry" in text
+    assert "component: mcp-registry" in text
     assert "Secret internal roadmap detail" not in text   # NO Jira prose
     assert "transition: Open -> Closed" in text or "Closed" in text
 

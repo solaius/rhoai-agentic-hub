@@ -6,7 +6,7 @@ persona: agentops-admin
 status: candidate
 timestamp: 2026-07-10
 source: narrative/research/02-agentic-requirements-landscape.md
-features: [agent-ops, agent-registry]
+components: [agent-ops, agent-registry]
 tags: [narrative, jtbd, fleet, governance, research-gap]
 ---
 **When** I operate many agents across my organization,

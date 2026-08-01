@@ -1,6 +1,6 @@
 # Strategy document conventions
 
-`features/<id>/strategy/strategy.md` is the feature's ONE living strategy
+`components/<id>/strategy/strategy.md` is the feature's ONE living strategy
 document — the synthesis a PM plans from. Evidence stays in `knowledge/`
 and `research/`; this document cites, it never restates at length.
 Producer: `hub.strategy` (gated). Hand-edits are allowed (it is a

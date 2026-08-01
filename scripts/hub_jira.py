@@ -6,8 +6,8 @@ docs/specs/2026-07-09-jira-hub-skills-design.md.
   --try-jql '<jql>'             scope discovery: count + sample rows
   --audit <KEY>                 read-only structured dump of one issue, incl.
                                  a best-effort children search (hub.jira-hygiene)
-  --sweep <feature> --out DIR   proposed snapshot + ref candidates -> DIR
-  --sync [<feature>] --out DIR  diff stored snapshots + watched keys -> report + DIR
+  --sweep <component> --out DIR   proposed snapshot + ref candidates -> DIR
+  --sync [<component>] --out DIR  diff stored snapshots + watched keys -> report + DIR
 """
 import argparse
 import asyncio
@@ -36,13 +36,13 @@ def _load_env(root):
     load_env(root, prefixes=("JIRA_",))
 
 
-def _jira_cfg(root, feature):
-    """The feature's jira: block from features.yaml; None = unknown feature,
-    {} = known feature without a stored scope."""
-    p = root / "features" / "features.yaml"
+def _jira_cfg(root, component):
+    """The component's jira: block from components.yaml; None = unknown component,
+    {} = known component without a stored scope."""
+    p = root / "components" / "components.yaml"
     data = yaml.safe_load(p.read_text(encoding="utf-8")) if p.is_file() else {}
-    for f in (data or {}).get("features") or []:
-        if isinstance(f, dict) and f.get("id") == feature:
+    for f in (data or {}).get("components") or []:
+        if isinstance(f, dict) and f.get("id") == component:
             return f.get("jira") or {}
     return None
 
@@ -162,14 +162,14 @@ async def _fetch_rows(client, jql):
     return issues, rows
 
 
-async def _sweep(root, feature, jql_override, out, today):
-    cfg = _jira_cfg(root, feature)
+async def _sweep(root, component, jql_override, out, today):
+    cfg = _jira_cfg(root, component)
     if cfg is None:
-        print(f"ERROR unknown feature '{feature}' (not in features/features.yaml)")
+        print(f"ERROR unknown component '{component}' (not in components/components.yaml)")
         return 2
     jql = jql_override or cfg.get("jql")
     if not jql:
-        print(f"ERROR no stored jira scope for '{feature}' — pass --jql, or run "
+        print(f"ERROR no stored jira scope for '{component}' — pass --jql, or run "
               f"hub.jira-sweep scope discovery first")
         return 2
     ref_types = cfg.get("ref_types") or DEFAULT_REF_TYPES
@@ -179,7 +179,7 @@ async def _sweep(root, feature, jql_override, out, today):
     if len(rows) == MAX_RESULTS:
         print(f"WARN result set hit the {MAX_RESULTS}-issue cap — the snapshot "
               f"may be truncated; narrow the JQL")
-    old = root / "features" / feature / "work" / "jira-snapshot.yaml"
+    old = root / "components" / component / "work" / "jira-snapshot.yaml"
     if old.is_file():
         old_rows = (yaml.safe_load(old.read_text(encoding="utf-8")) or {}).get("issues") or []
         if old_rows and (not rows or len(rows) < len(old_rows) / 2
@@ -187,8 +187,8 @@ async def _sweep(root, feature, jql_override, out, today):
             print(f"WARN result count {len(rows)} vs {len(old_rows)} in the last "
                   f"snapshot — scope may have drifted; review the JQL before the gate")
     out.mkdir(parents=True, exist_ok=True)
-    snap_path = out / f"jira-snapshot-{feature}.yaml"
-    snap_path.write_text(jiramap.build_snapshot(feature, jql, rows, today),
+    snap_path = out / f"jira-snapshot-{component}.yaml"
+    snap_path.write_text(jiramap.build_snapshot(component, jql, rows, today),
                          encoding="utf-8", newline="\n")
     redacted_keys = {r["key"] for r in rows if r.get("summary") is None}
     candidates = []
@@ -204,30 +204,30 @@ async def _sweep(root, feature, jql_override, out, today):
                 "url": f"{base}/browse/{issue.get('key')}",
                 "description": adf_to_text(f.get("description"))[:2000],
             })
-    cand_path = out / f"candidates-{feature}.yaml"
+    cand_path = out / f"candidates-{component}.yaml"
     cand_path.write_text(yaml.safe_dump(candidates, sort_keys=False, allow_unicode=True),
                          encoding="utf-8", newline="\n")
     redacted = sum(1 for r in rows if r.get("summary") is None)
-    print(f"swept {feature}: {len(rows)} issue(s), {redacted} summary(ies) withheld "
+    print(f"swept {component}: {len(rows)} issue(s), {redacted} summary(ies) withheld "
           f"(not anonymously readable), {len(candidates)} ref candidate(s)")
     print(f"proposed snapshot: {snap_path}")
     print(f"ref candidates:    {cand_path}")
     return 0
 
 
-async def _sync(root, feature, out, today):
-    p = root / "features" / "features.yaml"
+async def _sync(root, component, out, today):
+    p = root / "components" / "components.yaml"
     data = yaml.safe_load(p.read_text(encoding="utf-8")) if p.is_file() else {}
-    feats = [f for f in (data or {}).get("features") or []
+    comps = [f for f in (data or {}).get("components") or []
              if isinstance(f, dict) and f.get("jira")]
-    if feature:
-        feats = [f for f in feats if f.get("id") == feature]
-        if not feats:
-            print(f"ERROR '{feature}' has no jira: block in features/features.yaml "
+    if component:
+        comps = [f for f in comps if f.get("id") == component]
+        if not comps:
+            print(f"ERROR '{component}' has no jira: block in components/components.yaml "
                   f"— run hub.jira-sweep first")
             return 2
-    if not feats:
-        print("nothing to sync — no feature has a jira: block yet "
+    if not comps:
+        print("nothing to sync — no component has a jira: block yet "
               "(run hub.jira-sweep first)")
         return 0
     watched = jiramap.watched_keys(root)
@@ -235,9 +235,9 @@ async def _sync(root, feature, out, today):
     out.mkdir(parents=True, exist_ok=True)
     async with client_from_env() as client:
         snap_keys = set()
-        for f in feats:
+        for f in comps:
             fid, jql = f["id"], (f.get("jira") or {}).get("jql", "")
-            snap = root / "features" / fid / "work" / "jira-snapshot.yaml"
+            snap = root / "components" / fid / "work" / "jira-snapshot.yaml"
             if not snap.is_file():
                 print(f"NOTE {fid}: no committed snapshot yet — run hub.jira-sweep "
                       f"first; skipping")
@@ -291,9 +291,9 @@ def main(argv=None):
     ap.add_argument("--try-jql", metavar="JQL")
     ap.add_argument("--sample", type=int, default=15)
     ap.add_argument("--audit", metavar="KEY")
-    ap.add_argument("--sweep", metavar="FEATURE")
+    ap.add_argument("--sweep", metavar="COMPONENT")
     ap.add_argument("--jql", metavar="JQL")
-    ap.add_argument("--sync", nargs="?", const="", metavar="FEATURE")
+    ap.add_argument("--sync", nargs="?", const="", metavar="COMPONENT")
     ap.add_argument("--out", metavar="DIR")
     ap.add_argument("--root", help=argparse.SUPPRESS)  # tests only
     args = ap.parse_args(argv)

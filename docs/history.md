@@ -63,7 +63,7 @@ Deliberately deferred, in rough priority order:
 - `hub.refresh-site` (successor to the old repo's knowledge-hub-create /
   update-hub skills) — port at the next piece of hub-site work.
 - `rice-strats` skill port — the rubric it needs is already here at
-  `features/platform/strategy/rice-scoring-rubric.md`.
+  `components/platform/strategy/rice-scoring-rubric.md`.
 - Remaining old-repo-doctor coverage: `~/.bashrc` shell-env wiring (so
   `JIRA_*` reaches every shell) and the Jira/Slack connectivity probes —
   needed the first time Jira-using skills (`rfe.*`, `rice-strats`) run on a

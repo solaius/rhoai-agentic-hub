@@ -17,8 +17,8 @@ commit and then reports clean. It is not clean. Every knowledge entry carries a
 description verbatim into TRACKED GENERATED files:
 
 - `views/decisions.md` (and the other views)
-- `features/<f>/index.md`
-- `features/<f>/knowledge/index.md`
+- `components/<f>/index.md`
+- `components/<f>/knowledge/index.md`
 
 Those generated files are a second copy of the sensitive sentence, in files the
 path filter never touches. After pass 1 the entry showed 0 hits, but

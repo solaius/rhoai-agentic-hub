@@ -47,7 +47,7 @@ Ask these questions conversationally, one per message. Adapt based on answers â€
 
 **Validation**: Cross-reference against the [Official Product Names List](https://docs.google.com/spreadsheets/d/1DLS_lS3VKidgZIvcLmLp9BoiqptkvqHWfe1D5FD2kfk/edit?gid=1987148185#gid=1987148185) and the target feature's `knowledge/index.md` (plus `/memory/index.md` for current-state facts like roadmap dates). Use official names only.
 
-**Feature routing**: Based on products/topics, propose a feature from `features/features.yaml`:
+**Feature routing**: Based on products/topics, propose a feature from `components/components.yaml`:
 
 | Products/Topics | Suggested Feature |
 |---|---|
@@ -61,9 +61,9 @@ Ask these questions conversationally, one per message. Adapt based on answers â€
 | Prompt/agent iteration studio, playground UX | `gen-ai-studio` |
 | Cross-cutting AI Gateway, AI Hub UI, org-wide strategy, industry perspective, or anything spanning multiple products | `platform` |
 
-Present the proposed feature and topic-short slug for user confirmation: "I'd suggest filing this under `features/mcp-gateway/enablement/blog-mcp-gateway-openclaw/`. Does that work, or would you prefer a different feature?"
+Present the proposed feature and topic-short slug for user confirmation: "I'd suggest filing this under `components/mcp-gateway/enablement/blog-mcp-gateway-openclaw/`. Does that work, or would you prefer a different feature?"
 
-If no existing feature fits, don't invent one â€” hand off to `hub.file` (it creates new feature partitions in `features/features.yaml`), then resume once it exists.
+If no existing feature fits, don't invent one â€” hand off to `hub.file` (it creates new feature partitions in `components/components.yaml`), then resume once it exists.
 
 ### Q5: Source Material
 
@@ -147,7 +147,7 @@ When reviewing an existing draft (not creating from scratch):
 1. Read the draft in full
 2. Infer: blog type, thesis, audience, products, structure
 3. Present inferences to user for confirmation
-4. Ask only about: CTA (if not clear), series context (if not clear), and feature (infer from the draft's existing path if it already lives under a `features/<feature>/enablement/` directory; otherwise ask, same as Q4)
+4. Ask only about: CTA (if not clear), series context (if not clear), and feature (infer from the draft's existing path if it already lives under a `components/<feature>/enablement/` directory; otherwise ask, same as Q4)
 5. Proceed with shortened qualifying summary
 
 ## Exit Condition
@@ -161,8 +161,8 @@ Present the qualifying summary for user confirmation:
 - **Thesis**: [one sentence]
 - **Audience**: [target readers]
 - **Products**: [list]
-- **Feature**: [feature id from features/features.yaml]
-- **Output path**: features/[feature]/enablement/blog-[topic-short]/
+- **Feature**: [feature id from components/components.yaml]
+- **Output path**: components/[feature]/enablement/blog-[topic-short]/
 - **Source material**: [list of sources]
 - **Demo**: [Yes/No â€” details if yes]
 - **Series**: [Standalone / Part N of series name]

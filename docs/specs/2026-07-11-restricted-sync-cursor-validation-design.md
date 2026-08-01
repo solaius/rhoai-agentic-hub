@@ -58,7 +58,7 @@ Keep (unchanged):
 
 Transcripts are large and ephemeral -- not worth tracking even encrypted. The
 existing `**/transcripts/` pattern catches them regardless of location
-(including `restricted/features/platform/work/customer-tracker/transcripts/`).
+(including `restricted/components/platform/work/customer-tracker/transcripts/`).
 
 #### Linter guard
 
@@ -129,7 +129,7 @@ On machine B:
   goes into restricted/
 - `restricted/.env.example` -- stays plaintext, stays tracked
 - `docs/setup.md` step 6 -- simplifies (no more manual file copy for
-  restricted/features/; just the key file once)
+  restricted/components/; just the key file once)
 
 ### Acceptance criteria
 

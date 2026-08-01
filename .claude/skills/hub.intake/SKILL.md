@@ -10,16 +10,16 @@ transcript files, pasted text) from the prompt. Ask ONCE, upfront, for
 anything obviously missing (no topic, or no sources and no facts to
 file) — then run the flow without further questions until the gate.
 
-1. ROUTE HOME: match the topic against features/features.yaml;
+1. ROUTE HOME: match the topic against components/components.yaml;
    story-shaped (pillar/cross-feature narrative) → narrative/. No fit →
    propose a new partition (id, title, one-line description) per
-   hub.file step 1; the features.yaml append and subdirectory creation
+   hub.file step 1; the components.yaml append and subdirectory creation
    (ONLY what this intake needs) ride the step-4 gate with every other
    write — there is no separate partition-approval moment. A NEW partition also gets a
    starter knowledge/fact-<id>-overview.md (what it is, current status,
    key links) built from the user's basic info. RHOAI-feature overviews
    link the RHOAI architecture repo
-   (/features/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
+   (/components/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
    under key links.
 2. FILE SOURCES: each source per hub.file steps 2-5 — canonical URI
    (/conventions/uris.md), ref- entry with a load-bearing one-line
@@ -35,7 +35,7 @@ file) — then run the flow without further questions until the gate.
    inside — fact-, decision-, question-, person-, qa- (dedupe per
    hub.capture step 2 — recurrence appends to asks:, never duplicates).
    Multi-feature material keeps the primary home and declares
-   `features: [ids]`. Draft in the session/scratchpad — no repo writes
+   `components: [ids]`. Draft in the session/scratchpad — no repo writes
    before the gate.
 4. BATCH GATE: one table — every proposed write, one line:
    `path: description [public|restricted] [new|update]`. Full content on

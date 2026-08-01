@@ -44,7 +44,7 @@ gate can name what will fire.
   `transport=` kwarg.
 - After every task: `python scripts/hub_lint.py` reports **0 errors** and the
   warning count has not increased over the pre-task baseline (currently **81**).
-- Never hand-edit generated files (`features/index.md`, `*/index.md`,
+- Never hand-edit generated files (`components/index.md`, `*/index.md`,
   `views/*`, `memory/index.md`). Run `python scripts/hub_index.py`.
 - `AGENTS.md` has a 150-line CI budget. Two new skill rows must fit.
 - Links in markdown use the leading-slash repo-root form.
@@ -2071,7 +2071,7 @@ def write(root: Path, rel: str, text: str):
 
 
 def make_repo(tmp_path: Path) -> Path:
-    write(tmp_path, "features/features.yaml",
+    write(tmp_path, "components/components.yaml",
           "features:\n"
           "- id: mcp-registry\n  title: R\n  description: d\n"
           "  jira:\n    jql: 'project = RHAIRFE'\n"
@@ -2180,7 +2180,7 @@ from hublib.shellenv import load_env
 
 def _jira_cfg(root, feature):
     """The feature's jira: block. None = unknown feature, {} = no scope."""
-    p = root / "features" / "features.yaml"
+    p = root / "features" / "components.yaml"
     data = yaml.safe_load(p.read_text(encoding="utf-8")) if p.is_file() else {}
     for f in (data or {}).get("features") or []:
         if isinstance(f, dict) and f.get("id") == feature:
@@ -2191,7 +2191,7 @@ def _jira_cfg(root, feature):
 async def _scan(root, feature, out, today):
     cfg = _jira_cfg(root, feature)
     if cfg is None:
-        print(f"ERROR unknown feature '{feature}' (not in features/features.yaml)")
+        print(f"ERROR unknown feature '{feature}' (not in components/components.yaml)")
         return 2
     if not cfg.get("jql"):
         print(f"ERROR no stored jira scope for '{feature}' - run hub.jira-sweep "
@@ -2416,9 +2416,9 @@ In `scripts/hublib/disclosure.py`, in the `surfaces` tuple inside `_scan_files`,
 add one line directly after the `jira-snapshot.yaml` entry:
 
 ```python
-        ("features/*/work/jira-snapshot.yaml", False),
-        ("features/*/work/triage-log.yaml", False),
-        ("features/*/work/refresh-*.yaml", False),
+        ("components/*/work/jira-snapshot.yaml", False),
+        ("components/*/work/triage-log.yaml", False),
+        ("components/*/work/refresh-*.yaml", False),
 ```
 
 - [ ] **Step 4: Write the skill**
@@ -2433,7 +2433,7 @@ description: Run the RFE triage ceremony for one feature - scan its open Feature
 
 # hub.jira-triage
 
-Input: a feature id (its `jira:` scope in features.yaml supplies the JQL).
+Input: a feature id (its `jira:` scope in components.yaml supplies the JQL).
 Spec: [/docs/specs/2026-07-11-jira-operating-batch-design.md](/docs/specs/2026-07-11-jira-operating-batch-design.md).
 
 This is the ONLY skill in the hub with a Jira write surface. Every other
@@ -2448,7 +2448,7 @@ hub.jira-* skill is read-only, and that is deliberate: keep it that way.
    Requests) before it fetches. Read it back to the human and confirm.
    Unknown feature or no stored scope: exit 2, offer hub.jira-sweep.
 3. REVIEW. Move the report to
-   `restricted/features/<feature>/work/triage-<date>.html` and tell the human
+   `restricted/components/<feature>/work/triage-<date>.html` and tell the human
    to open it. Keep `rows-<feature>.json` in scratch: the apply step needs it.
    The human clicks through the rows and hits Export Decisions, which downloads
    `triage-decisions-<date>.json`. Ask where it landed.
@@ -2464,12 +2464,12 @@ hub.jira-* skill is read-only, and that is deliberate: keep it that way.
    comments, then transitions. Report applied/skipped/rejected/errors and name
    every transition that fired.
 6. RECORD. Copy the proposed `triage-log-<feature>.yaml` to
-   `features/<feature>/work/triage-log.yaml`. It carries no Jira prose by
+   `components/<feature>/work/triage-log.yaml`. It carries no Jira prose by
    design: never add summaries or comment bodies to it.
    `python scripts/hub_index.py` then `python scripts/hub_lint.py` (0 errors).
 7. COMMIT. Stage explicitly, NEVER `git add -A` (shared checkout; see
    fact-concurrent-session-git-hygiene). Check `git diff --cached --stat`, then:
-   `git commit -m "triage(<feature>): <n> issues, <m> applied" -- features/<feature>/work/triage-log.yaml <regenerated indexes>`
+   `git commit -m "triage(<feature>): <n> issues, <m> applied" -- components/<feature>/work/triage-log.yaml <regenerated indexes>`
    and `git push`.
 
 NEVER: write the HTML report into the tracked tree; put a Jira summary or
@@ -2637,7 +2637,7 @@ scanner). `0 stale file(s)`. All tests PASS. AGENTS.md under 150 lines.
 - [ ] **Step 8: Commit**
 
 ```bash
-git add AGENTS.md docs/skills.md docs/tooling.md conventions/layout.md docs/enhancements.md memory/facts/fact-jira-write-surface.md memory/log.md memory/index.md views/ features/index.md
+git add AGENTS.md docs/skills.md docs/tooling.md conventions/layout.md docs/enhancements.md memory/facts/fact-jira-write-surface.md memory/log.md memory/index.md views/ components/index.md
 git diff --cached --stat
 git commit -m "docs: Jira operating batch paperwork (#30, #27b, #29)
 
@@ -2685,7 +2685,7 @@ Expected: `validate.yml` green (pytest, hub_lint, hub_index --check).
 
 - [ ] **Step 5: Confirm the report never entered the tracked tree**
 
-Run: `git log --oneline --all -- 'features/*/work/triage-*.html' | head`
+Run: `git log --oneline --all -- 'components/*/work/triage-*.html' | head`
 Expected: empty. The HTML report must exist only under `restricted/` (gitignored)
 and in scratch. If anything shows here, it is a disclosure incident: the repo is
 PUBLIC and the report carries live Jira summaries.

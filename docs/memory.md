@@ -23,7 +23,7 @@ flowchart LR
     W["durable item surfaces mid-session"] -->|hub.capture| G
     G -->|approved, public| M["memory/ (tracked)"]
     G -->|approved, restricted| R["restricted/memory/ (local only)"]
-    G -->|domain knowledge, not working context| K["features/(f)/knowledge/"]
+    G -->|domain knowledge, not working context| K["components/(f)/knowledge/"]
     G -->|discard| X["dropped"]
 ```
 

@@ -8,7 +8,7 @@ status: current
 As of the component hub build-out (2026-07-12), all five knowledge hubs
 (RHCL/Gateway, Management, MCP Catalog, MCP Lifecycle Operator, MCP
 Registry) carry the same two standard pages: a Jobs to be Done page under
-Understand (renders every `narrative/knowledge/jtbd-*.md` whose `features:`
+Understand (renders every `narrative/knowledge/jtbd-*.md` whose `components:`
 list includes the hub's feature id) and a Jira Tracker (Strats) page under
 Plan (a static table of the feature's RHAISTRAT issues, generated from its
 stored Jira scope).
@@ -24,7 +24,7 @@ Jira unreachable means no tracker change is proposed; the page keeps its
 last `data-verified` date and the staleness indicator surfaces it.
 
 **Open item for owner review:** the mcp-gateway Jira scope added to
-`features.yaml` to support the RHCL hub's tracker page is provisional, a
+`components.yaml` to support the RHCL hub's tracker page is provisional, a
 summary-match JQL (`project = RHAISTRAT AND summary ~ "MCP Gateway"`) with
 no key allowlist. The other four features' scopes anchor on specific keys.
 Refine when there's time to curate it.

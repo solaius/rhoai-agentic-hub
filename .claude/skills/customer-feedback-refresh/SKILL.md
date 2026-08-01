@@ -9,7 +9,7 @@ Reviews the customer interest tracker for staleness, completeness, and accuracy 
 
 ## Tracker Location
 
-`restricted/features/platform/work/customer-tracker/customer-interest-tracker.html`
+`restricted/components/platform/work/customer-tracker/customer-interest-tracker.html`
 
 Same file `customer-feedback-ingest` writes. If it doesn't exist yet on this
 machine, tell the user and point them at `customer-feedback-ingest` to create
@@ -27,7 +27,7 @@ Review every row in the Open Action Items table:
 
 ### 2. Source Coverage
 
-Compare files in `restricted/features/platform/work/customer-tracker/transcripts/`
+Compare files in `restricted/components/platform/work/customer-tracker/transcripts/`
 against meetings listed in the tracker:
 - Flag transcriptions not yet ingested
 - Flag tracker entries with no source transcription
@@ -48,7 +48,7 @@ Check tracker interest levels against product roadmap changes:
 - If a feature shipped (moved to GA), note that in the detail section
 - If a customer's requirement was addressed by a new release, update the detail notes
 - Check `memory/profiles/roadmap.md` and the relevant feature's
-  `features/<f>/knowledge/index.md` (mcp-gateway, mcp-registry, mcp-ecosystem,
+  `components/<f>/knowledge/index.md` (mcp-gateway, mcp-registry, mcp-ecosystem,
   agent-registry, etc. — whichever this customer's interests map to) for
   newly captured decisions or facts that affect a tracked customer's interest
   areas. This replaces the old repo's single `docs/knowledge-registry.md`

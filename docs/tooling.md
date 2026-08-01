@@ -83,7 +83,7 @@ content stays convention-clean even though CI never sees it.
 
 - **Restricted patterns (errors, local-first).** An OPTIONAL, gitignored
   `restricted/lint-patterns.txt` — one case-insensitive regex per line, `#`
-  comments allowed — is scanned over `features/*/enablement/**/*.html`,
+  comments allowed — is scanned over `components/*/enablement/**/*.html`,
   `narrative/enablement/**/*.html`, and all public knowledge entries. A match
   is an ERROR naming the file:line and the pattern's line number (never its
   text). CI never sees the pattern file, so this net only exists on machines

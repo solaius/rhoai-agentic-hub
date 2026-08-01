@@ -57,13 +57,13 @@ issues.redhat.com.
 - `scripts/hublib/schema.py`: wires `check_audience_links` into `lint_repo`
 - `.github/workflows/publish.yml`: internal target steps
 - `.claude/skills/hub.refresh-site/SKILL.md`, `.claude/skills/hub.publish/SKILL.md`: contract updates
-- `features/mcp-catalog/enablement/catalog-hub/` (14 pages + nav.js + styles.css + artifact.md)
-- `features/mcp-lifecycle-operator/enablement/mcplo-hub/` (16 pages + assets)
-- `features/mcp-registry/enablement/registry-hub/` (12 pages + assets)
-- `features/{mcp-catalog,mcp-lifecycle-operator,mcp-registry}/work/refresh-*.yaml`
-- Thinned pages in `features/mcp-ecosystem/enablement/management-hub/` and
-  `features/mcp-gateway/enablement/rhcl-hub/`
-- `publish/manifest.yaml`, `features/features.yaml`, `conventions/publishing.md`,
+- `components/mcp-catalog/enablement/catalog-hub/` (14 pages + nav.js + styles.css + artifact.md)
+- `components/mcp-lifecycle-operator/enablement/mcplo-hub/` (16 pages + assets)
+- `components/mcp-registry/enablement/registry-hub/` (12 pages + assets)
+- `components/{mcp-catalog,mcp-lifecycle-operator,mcp-registry}/work/refresh-*.yaml`
+- Thinned pages in `components/mcp-ecosystem/enablement/management-hub/` and
+  `components/mcp-gateway/enablement/rhcl-hub/`
+- `publish/manifest.yaml`, `components/components.yaml`, `conventions/publishing.md`,
   `docs/enhancements.md` updates
 
 Dependencies: Tasks 1-3 (increment 0) strictly ordered. Task 4 before Task
@@ -189,7 +189,7 @@ from hublib.publisher import check_audience_links
 
 def test_check_audience_links_flags_public_to_internal(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/enablement/site/index.html",
+    write(root, "components/x/enablement/site/index.html",
           '<a href="../internal/">peek</a>')
     errors = check_audience_links(root)
     assert len(errors) == 1
@@ -198,7 +198,7 @@ def test_check_audience_links_flags_public_to_internal(tmp_path):
 
 def test_check_audience_links_clean_and_internal_to_public_ok(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/enablement/internal/index.html",
+    write(root, "components/x/enablement/internal/index.html",
           '<a href="../site/">fine</a> <a href="https://example.com/x">ext</a>')
     assert check_audience_links(root) == []
 ```
@@ -314,7 +314,7 @@ Then handle the reverse direction (internal relative links that escape the
 internal target): grep both hubs for cross-artifact relative links,
 
 ```bash
-grep -rnoE 'href="\.\./\.\./(\.\./)?[a-z-]+/[a-z0-9-]+/[^"]*"' features/mcp-gateway/enablement/rhcl-hub features/mcp-ecosystem/enablement/management-hub | grep -v -E 'mcp-ecosystem/hub|mcp-gateway/rhcl|mcp-catalog/hub|mcp-lifecycle-operator/hub|mcp-registry/hub'
+grep -rnoE 'href="\.\./\.\./(\.\./)?[a-z-]+/[a-z0-9-]+/[^"]*"' components/mcp-gateway/enablement/rhcl-hub components/mcp-ecosystem/enablement/management-hub | grep -v -E 'mcp-ecosystem/hub|mcp-gateway/rhcl|mcp-catalog/hub|mcp-lifecycle-operator/hub|mcp-registry/hub'
 ```
 
 and rewrite each hit that points at a PUBLIC dest to the absolute URL form
@@ -425,14 +425,14 @@ title in the HTML). Report all four checks.
 ```python
 def test_sections_block_valid(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
+    write(tmp_path, "components/x/work/refresh-site.yaml",
           VALID + "sections:\n  jtbd: true\n  jira_tracker: {project: RHAISTRAT}\n")
     assert validate(tmp_path) == ([], [])
 
 
 def test_sections_block_invalid(tmp_path):
     make_site(tmp_path)
-    write(tmp_path, "features/x/work/refresh-site.yaml",
+    write(tmp_path, "components/x/work/refresh-site.yaml",
           VALID + "sections:\n  bogus: 1\n  jtbd: yes please\n  jira_tracker: {}\n")
     errors, _ = validate(tmp_path)
     assert len([e for e in errors if "section" in e]) == 3
@@ -498,10 +498,10 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 5: mcp-catalog Jira scope + snapshot
 
 **Files:**
-- Modify: `features/features.yaml`
-- Create: `features/mcp-catalog/work/jira-snapshot.yaml` (generated)
+- Modify: `components/components.yaml`
+- Create: `components/mcp-catalog/work/jira-snapshot.yaml` (generated)
 
-- [ ] **Step 1:** In `features/features.yaml`, under the `mcp-catalog`
+- [ ] **Step 1:** In `components/components.yaml`, under the `mcp-catalog`
 entry (after `description:`), add:
 
 ```yaml
@@ -510,14 +510,14 @@ entry (after `description:`), add:
     ref_types: [Outcome, Feature]
 ```
 
-(Seed keys from `features/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md`.)
+(Seed keys from `components/mcp-catalog/knowledge/ref-mcp-catalog-strat-jiras.md`.)
 
 - [ ] **Step 2:** Validate and sweep (env comes from `restricted/.env` via
 the doctor's shell wiring):
-`python scripts/hub_jira.py --try-jql "$(python -c "import yaml;print(yaml.safe_load(open('features/features.yaml'))['features'][4]['jira']['jql'])")"`
+`python scripts/hub_jira.py --try-jql "$(python -c "import yaml;print(yaml.safe_load(open('components/components.yaml'))['features'][4]['jira']['jql'])")"`
 (sanity: returns issues, no error; index 4 = mcp-catalog, verify first),
 then `python scripts/hub_jira.py --sweep mcp-catalog`.
-Expected: `features/mcp-catalog/work/jira-snapshot.yaml` created with
+Expected: `components/mcp-catalog/work/jira-snapshot.yaml` created with
 RHAISTRAT keys present. If Jira is unreachable, STOP and report (Task 9
 needs this snapshot).
 
@@ -525,7 +525,7 @@ needs this snapshot).
 (0 errors), then commit:
 
 ```bash
-git add features/features.yaml features/mcp-catalog/work/jira-snapshot.yaml features/index.md features/mcp-catalog/index.md views/
+git add components/components.yaml components/mcp-catalog/work/jira-snapshot.yaml components/index.md components/mcp-catalog/index.md views/
 git commit -m "jira(mcp-catalog): stored scope + first snapshot for the catalog hub tracker
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
@@ -536,14 +536,14 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 ### Task 6: Catalog hub scaffold
 
 **Files:**
-- Create: `features/mcp-catalog/enablement/catalog-hub/{nav.js,styles.css,index.html,reference.html,artifact.md}`
+- Create: `components/mcp-catalog/enablement/catalog-hub/{nav.js,styles.css,index.html,reference.html,artifact.md}`
 
 **Interfaces:**
 - Produces: the SITE_MAP page paths below; Tasks 7-9 must create exactly
   these files.
 
 - [ ] **Step 1:** Copy `styles.css` verbatim from
-`features/mcp-ecosystem/enablement/management-hub/styles.css`.
+`components/mcp-ecosystem/enablement/management-hub/styles.css`.
 
 - [ ] **Step 2:** Copy `nav.js` from the management hub, then replace:
 `SIDEBAR_STATE_KEY = 'catalog-hub-sidebar-state'`; header title block to
@@ -589,11 +589,11 @@ const HUB_NETWORK = [
 ```
 
 - [ ] **Step 3:** Write `index.html` (landing: hero with one-paragraph
-what/why from `features/mcp-catalog/knowledge/fact-mcp-catalog-overview.md`,
+what/why from `components/mcp-catalog/knowledge/fact-mcp-catalog-overview.md`,
 section cards linking the five sections, release-train strip DP 3.4 ->
 DP 3.5 -> TP 3.6 EA1 -> GA 3.6) and `reference.html` (quick facts table:
 upstream repos, release train, key Jiras, glossary of trust tiers). Use
-`features/mcp-ecosystem/enablement/management-hub/index.html` and
+`components/mcp-ecosystem/enablement/management-hub/index.html` and
 `reference.html` as the structural reference (same div ids `hub-header`,
 `hub-sidebar`, `breadcrumb` div, `page-footer` with `data-verified`).
 
@@ -605,7 +605,7 @@ type: artifact
 title: MCP Catalog Knowledge Hub
 description: 14-page enablement site for the MCP Catalog (discovery/storefront) across understand/sell/build/govern/plan. Internal audience; customer-engagement detail anonymized.
 timestamp: <TODAY>
-features: [mcp-catalog]
+components: [mcp-catalog]
 source: seeded from rhcl-hub govern/catalog.html + management-hub component sections + mcp-catalog partition (spec 2026-07-11)
 ---
 14-page multi-section site sharing styles.css/nav.js; entry point
@@ -625,10 +625,10 @@ check HTML links), commit `feat(catalog-hub): scaffold (nav, styles, landing, re
 - Create: `catalog-hub/understand/what-is-the-catalog.html`,
   `understand/jobs-to-be-done.html`, `understand/upstream-ecosystem.html`,
   `sell/positioning.html`, `sell/competitive.html`
-  (all under `features/mcp-catalog/enablement/catalog-hub/`)
+  (all under `components/mcp-catalog/enablement/catalog-hub/`)
 
 **Seed map (read these before writing):**
-- RHCL `features/mcp-gateway/enablement/rhcl-hub/govern/catalog.html`:
+- RHCL `components/mcp-gateway/enablement/rhcl-hub/govern/catalog.html`:
   Purpose, "What Shipped in 3.4 DP" 10-row partner table, partner pipeline
   (goes to govern task, skip here), technical requirements, upstream
   integration, post-Summit plans.
@@ -700,7 +700,7 @@ check HTML links), commit `feat(catalog-hub): scaffold (nav, styles, landing, re
   Catalog Integration), 7-row technical requirements table, STDIO RFEs
   (RHAIRFE-2514/2515/2516 from the component card).
 - Partition: `fact-partner-mcp-catalog.md` is in mcp-ecosystem knowledge
-  (check `features/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md`),
+  (check `components/mcp-ecosystem/knowledge/fact-partner-mcp-catalog.md`),
   `question-kubeflow-hub-catalog-alignment.md` (ANSWERED: kubeflow/hub IS
   the upstream).
 
@@ -728,7 +728,7 @@ Steps: same rhythm as Task 7 (read seeds, write four pages, lint, commit
 - Create: `catalog-hub/plan/roadmap.html`, `plan/jira-tracker.html`,
   `plan/gaps-open-questions.html`
 
-**Consumes:** `features/mcp-catalog/work/jira-snapshot.yaml` (Task 5),
+**Consumes:** `components/mcp-catalog/work/jira-snapshot.yaml` (Task 5),
 Task 4's tracker row contract.
 
 **Page specs:**
@@ -761,23 +761,23 @@ Steps: read seeds, write three pages, lint, commit
   `plan/gaps.html`, `plan/open-questions.html`, `plan/roadmap.html`,
   `sell/competitive.html`; RHCL `govern/catalog.html`,
   RHCL `sell/competitive.html`
-- Create: `features/mcp-catalog/work/refresh-catalog-hub.yaml`
+- Create: `components/mcp-catalog/work/refresh-catalog-hub.yaml`
 
 - [ ] **Step 1: Manifest entry** (append to `publish/manifest.yaml`):
 
 ```yaml
-- source: features/mcp-catalog/enablement/catalog-hub/
+- source: components/mcp-catalog/enablement/catalog-hub/
   dest: mcp-catalog/hub/
   audience: internal
   title: MCP Catalog Knowledge Hub
   description: 14-page enablement site for the MCP Catalog (discovery/storefront) across understand/sell/build/govern/plan.
 ```
 
-- [ ] **Step 2: Refresh config** `features/mcp-catalog/work/refresh-catalog-hub.yaml`:
+- [ ] **Step 2: Refresh config** `components/mcp-catalog/work/refresh-catalog-hub.yaml`:
 
 ```yaml
 # Source list for hub.refresh-site. Tracked and PUBLIC.
-site: features/mcp-catalog/enablement/catalog-hub/
+site: components/mcp-catalog/enablement/catalog-hub/
 sources:
   gdocs:
   - {id: 1L3yVBHKJLwVJ2SzF5NunzXc8gFJNZKbMU6OWfPyB_fE, title: MCP Catalog}
@@ -791,21 +791,21 @@ sources:
     channels: [forum-ai-asset-management]
     window_days: 14
   local:
-  - features/mcp-catalog/knowledge/
-  - features/mcp-catalog/research/
+  - components/mcp-catalog/knowledge/
+  - components/mcp-catalog/research/
 sections:
   jtbd: true
   jira_tracker: {project: RHAISTRAT}
 ```
 
 (Verify the model-metadata-collection org/repo against
-`features/mcp-ecosystem/knowledge/ref-model-metadata-collection-repo.md`
+`components/mcp-ecosystem/knowledge/ref-model-metadata-collection-repo.md`
 before writing.)
 
 - [ ] **Step 3: Management hub launch conversion.**
   - `nav.js`: Catalog HUB_NETWORK entry loses `comingSoon: true`.
   - `index.html` + `reference.html`: convert Catalog coming-soon badges to
-    live links (`grep -rn "coming soon" features/mcp-ecosystem/enablement/management-hub -i`
+    live links (`grep -rn "coming soon" components/mcp-ecosystem/enablement/management-hub -i`
     and fix the Catalog ones only).
   - `understand/component-overview.html`: Catalog card shrinks to ~80
     words (purpose, status line) + prominent `Full depth: MCP Catalog
@@ -841,7 +841,7 @@ before writing.)
 ### Task 11: MCPLO hub scaffold
 
 Mirror of Task 6 under
-`features/mcp-lifecycle-operator/enablement/mcplo-hub/`:
+`components/mcp-lifecycle-operator/enablement/mcplo-hub/`:
 `SIDEBAR_STATE_KEY = 'mcplo-hub-sidebar-state'`, header
 `<span class="hub-header__logo">MCP</span> Lifecycle Operator`,
 HUB_NETWORK self = MCPLO entry, Catalog entry now LIVE (no comingSoon),
@@ -991,7 +991,7 @@ Steps: read seeds, write 6 pages, lint, commit
   16-page description); `refresh-mcplo-hub.yaml`:
 
 ```yaml
-site: features/mcp-lifecycle-operator/enablement/mcplo-hub/
+site: components/mcp-lifecycle-operator/enablement/mcplo-hub/
 sources:
   gdocs:
   - {id: 1vRu8pSLi6VMrX1Cdn64RdQTOhjQZG97BIxTRZadtjVY, title: MCPLO Weekly Meeting Notes}
@@ -1004,8 +1004,8 @@ sources:
     channels: [forum-mcp-lifecycle-operator]
     window_days: 14
   local:
-  - features/mcp-lifecycle-operator/knowledge/
-  - features/mcp-lifecycle-operator/research/
+  - components/mcp-lifecycle-operator/knowledge/
+  - components/mcp-lifecycle-operator/research/
 sections:
   jtbd: true
   jira_tracker: {project: RHAISTRAT}
@@ -1030,7 +1030,7 @@ sections:
 
 ### Task 15: Registry hub scaffold
 
-Mirror of Task 6 under `features/mcp-registry/enablement/registry-hub/`:
+Mirror of Task 6 under `components/mcp-registry/enablement/registry-hub/`:
 `SIDEBAR_STATE_KEY = 'registry-hub-sidebar-state'`, header
 `<span class="hub-header__logo">MCP</span> Registry`, HUB_NETWORK self =
 Registry, Catalog and MCPLO now live, none comingSoon. SITE_MAP:
@@ -1153,7 +1153,7 @@ Task-14 pattern for Registry:
   `mcp-registry/hub/`, audience internal); `refresh-registry-hub.yaml`:
 
 ```yaml
-site: features/mcp-registry/enablement/registry-hub/
+site: components/mcp-registry/enablement/registry-hub/
 sources:
   gdocs:
   - {id: 11mJpJ-Py8FxRDYdw41mMWEBvlahENS4rHqnpDNpqa8Y, title: MCP Registry MVP Requirements}
@@ -1164,7 +1164,7 @@ sources:
     channels: [forum-ai-asset-management]
     window_days: 14
   local:
-  - features/mcp-registry/knowledge/
+  - components/mcp-registry/knowledge/
 sections:
   jtbd: true
   jira_tracker: {project: RHAISTRAT}
@@ -1251,7 +1251,7 @@ const SITE_MAP = [
     fold their remaining seam content into `end-to-end-setup.html` (version
     matrix, seam artifacts, cross-component issues) and DELETE all three.
 - [ ] **Step 3:** Update every deleted page's inbound links
-  (`grep -rn "component-integration.html\|summit-feedback.html\|open-questions.html\|operator-installation.html\|configuration-reference.html\|troubleshooting.html" features/ --include=*.html`)
+  (`grep -rn "component-integration.html\|summit-feedback.html\|open-questions.html\|operator-installation.html\|configuration-reference.html\|troubleshooting.html" components/ --include=*.html`)
   to their new homes, including from the three component hubs and RHCL.
 - [ ] **Step 4:** index+lint, commit
   `restructure(management-hub): umbrella IA, component directory, merged architecture, decision guide`.
@@ -1261,14 +1261,14 @@ const SITE_MAP = [
 
 ### Task 20: Umbrella rollup tracker + gateway scope + refresh rebalance
 
-**Files:** `features/features.yaml` (mcp-gateway jira block),
+**Files:** `components/components.yaml` (mcp-gateway jira block),
 management-hub `plan/jira-tracker.html`,
-`features/mcp-ecosystem/work/refresh-management-hub.yaml`,
-`features/mcp-gateway/work/jira-snapshot.yaml` (generated)
+`components/mcp-ecosystem/work/refresh-management-hub.yaml`,
+`components/mcp-gateway/work/jira-snapshot.yaml` (generated)
 
 - [ ] **Step 1: Gateway Jira scope.** Derive candidate RHAISTRAT keys:
-  `grep -rn "RHAISTRAT-[0-9]*" features/mcp-gateway/knowledge/ | grep -oE "RHAISTRAT-[0-9]+" | sort -u`.
-  Add to features.yaml under mcp-gateway:
+  `grep -rn "RHAISTRAT-[0-9]*" components/mcp-gateway/knowledge/ | grep -oE "RHAISTRAT-[0-9]+" | sort -u`.
+  Add to components.yaml under mcp-gateway:
 
 ```yaml
   jira:
@@ -1285,7 +1285,7 @@ management-hub `plan/jira-tracker.html`,
   intro = swept dates per feature. Outcome rows (type Outcome) listed
   first per section.
 - [ ] **Step 3: Rebalance** `refresh-management-hub.yaml`: drop
-  `features/mcp-registry/knowledge/` and `features/mcp-catalog/knowledge/`
+  `components/mcp-registry/knowledge/` and `components/mcp-catalog/knowledge/`
   from `local:` (their hubs own them now; keep mcp-ecosystem paths); add
 
 ```yaml
@@ -1316,11 +1316,11 @@ pages across the network.
 - [ ] **Step 2: RHCL retrofits.** `understand/jobs-to-be-done.html`: jobs
   whose `features:` includes `mcp-gateway` (grep to enumerate), Task 7
   render format; add to RHCL SITE_MAP under Understand. `plan/jira-tracker.html`:
-  RHAISTRAT rows from `features/mcp-gateway/work/jira-snapshot.yaml`
+  RHAISTRAT rows from `components/mcp-gateway/work/jira-snapshot.yaml`
   (Task 20), add to SITE_MAP under Plan. Refresh `plan/skus.html` stub's
   pointer (entitlement page moved? verify path still resolves).
   Add `sections: {jtbd: true, jira_tracker: {project: RHAISTRAT}}` to
-  `features/mcp-gateway/work/refresh-rhcl-hub.yaml`.
+  `components/mcp-gateway/work/refresh-rhcl-hub.yaml`.
 - [ ] **Step 3: Management JTBD.** New
   `understand/jobs-to-be-done.html`: aggregate jobs tagged with ANY of
   mcp-ecosystem, mcp-gateway, mcp-catalog, mcp-lifecycle-operator,
@@ -1333,8 +1333,8 @@ pages across the network.
   TODAY for touched pages.
 - [ ] **Step 5: Contradiction checklist verification.** Grep the network
   for each spec-checklist item and confirm resolved:
-  `grep -rn "four-track\|Draft → Candidate\|early access" features/*/enablement/*hub* --include=*.html -i`
-  (no shipped-four-track claims, no 3.5-early-access), `grep -rn "restricted-use entitlement" features/mcp-lifecycle-operator features/mcp-gateway/enablement/rhcl-hub/govern/lifecycle-operator.html` (corrected), TP-date and GA-phrasing spot checks. Fix anything found.
+  `grep -rn "four-track\|Draft → Candidate\|early access" components/*/enablement/*hub* --include=*.html -i`
+  (no shipped-four-track claims, no 3.5-early-access), `grep -rn "restricted-use entitlement" components/mcp-lifecycle-operator components/mcp-gateway/enablement/rhcl-hub/govern/lifecycle-operator.html` (corrected), TP-date and GA-phrasing spot checks. Fix anything found.
 - [ ] **Step 6:** index+lint+pytest, commit
   `network(hubs): reciprocal links, RHCL hub-network + retrofits, management jtbd, checklist sweep`,
   push, watch green, fetch all five internal hub URLs (200 + title each).
@@ -1344,7 +1344,7 @@ pages across the network.
 ### Task 22: Closeout
 
 **Files:** `docs/enhancements.md`,
-`features/mcp-ecosystem/work/management-hub-umbrella-plan.md`,
+`components/mcp-ecosystem/work/management-hub-umbrella-plan.md`,
 `memory/` via hub.capture
 
 - [ ] **Step 1:** `docs/enhancements.md`: move #35 to Done (shipped date,

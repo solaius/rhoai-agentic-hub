@@ -6,7 +6,7 @@ description: Refresh the hub against live Jira — re-run every stored feature s
 # hub.jira-sync
 
 Input: optional feature id — default is every feature with a `jira:` block
-in features/features.yaml. Spec:
+in components/components.yaml. Spec:
 /docs/specs/2026-07-09-jira-hub-skills-design.md.
 
 1. PRE-FLIGHT: `python scripts/hub_jira.py --check`. Failure → stop and

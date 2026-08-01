@@ -32,10 +32,10 @@ def test_report_is_self_contained():
     assert 'href="http' not in html or 'href="https://jira.test/browse' in html
 
 
-def test_feature_is_a_data_attribute_not_a_title_scrape():
+def test_component_is_a_data_attribute_not_a_title_scrape():
     html_out = triage_html.render("mcp-registry", "project = X", [scan_row()],
                                   TODAY, "https://jira.test")
-    assert 'data-feature="mcp-registry"' in html_out
+    assert 'data-comp="mcp-registry"' in html_out
     # the em-dash title split that pm-toolkit used must not reappear
     assert "document.title.split" not in html_out
     # the no-em-dashes rule governs what WE author (chrome: CSS, JS, static

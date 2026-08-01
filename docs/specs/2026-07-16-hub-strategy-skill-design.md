@@ -22,7 +22,7 @@ returning to a feature after weeks means re-reading everything.
 
 ## Decisions already made (brainstorm, 2026-07-16 — do not re-litigate)
 
-- **D1 — Shape:** ONE living document, `features/<id>/strategy/strategy.md`,
+- **D1 — Shape:** ONE living document, `components/<id>/strategy/strategy.md`,
   rewritten in place on refresh with a `## History` section (profile
   pattern). No dated series, no companion files.
 - **D2 — Jira section:** BOTH halves — a coverage map (existing
@@ -39,7 +39,7 @@ returning to a feature after weeks means re-reading everything.
 
 ## The document contract (`conventions/strategy.md`)
 
-`features/<id>/strategy/strategy.md` (narrative/ may adopt the same shape
+`components/<id>/strategy/strategy.md` (narrative/ may adopt the same shape
 later for the strategy spine; out of scope now).
 
 Frontmatter: `title` ("<Feature> — strategy") · `description` (one line for
@@ -70,7 +70,7 @@ no customer names or deal context ever (restricted-lint enforced).
 
 Prompt-only. Flow:
 
-1. **RESOLVE:** feature id from features/features.yaml (no home → offer
+1. **RESOLVE:** feature id from components/components.yaml (no home → offer
    hub.intake, stop). Existing `strategy/strategy.md` ⇒ REFRESH run.
 2. **PRECONDITIONS:** knowledge/index.md must exist. Empty `research/` →
    warn that the Why/market sections will be thin, offer `hub.research`

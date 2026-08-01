@@ -14,8 +14,8 @@ def write(root: Path, rel: str, text: str):
 
 
 def make_repo(tmp_path: Path) -> Path:
-    write(tmp_path, "features/features.yaml",
-          "features:\n"
+    write(tmp_path, "components/components.yaml",
+          "components:\n"
           "- id: mcp-registry\n  title: R\n  description: d\n"
           "  jira:\n    jql: 'project = RHAIRFE'\n"
           "- id: bare\n  title: B\n  description: d\n")
@@ -35,11 +35,11 @@ def test_scan_requires_out_dir(tmp_path):
                          "--root", str(make_repo(tmp_path))])
 
 
-def test_scan_unknown_feature_exits_2(tmp_path, capsys):
+def test_scan_unknown_component_exits_2(tmp_path, capsys):
     rc = hub_triage.main(["--scan", "nope", "--out", str(tmp_path / "o"),
                           "--root", str(make_repo(tmp_path))])
     assert rc == 2
-    assert "unknown feature" in capsys.readouterr().out
+    assert "unknown component" in capsys.readouterr().out
 
 
 def test_scan_without_stored_scope_exits_2(tmp_path, capsys):
@@ -75,7 +75,7 @@ def test_plan_mode_prints_the_gate_table_and_touches_no_network(tmp_path, capsys
     assert "not in the scan" in out
 
 
-def test_apply_requires_rows_and_feature(tmp_path):
+def test_apply_requires_rows_and_component(tmp_path):
     with pytest.raises(SystemExit):
         hub_triage.main(["--apply", str(tmp_path / "d.json")])
 

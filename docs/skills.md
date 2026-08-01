@@ -49,7 +49,7 @@ families (design decisions D8/D11):
   gate. It cannot assign, edit fields, or create issues. Every other
   `hub.jira-*` skill stays read-only.
 - **Artifact:** `presentation-create` (or `blog-mockup`) → self-contained
-  `features/<f>/enablement/<slug>/` → `hub.publish` → live on the pages
+  `components/<f>/enablement/<slug>/` → `hub.publish` → live on the pages
   site. Building never publishes by itself.
 - **Blog:** `blog-create` → multi-agent draft/review pipeline under
   `enablement/` → final draft ships via **Workfront**, not `hub.publish`.
@@ -69,11 +69,11 @@ families (design decisions D8/D11):
 |---|---|---|---|
 | `hub.capture` | one durable item surfaces mid-session | inline confirm | memory or knowledge entry + reindex + commit |
 | `hub.consolidate` | session end / "consolidate memory" | batch approve/edit/reject, per-item public-vs-restricted | tracked store + clears `.scratch/` + one commit |
-| `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `features.yaml` on first use |
+| `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `components.yaml` on first use |
 | `hub.intake` | onboard a new feature area or bulk-add sources | ask-once upfront + batch write gate (incl. partition) | partition (first use), ref-/typed entries, reindex + commit |
 | `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
 | `hub.strategy` | write/refresh a feature's living strategy doc | brief shown inline + write gate | `strategy/strategy.md`, reindex + commit |
-| `hub.jira-sweep` | sweep Jira for one feature (snapshot + strategic refs) | scope confirm + batch write gate | features.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
+| `hub.jira-sweep` | sweep Jira for one feature (snapshot + strategic refs) | scope confirm + batch write gate | components.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
 | `hub.jira-sync` | refresh swept scopes + watched keys against live Jira | batch write gate | snapshot refreshes, ref-/jtbd updates, reindex + commit |
 | `hub.jira-hygiene` | audit one Jira issue against its type checklist | no (read-only, reports in chat) | nothing - it reports, it does not fix |
 | `hub.jira-triage` | run the periodic RFE triage ceremony for a feature | browser review + inline batch gate, line by line | Jira: labels, comments, `close`/`approve` transitions (ONLY skill that writes to Jira); repo: `work/triage-log.yaml`, reindex + commit |
@@ -82,7 +82,7 @@ families (design decisions D8/D11):
 | `hub.publish` | ship an enablement artifact to the public site | disclosure confirm | `publish/manifest.yaml` entry |
 | `hub.refresh-site` | refresh a published hub site from its live sources | batch write gate | surgical HTML edits to the site under `hub.publish`'s source path |
 | `hub.migrate` | bring old-repo content over | ruling per item | hub files only; old repo is read-only |
-| `presentation-create` | "create a presentation about X" | output path confirm | `features/<f>/enablement/<slug>/index.html` |
+| `presentation-create` | "create a presentation about X" | output path confirm | `components/<f>/enablement/<slug>/index.html` |
 | `blog-create` | draft/review a Red Hat blog post | pipeline checkpoints | drafts under `enablement/`; ships via Workfront |
 | `blog-mockup` | quick branded HTML preview of blog content | no | preview HTML under `enablement/` |
 | `customer-feedback-ingest` | new customer signal from a transcript/email/Jira | confirm per change | `restricted/` tracker only |
@@ -109,9 +109,9 @@ auto-resolved. Ends with reindex, scratch cleared, one commit. Details:
 **`hub.file`** — intake. Normalizes the source URL to its canonical form
 ([/conventions/uris.md](/conventions/uris.md)), picks feature + type, writes
 the entry with a load-bearing one-line `description`. If no feature fits, it
-proposes a new partition (appending to `features/features.yaml` and creating
+proposes a new partition (appending to `components/components.yaml` and creating
 only the needed subdirectories) — the **only** sanctioned way partitions are
-born. Transcripts land in `features/<f>/work/transcripts/` (gitignored) with
+born. Transcripts land in `components/<f>/work/transcripts/` (gitignored) with
 a tracked `ref-` entry pointing at them.
 
 **`hub.intake`** — the guided multi-source front door: topic + a pile of
@@ -128,7 +128,7 @@ Lenses (landscape · upstream · architecture · requirements · competitive
 · jira-gap — the last two driven by `domains/*.yaml` configs) are scoped
 by your prompt: name lenses and only those run. The context load pulls
 the home's knowledge/research/questions plus its `related:` boundary
-siblings from `features/features.yaml` (see
+siblings from `components/components.yaml` (see
 [/conventions/layout.md](/conventions/layout.md) — sibling knowledge
 indexes, research summaries, strategy docs, and Jira snapshots are
 standing context in every lens brief). Two gates: a plan gate (lenses ×
@@ -151,7 +151,7 @@ refresh with a `## History` entry; preconditions nudge toward
 **`hub.jira-sweep`** — the Jira intake path for one feature. First run does
 conversational scope discovery (`--try-jql` iterations until the JQL looks
 right; the approved scope is stored as a `jira:` block in
-`features/features.yaml`). Every run fetches the scope, builds a
+`components/components.yaml`). Every run fetches the scope, builds a
 whitelisted public snapshot (`work/jira-snapshot.yaml` — summaries admitted
 only when an unauthenticated probe proves the issue world-readable), picks
 strategic-tier issues (`ref_types`, default Outcome/Feature) as gated ref-
@@ -189,7 +189,7 @@ surface**, and it is deliberately narrow: add a label, post a comment, fire
 the `close` transition, fire the `approve` transition - that's the entire
 vocabulary. It cannot assign, edit fields, or create issues. `--apply` is
 the one CLI mode that writes to Jira; `--scan` and `--plan` never do. The
-tracked result (`features/<f>/work/triage-log.yaml`) is prose-free by
+tracked result (`components/<f>/work/triage-log.yaml`) is prose-free by
 design - no summaries, no comment bodies - so it needs no redaction in this
 PUBLIC repo. See
 [/memory/facts/fact-jira-write-surface.md](/memory/facts/fact-jira-write-surface.md).

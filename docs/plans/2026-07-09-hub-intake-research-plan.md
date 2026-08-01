@@ -13,7 +13,7 @@
 - This repo is **PUBLIC**: no customer names, deal context, dollar figures, or agreement language in any tracked file, ever.
 - `python scripts/hub_lint.py` must report **0 errors** after every task (warnings allowed; the repo currently emits 47 pre-existing warnings — do not add new ones except where a task says so).
 - `python scripts/hub_index.py --check` must report 0 stale files after every task.
-- Research-doc lint findings are **warnings only** — the 21 pre-convention docs in `features/agent-memory/research/` must never fail the build (they all carry `description` + `timestamp` today, so the expected new-warning count on this repo is **zero**).
+- Research-doc lint findings are **warnings only** — the 21 pre-convention docs in `components/agent-memory/research/` must never fail the build (they all carry `description` + `timestamp` today, so the expected new-warning count on this repo is **zero**).
 - `AGENTS.md` has a hard 150-line CI budget (currently 71 lines; lint errors above 150).
 - No behavior changes to `hub.file`, `hub.capture`, or `hub.consolidate`.
 - Markdown links use leading-slash repo-root form (`/conventions/research.md`); files are UTF-8 with LF newlines.
@@ -83,7 +83,7 @@ pre-convention or migrated docs; `source:` marks migrated provenance) ·
 `hub.research` (primary), `hub.intake` (offers the kickoff),
 `hub.migrate` (imports old-repo series; `source:` marks provenance).
 The reference series:
-[agent-memory research](/features/agent-memory/research/00-executive-summary.md).
+[agent-memory research](/components/agent-memory/research/00-executive-summary.md).
 ```
 
 - [ ] **Step 2: Verify lint and index stay clean**
@@ -110,7 +110,7 @@ Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
 
 **Interfaces:**
 - Consumes: the contract from Task 1 (`description`/`timestamp` as warnings; `index.md`/`REVIEW-NOTES.md` exempt).
-- Produces: `_lint_research(root, research_dir, warnings)` in `hublib.schema`, called from `_lint_tree` for every `features/<id>/research/` and `narrative/research/` (both the main tree and `restricted/`, since `_lint_tree` runs for both). Warning strings start with `<relpath>: research doc `.
+- Produces: `_lint_research(root, research_dir, warnings)` in `hublib.schema`, called from `_lint_tree` for every `components/<id>/research/` and `narrative/research/` (both the main tree and `restricted/`, since `_lint_tree` runs for both). Warning strings start with `<relpath>: research doc `.
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -123,7 +123,7 @@ RESEARCH_DOC = ("---\ntitle: T\ndescription: d\ntimestamp: 2026-07-09\n"
 
 def test_valid_research_doc_no_warnings(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/research/01-landscape.md", RESEARCH_DOC)
+    write(root, "components/x/research/01-landscape.md", RESEARCH_DOC)
     errors, warnings = lint_repo(root)
     assert errors == []
     assert not any("research doc" in w for w in warnings)
@@ -131,7 +131,7 @@ def test_valid_research_doc_no_warnings(tmp_path):
 
 def test_research_doc_missing_description_is_warning(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/research/01-landscape.md",
+    write(root, "components/x/research/01-landscape.md",
           "---\ntitle: T\ntimestamp: 2026-07-09\n---\nbody\n")
     errors, warnings = lint_repo(root)
     assert errors == []
@@ -140,7 +140,7 @@ def test_research_doc_missing_description_is_warning(tmp_path):
 
 def test_research_doc_without_frontmatter_is_warning_not_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/research/02-notes.md", "# just a heading\nbody\n")
+    write(root, "components/x/research/02-notes.md", "# just a heading\nbody\n")
     errors, warnings = lint_repo(root)
     assert errors == []
     assert any("research doc lacks frontmatter" in w for w in warnings)
@@ -148,8 +148,8 @@ def test_research_doc_without_frontmatter_is_warning_not_error(tmp_path):
 
 def test_review_notes_and_index_exempt_from_research_lint(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "features/x/research/REVIEW-NOTES.md", "# rulings\n")
-    write(root, "features/x/research/index.md", "# idx\n")
+    write(root, "components/x/research/REVIEW-NOTES.md", "# rulings\n")
+    write(root, "components/x/research/index.md", "# idx\n")
     errors, warnings = lint_repo(root)
     assert errors == []
     assert not any("research doc" in w for w in warnings)
@@ -267,9 +267,9 @@ upstream (OSS projects, standards, protocols, repos) · architecture
 jira-gap (FUTURE — refuse politely; activates when the Jira hub skills
 land, backlog #2).
 
-1. RESOLVE HOME: feature id → features/<id>/research/; story-shaped →
+1. RESOLVE HOME: feature id → components/<id>/research/; story-shaped →
    narrative/research/. Free topic with no home in
-   features/features.yaml → offer hub.intake first (research needs a home
+   components/components.yaml → offer hub.intake first (research needs a home
    to write into); stop there if declined.
 2. CONTEXT LOAD: read <home>/knowledge/index.md (if present), every doc
    in the existing <home>/research/ series, and open question- entries
@@ -447,10 +447,10 @@ transcript files, pasted text) from the prompt. Ask ONCE, upfront, for
 anything obviously missing (no topic, or no sources and no facts to
 file) — then run the flow without further questions until the gate.
 
-1. ROUTE HOME: match the topic against features/features.yaml;
+1. ROUTE HOME: match the topic against components/components.yaml;
    story-shaped (pillar/cross-feature narrative) → narrative/. No fit →
    propose a new partition (id, title, one-line description) per
-   hub.file step 1: on approval append to features.yaml and create ONLY
+   hub.file step 1: on approval append to components.yaml and create ONLY
    the subdirectories this intake needs. A NEW partition also gets a
    starter knowledge/fact-<id>-overview.md (what it is, current status,
    key links) built from the user's basic info.
@@ -693,7 +693,7 @@ early):
   additions), the domain config drove the competitive brief, and the
   adversarial verify pass caught 1 refuted + 2 softened claims before
   the gate.)*
-- [x] 5. Refresh on `features/agent-memory/research/` — numbering
+- [x] 5. Refresh on `components/agent-memory/research/` — numbering
   continues at 19, `00` refresh proposed through the gate. *(2026-07-10,
   `82160c3` — quick depth, inline, no fan-out (the last unexercised
   path): doc 19 born, `00` refreshed (incl. repairing the never-indexed
