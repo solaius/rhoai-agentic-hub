@@ -1,16 +1,16 @@
 ---
 name: hub.sweep
-description: Feature staleness sweep -- per-feature "what's outdated?" audit. Combines date-arithmetic staleness (timestamp + type defaults from conventions/staleness.yaml) with live source cross-referencing (Jira status, GDoc last-modified, GitHub activity). Flags stale entries and proposes updates through the gate. Use when the user says "sweep <feature>", "what's stale in <feature>", "check for outdated entries", "staleness check", or "what changed since I last touched <feature>". Generalizes the customer-feedback-refresh pattern to all knowledge entries.
+description: Component staleness sweep -- per-component "what's outdated?" audit. Combines date-arithmetic staleness (timestamp + type defaults from conventions/staleness.yaml) with live source cross-referencing (Jira status, GDoc last-modified, GitHub activity). Flags stale entries and proposes updates through the gate. Use when the user says "sweep <component>", "what's stale in <component>", "check for outdated entries", "staleness check", or "what changed since I last touched <component>". Generalizes the customer-feedback-refresh pattern to all knowledge entries.
 ---
 
 # hub.sweep
 
-Input: a feature id (from components/components.yaml), or `--all` to sweep
-every feature.
+Input: a component id (from components/components.yaml), or `--all` to sweep
+every component.
 
 1. PRE-FLIGHT:
-   - Validate the feature id against `components/components.yaml`. If `--all`,
-     load all feature ids from that file.
+   - Validate the component id against `components/components.yaml`. If `--all`,
+     load all component ids from that file.
    - Read `conventions/staleness.yaml` for the type defaults:
      `profile_default_days` (30) and `fact_default_days` (90).
    - `python scripts/hub_jira.py --check` -- needed for Jira
@@ -22,7 +22,7 @@ every feature.
 
 2. PHASE 1 -- DATE-ARITHMETIC STALENESS (hub-local, no API calls):
 
-   For each target feature, use `Glob` to list all `*.md` files in
+   For each target component, use `Glob` to list all `*.md` files in
    `components/<id>/knowledge/`. For `--all`, also check
    `narrative/knowledge/` and `memory/facts/` and `memory/profiles/`.
    Also check `components/<id>/strategy/strategy.md` for a `review_after`
@@ -45,7 +45,7 @@ every feature.
    Collect: `{path, type, timestamp, review_after, resource, source,
    status, description, staleness_reason}` for each flagged entry.
 
-   RELATED-FEATURE DRIFT (hub-local): if the feature has a `related:`
+   RELATED-COMPONENT DRIFT (hub-local): if the component has a `related:`
    list in `components/components.yaml` (its boundary siblings), find the
    target's newest entry timestamp, then list sibling entries
    (knowledge/ + research/) with timestamps newer than it. Carry these
@@ -97,10 +97,10 @@ every feature.
 
 4. PHASE 3 -- PRESENT FINDINGS (gated):
 
-   Group findings by feature. Present a summary:
+   Group findings by component. Present a summary:
 
    ```
-   sweep findings for <feature> (<n> entries checked, <m> flagged):
+   sweep findings for <component> (<n> entries checked, <m> flagged):
 
    1. <filename> -- <staleness_reason>
       -> suggest: <suggested action>
@@ -123,7 +123,7 @@ every feature.
 
    If no entries are flagged, report:
    ```
-   sweep for <feature>: <n> entries checked, all current. Nothing to do.
+   sweep for <component>: <n> entries checked, all current. Nothing to do.
    ```
 
 5. APPLY UPDATES (only after user approval, entry by entry):
@@ -142,7 +142,7 @@ every feature.
 6. POST-WRITE SEQUENCE (standard, only if any entries were updated):
 
    a. Append to `memory/log.md` under today's heading:
-      `- **Update** -- sweep(<feature>): <n> entries refreshed`
+      `- **Update** -- sweep(<component>): <n> entries refreshed`
    b. Run `python scripts/hub_index.py`
    c. Run `python scripts/hub_lint.py` -- 0 errors required; fix the
       updated entries (not the scripts) if it reports errors.
@@ -153,11 +153,11 @@ every feature.
       narrative/knowledge/index.md views/`
       Check `git diff --cached --stat` for anything the sweep did not
       write, then commit WITH PATHSPECS:
-      `git commit -m "sweep(<feature>): refresh <n> stale entries" -- <those paths>`
+      `git commit -m "sweep(<component>): refresh <n> stale entries" -- <those paths>`
 
 7. KNOWLEDGE-CAPTURE HANDOFF: if the sweep discovers a non-entry-specific
    product fact (e.g., a Jira issue moved to Done reveals a feature
-   shipped), offer `hub.capture` for that item into the relevant feature's
+   shipped), offer `hub.capture` for that item into the relevant component's
    knowledge or `memory/profiles/roadmap.md`.
 
 ### Scope boundary
@@ -169,7 +169,7 @@ and the user decides what to write. This is an auditor, not an author.
 ### git-crypt awareness
 
 Since #14 shipped, `restricted/` is git-crypt encrypted and tracked. If
-the sweep targets a feature with restricted knowledge entries, locked
+the sweep targets a component with restricted knowledge entries, locked
 (encrypted) files are skipped silently -- check for binary/non-UTF-8
 content before parsing frontmatter.
 

@@ -27,7 +27,7 @@ OLD = C:/Users/peter/code/rh/ai-asset-registry — read-only, never edit it.
    interaction as hub.consolidate step 4).
 5. Published HTML artifacts: copy sources into
    components/<f>/enablement/<artifact>/ (or narrative/enablement/ for
-   cross-feature ones), add an artifact.md descriptor (type: artifact,
+   cross-component ones), add an artifact.md descriptor (type: artifact,
    components: spread), and add the manifest entry via hub.publish. Old URLs
    keep serving from the old repo — never delete there.
 6. `python scripts/hub_index.py` && `python scripts/hub_lint.py`; commit
@@ -40,7 +40,7 @@ design spec §7.3
 Per session: pick 1-3 sections → extract typed entries → gate → commit.
 Fixed routing: §6 release timeline → memory/profiles/roadmap.md (profile
 update, not an entry); §6 SKU/pricing + support agreement → restricted/;
-§12 source index → ref- entries in their features. Track progress with a
+§12 source index → ref- entries in their components. Track progress with a
 log.md line per session: `**Update** — monolith §N (<name>) migrated`.
 
 ## One-time ~/.claude seed (part of M3)

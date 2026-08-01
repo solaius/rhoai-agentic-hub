@@ -1,11 +1,11 @@
 ---
 name: hub.research
-description: Deep research on a feature or narrative topic — sized fan-out across lenses (landscape, upstream, architecture, requirements, competitive), producing a numbered series under <home>/research/ plus gated knowledge entries and a living executive summary. Use when the user says "research <topic>", "deep dive on <feature>", "competitive research on <feature>", "refresh the research on <feature>", or after hub.intake offers a kickoff. Lens names in the prompt scope the run to exactly those lenses.
+description: Deep research on a component or narrative topic — sized fan-out across lenses (landscape, upstream, architecture, requirements, competitive), producing a numbered series under <home>/research/ plus gated knowledge entries and a living executive summary. Use when the user says "research <topic>", "deep dive on <component>", "competitive research on <component>", "refresh the research on <component>", or after hub.intake offers a kickoff. Lens names in the prompt scope the run to exactly those lenses.
 ---
 
 # hub.research
 
-Input: a feature id, narrative topic, or free topic + optional lens names
+Input: a component id, narrative topic, or free topic + optional lens names
 and depth from the prompt. Series contract: /conventions/research.md.
 
 Lenses: landscape (definitions, state of the art, best practices) ·
@@ -36,14 +36,14 @@ second is the payload:
    (this repo is PUBLIC and Jira serves nothing anonymously): cite the key and
    describe the work in your own words.
 
-1. RESOLVE HOME: feature id → components/<id>/research/; story-shaped →
+1. RESOLVE HOME: component id → components/<id>/research/; story-shaped →
    narrative/research/. Free topic with no home in
    components/components.yaml → offer hub.intake first (research needs a home
    to write into); stop there if declined.
 2. CONTEXT LOAD: read <home>/knowledge/index.md (if present), every doc
    in the existing <home>/research/ series, and open question- entries
-   for the home. Open questions become research inputs. RELATED FEATURES:
-   if the feature has a `related:` list in components/components.yaml (its
+   for the home. Open questions become research inputs. RELATED COMPONENTS:
+   if the component has a `related:` list in components/components.yaml (its
    boundary siblings — e.g. the agent family agent-registry/agent-interop/
    agent-catalog, or the mcp family), read each sibling's
    knowledge/index.md, research/00-executive-summary.md, strategy/ docs,
@@ -53,7 +53,7 @@ second is the payload:
    STANDING CONTEXT in every lens brief; the split boundary is where
    drift lives, so scope conflicts between the home's docs and a
    sibling's (either direction) go into 00 and become step-5 knowledge
-   drafts. RHOAI feature topics: the RHOAI architecture repo
+   drafts. RHOAI component topics: the RHOAI architecture repo
    (/components/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
    is STANDING CONTEXT — include its matching release snapshot in every
    lens agent's brief. A non-empty series ⇒ this is a REFRESH run.

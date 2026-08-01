@@ -37,10 +37,10 @@ keeps them OUT.
    - local: the hub knowledge/research paths listed in the config.
    - jtbd: when sections.jtbd is true, re-derive the hub's job set
      (narrative/knowledge/jtbd-*.md whose components: list contains the hub's
-     feature id) and diff against the Jobs to be Done page (new jobs, changed
+     component id) and diff against the Jobs to be Done page (new jobs, changed
      status/evidence, removals).
    - jira tracker: when sections.jira_tracker is set, re-run
-     `python scripts/hub_jira.py --sweep <feature> --out <scratch dir>` to produce
+     `python scripts/hub_jira.py --sweep <component> --out <scratch dir>` to produce
      a proposed snapshot; diff it against stored work/jira-snapshot.yaml; on
      approval copy it into place, then regenerate the tracker rows from it.
    Any unreachable source (Slack tokens expire; VPN) degrades to a "Fetch

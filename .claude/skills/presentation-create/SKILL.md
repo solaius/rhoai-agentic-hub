@@ -1,6 +1,6 @@
 ---
 name: presentation-create
-description: Create or update polished HTML presentations following Red Hat branding standards, staged under a feature's enablement/ directory. Use this skill whenever the user wants to create a presentation, slide deck, overview page, pitch deck, scrolling narrative, executive summary page, or says things like "create a presentation about X", "I need a slide deck", "make an overview page", "build a presentation", "update the presentation", or "presentation for [audience]". Also use when the user has existing HTML presentations they want to refresh, extend, or adapt for a different audience. Covers both slide-deck format (keyboard-navigated, full-screen slides) and vertical-scrolling format (long-form narrative pages with fixed header navigation). Building the artifact does not publish it — hand off to hub.publish when it's ready to go live. Requires the superpowers plugin (for brainstorming) and benefits from Google Workspace MCP (for accessing GDrive source materials).
+description: Create or update polished HTML presentations following Red Hat branding standards, staged under a component's enablement/ directory. Use this skill whenever the user wants to create a presentation, slide deck, overview page, pitch deck, scrolling narrative, executive summary page, or says things like "create a presentation about X", "I need a slide deck", "make an overview page", "build a presentation", "update the presentation", or "presentation for [audience]". Also use when the user has existing HTML presentations they want to refresh, extend, or adapt for a different audience. Covers both slide-deck format (keyboard-navigated, full-screen slides) and vertical-scrolling format (long-form narrative pages with fixed header navigation). Building the artifact does not publish it — hand off to hub.publish when it's ready to go live. Requires the superpowers plugin (for brainstorming) and benefits from Google Workspace MCP (for accessing GDrive source materials).
 ---
 
 # presentation-create
@@ -24,7 +24,7 @@ Use when:
 - The user says "just build it" or "I know exactly what I want"
 
 Quick build process:
-1. **Confirm scope** — Read any source material, confirm the feature and output path (`components/<feature>/enablement/<artifact-slug>/`), and summarize what you'll build in 2-3 sentences. Get a thumbs-up.
+1. **Confirm scope** — Read any source material, confirm the component and output path (`components/<component>/enablement/<artifact-slug>/`), and summarize what you'll build in 2-3 sentences. Get a thumbs-up.
 2. **Read the template and references** — Same as Phase 4 Step 1 (still need the design tokens and patterns).
 3. **Build and write** — Go straight to building the HTML. Apply the branding checklist.
 4. **Review** — Same as Phase 5.
@@ -81,14 +81,14 @@ Gather requirements through conversational questions. Skip any that the user alr
 
 | Question | Why It Matters |
 |---|---|
-| **Feature**: Which feature partition does this belong to (see `components/components.yaml`)? | Determines where the artifact is filed — `components/<feature>/enablement/` |
+| **Component**: Which component partition does this belong to (see `components/components.yaml`)? | Determines where the artifact is filed — `components/<component>/enablement/` |
 | **Purpose**: What is this presentation trying to achieve? | Shapes the narrative structure and CTA |
 | **Topic & products**: What specific topic(s) and Red Hat products are involved? | Determines technical depth and which components to highlight |
 | **Messaging**: What key message should the audience take away? | Drives the thesis slide and narrative arc |
 | **Audience/persona**: Client, Partner, Engineering, Marketing, General? | Controls technical depth, jargon level, and framing |
 | **Format**: Slide deck (keyboard navigation) or vertical scrolling? | Determines which template to use |
 | **Artifact slug**: Short kebab-case name for this artifact (e.g. `mcp-gateway-pitch-deck`)? | Becomes the `enablement/<artifact-slug>/` directory name |
-| **Knowledge sources**: Any docs, transcripts, repos, or Drive files beyond what's already in this feature's `knowledge/` or in `memory/`? | Ensures all relevant context is captured |
+| **Knowledge sources**: Any docs, transcripts, repos, or Drive files beyond what's already in this component's `knowledge/` or in `memory/`? | Ensures all relevant context is captured |
 
 ### Adaptive Behavior
 
@@ -96,7 +96,7 @@ Gather requirements through conversational questions. Skip any that the user alr
 - If the user names a persona, infer appropriate technical depth rather than asking again
 - If the user provides source material (files, links, docs), read them during intake to reduce follow-up questions
 - If updating an existing presentation, read the HTML first, then ask what needs changing
-- If no existing feature fits, don't invent a partition — hand off to `hub.file` (it creates new feature partitions in `components/components.yaml`); resume once it exists
+- If no existing component fits, don't invent a partition — hand off to `hub.file` (it creates new component partitions in `components/components.yaml`); resume once it exists
 
 ### Exit Condition
 
@@ -106,7 +106,7 @@ User confirms a qualifying summary:
 ## Presentation Qualifying Summary
 
 - **Title** (working): [title]
-- **Feature**: [feature id from components/components.yaml]
+- **Component**: [component id from components/components.yaml]
 - **Purpose**: [what this achieves]
 - **Thesis**: [one-sentence takeaway]
 - **Audience**: [persona — Client/Partner/Engineering/Marketing/General]
@@ -114,7 +114,7 @@ User confirms a qualifying summary:
 - **Format**: [Slide deck / Vertical scrolling]
 - **Products**: [list]
 - **Source material**: [list of sources reviewed]
-- **Output path**: `components/[feature]/enablement/[artifact-slug]/index.html`
+- **Output path**: `components/[component]/enablement/[artifact-slug]/index.html`
 ```
 
 ## Phase 2: Brainstorm
@@ -235,9 +235,9 @@ Before finishing the build, verify:
 
 ### Step 4: Write the Output
 
-Write the HTML file to `components/<feature>/enablement/<artifact-slug>/index.html` (the path fixed during Phase 1 intake). Keep the artifact self-contained — if it needs assets beyond CDN-hosted fonts/libraries (Cytoscape.js, Google Fonts), place them alongside it in the same `enablement/<artifact-slug>/` directory rather than reaching into other features.
+Write the HTML file to `components/<component>/enablement/<artifact-slug>/index.html` (the path fixed during Phase 1 intake). Keep the artifact self-contained — if it needs assets beyond CDN-hosted fonts/libraries (Cytoscape.js, Google Fonts), place them alongside it in the same `enablement/<artifact-slug>/` directory rather than reaching into other components.
 
-If this run created a new `enablement/<artifact-slug>/` directory, also scaffold an `artifact.md` descriptor alongside the HTML — frontmatter `type: artifact`, `title`, one-line `description`, `timestamp` (today), and `components:` listing any other feature partitions the artifact spans. `views/artifacts.md` flags descriptor-less directories, and `hub.publish` reads the descriptor when the artifact ships.
+If this run created a new `enablement/<artifact-slug>/` directory, also scaffold an `artifact.md` descriptor alongside the HTML — frontmatter `type: artifact`, `title`, one-line `description`, `timestamp` (today), and `components:` listing any other component partitions the artifact spans. `views/artifacts.md` flags descriptor-less directories, and `hub.publish` reads the descriptor when the artifact ships.
 
 After writing, offer to:
 1. **Open in browser** — Suggest the user open it to preview.
@@ -257,7 +257,7 @@ After the user reviews the presentation:
 
 When the user wants to update an existing presentation rather than create one from scratch:
 
-1. Read the existing HTML file (under `components/<feature>/enablement/<artifact-slug>/`)
+1. Read the existing HTML file (under `components/<component>/enablement/<artifact-slug>/`)
 2. Identify the current format (slide deck vs scrolling) and design tokens in use
 3. Ask what needs changing (content, layout, audience shift, new sections, diagram updates)
 4. Ask whether to edit in-place or create a versioned copy (if not already specified)
@@ -313,4 +313,4 @@ None of the presentation examples below have been migrated into the hub yet (tha
 - [mcp-registry-overview.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-registry/overview/) — **Scrolling format**, MVP scope overview
 - [mcp-ingestion-pipeline.html](https://solaius.github.io/rhoai-agentic-hub-pages/mcp-ecosystem/ingestion-pipeline/) — **Scrolling format** with Cytoscape.js pipeline diagram
 
-Each targets a different persona with different goals, but they share the same design language. New presentations should match this quality bar. Once an example is migrated into a feature's `enablement/`, update its entry here to the hub path.
+Each targets a different persona with different goals, but they share the same design language. New presentations should match this quality bar. Once an example is migrated into a component's `enablement/`, update its entry here to the hub path.

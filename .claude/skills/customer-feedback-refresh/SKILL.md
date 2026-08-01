@@ -47,13 +47,13 @@ Cross-reference with recent emails (Google Workspace MCP) or Jira tickets if ava
 Check tracker interest levels against product roadmap changes:
 - If a feature shipped (moved to GA), note that in the detail section
 - If a customer's requirement was addressed by a new release, update the detail notes
-- Check `memory/profiles/roadmap.md` and the relevant feature's
-  `components/<f>/knowledge/index.md` (mcp-gateway, mcp-registry, mcp-ecosystem,
+- Check `memory/profiles/roadmap.md` and the relevant component's
+  `components/<c>/knowledge/index.md` (mcp-gateway, mcp-registry, mcp-ecosystem,
   agent-registry, etc. — whichever this customer's interests map to) for
   newly captured decisions or facts that affect a tracked customer's interest
   areas. This replaces the old repo's single `docs/knowledge-registry.md`
   monolith check — the hub spreads that same living-knowledge-base role
-  across `memory/` and each feature's `knowledge/`.
+  across `memory/` and each component's `knowledge/`.
 
 ### 5. Summary Card Accuracy
 
@@ -87,7 +87,7 @@ Check the Cross-Customer Themes table:
 6. **Knowledge-capture handoff** — if a refresh finding is really a
    non-customer-specific product fact worth keeping (a roadmap date that
    moved, a feature that shipped), offer `hub.capture` for that item into the
-   relevant feature's knowledge or `memory/profiles/roadmap.md`, generalized
+   relevant component's knowledge or `memory/profiles/roadmap.md`, generalized
    away from the specific customer/meeting it was noticed in
 
 ## Related skills

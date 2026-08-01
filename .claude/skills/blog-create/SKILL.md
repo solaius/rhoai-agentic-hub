@@ -1,6 +1,6 @@
 ---
 name: blog-create
-description: Create Red Hat blog posts or review existing drafts through a multi-agent pipeline with iterative quality improvement, staged under a feature's enablement/ directory. Use this skill whenever the user wants to write a blog post, create blog content, draft a Red Hat blog, review a blog draft, improve a blog post, or says things like "write a blog about X", "I need a blog post", "review my blog draft", "help me with a blog", "create a developer blog", or "blog about [topic]". Also use when the user shares a Google Doc or draft and wants it turned into a polished Red Hat blog post. Producing a draft does not publish it — sharing happens through the Red Hat blog submission process (Workfront), and any HTML preview only goes public via hub.publish. Benefits from Google Workspace MCP (Google Docs) and Playwright (JS-rendered Red Hat blog pages for research).
+description: Create Red Hat blog posts or review existing drafts through a multi-agent pipeline with iterative quality improvement, staged under a component's enablement/ directory. Use this skill whenever the user wants to write a blog post, create blog content, draft a Red Hat blog, review a blog draft, improve a blog post, or says things like "write a blog about X", "I need a blog post", "review my blog draft", "help me with a blog", "create a developer blog", or "blog about [topic]". Also use when the user shares a Google Doc or draft and wants it turned into a polished Red Hat blog post. Producing a draft does not publish it — sharing happens through the Red Hat blog submission process (Workfront), and any HTML preview only goes public via hub.publish. Benefits from Google Workspace MCP (Google Docs) and Playwright (JS-rendered Red Hat blog pages for research).
 ---
 
 # blog-create
@@ -17,7 +17,7 @@ Load into context — they ground the entire workflow:
 
 1. **`/memory/index.md`** — always-loaded tier: current hub state, active work, recent decisions, roadmap. Read this immediately, before Phase 1.
 2. **`references/blog-creation-guide.md`** (this skill) — Red Hat editorial process, writing patterns, formatting rules, brand standards, examples. Read this immediately too.
-3. **The target feature's `components/<f>/knowledge/index.md`** — stakeholders, decisions, open questions for the product area this blog covers. This can only be loaded once Phase 1 has identified the feature (see Feature Routing below) — read it before Phase 2 Abstract, and again fresh at each Phase 4 review cycle for the Content reviewer.
+3. **The target component's `components/<c>/knowledge/index.md`** — stakeholders, decisions, open questions for the product area this blog covers. This can only be loaded once Phase 1 has identified the component (see Component Routing below) — read it before Phase 2 Abstract, and again fresh at each Phase 4 review cycle for the Content reviewer.
 
 These are living documents. Read them fresh every time — don't rely on cached knowledge.
 
@@ -48,15 +48,15 @@ Each phase has a clear exit condition. Do not advance to the next phase until th
 
 **Shortcut path**: If the user provides a Google Doc link or substantial notes upfront, fetch and analyze the content, auto-fill extractable answers, present findings, and only ask about gaps.
 
-**Existing draft review mode**: If the user provides an existing draft to review (not create from scratch), use the shortened qualifying flow — read the draft, infer blog type/audience/thesis, confirm with user, and only ask about gaps. If the draft already lives under a `components/<feature>/enablement/` path, infer the feature from that path instead of asking.
+**Existing draft review mode**: If the user provides an existing draft to review (not create from scratch), use the shortened qualifying flow — read the draft, infer blog type/audience/thesis, confirm with user, and only ask about gaps. If the draft already lives under a `components/<component>/enablement/` path, infer the component from that path instead of asking.
 
-**Feature routing**: Based on the products/topics discussed, determine which feature partition in `components/components.yaml` this blog belongs to (e.g., MCP server governance/lifecycle → `mcp-registry`; runtime traffic policy/entitlements → `mcp-gateway`; partner/community server catalog → `mcp-ecosystem`; strategy or industry perspective with no single product → `platform`). Present the proposed feature and artifact slug for user confirmation:
+**Component routing**: Based on the products/topics discussed, determine which component partition in `components/components.yaml` this blog belongs to (e.g., MCP server governance/lifecycle → `mcp-registry`; runtime traffic policy/entitlements → `mcp-gateway`; partner/community server catalog → `mcp-ecosystem`; strategy or industry perspective with no single product → `platform`). Present the proposed component and artifact slug for user confirmation:
 
 ```
-components/<feature>/enablement/blog-<topic-short>/
+components/<component>/enablement/blog-<topic-short>/
 ```
 
-If no existing feature fits, don't invent a partition — hand off to `hub.file` (it creates new feature partitions in `components/components.yaml`), then resume qualifying once it exists.
+If no existing component fits, don't invent a partition — hand off to `hub.file` (it creates new component partitions in `components/components.yaml`), then resume qualifying once it exists.
 
 **Exit condition**: User confirms the qualifying summary.
 
@@ -69,8 +69,8 @@ Output format for qualifying summary:
 - **Thesis**: [one sentence]
 - **Audience**: [target readers]
 - **Products**: [list]
-- **Feature**: [feature id from components/components.yaml]
-- **Output path**: components/[feature]/enablement/blog-[topic-short]/
+- **Component**: [component id from components/components.yaml]
+- **Output path**: components/[component]/enablement/blog-[topic-short]/
 - **Source material**: [list of sources]
 - **Demo**: [Yes/No — details if yes]
 - **Series**: [Standalone / Part N of series name]
@@ -86,12 +86,12 @@ Create the output directory structure:
 
 ```bash
 # Create the blog artifact folder and subfolders
-mkdir -p components/<feature>/enablement/blog-<topic-short>/drafts/reviews
+mkdir -p components/<component>/enablement/blog-<topic-short>/drafts/reviews
 ```
 
-If this created a new `enablement/blog-<topic-short>/` directory, scaffold an `artifact.md` descriptor in it — frontmatter `type: artifact`, `title` (the working title), one-line `description`, `timestamp` (today), and `components:` for any cross-feature spread. `views/artifacts.md` flags descriptor-less directories.
+If this created a new `enablement/blog-<topic-short>/` directory, scaffold an `artifact.md` descriptor in it — frontmatter `type: artifact`, `title` (the working title), one-line `description`, `timestamp` (today), and `components:` for any cross-component spread. `views/artifacts.md` flags descriptor-less directories.
 
-Write `components/<feature>/enablement/blog-<topic-short>/abstract.md` containing:
+Write `components/<component>/enablement/blog-<topic-short>/abstract.md` containing:
 
 - Thesis statement
 - Target audience
@@ -116,7 +116,7 @@ Write `components/<feature>/enablement/blog-<topic-short>/abstract.md` containin
 Generate v1 based on:
 - The approved abstract
 - Source materials (fetched via Google Workspace MCP or Playwright MCP)
-- The feature's `knowledge/index.md` and `/memory/index.md` for grounding
+- The component's `knowledge/index.md` and `/memory/index.md` for grounding
 - Fresh web research (use Playwright for Red Hat blogs — they are JS-rendered and WebFetch cannot parse them)
 
 ### Target word count
@@ -244,7 +244,7 @@ For each iteration:
    - Blog creation guide (`references/blog-creation-guide.md`)
    - Their specific rubric (one of `references/reviewer-architect.md`, `references/reviewer-content.md`, `references/reviewer-formatting.md`, `references/reviewer-image.md`)
    - The qualifying summary (embedded in abstract)
-   - **Content reviewer only**: also receives the target feature's `knowledge/index.md` (plus any other feature partitions whose products are discussed in the draft) and `/memory/index.md` for fact-checking
+   - **Content reviewer only**: also receives the target component's `knowledge/index.md` (plus any other component partitions whose products are discussed in the draft) and `/memory/index.md` for fact-checking
 
    **Sub-agent prompt template** (adapt per reviewer — replace all `<PLACEHOLDERS>`):
 
@@ -254,15 +254,15 @@ For each iteration:
    Review the draft against your rubric and the blog creation guide. Score each dimension 1-10, multiply by its weight, and provide specific line-level feedback with corrections.
 
    Read these files:
-   - Draft: components/<feature>/enablement/blog-<topic-short>/drafts/v<N>.md
-   - Abstract: components/<feature>/enablement/blog-<topic-short>/abstract.md
+   - Draft: components/<component>/enablement/blog-<topic-short>/drafts/v<N>.md
+   - Abstract: components/<component>/enablement/blog-<topic-short>/abstract.md
    - Blog creation guide: .claude/skills/blog-create/references/blog-creation-guide.md
    - Your rubric: .claude/skills/blog-create/references/reviewer-<type>.md
    [Content reviewer only:
-   - Feature knowledge index(es): components/<feature>/knowledge/index.md (+ any other relevant feature's knowledge/index.md)
+   - Component knowledge index(es): components/<component>/knowledge/index.md (+ any other relevant component's knowledge/index.md)
    - Hub memory index: /memory/index.md]
 
-   Write your review to: components/<feature>/enablement/blog-<topic-short>/drafts/reviews/v<N>-<type>.md
+   Write your review to: components/<component>/enablement/blog-<topic-short>/drafts/reviews/v<N>-<type>.md
 
    Follow the output format specified in your rubric exactly.
    ```
@@ -313,9 +313,9 @@ If overall >= 7.5 and only one dimension is between 5.0-5.9, flag as "conditiona
 2. **Pre-fill blog submission form** template at top of draft:
    - Publication type, byline (defaults to Peter Double — overridable during qualifying), reviewers needed, image checklist, pre-submission checklist
 
-3. **Write `final.md`**: Submission form + clean draft in `components/<feature>/enablement/blog-<topic-short>/final.md`
+3. **Write `final.md`**: Submission form + clean draft in `components/<component>/enablement/blog-<topic-short>/final.md`
 
-4. **Generate `seo.md`** in `components/<feature>/enablement/blog-<topic-short>/seo.md`:
+4. **Generate `seo.md`** in `components/<component>/enablement/blog-<topic-short>/seo.md`:
    - Meta title (50-60 chars, keywords front-loaded)
    - Meta description (150-160 chars, action-oriented)
    - Primary and secondary keywords
@@ -329,7 +329,7 @@ If overall >= 7.5 and only one dimension is between 5.0-5.9, flag as "conditiona
    - Convert the markdown body to HTML following the guide's conversion rules
    - Replace all `{{PLACEHOLDER}}` tokens in the template
    - Render structured image placeholders as actual HTML diagrams when the content describes a table or comparison; otherwise render as placeholder cards
-   - Write to `components/<feature>/enablement/blog-<topic-short>/index.html`
+   - Write to `components/<component>/enablement/blog-<topic-short>/index.html`
    - This step is equivalent to running the `blog-mockup` skill against `final.md` — use that skill directly if you only want the preview without the rest of Finalize
 
    **This does not make anything public.** The preview HTML sits in the tracked repo like any other enablement artifact, but publishing is a separate, explicit decision — see Publishing below.
@@ -340,7 +340,7 @@ If overall >= 7.5 and only one dimension is between 5.0-5.9, flag as "conditiona
    - If yes: create via `mcp__google-workspace__create_doc` with submission form + draft content using `pedouble@redhat.com`
    - If no: skip, local artifacts are complete
 
-8. **Reindex**: Run `python scripts/hub_index.py` (regenerates `components/<feature>/index.md` if anything about the feature changed; safe no-op otherwise — the generated index links to `enablement/` as a whole, it doesn't enumerate individual artifacts, so this step is a formality, not a registration step)
+8. **Reindex**: Run `python scripts/hub_index.py` (regenerates `components/<component>/index.md` if anything about the component changed; safe no-op otherwise — the generated index links to `enablement/` as a whole, it doesn't enumerate individual artifacts, so this step is a formality, not a registration step)
 
 9. **Capture durable side-knowledge**: If qualifying, drafting, or review surfaced anything a colleague would want to find later — a new stakeholder, a positioning decision, a fact the draft depends on — offer `hub.capture` for that one item. This is NOT the place to register the blog post itself as a knowledge entry; the artifact is already discoverable at its `enablement/` path, and there is no per-post registry to update (unlike the old repo's knowledge-registry.md, the hub has no manual index of examples).
 
@@ -398,13 +398,13 @@ Writing `final.md` and `index.html` into the enablement directory does not share
 | Search project files | Glob, Grep tools |
 | Publish the HTML preview | `hub.publish` (only on explicit request — see Publishing above) |
 | Capture durable side-knowledge | `hub.capture` |
-| Create a new feature partition | `hub.file` (when no existing feature fits) |
+| Create a new component partition | `hub.file` (when no existing component fits) |
 
 ## Important Reminders
 
 - **Never overwrite drafts** — always create a new version file (v1, v2, v3...)
 - **Reviews are also versioned** — `vN-architect.md`, `vN-content.md`, etc.
-- **Read `/memory/index.md` and the feature's `knowledge/index.md` fresh** every session — they're living documents
+- **Read `/memory/index.md` and the component's `knowledge/index.md` fresh** every session — they're living documents
 - **Use Playwright, not WebFetch** for Red Hat blog URLs — they require JavaScript rendering
 - **Brand standards matter** — reference the Brand Standards Quick Reference in `references/blog-creation-guide.md` for colors, typography, and illustration style
 - **The abstract is a contract** — if the draft diverges significantly from the abstract, flag it before continuing

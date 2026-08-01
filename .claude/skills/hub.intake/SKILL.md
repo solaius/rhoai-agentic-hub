@@ -1,6 +1,6 @@
 ---
 name: hub.intake
-description: Guided multi-source intake — onboard a new feature area or bulk-add sources to an existing one. Accepts a topic plus any pile of sources (URLs, Google Docs, Slack permalinks, Jira/RFE links, transcripts, pasted notes), routes to a home, files ref- entries, extracts typed entries through a batch gate, and offers a hub.research kickoff. Use when the user says "add a new feature <x>", "onboard <topic>", "intake these", "here's everything on <topic>", or drops multiple sources at once. A single source → hub.file is the faster path.
+description: Guided multi-source intake — onboard a new component area or bulk-add sources to an existing one. Accepts a topic plus any pile of sources (URLs, Google Docs, Slack permalinks, Jira/RFE links, transcripts, pasted notes), routes to a home, files ref- entries, extracts typed entries through a batch gate, and offers a hub.research kickoff. Use when the user says "add a new component <x>", "onboard <topic>", "intake these", "here's everything on <topic>", or drops multiple sources at once. A single source → hub.file is the faster path.
 ---
 
 # hub.intake
@@ -11,13 +11,13 @@ anything obviously missing (no topic, or no sources and no facts to
 file) — then run the flow without further questions until the gate.
 
 1. ROUTE HOME: match the topic against components/components.yaml;
-   story-shaped (pillar/cross-feature narrative) → narrative/. No fit →
+   story-shaped (pillar/cross-component narrative) → narrative/. No fit →
    propose a new partition (id, title, one-line description) per
    hub.file step 1; the components.yaml append and subdirectory creation
    (ONLY what this intake needs) ride the step-4 gate with every other
    write — there is no separate partition-approval moment. A NEW partition also gets a
    starter knowledge/fact-<id>-overview.md (what it is, current status,
-   key links) built from the user's basic info. RHOAI-feature overviews
+   key links) built from the user's basic info. RHOAI-component overviews
    link the RHOAI architecture repo
    (/components/platform/knowledge/ref-opendatahub-architecture-context-repo.md)
    under key links.
@@ -27,14 +27,14 @@ file) — then run the flow without further questions until the gate.
    a tracked ref- pointing at the source system, NDA-adjacent →
    restricted/ mirror. Jira/RFE links: ref- entry with the URL only
    (offer a hub.jira-sweep run afterwards for field ingestion + the
-   feature snapshot).
+   component snapshot).
    Unreachable source (paywall, auth, dead link): still draft the ref-
    (the pointer is real knowledge), mark its gate line `fetch failed`.
    MCP down → say so, offer pasted content, point at hub.doctor check.
 3. EXTRACT: read the fetchable sources; draft typed entries for what is
    inside — fact-, decision-, question-, person-, qa- (dedupe per
    hub.capture step 2 — recurrence appends to asks:, never duplicates).
-   Multi-feature material keeps the primary home and declares
+   Multi-component material keeps the primary home and declares
    `components: [ids]`. Draft in the session/scratchpad — no repo writes
    before the gate.
 4. BATCH GATE: one table — every proposed write, one line:

@@ -17,7 +17,7 @@ This file lives in the `restricted/` mirror (gitignored, NDA content — see
 transcriptions live in
 `restricted/components/platform/work/customer-tracker/transcripts/` (named
 `transcripts/`, not `transcriptions/`, to match the hub-wide `work/transcripts/`
-convention used by every other feature).
+convention used by every other component).
 
 The public pointer to this content —
 [components/platform/work/customer-tracker/README.md](/components/platform/work/customer-tracker/README.md)

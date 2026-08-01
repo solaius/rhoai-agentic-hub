@@ -1,6 +1,6 @@
 ---
 name: hub.reindex
-description: Regenerate all generated indexes and views (components/index.md, per-feature indexes, memory/index.md, views/*) and run the structure linter. Use after adding or editing entries, when CI reports stale indexes, or when the user says "reindex", "rebuild the indexes", or "run the linter".
+description: Regenerate all generated indexes and views (components/index.md, per-component indexes, memory/index.md, views/*) and run the structure linter. Use after adding or editing entries, when CI reports stale indexes, or when the user says "reindex", "rebuild the indexes", or "run the linter".
 ---
 
 # hub.reindex

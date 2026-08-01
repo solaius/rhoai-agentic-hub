@@ -45,11 +45,11 @@ Ask these questions conversationally, one per message. Adapt based on answers �
 
 **Ask**: "Which Red Hat products or open source projects are involved?"
 
-**Validation**: Cross-reference against the [Official Product Names List](https://docs.google.com/spreadsheets/d/1DLS_lS3VKidgZIvcLmLp9BoiqptkvqHWfe1D5FD2kfk/edit?gid=1987148185#gid=1987148185) and the target feature's `knowledge/index.md` (plus `/memory/index.md` for current-state facts like roadmap dates). Use official names only.
+**Validation**: Cross-reference against the [Official Product Names List](https://docs.google.com/spreadsheets/d/1DLS_lS3VKidgZIvcLmLp9BoiqptkvqHWfe1D5FD2kfk/edit?gid=1987148185#gid=1987148185) and the target component's `knowledge/index.md` (plus `/memory/index.md` for current-state facts like roadmap dates). Use official names only.
 
-**Feature routing**: Based on products/topics, propose a feature from `components/components.yaml`:
+**Component routing**: Based on products/topics, propose a component from `components/components.yaml`:
 
-| Products/Topics | Suggested Feature |
+| Products/Topics | Suggested Component |
 |---|---|
 | MCP servers, lifecycle, governance, data model, Lifecycle Operator | `mcp-registry` |
 | Runtime MCP traffic policy, Envoy/RHCL gateway, entitlements | `mcp-gateway` |
@@ -61,9 +61,9 @@ Ask these questions conversationally, one per message. Adapt based on answers �
 | Prompt/agent iteration studio, playground UX | `gen-ai-studio` |
 | Cross-cutting AI Gateway, AI Hub UI, org-wide strategy, industry perspective, or anything spanning multiple products | `platform` |
 
-Present the proposed feature and topic-short slug for user confirmation: "I'd suggest filing this under `components/mcp-gateway/enablement/blog-mcp-gateway-openclaw/`. Does that work, or would you prefer a different feature?"
+Present the proposed component and topic-short slug for user confirmation: "I'd suggest filing this under `components/mcp-gateway/enablement/blog-mcp-gateway-openclaw/`. Does that work, or would you prefer a different component?"
 
-If no existing feature fits, don't invent one — hand off to `hub.file` (it creates new feature partitions in `components/components.yaml`), then resume once it exists.
+If no existing component fits, don't invent one — hand off to `hub.file` (it creates new component partitions in `components/components.yaml`), then resume once it exists.
 
 ### Q5: Source Material
 
@@ -73,9 +73,9 @@ If no existing feature fits, don't invent one — hand off to `hub.file` (it cre
 |---|---|
 | "I have a draft/notes" | Ask for content or Google Doc link. Fetch via Google Workspace MCP or read from provided path. |
 | "I have reference docs" | Ask for links/IDs. Fetch each. |
-| "Start from scratch" | Note: will rely on the feature's `knowledge/` and `research/`, `/memory/`, and web research. |
+| "Start from scratch" | Note: will rely on the component's `knowledge/` and `research/`, `/memory/`, and web research. |
 
-**In all cases**: Offer to scan related material automatically: "I can also scan this feature's `knowledge/` and `research/` directories for related material on [topic]. Want me to do that?"
+**In all cases**: Offer to scan related material automatically: "I can also scan this component's `knowledge/` and `research/` directories for related material on [topic]. Want me to do that?"
 
 **For Google Doc links**: Extract the Doc ID from the URL and use `mcp__google-workspace__get_doc_as_markdown`.
 
@@ -147,7 +147,7 @@ When reviewing an existing draft (not creating from scratch):
 1. Read the draft in full
 2. Infer: blog type, thesis, audience, products, structure
 3. Present inferences to user for confirmation
-4. Ask only about: CTA (if not clear), series context (if not clear), and feature (infer from the draft's existing path if it already lives under a `components/<feature>/enablement/` directory; otherwise ask, same as Q4)
+4. Ask only about: CTA (if not clear), series context (if not clear), and component (infer from the draft's existing path if it already lives under a `components/<component>/enablement/` directory; otherwise ask, same as Q4)
 5. Proceed with shortened qualifying summary
 
 ## Exit Condition
@@ -161,8 +161,8 @@ Present the qualifying summary for user confirmation:
 - **Thesis**: [one sentence]
 - **Audience**: [target readers]
 - **Products**: [list]
-- **Feature**: [feature id from components/components.yaml]
-- **Output path**: components/[feature]/enablement/blog-[topic-short]/
+- **Component**: [component id from components/components.yaml]
+- **Output path**: components/[component]/enablement/blog-[topic-short]/
 - **Source material**: [list of sources]
 - **Demo**: [Yes/No — details if yes]
 - **Series**: [Standalone / Part N of series name]

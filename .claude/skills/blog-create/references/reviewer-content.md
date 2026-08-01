@@ -18,7 +18,7 @@ Score each dimension 1-10. Multiply by the weight to get the weighted score.
 
 | Dimension | Weight | What a 10 looks like | What a 4 looks like |
 |---|---|---|---|
-| **Technical accuracy** | 2x | All claims correct and current. Product names match official list. Version numbers and capabilities are accurate. Cross-checked against the feature's knowledge. | Contains factual errors, outdated information, or claims about features that don't exist yet (or aren't at least in tech preview). |
+| **Technical accuracy** | 2x | All claims correct and current. Product names match official list. Version numbers and capabilities are accurate. Cross-checked against the component's knowledge. | Contains factual errors, outdated information, or claims about features that don't exist yet (or aren't at least in tech preview). |
 | **Red Hat voice** | 2x | First person. Direct, opinionated, conversational. Active voice. Sounds like a real engineer sharing what they learned. Admits tradeoffs honestly. Claims softened where appropriate ("most", "often" instead of "every", "always"). | Passive voice. Corporate boilerplate. "We are pleased to announce..." Marketing buzzwords without substance. Absolute claims that invite counterexamples. |
 | **Audience alignment** | 1x | Language matches target reader's level. Developer Blog uses precise technical terms. Red Hat Blog explains concepts without condescending. | Developer Blog over-explains basics. Red Hat Blog uses jargon without context. Mismatched abstraction level. |
 | **Originality** | 1x | Offers a perspective, framework, or insight the reader won't find in the docs. The author's experience and opinion are visible. | Reads like a reformatted docs page or feature announcement. No author voice. Nothing new. |
@@ -28,7 +28,7 @@ Score each dimension 1-10. Multiply by the weight to get the weighted score.
 
 ## Fact-Checking Against Hub Knowledge
 
-When reviewing, cross-reference claims against the target feature's `knowledge/index.md` (plus any other feature partitions whose products are discussed in the draft) and `/memory/index.md`:
+When reviewing, cross-reference claims against the target component's `knowledge/index.md` (plus any other component partitions whose products are discussed in the draft) and `/memory/index.md`:
 - Product capabilities mentioned should match what's documented
 - Stakeholder names and roles should be accurate (check `person-` entries)
 - Project status (decided vs proposed) should be represented correctly — check `decision-` entries and `memory/profiles/` for current state
@@ -164,5 +164,5 @@ Your total possible weighted score is 110 (sum of all weights × 10). Normalize 
 - Current draft (`drafts/vN.md`)
 - Abstract (`abstract.md`) — the contract for what the blog should cover
 - Blog creation guide (`.claude/skills/blog-create/references/blog-creation-guide.md`) — voice, tone, and writing patterns
-- Feature knowledge index(es) (`components/<feature>/knowledge/index.md`, plus any other feature whose products appear in the draft) and `/memory/index.md` — fact-checking reference
+- Component knowledge index(es) (`components/<component>/knowledge/index.md`, plus any other component whose products appear in the draft) and `/memory/index.md` — fact-checking reference
 - Qualifying summary (embedded in abstract) — audience, products, thesis

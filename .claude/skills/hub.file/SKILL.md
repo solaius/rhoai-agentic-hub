@@ -1,18 +1,18 @@
 ---
 name: hub.file
-description: Intake an external source (Google Doc, PDF, URL, GitHub repo, meeting transcript) as a typed knowledge entry in the right feature partition - creating the partition on first use. Successor to add-knowledge-source. Use when the user says "add this doc", "file this source", "add this transcript", or shares a link to incorporate.
+description: Intake an external source (Google Doc, PDF, URL, GitHub repo, meeting transcript) as a typed knowledge entry in the right component partition - creating the partition on first use. Successor to add-knowledge-source. Use when the user says "add this doc", "file this source", "add this transcript", or shares a link to incorporate.
 ---
 
 # hub.file
 
 Input: the source (URL or file) + whatever context the user gave.
 
-1. Pick the home: story-shaped sources (pillars, cross-feature narrative,
+1. Pick the home: story-shaped sources (pillars, cross-component narrative,
    strategy-spine material) → narrative/knowledge/. Otherwise pick the
-   feature: read components/components.yaml. If nothing fits, propose a
+   component: read components/components.yaml. If nothing fits, propose a
    new partition (id, title, one-line description); on approval append it to
    components.yaml and create ONLY the subdirectories this filing needs — never
-   all five empty (see /conventions/layout.md). Multi-feature sources keep a
+   all five empty (see /conventions/layout.md). Multi-component sources keep a
    primary home and declare `components:` cross-refs.
 2. Normalize the resource URI per /conventions/uris.md (strip /edit suffixes,
    query params, fragments).

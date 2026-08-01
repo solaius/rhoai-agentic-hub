@@ -1,16 +1,16 @@
 ---
 name: hub.strategy
-description: Synthesize or refresh a feature's living strategy document (components/<id>/strategy/strategy.md) from its knowledge, research series, and Jira scope - the WHAT/WHY, gaps and risks, Jira coverage map plus candidate jiras, and watchlist - through the inline gate. Use when the user says "write the strategy for <feature>", "generate the strategy doc", "create the strategy", "refresh the strategy", or after hub.intake / hub.research offer it. One living doc per feature, rewritten in place - never a series.
+description: Synthesize or refresh a component's living strategy document (components/<id>/strategy/strategy.md) from its knowledge, research series, and Jira scope - the WHAT/WHY, gaps and risks, Jira coverage map plus candidate jiras, and watchlist - through the inline gate. Use when the user says "write the strategy for <component>", "generate the strategy doc", "create the strategy", "refresh the strategy", or after hub.intake / hub.research offer it. One living doc per component, rewritten in place - never a series.
 ---
 
 # hub.strategy
 
-Input: a feature id (components/components.yaml). Contract:
+Input: a component id (components/components.yaml). Contract:
 /conventions/strategy.md — ONE living document, eight fixed sections, PM
 working register, rewritten in place with a ## History entry per refresh.
 Spec: /docs/specs/2026-07-16-hub-strategy-skill-design.md.
 
-1. RESOLVE: feature id → components/<id>/strategy/strategy.md. No home in
+1. RESOLVE: component id → components/<id>/strategy/strategy.md. No home in
    components.yaml → offer hub.intake (research needs a home), stop there
    if declined. The file already exists ⇒ this is a REFRESH run.
 2. PRECONDITIONS: knowledge/index.md must exist — none → hand off to

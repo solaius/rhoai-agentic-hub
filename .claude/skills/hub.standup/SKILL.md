@@ -159,7 +159,7 @@ otherwise. No gate, no index, no lint, no commit.
 
 ## Known gap
 
-Issues in the user's feature areas that lack a "Product Manager" assignment
+Issues in the user's component areas that lack a "Product Manager" assignment
 are invisible to this brief. A future improvement could cross-reference
 against `components/components.yaml` JQL scopes and flag issues in those scopes
 without a PM.

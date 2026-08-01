@@ -10,12 +10,12 @@ Input: the item, from the user's words or session context.
 1. Classify with the boundary rule (/conventions/memory.md): working context
    (state, preference, feedback, process fact) → memory store; domain
    knowledge (a colleague would look it up) → components/<f>/knowledge/;
-   story-shaped (pillar, cross-feature narrative — wrong under any single
-   feature) → narrative/knowledge/; a field question someone asked us →
+   story-shaped (pillar, cross-component narrative — wrong under any single
+   component) → narrative/knowledge/; a field question someone asked us →
    qa- entry (dedupe rule in step 2); a user job for UX/Docs → jtbd- entry
    (persona from the locked list, evidence: links); NDA-adjacent → the
    restricted/ mirror of the same location. Entries touching multiple
-   features declare `components: [ids]`.
+   components declare `components: [ids]`.
 2. Determine the write:
    - Profile-shaped (roadmap/strategy/status/preference change): EDIT the
      profile in place — new current value, prepend the old value to
@@ -24,7 +24,7 @@ Input: the item, from the user's words or session context.
      `components/<f>/knowledge/<prefix><slug>.md`, or — story-shaped —
      `narrative/knowledge/<prefix><slug>.md`, frontmatter per
      /conventions/type-vocabulary.md.
-   - Knowledge entries: first check the feature partition exists in
+   - Knowledge entries: first check the component partition exists in
      components/components.yaml; if it doesn't → hand off to hub.file (it
      creates partitions).
    - qa entries: BEFORE creating, grep existing `qa-*` for the same
