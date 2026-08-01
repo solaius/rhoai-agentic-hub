@@ -54,7 +54,7 @@
       <p>Upstream's own layering model is: the official registry holds canonical metadata ("metaregistries host metadata, not code"), subregistries add curation and trust signals on top, and package registries (npm, PyPI, Docker Hub) hold the actual code. Downstream catalogs are expected to either poll the official registry as an aggregator, or implement its subregistry OpenAPI spec, adding namespaced <code>_meta</code> extensions for exactly the kind of metadata Red Hat already adds (scan results, certification, tiers). Host applications are explicitly told not to consume the official registry directly. GitHub's publish-once flow shows the pattern working in production, and ToolHive realigned onto the official <code>server.json</code> schema in April 2026.</p>
 
       <div class="callout callout--gap">
-        <strong>Open question:</strong> the RHOAI Catalog has no stated federation posture toward the official registry (aggregator, subregistry-spec implementer, or neither). This is a decision for the TP window (RHOAI 3.6 EA1); it shapes TP scope, the metadata schema, and whether Red Hat publishes its own servers to the official registry namespace (none found there today). See <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a>.
+        <strong>Open question:</strong> the RHOAI Catalog has no stated federation posture toward the official registry (aggregator, subregistry-spec implementer, or neither). This is a decision for the TP window (RHOAI 3.6 EA1); it shapes TP scope, the metadata schema, and whether Red Hat publishes its own servers to the official registry namespace (none found there today). See <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a>.
       </div>
 
       <h2>Spec Version Churn in the TP to GA Window</h2>
@@ -68,7 +68,7 @@
       <p>The Catalog's own release train is DP 3.4 shipped, DP continues through 3.5, TP targeted for RHOAI 3.6 EA1, and GA targeted at RHOAI 3.6 (code freeze Oct 23, 2026). The spec finalizes roughly three months ahead of that code freeze, which means Catalog GA has to certify servers spanning both the pre- and post-2026-07-28 spec generations.</p>
 
       <div class="callout callout--gap">
-        <strong>Open question:</strong> no compatibility-matrix policy is stated yet for which spec versions catalog entries declare, what the Gateway accepts, or what the Red Hat and Partner tiers require at GA. See <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a>.
+        <strong>Open question:</strong> no compatibility-matrix policy is stated yet for which spec versions catalog entries declare, what the Gateway accepts, or what the Red Hat and Partner tiers require at GA. See <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a>.
       </div>
 
       <h2>Adjacent Coopetition</h2>
@@ -79,11 +79,11 @@
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/research/01-upstream-mcp-catalog-registry.md">Research: Upstream, MCP catalog/registry ecosystem (July 2026)</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/fact-mcp-upstream-status.md">fact-mcp-upstream-status.md</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/knowledge/question-kubeflow-hub-catalog-alignment.md">question-kubeflow-hub-catalog-alignment.md (answered)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/research/01-upstream-mcp-catalog-registry.md">Research: Upstream, MCP catalog/registry ecosystem (July 2026)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/knowledge/fact-mcp-upstream-status.md">fact-mcp-upstream-status.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/knowledge/question-official-registry-federation.md">question-official-registry-federation.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/knowledge/question-spec-version-policy-ga.md">question-spec-version-policy-ga.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/knowledge/question-kubeflow-hub-catalog-alignment.md">question-kubeflow-hub-catalog-alignment.md (answered)</a></li>
             <li><a href="https://github.com/kubeflow/hub" target="_blank" rel="noopener">kubeflow/hub</a></li>
           </ul>
         </div>

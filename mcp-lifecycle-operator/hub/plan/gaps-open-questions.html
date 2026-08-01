@@ -17,7 +17,7 @@
       <div class="breadcrumb"></div>
 
       <h1>Gaps &amp; Open Questions</h1>
-      <p class="lead">MCPLO's five known gaps, four of them P0 for GA readiness per this feature's own requirements research, plus three open questions carried from the management hub's cross-cutting log, numbering preserved for traceability.</p>
+      <p class="lead">MCPLO's five known gaps, four of them P0 for GA readiness per this component's own requirements research, plus three open questions carried from the management hub's cross-cutting log, numbering preserved for traceability.</p>
 
       <section>
         <h2>Known Gaps</h2>
@@ -33,7 +33,7 @@
             <p><strong>Owner:</strong> OCP + RHOAI teams (joint GA)</p>
             <p><strong>Status:</strong> P0 for GA. Recommendations: a Prometheus ServiceMonitor auto-created per <code>MCPServer</code>, a PrometheusRule for alerting (server down more than 5 minutes, handshake failures), a <code>GatewayAvailable</code> condition with actionable messages, an operator-level <code>/metrics</code> endpoint, and an admission webhook for CRD validation.</p>
             <p><strong>Workaround:</strong> Treat TP-era deployments as non-production; monitor via generic pod-health checks until ServiceMonitor support lands.</p>
-            <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a> §1, citing the <a href="https://sdk.operatorframework.io/docs/overview/operator-capabilities/" target="_blank" rel="noopener">Operator SDK Capability Levels</a> model.</p>
+            <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a> §1, citing the <a href="https://sdk.operatorframework.io/docs/overview/operator-capabilities/" target="_blank" rel="noopener">Operator SDK Capability Levels</a> model.</p>
           </div>
         </div>
 
@@ -48,7 +48,7 @@
             <p><strong>Owner:</strong> RHOAI Catalog Team, MCPLO Team</p>
             <p><strong>Status:</strong> Open question, raised in the RHOAI Limited FAQ with no answer provided yet. P0 recommendation: package the MCP server catalog as an OCI artifact (following the OLM File-Based Catalog pattern) with <code>oc-mirror</code> support via <code>ImageSetConfiguration</code> additional images, plus an offline catalog UI reading from a local or mirrored source. None of this exists today.</p>
             <p><strong>Workaround:</strong> None today.</p>
-            <p class="source-ref">Full detail: <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement: Disconnected Catalog Delivery</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a>.</p>
+            <p class="source-ref">Full detail: <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement: Disconnected Catalog Delivery</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a>.</p>
           </div>
         </div>
 
@@ -63,7 +63,7 @@
             <p><strong>Owner:</strong> OLS Team, MCPLO Team</p>
             <p><strong>Status:</strong> Open question, transition timeline and subscription implications unresolved. P0 recommendations: a transparent fallback (OLS detects an MCPLO-managed server and uses it if available, continuing with its internal implementation if not) and a zero-config path for OCP users (a single-click "Enable MCP servers" in console, not a multi-step RHOAI operator install).</p>
             <p><strong>Workaround:</strong> None today; OLS continues on its internal MCP server until a transition decision is made.</p>
-            <p class="source-ref">Full detail: <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement: OLS Transition</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a>.</p>
+            <p class="source-ref">Full detail: <a href="../govern/distribution-entitlement.html">Distribution &amp; Entitlement: OLS Transition</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a>.</p>
           </div>
         </div>
 
@@ -78,7 +78,7 @@
             <p><strong>Owner:</strong> MCPLO Team</p>
             <p><strong>Status:</strong> P0 for TP: a configuration-mapping document (Helm values to <code>MCPServer</code> spec) and a deprecation notice in <code>Chart.yaml</code>. P1 for GA: a migration script that reads a Helm release and generates <code>MCPServer</code> YAML, resource adoption (MCPLO adopting existing Helm-created resources), and coexistence documentation.</p>
             <p><strong>Workaround:</strong> None today.</p>
-            <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a> §5.</p>
+            <p class="source-ref">Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a> §5.</p>
           </div>
         </div>
 
@@ -142,11 +142,11 @@
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps (Cluster-Admin card)</a></li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps &amp; Open Questions (Q8, Q17, Q21)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/research/04-requirements.md">research/04-requirements.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/knowledge/question-disconnected-catalog-delivery.md">question-disconnected-catalog-delivery.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md">question-ols-mcplo-transition.md</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps (Cluster-Admin card)</a></li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-ecosystem/enablement/management-hub/plan/gaps.html">Management hub: Gaps &amp; Open Questions (Q8, Q17, Q21)</a></li>
           </ul>
         </div>
         <div class="related-pages">

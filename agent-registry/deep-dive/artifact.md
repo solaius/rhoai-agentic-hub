@@ -3,7 +3,7 @@ type: artifact
 title: Agent Registry — an engineer's deep dive
 description: Vertical-scrolling engineering deep-dive — the dual-entity model, post-kagenti discovery, register-on-deploy architecture, lifecycle join points, supply-chain queries, upstream strategy, and the open decisions; synthesized from the 2026-07-16 research series.
 timestamp: 2026-07-16
-features: [agent-interop, agent-catalog]
+components: [agent-interop, agent-catalog]
 ---
 
 Engineer-persona (high depth) scrolling page built with presentation-create.

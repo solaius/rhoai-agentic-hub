@@ -17,12 +17,12 @@
       <div class="breadcrumb"></div>
 
       <h1>Jira Tracker (Strats Rollup)</h1>
-      <p class="lead">Cross-component RHAISTRAT rollup for the MCP ecosystem. Each component hub sweeps and stores its own Jira scope (<code>features/&lt;component&gt;/work/jira-snapshot.yaml</code>, scope defined in that feature's <code>features.yaml</code> <code>jira:</code> block); this page unions the RHAISTRAT-prefixed rows from all four into one table per component, so the strategy-level picture reads in one place without visiting every hub.</p>
+      <p class="lead">Cross-component RHAISTRAT rollup for the MCP ecosystem. Each component hub sweeps and stores its own Jira scope (<code>components/&lt;component&gt;/work/jira-snapshot.yaml</code>, scope defined in that feature's <code>components.yaml</code> <code>jira:</code> block); this page unions the RHAISTRAT-prefixed rows from all four into one table per component, so the strategy-level picture reads in one place without visiting every hub.</p>
 
       <section>
         <h2>Stored Scopes</h2>
         <div class="callout callout--source">
-          <p>The four stored scopes, as recorded in <code>features/features.yaml</code>, and the date each was last swept:</p>
+          <p>The four stored scopes, as recorded in <code>components/components.yaml</code>, and the date each was last swept:</p>
           <ul>
             <li><strong>Gateway</strong> - <code>project = RHAISTRAT AND summary ~ "\"MCP Gateway\""</code> - swept 2026-07-12</li>
             <li><strong>Catalog</strong> - <code>(project = RHAISTRAT AND (summary ~ "\"MCP Catalog\"" OR key in (RHAISTRAT-1339, RHAISTRAT-1084, RHAISTRAT-1306, RHAISTRAT-1149, RHAISTRAT-1859, RHAISTRAT-1994))) OR (project = RHOAIENG AND component = "AI Hub" AND summary ~ "\"MCP Catalog\"")</code> - swept 2026-07-11</li>
@@ -144,7 +144,7 @@
             </tr>
           </tbody>
         </table>
-        <p class="source-ref">10 RHAISTRAT rows, no Outcome type. "Known As" for RHAISTRAT-1937 sourced from: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/govern/ecosystem.html">rhcl-hub Ecosystem</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/reference.html">rhcl-hub Quick Reference</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/enablement/rhcl-hub/plan/open-questions.html">rhcl-hub Open Questions</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
+        <p class="source-ref">10 RHAISTRAT rows, no Outcome type. "Known As" for RHAISTRAT-1937 sourced from: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-gateway/enablement/rhcl-hub/govern/ecosystem.html">rhcl-hub Ecosystem</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-gateway/enablement/rhcl-hub/reference.html">rhcl-hub Quick Reference</a>, <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-gateway/enablement/rhcl-hub/plan/open-questions.html">rhcl-hub Open Questions</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-gateway/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
       </section>
 
       <section>
@@ -254,7 +254,7 @@
             </tr>
           </tbody>
         </table>
-        <p class="source-ref">10 RHAISTRAT rows (1 Outcome, listed first, + 9 Feature). "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/enablement/catalog-hub/plan/jira-tracker.html">MCP Catalog Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-11).</p>
+        <p class="source-ref">10 RHAISTRAT rows (1 Outcome, listed first, + 9 Feature). "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/enablement/catalog-hub/plan/jira-tracker.html">MCP Catalog Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-11).</p>
       </section>
 
       <section>
@@ -301,7 +301,7 @@
             </tr>
           </tbody>
         </table>
-        <p class="source-ref">3 RHAISTRAT rows (1 Outcome, listed first, + 2 Feature). "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/enablement/mcplo-hub/plan/jira-tracker.html">MCP Lifecycle Operator Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
+        <p class="source-ref">3 RHAISTRAT rows (1 Outcome, listed first, + 2 Feature). "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/enablement/mcplo-hub/plan/jira-tracker.html">MCP Lifecycle Operator Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
       </section>
 
       <section>
@@ -375,7 +375,7 @@
             </tr>
           </tbody>
         </table>
-        <p class="source-ref">6 RHAISTRAT rows, no Outcome type. "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/enablement/registry-hub/plan/jira-tracker.html">MCP Registry Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
+        <p class="source-ref">6 RHAISTRAT rows, no Outcome type. "Known As" descriptors sourced from the <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-registry/enablement/registry-hub/plan/jira-tracker.html">MCP Registry Hub's own Jira Tracker</a>. Source: <a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-registry/work/jira-snapshot.yaml">jira-snapshot.yaml</a> (swept 2026-07-12).</p>
       </section>
 
       <section>
@@ -397,10 +397,10 @@
         <div class="footer-sources">
           <h4>Sources</h4>
           <ul>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-gateway/work/jira-snapshot.yaml">mcp-gateway jira-snapshot.yaml</a> (swept 2026-07-12)</li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-catalog/work/jira-snapshot.yaml">mcp-catalog jira-snapshot.yaml</a> (swept 2026-07-11)</li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-lifecycle-operator/work/jira-snapshot.yaml">mcp-lifecycle-operator jira-snapshot.yaml</a> (swept 2026-07-12)</li>
-            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/features/mcp-registry/work/jira-snapshot.yaml">mcp-registry jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-gateway/work/jira-snapshot.yaml">mcp-gateway jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-catalog/work/jira-snapshot.yaml">mcp-catalog jira-snapshot.yaml</a> (swept 2026-07-11)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-lifecycle-operator/work/jira-snapshot.yaml">mcp-lifecycle-operator jira-snapshot.yaml</a> (swept 2026-07-12)</li>
+            <li><a href="https://github.com/solaius/rhoai-agentic-hub/blob/main/components/mcp-registry/work/jira-snapshot.yaml">mcp-registry jira-snapshot.yaml</a> (swept 2026-07-12)</li>
           </ul>
         </div>
         <div class="related-pages">
