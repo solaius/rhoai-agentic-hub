@@ -1,7 +1,7 @@
 ---
 type: reference
 title: opendatahub-io/architecture-context — THE RHOAI architecture repo
-description: Per-release architecture snapshots for all of RHOAI (~48 components) — component summaries, Mermaid/C4 diagrams, build metadata; agent entry point AGENT_USAGE.md. Standing context for every feature.
+description: Per-release architecture snapshots for all of RHOAI (~48 components) — component summaries, Mermaid/C4 diagrams, build metadata; agent entry point AGENT_USAGE.md. Standing context for every component.
 resource: https://github.com/opendatahub-io/architecture-context
 tags: [platform, architecture, github, standing-context]
 timestamp: 2026-07-10
@@ -26,9 +26,9 @@ How to use it:
 
 - Agents start at `AGENT_USAGE.md`, then navigate `architecture/` to
   the snapshot matching the release in question.
-- Architecture questions in ANY feature route here first —
+- Architecture questions in ANY component route here first —
   `hub.research` hands the matching snapshot to every lens agent as
-  standing context, and new feature overview facts link this entry.
+  standing context, and new component overview facts link this entry.
 - The recorded "why" behind these architectures lives in the companion
   [ADR repo](/components/platform/knowledge/ref-odh-architecture-decision-records-repo.md).
 

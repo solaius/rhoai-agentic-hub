@@ -35,7 +35,7 @@ SkillSpector or Snyk agent-scan into Konflux before TP.
 | **3.6 GA** | Skills Registry DP (MLflow, POC developed, working with Databricks), installation UX (copy-paste commands per harness), partner skill feeds | Registry depends on RFC-0008 upstream merge |
 | **3.7+** | OCI artifact distribution via Quay, one-click install, catalog-to-registry pull, quality scores/benchmarks, signature verification enforcement, partner verification program (Tekton pipelines), marketplace syndication (Skills.sh, ARD), semantic search | Future |
 
-### Boundaries -- what this feature is NOT
+### Boundaries -- what this component is NOT
 
 - **Not the Skills Registry** ([skills-registry](/components/skills-registry/)) -- the registry is the MLflow governance/workspace layer (read-write, namespace-scoped, lifecycle management, RBAC). The catalog is read-only, cluster-scoped, Git-backed. See [decision-skills-catalog-registry-separation](/components/skills-catalog/knowledge/decision-skills-catalog-registry-separation.md).
 - **Not a marketplace** -- no publishing, no monetization, no community submission flow. Curated content from Red Hat, partners, and admin-approved org skills.
@@ -212,7 +212,7 @@ a registry. JFrog has scanning + signing but not a catalog UX.
 | No Red Hat Skill Card format | No structured metadata format for trust, compliance, and quality data beyond SKILL.md frontmatter; NVIDIA's skill card is the de facto reference but not standardized | RHAISTRAT (new, under RHAISTRAT-1780) |
 | No OCI artifact distribution for skills | OCI is the strategic convergence point for disconnected, signing, and mirroring but no Jira work exists to implement the Thomas Vitale v0.1.0 spec for skills | RHAISTRAT (new) |
 | Installation features location unresolved | Where install features live (catalog vs registry vs shared service) needs its own STRAT | RHAISTRAT (new) |
-| No NVIDIA verification integration | SkillSpector/OMS pipeline is complementary; no work exists to integrate scan results or signatures into the catalog UI | RHAISTRAT (new, cross-feature with skills-registry) |
+| No NVIDIA verification integration | SkillSpector/OMS pipeline is complementary; no work exists to integrate scan results or signatures into the catalog UI | RHAISTRAT (new, cross-component with skills-registry) |
 | No marketplace syndication plan | Publishing RH skills to Skills.sh, Codex/Claude Code plugin directories, and ARD format would drive adoption; no work planned | RHAISTRAT (new, 3.7+) |
 
 

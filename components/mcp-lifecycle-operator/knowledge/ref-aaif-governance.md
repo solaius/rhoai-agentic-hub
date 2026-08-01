@@ -31,7 +31,7 @@ release under AAIF governance.
 **Events:** AGNTCon + MCPCon across NA, EU, Asia, India, Africa. First
 MCP Dev Summit (Apr 2-3, NYC) drew 1,200 attendees.
 
-Cross-cutting: MCP governance affects every MCP feature partition.
+Cross-cutting: MCP governance affects every MCP component partition.
 
 Source: [AAIF formation](https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation),
 [MCP is growing up](https://aaif.io/blog/mcp-is-growing-up/)

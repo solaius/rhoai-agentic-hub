@@ -19,7 +19,7 @@ filter_options response surfacing `config-driven` / `flow-import`.
 |---|---|---|
 | [01-landscape](/components/agent-catalog/research/01-landscape.md) | landscape | Taxonomy (template gallery / marketplace / registry), vendor-by-vendor state of the art, deploy-UX and curation patterns |
 | [02-upstream](/components/agent-catalog/research/02-upstream.md) | upstream | kubeflow/hub agent plugin, starter kits repo, OpenShell + agent-sandbox, A2A 1.0, MLflow RFC stream, harness upstreams |
-| [03-architecture](/components/agent-catalog/research/03-architecture.md) | architecture | RHOAI platform baseline (rhoai-3.5-ea.2 snapshot), per-feature integration map, 3.6 deploy reference path, risks |
+| [03-architecture](/components/agent-catalog/research/03-architecture.md) | architecture | RHOAI platform baseline (rhoai-3.5-ea.2 snapshot), per-component integration map, 3.6 deploy reference path, risks |
 | [04-requirements](/components/agent-catalog/research/04-requirements.md) | requirements | Disconnected, supportability, licensing, personas, governance/regulation, day-zero enablement — evidence-graded |
 | [05-competitive](/components/agent-catalog/research/05-competitive.md) | competitive | Hyperscaler/IBM/NVIDIA/Databricks moves, analyst view, honest wedge-vs-behind positioning |
 | [06-requirements-deployment-model-metadata](/components/agent-catalog/research/06-requirements-deployment-model-metadata.md) | requirements | deploymentModel customProperty (config-driven / flow-import) — the unstated deploy routing key, schema gap, and 3.6 contract recommendation |

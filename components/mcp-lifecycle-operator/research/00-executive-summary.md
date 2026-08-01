@@ -1,6 +1,6 @@
 ---
 title: MCP Lifecycle Operator — Executive Summary
-description: Living synthesis of deep research across upstream, architecture, competitive, requirements, and landscape lenses for the MCPLO feature partition.
+description: Living synthesis of deep research across upstream, architecture, competitive, requirements, and landscape lenses for the MCPLO component partition.
 timestamp: 2026-07-11
 review_after: 2026-09-11
 ---

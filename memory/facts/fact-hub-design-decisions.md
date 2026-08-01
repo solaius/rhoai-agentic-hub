@@ -10,5 +10,5 @@ post-build (D2) · auto-memory redirected to memory/.scratch/ (D3) · inline
 approve→commit gate incl. disclosure check (D4) · dedicated pages repo,
 allowlist manifest (D5) · old repo untouched, migrate-on-touch (D6) · full
 successor (D7) · skills not lift-and-shift, ODH marketplace for shared (D8) ·
-feature-partition layout (D9) · OKF v0.1 conventions + extensions (D10) ·
+component-partition layout (D9) · OKF v0.1 conventions + extensions (D10) ·
 hybrid skill architecture (D11). Full text: the design spec (source above).

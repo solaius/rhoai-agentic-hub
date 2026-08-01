@@ -15,7 +15,7 @@ observability, lifecycle, evaluation, policy, operational control.
 
 Component families (per the mapping sheet): Model Context Protocol
 (PM: Peter Double), GenAI Studio (PM: Peter Double), AgentOps, AgentDev,
-OGX core, agentic tooling experience. This hub's feature partitions ladder
+OGX core, agentic tooling experience. This hub's component partitions ladder
 primarily here (mcp-*, agent-*, gen-ai-studio, skills-registry).
 
 The agentic sub-strategy's own pillar set:

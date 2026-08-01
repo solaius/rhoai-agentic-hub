@@ -1,7 +1,7 @@
 ---
 type: reference
 title: Gen AI Studio playground must support AI Gateway as alternative to OGX
-description: Feature to decouple Gen AI Studio from OGX-only backend, enabling AI Gateway as an alternative serving path; parent RHAISTRAT-1312; cross-feature with gen-ai-studio.
+description: Feature to decouple Gen AI Studio from OGX-only backend, enabling AI Gateway as an alternative serving path; parent RHAISTRAT-1312; cross-component with gen-ai-studio.
 resource: https://redhat.atlassian.net/browse/RHAISTRAT-1935
 tags: [ai-gateway, gen-ai-studio]
 components: [gen-ai-studio]

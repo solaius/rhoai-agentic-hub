@@ -6,7 +6,7 @@ status: current
 valid_from: 2026-07-11
 review_after: 2026-07-25
 ---
-- **12 feature partitions**: skills-registry, mcp-gateway, mcp-registry,
+- **12 component partitions**: skills-registry, mcp-gateway, mcp-registry,
   mcp-ecosystem, mcp-catalog, agent-registry, platform, agent-memory,
   agent-ops, gen-ai-studio, mcp-lifecycle-operator, agent-interop.
 - **Five-hub internal knowledge network live**: RHCL/Gateway, Management
@@ -27,14 +27,15 @@ review_after: 2026-07-25
   HTML hub sites on-touch; `rice-strats` retired (owner ruling).
 
 ## History
-- 2026-07-12 — **Update** — superseded: "12 feature partitions ... daily PM
+- 2026-07-31 — terminology: feature → component (repo-wide rename).
+- 2026-07-12 — **Update** — superseded: "12 component partitions ... daily PM
   work running on the hub" (no network-live line). Component hub build-out
   (#35) shipped: three new component hubs built and published internal
   alongside the existing RHCL and Management hubs, all five carrying the
   standard JTBD + Jira Tracker sections; #13 (`audience: internal`) shipped
   in interim form as part of the same effort. (source: component hub
   build-out closeout, 2026-07-12)
-- 2026-07-11 — **Update** — superseded: "DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live." Two new feature partitions added (mcp-lifecycle-operator, agent-interop) with full intake, Jira sweep, and deep research for each. Partition count: 9 → 12. rice-strats retired. (source: intake sessions 2026-07-11)
+- 2026-07-11 — **Update** — superseded: "DOCUMENT PARITY COMPLETE (all workspace research/strategy/work docs migrated — batch 6: 48 docs) — 9 partitions — hub build at M1, memory system live." Two new component partitions added (mcp-lifecycle-operator, agent-interop) with full intake, Jira sweep, and deep research for each. Partition count: 9 → 12. rice-strats retired. (source: intake sessions 2026-07-11)
 - 2026-07-06 — **Update** — superseded: "R4 waves 1–2 done: `presentation-create`
   (wave 1: ported + first enablement artifact published, mcp-registry catalog
   deck) and `blog-create`/`blog-mockup` (wave 2: ported, guide co-located as

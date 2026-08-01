@@ -17,7 +17,7 @@ tags: [narrative, strategy, docs, jtbd, meeting]
   for agents, onboard your first agent, build registries, discover
   skills/MCPs/assets, operationalize agents. Each maps to a documentation area.
 - **Strategy visualization:** desire for interactive strategy diagram where
-  pressing a JTBD navigates to the relevant documentation/features.
+  pressing a JTBD navigates to the relevant documentation/components.
 - **MCP Gateway GA:** ongoing OCP 5 vs OCP 4 dependency discussion — need
   to hash out with Chris/Jonathan for 3.6 GA timeline.
 - **Field dissemination gap:** Brian Ball's team lacking information

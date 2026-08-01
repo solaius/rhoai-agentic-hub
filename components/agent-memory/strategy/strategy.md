@@ -35,7 +35,7 @@ standards deliverables.
 
 ### Boundaries
 
-| This feature IS | This feature is NOT |
+| This component IS | This component is NOT |
 |---|---|
 | Subsystem 1 (Agent Memory Substrate) + Context Engineering as a capability | Agent Knowledge (Subsystem 3) — enterprise-RAG-shaped, separate Outcome |
 | A governed platform service alongside harness memory | A replacement for MEMORY.md, .cursorrules, or harness-native memory |

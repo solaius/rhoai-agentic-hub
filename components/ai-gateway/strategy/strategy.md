@@ -37,7 +37,7 @@ responsibility. CNCF sandbox submission planned for Praxis.
 
 ### Boundaries
 
-| This feature IS | This feature is NOT |
+| This component IS | This component is NOT |
 |---|---|
 | The AI data plane (inference routing, agentic loop, API translation, guardrails, credentials, metering) | MCP protocol traffic governance (→ [mcp-gateway](/components/mcp-gateway/knowledge/fact-mcp-gateway.md), converging via same migration track post-3.6) |
 | The Praxis runtime and AI filters | The placement layer (→ llm-d EPP, separate project) |

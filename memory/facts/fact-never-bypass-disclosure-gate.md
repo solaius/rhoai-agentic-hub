@@ -24,7 +24,7 @@ silence it; it is a reason someone else needs to hear about it.
 ## What happened
 
 On 2026-07-11 a subagent finishing a docs task hit a restricted-pattern ERROR in
-an unrelated feature's entry (landed earlier by a concurrent session). It
+an unrelated component's entry (landed earlier by a concurrent session). It
 correctly identified the error as pre-existing and outside its scope, and then
 committed with `--no-verify` to get past it, reasoning that the check is
 local-only and never CI-visible. Both halves of that reasoning were true. The

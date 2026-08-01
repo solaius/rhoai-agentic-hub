@@ -103,7 +103,7 @@ No harness reads an in-repo memory store natively today. The proven wiring is: *
 
 Human personal-knowledge-management methods are prior art for the *organization* half of the charter (all [reported] — practitioner literature, not controlled studies):
 
-- **PARA** splits a knowledge base into four top-level categories **by actionability and time-horizon**, not topic: Projects (deadline-bound), Areas (ongoing standards), Resources (reference topics), Archive (inactive). Notably orthogonal to both feature-based and type-based decomposition (§7).
+- **PARA** splits a knowledge base into four top-level categories **by actionability and time-horizon**, not topic: Projects (deadline-bound), Areas (ongoing standards), Resources (reference topics), Archive (inactive). Notably orthogonal to both component-based and type-based decomposition (§7).
 - **Johnny.Decimal** numeric prefixes (`10-`, `20-`, …) buy deterministic, stable sort order and citable addresses — at the cost of renumbering friction when structure changes.
 - **Zettelkasten** contributes atomic notes plus explicit links (`[[wiki-links]]`) over folder placement as the discoverability mechanism; hybrid PARA × Johnny.Decimal schemes are common practice.
 - Practitioner claim worth keeping: **findability degrades non-linearly with note volume** — decompose before the monolith crosses the threshold, not after [reported].
@@ -148,11 +148,11 @@ Diátaxis (structure emerges from iteration; no empty scaffolds) [reported]; ado
 
 ## 7. Decomposing the Knowledge Registry (Strand C)
 
-**Evidence status: no directly verified prior art surfaced for the specific question** (feature vs asset type vs source axis for a PM knowledge registry). What follows combines [reported] docs-as-code evidence, local first-party analysis, and clearly-flagged design inference.
+**Evidence status: no directly verified prior art surfaced for the specific question** (component vs asset type vs source axis for a PM knowledge registry). What follows combines [reported] docs-as-code evidence, local first-party analysis, and clearly-flagged design inference.
 
 ### 7.1 The local problem, precisely
 
-First-party analysis of this repo (2026-07-05): `docs/knowledge-registry.md` is a 1,105-line monolith with 13 *topical* sections; `docs/knowledge-review/` already decomposes similar content into 24 files across 11 *aspect* directories (architecture/, components/, personas/, strategy/, …); and the workspaces (`mcps/`, `agents/`, `agent-memory/`, `skills/`) split by *feature*. **Three organizing axes coexist, with an undefined division of labor between the monolith and its decomposition** — the monolith is the designated "start here" yet substantially overlaps the per-domain files. The decomposition question is therefore not "which single axis" but "which axis at which layer."
+First-party analysis of this repo (2026-07-05): `docs/knowledge-registry.md` is a 1,105-line monolith with 13 *topical* sections; `docs/knowledge-review/` already decomposes similar content into 24 files across 11 *aspect* directories (architecture/, components/, personas/, strategy/, …); and the workspaces (`mcps/`, `agents/`, `agent-memory/`, `skills/`) split by *component*. **Three organizing axes coexist, with an undefined division of labor between the monolith and its decomposition** — the monolith is the designated "start here" yet substantially overlaps the per-domain files. The decomposition question is therefore not "which single axis" but "which axis at which layer."
 
 ### 7.2 What the prior art actually says
 
@@ -170,10 +170,10 @@ The consistent meta-pattern: **mature systems separate the storage axis from the
 
 ### 7.3 Direction this suggests (design inference, to be settled in the design phase)
 
-- **Feature/domain as the primary storage partition** — it matches how the work arrives (per-feature research, RFEs, hubs), how the workspaces already split, and PARA's insight that active work areas (Areas) are the natural first cut. Registries become per-feature bundles (OKF: bundle-as-subdirectory).
+- **Component/domain as the primary storage partition** — it matches how the work arrives (per-component research, RFEs, hubs), how the workspaces already split, and PARA's insight that active work areas (Areas) are the natural first cut. Registries become per-component bundles (OKF: bundle-as-subdirectory).
 - **Typed entries within each partition** (decision, fact/status, reference/pointer, person/stakeholder, open question — echoing the registry's 13 sections, Red Hat's typed modules, and this repo's existing memory `type:` frontmatter) rather than prose sections.
 - **Cross-cutting views as generated indexes, not hand-maintained files** — the "all decisions," "all open questions," "everything about roadmap dates" views the monolith currently provides by topic section become index files derived from frontmatter (OKF `index.md` synthesis; the practitioner Bases pattern; `frontmatter.py rebuild-index` is this repo's own working precedent).
-- **Granularity by standalone value, split on concrete need, migrate at next touch** (§5, §6.6) — start with coarse per-feature registries and let entry-level atomization emerge where change frequency demands it.
+- **Granularity by standalone value, split on concrete need, migrate at next touch** (§5, §6.6) — start with coarse per-component registries and let entry-level atomization emerge where change frequency demands it.
 
 Held loosely: strand C is the design phase's decision to make, with targeted follow-up (enterprise wiki IA literature, PM knowledge-base cases) if more evidence is wanted before committing.
 
@@ -186,7 +186,7 @@ Held loosely: strand C is the design phase's decision to make, with targeted fol
 1. **B (capture-as-you-go):** two-phase capture — immediate small typed writes + periodic consolidation skill + human gate for durable promotions (§6.5). OKF `log.md` is the spec-blessed chronological capture surface ([17 §6](17-open-knowledge-format.md)).
 2. **A (continuity):** index-plus-lazy-load store (§6.1–6.3) wired through the AGENTS.md → CLAUDE.md shim (§2.3); profile-shaped current-state files with validity frontmatter kill the re-reminding problem (§6.4).
 3. **C (deferred dogfooding):** the semantic/episodic/procedural taxonomy (§3.4, [research 01](01-landscape-and-definitions.md)) maps onto entry types without constraining them now; nothing in the proposed shape blocks later alignment with the RHOAI substrate direction ([research 16](16-ai-gateway-memory-substrate.md)).
-4. **Structure:** per-feature registries of typed, frontmatter-described entries with generated cross-cutting indexes; incremental migration (§7.3).
+4. **Structure:** per-component registries of typed, frontmatter-described entries with generated cross-cutting indexes; incremental migration (§7.3).
 
 ### 8.2 For the RHOAI agent-memory product line
 

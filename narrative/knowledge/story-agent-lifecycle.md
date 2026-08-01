@@ -12,7 +12,7 @@ tags: [narrative, story]
 iterated in the studio, registered and governed as an asset, remembering
 across sessions, operated with real observability.
 
-**How the features compose:**
+**How the components compose:**
 1. **Gen AI Studio** — where agents and prompts are built and iterated.
 2. **Agent Registry** — the governed asset record: versions, approval,
    catalog and starter kits for reuse.
@@ -27,4 +27,4 @@ control plane for agentic AI — the Agents pillar objective — rather than a
 collection of point tools.
 
 Pillar: [Agents](/narrative/knowledge/pillar-agents.md). Backing knowledge:
-each feature's `knowledge/` index.
+each component's `knowledge/` index.

@@ -42,7 +42,7 @@ contributions. See
 - Tech Preview: RHOAI 3.6 EA (Nov 2026)
 - GA: RHOAI 3.7 (early 2027)
 
-## Relationship to other features
+## Relationship to other components
 
 Works with the Agent Catalog/Registry/Gateway as part of the Agent
 Management Ecosystem. Pre-deployment registry/catalog work is in

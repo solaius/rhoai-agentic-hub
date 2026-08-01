@@ -12,7 +12,7 @@ tags: [narrative, story]
 community, in-house — and give agents access to them with the same
 governance discipline it applies to any other production dependency.
 
-**How the features compose:**
+**How the components compose:**
 1. The **MCP Ecosystem** supplies the raw material: partner/community
    servers, build tooling, validation and security scanning.
 2. The **MCP Registry** is the system of record: lifecycle states, metadata,
@@ -26,4 +26,4 @@ safely everywhere; security review stops being a per-project one-off.
 defensible in regulated environments — registry + gateway is the wedge.
 
 Pillar: [Agents](/narrative/knowledge/pillar-agents.md). Backing knowledge:
-each feature's `knowledge/` index.
+each component's `knowledge/` index.

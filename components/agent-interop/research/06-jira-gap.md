@@ -78,7 +78,7 @@ this cannot be confirmed without summaries.
 |---|-----------|------------------|-------------|
 | G4 | **SPIFFE/SPIRE identity integration** | All five lenses converge: SPIFFE is the identity substrate. RHAISTRAT-1730 covers authorization but NOT identity provisioning (SVID issuance, dynamic registration, rotation). The identity layer beneath authorization is untracked. | HIGH -- zero-trust foundation |
 | G5 | **Token exchange / AuthBridge** | Architecture lens: Red Hat three-layer model documented (SPIFFE + AuthBridge/Keycloak + lifecycle). Capability gaps fact: "token exchange" listed as high-severity gap. No RHAISTRAT. | HIGH -- delegation chain requirement |
-| G6 | **MCP protocol support (agent layer)** | Competitive lens: 78% enterprise MCP adoption, 97M monthly SDK downloads. RHOAI has no native MCP at the agent layer (MCP Gateway is separate feature area for tool traffic governance, not agent-to-tool protocol). | HIGH -- ecosystem gap |
+| G6 | **MCP protocol support (agent layer)** | Competitive lens: 78% enterprise MCP adoption, 97M monthly SDK downloads. RHOAI has no native MCP at the agent layer (MCP Gateway is separate component area for tool traffic governance, not agent-to-tool protocol). | HIGH -- ecosystem gap |
 | G7 | **Declarative CRD design** | Architecture + requirements + landscape lenses: CRD consensus clear (Agent Sandbox + kagent patterns). RHAISTRAT-2019 covers runtime contract, RHAISTRAT-1752 covers operator, but no feature for the CRD schema design itself. | HIGH -- platform engineer expectation |
 | G8 | **Service binding (LLM endpoints)** | Capability gaps fact: medium-severity gap. Kagenti auto-injected LLM endpoints and MCP gateway URLs; OpenShell requires manual provider YAML. No RHAISTRAT. | HIGH -- developer experience |
 
@@ -170,7 +170,7 @@ The competitive lens (01-competitive.md) identifies five areas where
 
 | Competitive gap | Jira coverage | Assessment |
 |----------------|--------------|------------|
-| MCP ecosystem (78% enterprise adoption) | None at agent layer | GAP -- G6. MCP Gateway (separate feature) covers tool traffic but not agent-to-tool protocol integration in OpenShell |
+| MCP ecosystem (78% enterprise adoption) | None at agent layer | GAP -- G6. MCP Gateway (separate component) covers tool traffic but not agent-to-tool protocol integration in OpenShell |
 | A2A protocol (150+ orgs) | RHAISTRAT-1356 | COVERED but early stage (In Progress) |
 | Market timing (12-18 months behind) | N/A (not a feature) | Structural -- mitigate through differentiation |
 | Security audit gaps | None | GAP -- G16 |
@@ -198,7 +198,7 @@ Red Hat-specific integration requirements:
 |-------------------|----------------|-------------------|-----|
 | Agent Sandbox SIG v1beta1 | Active, v1beta1 Jun 2026 | None | Need feature for RHOAI integration |
 | kagent CNCF Sandbox | Active, GitOps-native | None | Evaluate for CRD adoption |
-| Envoy AI Gateway v1.0 | GA Jun 2026 | None (MCP Gateway feature covers AI Gateway) | Covered in mcp-gateway feature |
+| Envoy AI Gateway v1.0 | GA Jun 2026 | None (MCP Gateway component covers AI Gateway) | Covered in mcp-gateway component |
 | OpenShell FIPS (aws-lc-rs) | Proposed (#900) | None | GAP -- G1 |
 | OpenShell privileged SCC | Open (#899) | None | GAP -- G2 |
 | OpenShell multi-tenancy | Discussion (#1722) | None | GAP -- G3 |
@@ -223,7 +223,7 @@ Red Hat-specific integration requirements:
 |---|----------|-----------|-----------|
 | R4 | **SPIFFE identity provisioning for agent workloads** | G4 | Zero-trust foundation. Scope: SVID issuance for agent pods, dynamic registration for ephemeral agents, integration with Keycloak for delegation chain. Distinct from RHAISTRAT-1730 authorization. |
 | R5 | **Token exchange and delegation chain for agents (AuthBridge)** | G5 | Enterprise identity requirement. Scope: Envoy ext-proc AuthBridge for RFC 8693 token exchange, Keycloak Federated Client Authentication, nested `act` claims. |
-| R6 | **MCP protocol support at the agent layer** | G6 | 78% enterprise adoption. Scope: MCP client/server support in OpenShell sandbox, MCP-aware routing in gateway, integration with MCP Lifecycle Operator. Distinct from MCP Gateway feature (tool traffic governance). |
+| R6 | **MCP protocol support at the agent layer** | G6 | 78% enterprise adoption. Scope: MCP client/server support in OpenShell sandbox, MCP-aware routing in gateway, integration with MCP Lifecycle Operator. Distinct from MCP Gateway component (tool traffic governance). |
 | R7 | **Agent CRD design aligned with Agent Sandbox SIG** | G7 | Platform engineer expectation. Scope: evaluate layered CRD approach (Agent Sandbox v1beta1 core + OpenShell extensions), GitOps compatibility, Template/Claim/Instance separation. |
 | R8 | **Service binding for LLM endpoints in agent sandboxes** | G8 | Developer experience. Scope: automatic injection of LLM provider endpoints and MCP gateway URLs into agent sandbox environment. Replaces manual provider YAML. |
 
@@ -279,7 +279,7 @@ Red Hat-specific integration requirements:
    identifies this as "the hardest unsolved problem."
 
 3. **MCP at the agent layer is untracked.** MCP Gateway (separate
-   feature area) covers tool traffic governance, but MCP protocol
+   component area) covers tool traffic governance, but MCP protocol
    support within agent sandboxes -- enabling agents to act as MCP
    clients/servers -- has no RHAISTRAT. This matters because MCP has
    78% enterprise adoption.

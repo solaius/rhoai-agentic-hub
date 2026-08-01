@@ -26,4 +26,4 @@ discussed in the 2026-07-10 Peter/Adel sync. Visual mapping of:
 Local image: `C:\Users\peter\Downloads\image (24).png`
 
 Adel's vision: make this interactive — press a JTBD, navigate to the
-documentation/features for that area.
+documentation/components for that area.

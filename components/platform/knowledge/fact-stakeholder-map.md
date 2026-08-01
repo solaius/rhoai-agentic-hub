@@ -7,7 +7,7 @@ tags: [platform, stakeholders, people]
 review_after: 2026-08-05
 source: ai-asset-registry/docs/knowledge-registry.md §11, §13 (as of 2026-07-05)
 ---
-Grouped rather than given individual `person-` entries — see the R2 batch 4 MANIFEST for the split criterion (recurring/cross-referenced/authored-artifact/signatory/workstream-lead → individual; single-mention role tag → here). For the ~29 people who cleared that bar, see the `person-*.md` entries across each feature's `knowledge/`. Peter Double (owner of this whole initiative) is deliberately excluded from both this map and the individual entries — see the manifest.
+Grouped rather than given individual `person-` entries — see the R2 batch 4 MANIFEST for the split criterion (recurring/cross-referenced/authored-artifact/signatory/workstream-lead → individual; single-mention role tag → here). For the ~29 people who cleared that bar, see the `person-*.md` entries across each component's `knowledge/`. Peter Double (owner of this whole initiative) is deliberately excluded from both this map and the individual entries — see the manifest.
 
 ### MCP Gateway & ecosystem engineering
 | Name | Role/Area | Notes |

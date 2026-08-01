@@ -1,6 +1,6 @@
 ---
 title: "Agent catalog architecture — RHOAI integration map and 3.6 deploy path"
-description: How the Agent Catalog plugs into every RHOAI agentic component today (3.5) and at 3.6 — platform baseline, per-feature integration map, the catalog→OpenShell deploy reference path, and the risks a PM should be tracking.
+description: How the Agent Catalog plugs into every RHOAI agentic component today (3.5) and at 3.6 — platform baseline, per-component integration map, the catalog→OpenShell deploy reference path, and the risks a PM should be tracking.
 timestamp: 2026-07-16
 lens: architecture
 review_after: 2026-10-16
@@ -81,9 +81,9 @@ graph TB
     GAS -. "consumes same MCP Gateway path" .-> GW
 ```
 
-Per sibling feature — **today (3.5)** vs **planned (3.6)**:
+Per sibling component — **today (3.5)** vs **planned (3.6)**:
 
-| Feature | Today (3.5) | Planned (3.6) |
+| Component | Today (3.5) | Planned (3.6) |
 |---|---|---|
 | **mcp-catalog** | Pattern donor, not a data-flow peer: same kubeflow/hub backend, same YAML-source→image→DB disconnected pipeline, same AI Hub card/detail UX; MCP admin UI took priority over the agent one ([/components/mcp-catalog/knowledge/fact-mcp-catalog-overview.md](/components/mcp-catalog/knowledge/fact-mcp-catalog-overview.md)) | Both catalogs converge on TP/GA in 3.6; MCP's discover→deploy→connect→consume chain is the template the agent deploy flow imitates |
 | **mcp-registry** | No integration — registry DP missed 3.5 stable ([/memory/profiles/roadmap.md](/memory/profiles/roadmap.md)) | Declarative binding (RHAIRFE-2309) resolves an agent's declared MCP servers against registry entries; open question how registry governance state (approval/certification) should gate what an agent may bind to |

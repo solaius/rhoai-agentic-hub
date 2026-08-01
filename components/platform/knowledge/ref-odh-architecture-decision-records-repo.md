@@ -13,4 +13,4 @@ snapshots in
 [architecture-context](/components/platform/knowledge/ref-opendatahub-architecture-context-repo.md).
 Already load-bearing in the hub: gen-ai-studio's architecture research
 cites its MLflow ADRs. Check here for the recorded "why" before
-proposing or researching architecture changes in any feature.
+proposing or researching architecture changes in any component.

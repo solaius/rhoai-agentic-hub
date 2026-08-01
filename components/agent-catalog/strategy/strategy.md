@@ -30,7 +30,7 @@ mechanisms hiding behind one catalog surface.
 |---|---|---|
 | 3.5 | Read-only catalog: starter-kit + [harness-kit](/components/agent-catalog/knowledge/decision-harness-kits-in-scope-35-catalog.md) cards from [agentic-starter-kits](/components/agent-catalog/knowledge/ref-agentic-starter-kits-repo.md) -> GitHub link-out; read-only deployments view (sandbox-CR discovery); YAML catalog source baked for disconnected; no deploy button, no agent-card discovery, no admin UI ([scope](/components/agent-catalog/knowledge/fact-agent-catalog-35-scope.md)); [14 agents, 11 frameworks, 2 deployment models, 16 labels](/components/agent-catalog/knowledge/fact-agent-catalog-35-filter-response.md) | **Shipped** — RHAISTRAT-1740 Release Pending (Done), RHAIENG-6156 Resolved |
 | 3.6 EA1 | Deploy from the detail page, [supported images only](/components/agent-catalog/knowledge/decision-agent-catalog-deploy-supported-images-only.md): BFF -> OpenShell Go SDK; declarative binding (RHAIRFE-2309/2310) aspirational — descope path is deploy-with-manual-config ([direction](/components/agent-catalog/knowledge/fact-agent-catalog-36-supported-images.md)); [flow-import deploy likely descoped](/components/agent-catalog/knowledge/question-flow-import-deploy-scope.md) to config-driven only | Planned — SDK pre-merge upstream |
-| 3.6 EA2+ | Agent Registry — work starts here at the earliest, multi-release to DP (~3.7 EA1 directional); a configured deployed instance becomes a registry version, and deploy-time registration is the registry's rich discovery path ([sibling](/components/agent-registry/knowledge/fact-agent-registry.md)). Deployment itself is a separate workstream both features consume | Not started (RHAISTRAT-1436 unscheduled, agent-registry scope) |
+| 3.6 EA2+ | Agent Registry — work starts here at the earliest, multi-release to DP (~3.7 EA1 directional); a configured deployed instance becomes a registry version, and deploy-time registration is the registry's rich discovery path ([sibling](/components/agent-registry/knowledge/fact-agent-registry.md)). Deployment itself is a separate workstream both components consume | Not started (RHAISTRAT-1436 unscheduled, agent-registry scope) |
 | Later | Harness playground/chat ([question](/components/agent-catalog/knowledge/question-agent-catalog-harness-playground-integration.md)), purpose-built agents, eval/validated tier (RHAISTRAT-1792 — now In Progress) | Deferred |
 
 **Boundaries.** Not the runtime (sandboxing/identity/deploy mechanics ->
@@ -110,7 +110,7 @@ adversarially verified
 5. **Register-vs-deploy stance open platform-wide** — evidence favors
    "deploy always registers, reconcile the rest," and the re-baselined
    registry proposal now names deploy-time registration its rich path —
-   the two features need the same answer ([question](/components/agent-catalog/knowledge/question-agent-catalog-register-vs-deploy.md)).
+   the two components need the same answer ([question](/components/agent-catalog/knowledge/question-agent-catalog-register-vs-deploy.md)).
 6. **Product-upstream schema divergence** — protocol/models/imageVersion
    are untyped customProperties upstream; the filter UX has no typed
    contract ([fact](/components/agent-catalog/knowledge/fact-agent-catalog-upstream-schema.md)).
