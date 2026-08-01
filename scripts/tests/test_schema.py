@@ -587,3 +587,18 @@ def test_jira_labels_uppercase_is_error(tmp_path):
           "  jira_labels: [MCP-Catalog]\n")
     errors, _ = lint_repo(root)
     assert any("jira_labels 'MCP-Catalog' must be lowercase" in e for e in errors)
+
+
+def test_related_and_jira_violations_both_surface(tmp_path):
+    """Regression guard for the related continue->if/else restructure: an
+    invalid related: must not short-circuit the jira_* checks on the same
+    entry."""
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-catalog\n  title: C\n  description: d\n"
+          "  related: mcp-gateway\n"
+          "  jira_labels: [MCP-Catalog]\n"
+          "- id: mcp-gateway\n  title: G\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("related must be a list of component ids" in e for e in errors)
+    assert any("jira_labels 'MCP-Catalog' must be lowercase" in e for e in errors)
