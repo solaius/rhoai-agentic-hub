@@ -6,7 +6,7 @@
 2. A field question answered (sales/SSA/PM/customer/partner) → `hub.capture`
    files a `qa-` entry — or appends a dated item to an existing one's
    `asks:` list. A validated user job → `jtbd-` entry.
-3. New source document/URL/transcript → `hub.file` (creates feature
+3. New source document/URL/transcript → `hub.file` (creates component
    partitions on first use).
 4. Session end (or "consolidate memory") → `hub.consolidate` sweeps
    `memory/.scratch/`, proposes promotions, you approve/reject each with a
@@ -27,14 +27,14 @@
 | SKU/pricing detail | `restricted/components/…` — NEVER tracked |
 | "does the registry work air-gapped?" (asked by an SSA) | `components/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
 | a user job for UX/Docs | `components/<f>/knowledge/jtbd-…md` (persona from the locked list) |
-| cross-feature strategy deck or write-up | `narrative/enablement/<slug>/` (+ `artifact.md`) or `narrative/{research,strategy}/` |
+| cross-component strategy deck or write-up | `narrative/enablement/<slug>/` (+ `artifact.md`) or `narrative/{research,strategy}/` |
 | a strategic pillar or connective story | `narrative/knowledge/pillar-…md` / `story-…md` |
 
 Rules live in `/conventions/` — layout, type vocabulary, entry shapes, memory,
 URIs, publishing. When in doubt, read the matching conventions file; it is
 short.
 
-## Adding a feature partition
+## Adding a component partition
 Don't mkdir by hand — file the first piece of content with `hub.file` and
 approve its "create partition" proposal (it updates `components/components.yaml`
 and creates only the needed subdirectories).

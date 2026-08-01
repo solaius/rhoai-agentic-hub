@@ -1,6 +1,6 @@
 # Strategy document conventions
 
-`components/<id>/strategy/strategy.md` is the feature's ONE living strategy
+`components/<id>/strategy/strategy.md` is the component's ONE living strategy
 document — the synthesis a PM plans from. Evidence stays in `knowledge/`
 and `research/`; this document cites, it never restates at length.
 Producer: `hub.strategy` (gated). Hand-edits are allowed (it is a
@@ -9,7 +9,7 @@ records the reconciliation in `## History`.
 
 ## Shape
 
-ONE file per feature: `strategy/strategy.md`. Current-state, rewritten in
+ONE file per component: `strategy/strategy.md`. Current-state, rewritten in
 place on refresh (the profile pattern) — never a dated series; the dated
 record lives in `research/` and `knowledge/` decisions. Other strategy
 artifacts (RFE roadmaps, outcome write-ups) may sit alongside it under
@@ -17,8 +17,8 @@ artifacts (RFE roadmaps, outcome write-ups) may sit alongside it under
 
 ## Frontmatter
 
-`title` ("<Feature> — strategy") · `description` (one line — heads the
-doc; the generated feature index links the `strategy/` directory, not
+`title` ("<Component> — strategy") · `description` (one line — heads the
+doc; the generated component index links the `strategy/` directory, not
 individual files) · `timestamp` (date of last rewrite) · `status: current` ·
 `review_after` (default +60 days — hub.sweep flags staleness) · `source`
 (generator note: inputs + date). No dedicated frontmatter lint (unlike
@@ -31,7 +31,7 @@ fails the build.
 | # | section | contract |
 |---|---|---|
 | 1 | `## The brief` | ≤10 lines. What this is, the one-sentence bet, where it stands today, next milestone. The owner's 60-second re-entry. |
-| 2 | `## What` | Product shape by release train (table: release → scope → status) + boundaries: what this feature is NOT, with routing to its `related:` siblings. |
+| 2 | `## What` | Product shape by release train (table: release → scope → status) + boundaries: what this component is NOT, with routing to its `related:` siblings. |
 | 3 | `## Why` | The problem and the bet stated plainly: jobs served (jtbd/persona links where they exist), market position (wedge vs behind, from research), why now. |
 | 4 | `## Where we stand` | Decisions to date (dated, linked), delivery state, in-flight work. |
 | 5 | `## Gaps & risks` | Open `question-` entries + research risks + tensions, each with one why-it-matters line. The honest section. |

@@ -11,9 +11,9 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 ## Map
 | path | holds |
 |---|---|
-| `components/<id>/` | all content for one feature area — identical skeleton: `knowledge/ research/ strategy/ enablement/ work/` |
-| `components/components.yaml` | the routing table (which features exist) |
-| `narrative/` | the story layer: pillars, cross-feature stories, strategy spine — same skeleton as a feature |
+| `components/<id>/` | all content for one component area — identical skeleton: `knowledge/ research/ strategy/ enablement/ work/` |
+| `components/components.yaml` | the routing table (which components exist) |
+| `narrative/` | the story layer: pillars, cross-component stories, strategy spine — same skeleton as a component |
 | `memory/` | working context: profiles (current state), facts, log |
 | `conventions/` | THE RULEBOOK — read before writing any content |
 | `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people, narrative-map, faq, jtbd, artifacts) |
@@ -22,9 +22,9 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 | `docs/` | the guides: architecture, setup, working-here, memory, skills, publishing, tooling, mcp-servers, enhancements, history |
 
 ## Writing rules (summary — details in /conventions/)
-- Filing = which home — narrative/ (story-shaped) or which feature
+- Filing = which home — narrative/ (story-shaped) or which component
   (components.yaml) — × which type (/conventions/type-vocabulary.md).
-  Cross-feature spread: `components:` list. Working context vs domain
+  Cross-component spread: `components:` list. Working context vs domain
   knowledge boundary: /conventions/memory.md.
 - Every entry: frontmatter with `type`, one-line `description`, `timestamp`.
   Filenames: `decision- fact- ref- person- question-` prefixes.
@@ -48,15 +48,15 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.capture | file one durable item now (gated, committed) |
 | hub.consolidate | scratch sweep → gated batch promotion → reindex |
 | hub.file | intake a doc/URL/transcript as a typed entry |
-| hub.intake | onboard a feature area / bulk-add sources (gated batch; offers research) |
+| hub.intake | onboard a component area / bulk-add sources (gated batch; offers research) |
 | hub.research | lens-scoped deep research → research/ series + gated entries |
-| hub.strategy | synthesize/refresh the feature's living strategy doc (strategy/strategy.md) from knowledge + research + jira -- gated |
+| hub.strategy | synthesize/refresh the component's living strategy doc (strategy/strategy.md) from knowledge + research + jira -- gated |
 | hub.standup | daily PM brief -- Jira (PM portfolio) + Slack + Gemini Notes + AI news, structured as Urgent/Important/Monitor |
-| hub.sweep | per-feature staleness audit -- date-arithmetic + live source cross-referencing (Jira/GDocs/GitHub), gated updates |
+| hub.sweep | per-component staleness audit -- date-arithmetic + live source cross-referencing (Jira/GDocs/GitHub), gated updates |
 | hub.weekly-plan | weekly planning superset of hub.standup -- adds Google Calendar analysis, carry-over tracking, checklist file |
-| hub.jira-sweep | sweep Jira into a feature — scope discovery, public snapshot, gated refs |
+| hub.jira-sweep | sweep Jira into a component — scope discovery, public snapshot, gated refs |
 | hub.jira-sync | diff stored Jira scopes + watched keys; propose updates via the gate |
-| hub.jira-triage | run the RFE triage ceremony for a feature - scan, review in a browser, gated batch write-back to Jira (labels, comments, close, approve) |
+| hub.jira-triage | run the RFE triage ceremony for a component - scan, review in a browser, gated batch write-back to Jira (labels, comments, close, approve) |
 | hub.jira-hygiene | audit one Jira issue against its type checklist (read-only) |
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
@@ -67,8 +67,8 @@ are PROFILE updates (update in place + ## History), not new files.
 First-party content skills (ported from ai-asset-registry, adapted to hub conventions):
 | skill | use for |
 |---|---|
-| presentation-create | build Red Hat-branded HTML decks/pages under a feature's enablement/ (ships via hub.publish) |
-| blog-create | multi-agent Red Hat blog drafting + review pipeline under a feature's enablement/ (final draft ships via Workfront, not hub.publish) |
+| presentation-create | build Red Hat-branded HTML decks/pages under a component's enablement/ (ships via hub.publish) |
+| blog-create | multi-agent Red Hat blog drafting + review pipeline under a component's enablement/ (final draft ships via Workfront, not hub.publish) |
 | blog-mockup | quick Red Hat-branded HTML preview of any blog content (lightweight alternative to blog-create's full pipeline; ships via hub.publish only on request) |
 | customer-feedback-ingest | add/update a customer in the restricted interest tracker from a transcript, email, Jira ticket, or pasted notes |
 | customer-feedback-refresh | audit the tracker for staleness, missing sources, and accuracy |

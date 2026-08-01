@@ -19,12 +19,12 @@ takes.
 | `python scripts/hub_publish.py --check-links --pages-dir <clone>` | verify internal link integrity of the pages clone; exit 1 on broken links | runs in `publish.yml` between the apply step and the push — reproduce a broken-link CI failure locally |
 | `python scripts/hub_jira.py --check` | Jira connectivity/auth probe (doctor section 4 runs it) | setup; auth debugging |
 | `python scripts/hub_jira.py --try-jql '<jql>'` | scope discovery: result count + sample rows | hub.jira-sweep step 2 |
-| `python scripts/hub_jira.py --sweep <feature> --out <dir>` | proposed snapshot + ref candidates into `<dir>` (repo untouched) | driven by hub.jira-sweep |
+| `python scripts/hub_jira.py --sweep <component> --out <dir>` | proposed snapshot + ref candidates into `<dir>` (repo untouched) | driven by hub.jira-sweep |
 | `python scripts/hub_jira.py --sync --out <dir>` | diff stored scopes + watched keys against live Jira | driven by hub.jira-sync |
 | `python scripts/hub_jira.py --audit <KEY>` | structured YAML dump of one issue (links, components, labels, fix versions, description) | driven by hub.jira-hygiene, read-only |
-| `python scripts/hub_triage.py --scan <feature> --out <dir>` | fetch the feature's open Feature Requests, flag/classify/suggest, render the browser report + `rows-<feature>.json` into `<dir>` (repo untouched) | driven by hub.jira-triage step 2; read-only |
+| `python scripts/hub_triage.py --scan <component> --out <dir>` | fetch the component's open Feature Requests, flag/classify/suggest, render the browser report + `rows-<component>.json` into `<dir>` (repo untouched) | driven by hub.jira-triage step 2; read-only |
 | `python scripts/hub_triage.py --plan <decisions.json> --rows <rows.json>` | render the gate table from an exported decisions file; zero network calls | driven by hub.jira-triage step 4; read-only |
-| `python scripts/hub_triage.py --apply <decisions.json> --rows <rows.json> --feature <f> --out <dir>` | the only mode that writes: applies labels/comments/transitions to Jira, writes the proposed `triage-log-<feature>.yaml` into `<dir>` | driven by hub.jira-triage step 5; **writes to Jira** |
+| `python scripts/hub_triage.py --apply <decisions.json> --rows <rows.json> --component <f> --out <dir>` | the only mode that writes: applies labels/comments/transitions to Jira, writes the proposed `triage-log-<component>.yaml` into `<dir>` | driven by hub.jira-triage step 5; **writes to Jira** |
 | `python scripts/hub_env.py --check` | report whether `~/.bashrc` sources the hub's `restricted/.env` and whether `JIRA_*` actually reach this shell (doctor section 4 runs it) | "the `rfe.*` skills cannot see my Jira credentials" |
 | `python scripts/hub_env.py --setup` | back up `~/.bashrc`, remove the retired `ai-asset-registry` block, write or repair the hub block; idempotent, refuses to touch a profile whose markers are malformed | driven by `doctor.sh setup`; rarely by hand |
 | `python scripts/hub_slack.py --check` | probe the Slack xoxc/xoxd tokens against `auth.test` (doctor section 9 runs it) | Slack MCP tools misbehaving: registration is not validity, and the tokens expire |
@@ -65,7 +65,7 @@ All linter findings are `"<relpath>: <message>"` strings, returned as
 missing or disagreeing with `type`; missing type-specific required fields
 (`decision→decided`, `reference→resource`, `person→role,org`); bad status
 enums; non-canonical `resource:` for known domains; skeleton violations
-(unknown dirs, files directly under a feature); `AGENTS.md` over 150 lines;
+(unknown dirs, files directly under a component); `AGENTS.md` over 150 lines;
 `memory/index.md` over 200 lines; manifest problems (missing fields, bad
 audience, `..` paths, missing source, duplicate dest).
 

@@ -16,7 +16,7 @@ private or move hosts without breaking a single published URL.
 ## End to end
 
 1. **Build** the artifact as a self-contained directory:
-   `components/<feature>/enablement/<slug>/` with `index.html` as the entry
+   `components/<component>/enablement/<slug>/` with `index.html` as the entry
    point and all assets inside it (usually via `presentation-create`).
 2. **Allowlist** it with the `hub.publish` skill — publishing is a
    disclosure decision, so the skill restates exactly what becomes public
@@ -40,7 +40,7 @@ private or move hosts without breaking a single published URL.
    and records the state in `.publish-snapshot.json` (the snapshot is how
    it distinguishes "entry removed → unpublish" from "never published", and
    how it warns when a shipped `dest` changes). The landing page groups
-   artifacts by area (feature `title`, routing-table order, Narrative
+   artifacts by area (component `title`, routing-table order, Narrative
    last), one card per artifact, with NEW/UPDATED badges for artifacts
    published or changed in the last 14 days. Badge state lives in the
    snapshot (v2: `{dest: {source, hash, published, badge}}`); v1 snapshots

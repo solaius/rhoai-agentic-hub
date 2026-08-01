@@ -1,6 +1,6 @@
 # Research series conventions
 
-`research/` directories (feature or narrative skeleton) hold deep
+`research/` directories (component or narrative skeleton) hold deep
 documents — the numbered-series contract below. Typed atoms (facts, refs,
 questions) belong in `knowledge/`, not here; research runs propose them
 separately through the gate.

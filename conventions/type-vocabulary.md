@@ -24,7 +24,7 @@ together): `ai-engineer` · `platform-engineer` · `agentops-admin` ·
 | `type` | filename prefix | it is | extra required fields |
 |---|---|---|---|
 | `pillar` | `pillar-` | an RHAI strategic pillar | — |
-| `story`  | `story-`  | a cross-feature narrative connecting features to customer value; optional `pillar:` root-path link | `features` (non-empty) |
+| `story`  | `story-`  | a cross-component narrative connecting components to customer value; optional `pillar:` root-path link | `components` (non-empty) |
 
 Narrative knowledge also accepts the standard vocabulary above.
 
@@ -38,7 +38,7 @@ Narrative knowledge also accepts the standard vocabulary above.
 Any knowledge entry or artifact descriptor may declare `components: [ids…]` —
 validated against `components/components.yaml` (unknown id = lint **error**; the
 routing table is closed, unlike dangling links). The indexer renders the
-backlinks: per-feature `## Connections` sections plus the views.
+backlinks: per-component `## Connections` sections plus the views.
 
 ## Memory files (`memory/`)
 

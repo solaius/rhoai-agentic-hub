@@ -21,9 +21,9 @@ explicit allowlist entry — see the trust model in
 
 ## Layout in one breath
 
-`components/<feature>/` holds all content for one feature area in an identical
+`components/<id>/` holds all content for one component area in an identical
 skeleton (`knowledge/ research/ strategy/ enablement/ work/`); `narrative/`
-is the story layer above them (pillars, cross-feature stories, the strategy
+is the story layer above them (pillars, cross-component stories, the strategy
 spine — same skeleton); `memory/` holds working context (current state,
 preferences, log); `conventions/` is the rulebook; `views/` and every
 `index.md` are generated — never hand-edited; `publish/manifest.yaml` is the

@@ -21,10 +21,10 @@ a concrete mechanism:
 
 | problem | mechanism |
 |---|---|
-| Information lands in inconsistent places | one routing rule — **feature × type** — answers where everything goes |
+| Information lands in inconsistent places | one routing rule — **component × type** — answers where everything goes |
 | Every addition is an ad-hoc filing decision | typed entries with fixed shapes; skills make filing mechanical |
 | Changed facts get re-explained every session | `memory/` profiles updated in place + an always-loaded index |
-| The knowledge registry outgrew one file | feature partitions replace the old 1,105-line monolith |
+| The knowledge registry outgrew one file | component partitions replace the old 1,105-line monolith |
 | Bus-factor of one | conventions + these docs + the doctor: operable without Peter in the room |
 
 ## Information flow
@@ -53,9 +53,9 @@ CI-verified.
 
 | path | holds | authored by |
 |---|---|---|
-| `components/<id>/` | all content for one feature area | humans + skills |
-| `components/components.yaml` | the feature routing table | `hub.file` (partition creation) |
-| `narrative/<skeleton>` | the story layer: pillars, cross-feature stories, strategy spine | humans + skills |
+| `components/<id>/` | all content for one component area | humans + skills |
+| `components/components.yaml` | the component routing table | `hub.file` (partition creation) |
+| `narrative/<skeleton>` | the story layer: pillars, cross-component stories, strategy spine | humans + skills |
 | `memory/` | working context: profiles, facts, log | the gate only |
 | `conventions/` | the normative rulebook | humans (rarely changes) |
 | `views/` | cross-cutting generated indexes | `hub_index.py` only |
@@ -70,12 +70,12 @@ CI-verified.
 Every addition answers exactly two questions — this is the core standard that
 replaces per-addition judgment calls:
 
-1. **Which home?** Story-shaped content (pillars, cross-feature stories, the
-   strategy spine) → `narrative/`; everything else picks its feature:
+1. **Which home?** Story-shaped content (pillars, cross-component stories, the
+   strategy spine) → `narrative/`; everything else picks its component:
    `components/components.yaml` is the routing table. Current partitions:
    skills-registry, mcp-gateway, mcp-registry, mcp-ecosystem,
    agent-registry, agent-memory, agent-ops, gen-ai-studio, and `platform`
-   (the cross-cutting pseudo-feature for releases, people, personas, SKUs,
+   (the cross-cutting pseudo-component for releases, people, personas, SKUs,
    org process — story/strategy content lives in `narrative/`). New
    partitions are created by `hub.file` on first use —
    never by hand.
@@ -87,7 +87,7 @@ replaces per-addition judgment calls:
    descriptor; memory files are `profile` / `fact` / `preference` /
    `feedback`.
 
-Every feature partition has the identical skeleton — subdirectories are
+Every component partition has the identical skeleton — subdirectories are
 created on first use, never pre-created empty, and anything else is a lint
 error:
 
@@ -113,19 +113,19 @@ generated set: `components/index.md`, every `components/*/index.md` and
 `views/`. Regenerate with `python scripts/hub_index.py`; CI fails the build
 when any of them is stale, so hand-edits cannot survive.
 
-`views/` gives cross-cutting answers that the per-feature layout would
+`views/` gives cross-cutting answers that the per-component layout would
 otherwise hide, derived entirely from entry frontmatter:
 
 | view | derived from |
 |---|---|
 | `views/decisions.md` | all `decision` entries, newest first |
 | `views/open-questions.md` | all `question` entries with `status: open` |
-| `views/people.md` | all `person` entries, grouped by feature |
+| `views/people.md` | all `person` entries, grouped by component |
 | `views/jira-map.md` | Jira keys found in `resource:` fields → the entry that covers them |
 | `views/stale-facts.md` | entries past `review_after` or the staleness defaults |
-| `views/narrative-map.md` | pillars → stories → the features each story connects |
-| `views/faq.md` | all `qa` entries — unanswered, most-asked (by `asks:` count), by feature |
-| `views/jtbd.md` | all `jtbd` entries by status × feature, evidence-count flagged |
+| `views/narrative-map.md` | pillars → stories → the components each story connects |
+| `views/faq.md` | all `qa` entries — unanswered, most-asked (by `asks:` count), by component |
+| `views/jtbd.md` | all `jtbd` entries by status × component, evidence-count flagged |
 | `views/artifacts.md` | every enablement artifact + publish state from the manifest |
 
 ## The trust model
@@ -182,10 +182,10 @@ Full text: the [original design spec](https://github.com/solaius/ai-asset-regist
 | D6 | old repo untouched; content migrates on touch via `hub.migrate` |
 | D7 | full successor — daily work moves here, not a partial experiment |
 | D8 | skills are reviewed/enhanced ports, never lift-and-shift; shared skills come from the ODH marketplace |
-| D9 | feature-partition layout (one axis: feature × type) |
+| D9 | component-partition layout (one axis: component × type) |
 | D10 | OKF v0.1 conventions + documented local extensions |
 | D11 | hybrid skill architecture: `hub.*` operational + first-party content + marketplace |
-| D12 | the connection layer is a top-level `narrative/` tree (peer of `components/`, same skeleton), never a pseudo-feature |
+| D12 | the connection layer is a top-level `narrative/` tree (peer of `components/`, same skeleton), never a pseudo-component |
 | D13 | `components:` cross-reference field, validated against `components.yaml`; connections are declared then generated, never hand-maintained |
 | D14 | type vocabulary extension: `pillar`/`story` (narrative-only), `qa`/`jtbd` (any knowledge), `artifact` descriptors + four views |
 | D15 | execution status stays in Jira — `jtbd` tracks the job's truth (`candidate→validated→delivered`, `retired`), `jira:` points at delivery |

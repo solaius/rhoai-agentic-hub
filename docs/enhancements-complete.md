@@ -51,7 +51,7 @@ the Jira operating batch (see below). #27 closed in full.
 **#2 Jira hub skills** (`629cb3d`): `hublib/jira.py`
 (pm-toolkit client port, httpx), `hublib/jiramap.py` + `hub_jira.py`
 (check/try-jql/sweep/sync CLI), `hub.jira-sweep` + `hub.jira-sync`
-skills, tracked public `work/jira-snapshot.yaml` per feature with the
+skills, tracked public `work/jira-snapshot.yaml` per component with the
 unauthenticated-probe summary rule, enriched `views/jira-map.md`, and
 the doctor Jira probe (#19's Jira slice). Spec:
 [/docs/specs/2026-07-09-jira-hub-skills-design.md](/docs/specs/2026-07-09-jira-hub-skills-design.md).
@@ -94,7 +94,7 @@ hub.standup is read-only, hub.weekly-plan writes a checklist file outside
 the repo. Spec:
 [/docs/specs/2026-07-11-standup-sweep-batch-design.md](/docs/specs/2026-07-11-standup-sweep-batch-design.md).
 
-**#3 Feature staleness sweep**: `hub.sweep` skill
+**#3 Component staleness sweep**: `hub.sweep` skill
 combining date-arithmetic staleness (conventions/staleness.yaml defaults)
 with live source cross-referencing (Jira status, GDoc last-modified,
 GitHub activity). Flags stale entries and proposes updates through the

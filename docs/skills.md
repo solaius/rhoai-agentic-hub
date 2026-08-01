@@ -21,26 +21,26 @@ families (design decisions D8/D11):
   item, seconds) — or at session end, `hub.consolidate` (batch sweep of
   `memory/.scratch/` + the session). Both gate, reindex, and commit.
 - **Intake:** new Google Doc / PDF / URL / transcript → `hub.file` → typed
-  knowledge entry in the right feature partition (creates the partition on
+  knowledge entry in the right component partition (creates the partition on
   first use).
 - **Intake at scale:** topic + a pile of sources → `hub.intake` → home
   routed (partition created if new), sources filed, entries batch-gated →
   offers a `hub.research` kickoff.
-- **Research:** `hub.research <feature|narrative> [lenses] [depth]` →
+- **Research:** `hub.research <component|narrative> [lenses] [depth]` →
   plan gate (lenses × quick/standard/deep) → fan-out → numbered series
   under `research/` + gated knowledge entries + living
   `00-executive-summary`. Series contract:
   [/conventions/research.md](/conventions/research.md).
-- **Strategy:** `hub.strategy <feature>` → the ONE living
+- **Strategy:** `hub.strategy <component>` → the ONE living
   `strategy/strategy.md` (eight-section contract:
   [/conventions/strategy.md](/conventions/strategy.md)) synthesized from
   knowledge + research + the Jira snapshot; refresh rewrites in place +
   `## History`. Offered by intake and research; its candidate jiras feed
   `/rfe.create`.
-- **Jira:** `hub.jira-sweep <feature>` (scope discovery → tracked snapshot +
+- **Jira:** `hub.jira-sweep <component>` (scope discovery → tracked snapshot +
   gated refs) then `hub.jira-sync` on demand — diff-driven refresh; the map
   lives in [/views/jira-map.md](/views/jira-map.md). `hub.jira-hygiene` audits
-  one issue against its type checklist (read-only). `hub.jira-triage <feature>`
+  one issue against its type checklist (read-only). `hub.jira-triage <component>`
   runs the periodic RFE triage ceremony - scan, review in a browser report,
   gated batch write-back. **`hub.jira-triage` is the only skill in this hub
   that writes to Jira**, and its surface is bounded to exactly four actions:
@@ -70,13 +70,13 @@ families (design decisions D8/D11):
 | `hub.capture` | one durable item surfaces mid-session | inline confirm | memory or knowledge entry + reindex + commit |
 | `hub.consolidate` | session end / "consolidate memory" | batch approve/edit/reject, per-item public-vs-restricted | tracked store + clears `.scratch/` + one commit |
 | `hub.file` | intake an external source as knowledge | confirm (incl. partition creation) | `ref-`/typed entry, `components.yaml` on first use |
-| `hub.intake` | onboard a new feature area or bulk-add sources | ask-once upfront + batch write gate (incl. partition) | partition (first use), ref-/typed entries, reindex + commit |
-| `hub.research` | deep research on a feature/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
-| `hub.strategy` | write/refresh a feature's living strategy doc | brief shown inline + write gate | `strategy/strategy.md`, reindex + commit |
-| `hub.jira-sweep` | sweep Jira for one feature (snapshot + strategic refs) | scope confirm + batch write gate | components.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
+| `hub.intake` | onboard a new component area or bulk-add sources | ask-once upfront + batch write gate (incl. partition) | partition (first use), ref-/typed entries, reindex + commit |
+| `hub.research` | deep research on a component/narrative topic | plan gate + batch write gate | `research/` series + knowledge entries, reindex + commit |
+| `hub.strategy` | write/refresh a component's living strategy doc | brief shown inline + write gate | `strategy/strategy.md`, reindex + commit |
+| `hub.jira-sweep` | sweep Jira for one component (snapshot + strategic refs) | scope confirm + batch write gate | components.yaml scope, work/jira-snapshot.yaml, ref- entries, reindex + commit |
 | `hub.jira-sync` | refresh swept scopes + watched keys against live Jira | batch write gate | snapshot refreshes, ref-/jtbd updates, reindex + commit |
 | `hub.jira-hygiene` | audit one Jira issue against its type checklist | no (read-only, reports in chat) | nothing - it reports, it does not fix |
-| `hub.jira-triage` | run the periodic RFE triage ceremony for a feature | browser review + inline batch gate, line by line | Jira: labels, comments, `close`/`approve` transitions (ONLY skill that writes to Jira); repo: `work/triage-log.yaml`, reindex + commit |
+| `hub.jira-triage` | run the periodic RFE triage ceremony for a component | browser review + inline batch gate, line by line | Jira: labels, comments, `close`/`approve` transitions (ONLY skill that writes to Jira); repo: `work/triage-log.yaml`, reindex + commit |
 | `hub.reindex` | after adding/editing entries; CI reports stale indexes | no | regenerates all `index.md` + `views/`, runs linter |
 | `hub.doctor` | new machine; something feels broken | setup mode confirms writes | per-machine config only (see [/docs/tooling.md](/docs/tooling.md)) |
 | `hub.publish` | ship an enablement artifact to the public site | disclosure confirm | `publish/manifest.yaml` entry |
@@ -107,8 +107,8 @@ auto-resolved. Ends with reindex, scratch cleared, one commit. Details:
 [/docs/memory.md](/docs/memory.md).
 
 **`hub.file`** — intake. Normalizes the source URL to its canonical form
-([/conventions/uris.md](/conventions/uris.md)), picks feature + type, writes
-the entry with a load-bearing one-line `description`. If no feature fits, it
+([/conventions/uris.md](/conventions/uris.md)), picks component + type, writes
+the entry with a load-bearing one-line `description`. If no component fits, it
 proposes a new partition (appending to `components/components.yaml` and creating
 only the needed subdirectories) — the **only** sanctioned way partitions are
 born. Transcripts land in `components/<f>/work/transcripts/` (gitignored) with
@@ -122,7 +122,7 @@ source per `hub.file` steps 2–5, extracts typed entries, and gates the
 whole batch in one table before writing anything. Ends by offering a
 `hub.research` kickoff — never auto-runs it. One source? Use `hub.file`.
 
-**`hub.research`** — standalone deep research on any feature or narrative
+**`hub.research`** — standalone deep research on any component or narrative
 topic, organized per [/conventions/research.md](/conventions/research.md).
 Lenses (landscape · upstream · architecture · requirements · competitive
 · jira-gap — the last two driven by `domains/*.yaml` configs) are scoped
@@ -139,7 +139,7 @@ supersede notes — never deletions. Tracker/NDA-sourced findings route to
 `restricted/`.
 
 **`hub.strategy`** — the synthesis layer: one living strategy document per
-feature (`strategy/strategy.md`, contract in
+component (`strategy/strategy.md`, contract in
 [/conventions/strategy.md](/conventions/strategy.md)) built from the
 partition's knowledge entries, research series, Jira snapshot + refs,
 memory profiles, and `related:` siblings. PM working register — dense,
@@ -148,7 +148,7 @@ gap-derived candidate jiras ready for `/rfe.create`. Rewritten in place on
 refresh with a `## History` entry; preconditions nudge toward
 `hub.research` / `hub.jira-sweep` first when those inputs are missing.
 
-**`hub.jira-sweep`** — the Jira intake path for one feature. First run does
+**`hub.jira-sweep`** — the Jira intake path for one component. First run does
 conversational scope discovery (`--try-jql` iterations until the JQL looks
 right; the approved scope is stored as a `jira:` block in
 `components/components.yaml`). Every run fetches the scope, builds a
@@ -175,8 +175,8 @@ answers hierarchy/lifecycle questions from the same checklist doc without
 touching Jira. Fixes route to a human in Jira or to `hub.jira-triage`'s
 comment action.
 
-**`hub.jira-triage`** - the periodic RFE triage ceremony for one feature:
-`scripts/hub_triage.py --scan` fetches the feature's open Feature Requests
+**`hub.jira-triage`** - the periodic RFE triage ceremony for one component:
+`scripts/hub_triage.py --scan` fetches the component's open Feature Requests
 (same stored `jira:` JQL scope as `hub.jira-sweep`/`hub.jira-sync`), flags
 staleness, classifies, and suggests an action per issue, then renders a
 browser report (full Jira fidelity, so it lands under `restricted/`, never
@@ -235,7 +235,7 @@ the user-level slack + google-workspace MCP servers with secrets from
   `references/` (brand standards, design tokens, slide + diagram patterns)
   and two self-contained HTML templates. Artifacts must be self-contained
   directories — assets live inside `enablement/<slug>/`, nothing reaches
-  into other features.
+  into other components.
 - `blog-create` and `blog-mockup` split on weight: full multi-agent pipeline
   with review gates vs. a quick branded preview. Only `blog-mockup` output
   ever goes near `hub.publish`, and only on request — real blogs publish

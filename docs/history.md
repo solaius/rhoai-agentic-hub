@@ -22,6 +22,7 @@ gated review batches. The old repo remains as a read-only archive.
 | 2026-07-06 | **R4 wave 2** — `blog-create` + `blog-mockup` ported (blog guide co-located as a skill reference) |
 | 2026-07-06 | **R4 wave 3** — customer-feedback suite ported; tracker data model moved to `restricted/`; rhai-tracker doctor section added |
 | 2026-07-08 | **R4 wave 4** — Slack + Google Workspace MCP setup ported: doctor sections 8–9 (Claude-config write, podman runtime), `restricted/.env` sourcing, [/docs/mcp-servers.md](/docs/mcp-servers.md) |
+| 2026-07-31 | features/ layer renamed to components/ (components are RHOAI components; "feature" now reserved for functionality added to a component). Spec: [/docs/superpowers/specs/2026-07-31-components-rename-design.md](/docs/superpowers/specs/2026-07-31-components-rename-design.md) |
 
 ## Where the full records live
 

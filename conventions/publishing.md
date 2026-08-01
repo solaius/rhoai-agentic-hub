@@ -43,7 +43,7 @@ https://solaius.github.io/rhoai-agentic-hub/ (internal, interim)
 ## Landing page + snapshot (v2)
 
 The pages-site landing page is rendered from `publish/landing-template.html`
-(tracked; self-contained inline CSS): artifacts grouped by area (feature
+(tracked; self-contained inline CSS): artifacts grouped by area (component
 `title` from components/components.yaml, routing-table order, Narrative last),
 one card per artifact, NEW/UPDATED badges for artifacts published or changed
 in the last 14 days. Badge state lives in `.publish-snapshot.json` (v2:
