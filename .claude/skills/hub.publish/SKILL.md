@@ -6,7 +6,7 @@ description: Add or update an entry in publish/manifest.yaml to ship an artifact
 # hub.publish
 
 1. Identify the artifact source — it must live under
-   components/<f>/enablement/… (move it there first if not).
+   components/<c>/enablement/… (move it there first if not).
 2. Draft the manifest entry: source · dest (URL slug — a CONTRACT, never
    changed after shipping; short and stable, e.g. `mcp-gateway/rhcl/`) ·
    audience (`public` ships to `rhoai-agentic-hub-pages`; `internal` ships to

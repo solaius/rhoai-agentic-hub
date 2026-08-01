@@ -13,7 +13,7 @@ mid-June (Adel Zaalouk chasing); Ramesh Reddy assigned Alessio Pragliola
 (+ Luca Giorgi) 2026-06-04. Sibling planning items: RHAISTRAT-1697 (Agent
 Hub UI outcome), -1742 (deploy/catalog integration), -1758 (render
 deployments), -1349 (off-the-shelf harnesses), -1792 (validated
-agents/evals). Field ingestion + feature snapshot: run hub.jira-sweep.
+agents/evals). Field ingestion + component snapshot: run hub.jira-sweep.
 
 **2026-07-27**: Resolved — status moved to Release Pending, resolution Done.
 The 3.5 read-only agent catalog (starter-kit templates + harness kits,

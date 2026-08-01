@@ -140,7 +140,7 @@ def build_all(root, today=None):
     entries += list(_load_entries(root, "knowledge/*.md", base="narrative"))
 
     artifacts = list(_load_artifacts(root))
-    # connection axis (spec D13): components: declarations → per-feature backlinks
+    # connection axis (spec D13): components: declarations → per-component backlinks
     connections = {}
     for rp, m, _ in entries:
         for fid in (m.get("components") or []):
@@ -158,14 +158,14 @@ def build_all(root, today=None):
         lines.append("_No component partitions yet — hub.file creates them on first use._")
     built["components/index.md"] = "\n".join(lines) + "\n"
 
-    # per-feature indexes (only for partitions that exist on disk)
+    # per-component indexes (only for partitions that exist on disk)
     titles = {f["id"]: f.get("title", f["id"]) for f in comps}
     for f in comps:
         fdir = root / "components" / f["id"]
         if not fdir.is_dir():
             continue
         lines = [MARKER + f"# {f.get('title', f['id'])}", "", f.get("description", ""), ""]
-        # feature family (related: in components.yaml) — unknown ids are a lint
+        # component family (related: in components.yaml) — unknown ids are a lint
         # error, so the index just skips them rather than emit a broken link
         rel = [r for r in (f.get("related") or []) if r in titles and r != f["id"]]
         if rel:
@@ -311,15 +311,15 @@ def build_all(root, today=None):
     people = [(rp, m) for rp, m, _ in entries if m.get("type") == "person"]
     lines = [MARKER + "# People & stakeholders", ""]
     for rp, m in sorted(people):
-        feature = _home(rp)
-        lines.append(f"- {feature} · [{_title(m, rp)}]({rp}) — {m.get('role', '')}, "
+        component = _home(rp)
+        lines.append(f"- {component} · [{_title(m, rp)}]({rp}) — {m.get('role', '')}, "
                      f"{m.get('org', '')} — {m.get('description', '')}")
     built["views/people.md"] = "\n".join(lines) + "\n"
 
     built["views/stale-facts.md"] = \
         "\n".join([MARKER + "# Stale facts & profiles", ""] + sorted(stale_rows(root, today))) + "\n"
 
-    # views/narrative-map.md — pillars → stories → features (spec §6)
+    # views/narrative-map.md — pillars → stories → components (spec §6)
     pillars = sorted([(rp, m) for rp, m, _ in entries if m.get("type") == "pillar"])
     stories = sorted([(rp, m) for rp, m, _ in entries if m.get("type") == "story"])
     lines = [MARKER + "# Narrative map", ""]

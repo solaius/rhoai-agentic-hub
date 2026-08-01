@@ -52,7 +52,7 @@ def build_snapshot(component_id, jql, rows, swept):
 
 
 def load_all(root):
-    """[(feature_id, data)] for every parseable snapshot, sorted by path.
+    """[(component_id, data)] for every parseable snapshot, sorted by path.
     Permissive — lint (validate) is where breakage is reported."""
     out = []
     for snap in sorted(Path(root).glob(SNAPSHOT_GLOB)):

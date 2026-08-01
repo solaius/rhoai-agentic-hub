@@ -96,7 +96,7 @@ document.addEventListener('change', e => {
 function exportDecisions() {
   const payload = {
     exported_at: document.body.dataset.today,
-    feature: document.body.dataset.comp,
+    component: document.body.dataset.comp,
     decisions: decisions()
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)],

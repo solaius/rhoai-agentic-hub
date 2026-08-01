@@ -196,7 +196,7 @@ TRANSITION_CONCURRENCY = 5
 
 
 def compose_jql(component_jql):
-    """The feature's stored scope, narrowed to open RFEs (spec decision 5).
+    """The component's stored scope, narrowed to open RFEs (spec decision 5).
     ORDER BY is stripped from the stored scope: it would be illegal mid-query.
     """
     base = component_jql.strip()

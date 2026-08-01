@@ -11,7 +11,7 @@ OLD = C:/Users/peter/code/rh/ai-asset-registry — read-only, never edit it.
 1. Locate and read the content in OLD.
 2. Reshape per hub conventions: split prose into typed entries
    (decision-/fact-/ref-/person-/question-), or move whole documents into
-   components/<f>/{research|strategy|enablement}/ when they have standalone
+   components/<c>/{research|strategy|enablement}/ when they have standalone
    value as documents. Story-shaped old-repo content (strategy, pillars,
    connective write-ups) routes to narrative/{knowledge|research|strategy}/.
    Every derived entry gets `source:` (old repo path or origin URL) and
@@ -26,12 +26,12 @@ OLD = C:/Users/peter/code/rh/ai-asset-registry — read-only, never edit it.
 4. Present the whole batch through the inline gate (numbered list, same
    interaction as hub.consolidate step 4).
 5. Published HTML artifacts: copy sources into
-   components/<f>/enablement/<artifact>/ (or narrative/enablement/ for
+   components/<c>/enablement/<artifact>/ (or narrative/enablement/ for
    cross-component ones), add an artifact.md descriptor (type: artifact,
    components: spread), and add the manifest entry via hub.publish. Old URLs
    keep serving from the old repo — never delete there.
 6. `python scripts/hub_index.py` && `python scripts/hub_lint.py`; commit
-   `migrate(<f>): <what> from ai-asset-registry`; push.
+   `migrate(<c>): <what> from ai-asset-registry`; push.
 
 ## M3 — monolith decomposition (seeded, multi-session)
 Target: OLD/docs/knowledge-registry.md (13 sections). Destination map:

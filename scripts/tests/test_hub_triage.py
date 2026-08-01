@@ -61,7 +61,7 @@ def test_plan_mode_prints_the_gate_table_and_touches_no_network(tmp_path, capsys
     rows_p.write_text(json.dumps(rows), encoding="utf-8")
     dec_p = tmp_path / "d.json"
     dec_p.write_text(json.dumps({
-        "feature": "mcp-registry",
+        "component": "mcp-registry",
         "decisions": {"A-1": {"action": "backlog", "current_labels": []},
                       "A-2": {"action": "assign"}},
     }), encoding="utf-8")
@@ -96,7 +96,7 @@ def test_plan_coerces_a_numeric_release_to_a_string(tmp_path, capsys):
     rows_p.write_text(json.dumps(rows), encoding="utf-8")
     dec_p = tmp_path / "d.json"
     dec_p.write_text(json.dumps({
-        "feature": "mcp-registry",
+        "component": "mcp-registry",
         "decisions": {"A-1": {"action": "roadmap", "release": 3.6}},
     }), encoding="utf-8")
 
@@ -145,7 +145,7 @@ def test_plan_ignores_a_non_list_current_labels_without_a_traceback(
     rows_p.write_text(json.dumps(_one_row_no_labels()), encoding="utf-8")
     dec_p = tmp_path / "d.json"
     dec_p.write_text(json.dumps({
-        "feature": "mcp-registry",
+        "component": "mcp-registry",
         "decisions": {"A-1": {"action": "backlog",
                               "current_labels": bad_current_labels}},
     }), encoding="utf-8")
@@ -166,7 +166,7 @@ def test_plan_drops_junk_entries_from_a_current_labels_list(tmp_path, capsys):
     rows_p.write_text(json.dumps(_one_row_no_labels()), encoding="utf-8")
     dec_p = tmp_path / "d.json"
     dec_p.write_text(json.dumps({
-        "feature": "mcp-registry",
+        "component": "mcp-registry",
         "decisions": {"A-1": {"action": "backlog",
                               "current_labels": ["mcp", 3, None]}},
     }), encoding="utf-8")
@@ -189,7 +189,7 @@ def test_plan_handles_a_non_dict_decision_value_without_a_traceback(
     rows_p.write_text(json.dumps(_one_row_no_labels()), encoding="utf-8")
     dec_p = tmp_path / "d.json"
     dec_p.write_text(json.dumps({
-        "feature": "mcp-registry",
+        "component": "mcp-registry",
         "decisions": {"A-1": bad_decision},
     }), encoding="utf-8")
 

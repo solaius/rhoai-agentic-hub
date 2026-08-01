@@ -6,7 +6,7 @@ description: Refresh a published enablement hub site (RHCL hub, Management hub, 
 # hub.refresh-site
 
 Config-driven successor to the old repo's update-*-hub skills. One config per
-site: `components/<f>/work/refresh-<slug>.yaml` (or `narrative/work/...`),
+site: `components/<c>/work/refresh-<slug>.yaml` (or `narrative/work/...`),
 validated by hub_lint. Never auto-commits. THE DISCLOSURE CONTRACT (step 6)
 is what the old skills lacked: they swept customer names IN; this skill
 keeps them OUT.

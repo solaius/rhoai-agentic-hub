@@ -9,7 +9,7 @@ Input: the item, from the user's words or session context.
 
 1. Classify with the boundary rule (/conventions/memory.md): working context
    (state, preference, feedback, process fact) → memory store; domain
-   knowledge (a colleague would look it up) → components/<f>/knowledge/;
+   knowledge (a colleague would look it up) → components/<c>/knowledge/;
    story-shaped (pillar, cross-component narrative — wrong under any single
    component) → narrative/knowledge/; a field question someone asked us →
    qa- entry (dedupe rule in step 2); a user job for UX/Docs → jtbd- entry
@@ -21,7 +21,7 @@ Input: the item, from the user's words or session context.
      profile in place — new current value, prepend the old value to
      `## History` with date + source, bump `timestamp` and `valid_from`.
    - Atomic: NEW file — `memory/facts/fact-<slug>.md`,
-     `components/<f>/knowledge/<prefix><slug>.md`, or — story-shaped —
+     `components/<c>/knowledge/<prefix><slug>.md`, or — story-shaped —
      `narrative/knowledge/<prefix><slug>.md`, frontmatter per
      /conventions/type-vocabulary.md.
    - Knowledge entries: first check the component partition exists in
