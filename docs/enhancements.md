@@ -30,13 +30,6 @@ evaluations) alongside the hub's existing research lenses. Shares the JTBD
 Knowledge Registry dependency with #1 -- both need the `restricted/` path
 story settled once.
 
-**[#15 Native prototype system](https://github.com/solaius/rhoai-agentic-hub/issues/15).**
-Build native UI prototyping into the hub -- a `prototype/` skeleton leg with
-versioned directories, `prototype.yaml` metadata, PatternFly MCP-grounded
-generation, generated views, and the `hub.prototype` skill. Supersedes #3's
-delegation approach with a self-contained solution needing no VPN or external
-repos.
-
 ## Later (data-gated or low urgency)
 
 **[#4 Curated FAQ / JTBD publishing](https://github.com/solaius/rhoai-agentic-hub/issues/4).**

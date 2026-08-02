@@ -7,6 +7,14 @@ See [/docs/enhancements.md](/docs/enhancements.md) for open items.
 
 ## 2026-08-02
 
+**#15 Native prototype system.** Added `prototype/` as the sixth skeleton
+leg with versioned directories, `prototype.yaml` metadata, PatternFly
+MCP-grounded generation, generated `views/prototypes.md`, and the
+`hub.prototype` skill (create/version/publish/list). Supersedes #3's
+delegation approach with a self-contained solution needing no VPN or
+external repos. Spec:
+[/docs/specs/2026-08-02-prototype-system-design.md](/docs/specs/2026-08-02-prototype-system-design.md).
+
 **#3 Prototyping skills.** Superseded by native prototype system (#15).
 The original approach (thin delegation to internal GitLab prototype repo,
 VPN-dependent) was replaced with a native `prototype/` skeleton leg,

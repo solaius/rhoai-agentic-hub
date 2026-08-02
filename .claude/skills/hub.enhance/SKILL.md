@@ -149,9 +149,20 @@ On reject: discard everything, no writes.
 
 ## Complete (steps 5-6)
 
+**Important:** GitHub auto-closes issues when a PR merge message contains
+`(#N)` or `fixes #N`. This closes the *issue* but does NOT update
+`enhancements.md` or `enhancements-complete.md` -- those are this skill's
+job. If the issue is already closed, that's fine -- skip step 6d (the
+`gh issue close` command) but still do everything else. The enhancements.md
+bookkeeping is the whole point.
+
 ### 5. Gather completion info
 
 Read `docs/enhancements.md` and identify the item by its issue number.
+If the item is NOT in enhancements.md but the user says it's complete,
+check whether it was already removed -- if so, verify it has a proper
+entry in `docs/enhancements-complete.md` and add one if missing.
+
 Ask the user for:
 - A short outcome summary (what was delivered)
 - Link to spec/plan if one exists
@@ -236,7 +247,8 @@ On OK:
      create it at the TOP of the completed items (before the most recent
      existing date heading). Match the existing format:
      `**#N <Title>.** <Outcome summary> ([/docs/specs/<spec>](/docs/specs/<spec>)).`
-  d. Close the GitHub issue: `gh issue close <N>`
+  d. Close the GitHub issue if still open: `gh issue close <N>`
+     (skip if already closed by a PR merge)
   e. Commit with explicit paths:
      `git add docs/enhancements.md docs/enhancements-complete.md` then
      `git commit -m "docs(enhancements): complete #N <short title>" -- docs/enhancements.md docs/enhancements-complete.md`
