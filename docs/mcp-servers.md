@@ -1,6 +1,6 @@
 # MCP servers
 
-The hub's skills lean on three MCP servers. Two are **user-scoped** — they
+The hub's skills lean on four MCP servers. Three are **user-scoped** — they
 live in your Claude config and follow the profile, not the repo; one is
 **project-scoped** — registered in this repo's gitignored `.mcp.json`:
 
@@ -8,10 +8,11 @@ live in your Claude config and follow the profile, not the repo; one is
 |---|---|---|---|
 | `google-workspace` | Claude config | Gmail, Drive, Calendar, Docs, Sheets, Slides | `hub.file` GDoc intake, `presentation-create` / `blog-create` source material, calendar/mail lookups |
 | `slack` | Claude config | read/search/post across the Red Hat workspace | research sweeps, channel context for knowledge entries |
+| `patternfly-docs` | Claude config | PatternFly v6 component docs, design guidelines, accessibility, AI prompt guidance | `hub.prototype` |
 | `rhai-tracker` | repo `.mcp.json` | the shared customer-interest Google Sheet | `customer-feedback-sync` |
 
 `rhai-tracker` is fully handled by doctor section 7 — see
-[/docs/tooling.md](/docs/tooling.md). This page covers the two user-scoped
+[/docs/tooling.md](/docs/tooling.md). This page covers the three user-scoped
 servers: the secrets they need, how they get configured (by `hub.doctor` or
 by hand), and the traps.
 
@@ -228,11 +229,51 @@ printf '%s\n' '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocol
 A `jsonrpc` result line means the plumbing works (wrong profile, or a
 restart is still needed); an auth error means expired tokens.
 
+## PatternFly MCP
+
+[@patternfly/patternfly-mcp](https://www.npmjs.com/package/@patternfly/patternfly-mcp)
+runs locally via `npx` and provides PatternFly v6 component documentation,
+design guidelines, accessibility docs, AI prompt guidance (from the
+`patternfly/ai-helpers` repo), and JSON schemas. `hub.prototype` queries it
+before generating any HTML to ensure correct component selection, CSS class
+names, HTML structure, and design token usage.
+
+**Prerequisite:** Node.js (provides `npx`). Install via your package
+manager (`brew install node`, `dnf install nodejs`, `winget install
+OpenJS.NodeJS`).
+
+Config block (under `mcpServers` in the Claude config — exactly what doctor
+`setup` writes):
+
+```json
+"patternfly-docs": {
+  "type": "stdio",
+  "command": "npx",
+  "args": ["-y", "@patternfly/patternfly-mcp@latest"],
+  "env": {}
+}
+```
+
+On Windows the command is `npx.cmd` (doctor handles this automatically).
+
+No secrets, no OAuth, no tokens. First invocation downloads the package
+via npm; subsequent calls use the npx cache.
+
+**Troubleshooting:**
+- "PatternFly MCP not responding" in `hub.prototype` → check
+  `bash scripts/doctor.sh check` section 8 for `patternfly-docs configured`.
+  If not configured, run `bash scripts/doctor.sh setup` and restart Claude
+  Code.
+- "npx not found" → install Node.js.
+- "npm ERR!" or timeout on first use → network/proxy issue; `npx` needs to
+  download `@patternfly/patternfly-mcp` from the npm registry.
+
 ## Verify
 
-Restart Claude Code, run `/mcp` — `google-workspace` and `slack` (plus
-`rhai-tracker` if set up) should show connected — then try one tool from
-each (list calendar events; list joined Slack channels).
+Restart Claude Code, run `/mcp` — `google-workspace`, `slack`, and
+`patternfly-docs` (plus `rhai-tracker` if set up) should show connected —
+then try one tool from each (list calendar events; list joined Slack
+channels; search PatternFly docs for "button").
 `bash scripts/doctor.sh check` should report sections 8–9 green.
 
 ## Cursor

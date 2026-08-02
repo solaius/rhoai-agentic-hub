@@ -126,6 +126,14 @@ PY
     fi
   done <<< "$PLUGIN_LIST"
 fi
+# Prototype dependencies: user-scoped plugins not in settings.json
+for PROTO_PLUG in "playwright@claude-plugins-official"; do
+  if [ -f "$INSTALLED_JSON" ] && grep -qF "\"$PROTO_PLUG\"" "$INSTALLED_JSON"; then
+    ok "plugin installed: $PROTO_PLUG"
+  else
+    warn "$PROTO_PLUG not installed — needed for hub.prototype visual verification. Install: /plugin in Claude Code"
+  fi
+done
 if [ -n "$MISSING_PLUGINS" ]; then
   # Precondition for the interactive install: can this machine clone from
   # github at all the way the installer will try to?
@@ -388,7 +396,7 @@ if [ -f "$SERVER_JS" ]; then
   fi
 fi
 
-echo "[8] Claude MCP servers (slack + google-workspace)"
+echo "[8] Claude MCP servers (slack + google-workspace + patternfly-docs)"
 # Ported/adapted from ai-asset-registry's repo-doctor bootstrap.sh section 6
 # (C:/Users/peter/code/rh/ai-asset-registry/.claude/skills/repo-doctor/).
 # These two servers are USER-scoped — they live in the Claude config and
@@ -441,6 +449,24 @@ for name, builder, tok in (("slack", want_slack, "SLACK_XOXC_TOKEN"),
         report.append(("fail", f"{name} not configured - run: bash scripts/doctor.sh setup (or wrong profile? docs/mcp-servers.md)"))
     else:
         report.append(("warn", f"{name} not configured and no {tok} in restricted/.env - optional (docs/mcp-servers.md)"))
+# patternfly-docs: no secrets, needs npx (Node.js)
+npx_cmd = "npx.cmd" if sys.platform == "win32" else "npx"
+have_npx = shutil.which(npx_cmd) is not None
+if "patternfly-docs" in srv:
+    report.append(("ok", "patternfly-docs configured"))
+elif mode == "setup":
+    if have_npx:
+        srv["patternfly-docs"] = {"type": "stdio", "command": npx_cmd,
+            "args": ["-y", "@patternfly/patternfly-mcp@latest"], "env": {}}
+        changed = True
+        report.append(("wrote", f"patternfly-docs written to {cfg}"))
+    else:
+        report.append(("warn", "patternfly-docs: npx not found — install Node.js first (docs/mcp-servers.md)"))
+else:
+    if have_npx:
+        report.append(("warn", "patternfly-docs not configured — needed for hub.prototype. Run: bash scripts/doctor.sh setup"))
+    else:
+        report.append(("warn", "patternfly-docs not configured and npx not found — install Node.js + run setup (docs/mcp-servers.md)"))
 if changed:
     if os.path.exists(cfg): shutil.copy(cfg, cfg + ".bak")
     json.dump(d, open(cfg, "w"), indent=2)
@@ -454,7 +480,7 @@ if os.path.isdir(cursor_dir):
         cd = {}
     csrv = cd.setdefault("mcpServers", {})
     cursor_changed = False
-    for name in ("slack", "google-workspace"):
+    for name in ("slack", "google-workspace", "patternfly-docs"):
         if name in srv and name not in csrv:
             csrv[name] = srv[name]; cursor_changed = True
         elif name in srv and csrv.get(name) != srv[name]:

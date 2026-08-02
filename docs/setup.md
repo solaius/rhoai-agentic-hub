@@ -30,7 +30,10 @@ instructions.
    the install prompt if offered).
 
 Optional (content skills like presentation-create): the superpowers plugin —
-install per its own docs if you'll build decks/blogs. The Google Workspace
+install per its own docs if you'll build decks/blogs. Optional
+(hub.prototype): Node.js for the PatternFly MCP server —
+`bash scripts/doctor.sh setup` configures it; see
+[/docs/mcp-servers.md](/docs/mcp-servers.md). The Google Workspace
 and Slack MCP servers are covered by steps 6–7 below plus
 [/docs/mcp-servers.md](/docs/mcp-servers.md).
 

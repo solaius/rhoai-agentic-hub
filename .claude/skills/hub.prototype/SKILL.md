@@ -12,6 +12,36 @@ Spec: /docs/specs/2026-08-02-prototype-system-design.md.
 Structure: /conventions/layout.md (prototype/ skeleton leg, prototype.yaml
 schema).
 
+## Step 0: Prerequisites
+
+Before any subcommand, verify the prototype dependencies are available.
+
+**PatternFly MCP (required):**
+1. Call `searchPatternFlyDocs` with `searchQuery: "button"` and
+   `version: "v6"`.
+2. If the call succeeds and returns results, proceed.
+3. If it fails or returns no results, STOP and tell the user:
+   > PatternFly MCP (`patternfly-docs`) is not responding. This is
+   > required for hub.prototype.
+   >
+   > Setup: run `bash scripts/doctor.sh setup` (section 8 configures
+   > it), then restart Claude Code. Requires Node.js (npx).
+   >
+   > Manual: add `patternfly-docs` to your Claude config — see
+   > [/docs/mcp-servers.md](/docs/mcp-servers.md).
+
+**Playwright (optional — for visual verification):**
+1. Check if `browser_navigate` tool is available.
+2. If not available, note internally that step 8 (Playwright verification)
+   will be skipped. Do NOT block — prototypes still generate without it.
+3. If skipping, inform the user once: "Playwright not available — skipping
+   visual verification. Install the Playwright plugin for screenshot
+   verification."
+
+Skip Step 0 for LIST mode (no generation, no MCP needed).
+
+---
+
 ## Subcommand dispatch
 
 Parse the invocation to determine the mode:
