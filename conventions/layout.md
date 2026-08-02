@@ -33,11 +33,26 @@ use, never pre-created empty):
 | `research/`  | deep documents (numbered series optional) |
 | `strategy/`  | strategy docs, RFE roadmaps, outcomes — `strategy.md` is the living per-component strategy doc ([strategy.md](/conventions/strategy.md)) |
 | `enablement/`| one subdirectory per artifact (deck, hub site, blog) |
+| `prototype/` | one subdirectory per prototype, each with `prototype.yaml` + versioned directories (`v1/`, `v2/`, ...) containing self-contained HTML + PatternFly 6 CDN |
 | `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored), `jira-snapshot.yaml` (machine-written by hub.jira-sweep; tracked), `triage-log.yaml` (machine-written by hub.jira-triage; tracked; carries no Jira prose by design, so it needs no redaction in this PUBLIC repo) |
 
 Anything else directly under a component is a lint **error**. `platform/` is the
 cross-cutting pseudo-component (releases, people, personas, SKUs, org process —
 story/strategy content lives in /narrative/).
+
+### Prototype structure
+
+Each `prototype/<slug>/` contains:
+- `prototype.yaml` — metadata (required fields: title, description, status,
+  current, versions, components)
+- Versioned directories (`v1/`, `v2/`, ...) each with `index.html` as the
+  entry point and optional `assets/` for images/icons
+- `status`: `active` | `superseded` | `archived`
+- `current`: the version directory name that is "latest"
+- `components`: list of component ids this prototype covers (closed
+  vocabulary, same as knowledge entries)
+
+Cross-component prototypes live in `narrative/prototype/`, same structure.
 
 ## Component families
 `related:` in `components/components.yaml` declares a component's boundary

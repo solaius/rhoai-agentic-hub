@@ -9,6 +9,7 @@ Related: [Skills Registry](/components/skills-registry/index.md) · [Agent Catal
 - [research/](/components/skills-catalog/research/)
 - [strategy/](/components/skills-catalog/strategy/)
 - [enablement/](/components/skills-catalog/enablement/)
+- [prototype/](/components/skills-catalog/prototype/)
 - [work/](/components/skills-catalog/work/)
 
 ## Connections

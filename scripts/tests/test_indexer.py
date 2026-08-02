@@ -54,6 +54,7 @@ def test_build_all_produces_expected_files(tmp_path):
         "memory/index.md",
         "views/decisions.md", "views/open-questions.md",
         "views/stale-facts.md", "views/jira-map.md", "views/people.md",
+        "views/prototypes.md",
     }
     for content in built.values():
         assert content.startswith(MARKER)
@@ -96,6 +97,60 @@ def test_component_index_ignores_untracked_content(tmp_path):
     after = build_all(root, today=TODAY)["components/mcp-registry/index.md"]
     assert before == after
     assert "file(s)" not in after
+
+
+def test_prototypes_view_generated(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n")
+    write(root, "components/mcp-registry/prototype/registry-ui/prototype.yaml",
+          "title: Registry UI\ndescription: Interactive mockup\nstatus: active\ncurrent: v1\n"
+          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial layout\n"
+          "components: [mcp-registry]\n")
+    write(root, "components/mcp-registry/prototype/registry-ui/v1/index.html", "<html></html>")
+    built = build_all(root, today=TODAY)
+    assert "views/prototypes.md" in built
+    content = built["views/prototypes.md"]
+    assert "Registry UI" in content
+    assert "active" in content
+    assert content.startswith(MARKER)
+
+
+def test_prototypes_appear_in_component_index(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n")
+    write(root, "components/mcp-registry/prototype/registry-ui/prototype.yaml",
+          "title: Registry UI\ndescription: Interactive mockup\nstatus: active\ncurrent: v1\n"
+          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial layout\n"
+          "components: [mcp-registry]\n")
+    write(root, "components/mcp-registry/prototype/registry-ui/v1/index.html", "<html></html>")
+    built = build_all(root, today=TODAY)
+    comp_index = built["components/mcp-registry/index.md"]
+    assert "## Prototypes" in comp_index
+    assert "Registry UI" in comp_index
+
+
+def test_narrative_prototypes_in_view(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/components.yaml",
+          "components:\n- id: mcp-registry\n  title: MCP Registry\n  description: d\n")
+    write(root, "narrative/prototype/ai-hub/prototype.yaml",
+          "title: AI Hub Unified\ndescription: Cross-component demo\nstatus: active\ncurrent: v1\n"
+          "versions:\n  v1:\n    timestamp: 2026-07-15\n    summary: Unified view\n"
+          "components: [mcp-registry]\n")
+    write(root, "narrative/prototype/ai-hub/v1/index.html", "<html></html>")
+    built = build_all(root, today=TODAY)
+    content = built["views/prototypes.md"]
+    assert "AI Hub Unified" in content
+
+
+def test_no_prototypes_produces_empty_view(tmp_path):
+    root = make_repo(tmp_path)
+    built = build_all(root, today=TODAY)
+    assert "views/prototypes.md" in built
+    content = built["views/prototypes.md"]
+    assert content.startswith(MARKER)
 
 
 def test_component_index_related_line(tmp_path):

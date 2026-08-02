@@ -9,6 +9,7 @@ Related: [MCP Gateway](/components/mcp-gateway/index.md) · [MCP Lifecycle Opera
 - [research/](/components/mcp-catalog/research/)
 - [strategy/](/components/mcp-catalog/strategy/)
 - [enablement/](/components/mcp-catalog/enablement/)
+- [prototype/](/components/mcp-catalog/prototype/)
 - [work/](/components/mcp-catalog/work/)
 
 ## Connections

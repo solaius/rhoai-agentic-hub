@@ -9,6 +9,7 @@ Related: [Agent Registry](/components/agent-registry/index.md) · [Agent Catalog
 - [research/](/components/agent-interop/research/)
 - [strategy/](/components/agent-interop/strategy/)
 - [enablement/](/components/agent-interop/enablement/)
+- [prototype/](/components/agent-interop/prototype/)
 - [work/](/components/agent-interop/work/)
 
 ## Connections

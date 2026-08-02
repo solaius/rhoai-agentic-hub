@@ -80,6 +80,23 @@ def _load_artifacts(root):
                 yield "/" + desc.relative_to(root).as_posix(), meta
 
 
+def _load_prototypes(root):
+    """Yield (slug_rel, data) for prototype.yaml files across components and narrative."""
+    for pattern in ("components/*/prototype/*/prototype.yaml",
+                    "narrative/prototype/*/prototype.yaml"):
+        for pyaml in sorted(root.glob(pattern)):
+            try:
+                data = yaml.safe_load(pyaml.read_text(encoding="utf-8")) or {}
+            except yaml.YAMLError:
+                continue
+            slug_rel = pyaml.parent.relative_to(root).as_posix()
+            data["_slug_rel"] = slug_rel
+            data["_home"] = (slug_rel.split("/")[1]
+                             if slug_rel.startswith("components/")
+                             else "narrative")
+            yield slug_rel, data
+
+
 def stale_rows(root, today=None):
     """Overdue rows for views/stale-facts.md — shared with hublib.status so
     the view and the morning brief cannot drift."""
@@ -140,6 +157,7 @@ def build_all(root, today=None):
     entries += list(_load_entries(root, "knowledge/*.md", base="narrative"))
 
     artifacts = list(_load_artifacts(root))
+    prototypes = list(_load_prototypes(root))
     # connection axis (spec D13): components: declarations → per-component backlinks
     connections = {}
     for rp, m, _ in entries:
@@ -172,7 +190,7 @@ def build_all(root, today=None):
             lines.append("Related: " + " · ".join(
                 f"[{titles[r]}](/components/{r}/index.md)" for r in rel))
             lines.append("")
-        for sub in ("knowledge", "research", "strategy", "enablement", "work"):
+        for sub in ("knowledge", "research", "strategy", "enablement", "prototype", "work"):
             lines.append(f"- [{sub}/](/components/{f['id']}/{sub}/)")
         conns = [(rp, m) for rp, m in connections.get(f["id"], [])
                  if not rp.startswith(f"/components/{f['id']}/")]
@@ -181,6 +199,14 @@ def build_all(root, today=None):
             lines.append("## Connections")
             for rp, m in sorted(conns):
                 lines.append(f"- {m.get('type', '?')} · {_line(rp, m)[2:]}")
+        comp_protos = [(sr, d) for sr, d in prototypes if d.get("_home") == f["id"]]
+        if comp_protos:
+            lines.append("")
+            lines.append("## Prototypes")
+            for sr, d in comp_protos:
+                current = d.get("current", "v1")
+                lines.append(f"- [{d.get('title', sr)}](/{sr}/{current}/index.html)"
+                             f" — {d.get('description', '')} ({d.get('status', '?')})")
         built[f"components/{f['id']}/index.md"] = "\n".join(lines) + "\n"
 
         if (fdir / "knowledge").is_dir():
@@ -238,7 +264,7 @@ def build_all(root, today=None):
         lines = [MARKER + "# Narrative", "",
                  "The story layer: pillars, cross-component stories, and the "
                  "strategy spine.", ""]
-        for sub in ("knowledge", "research", "strategy", "enablement", "work"):
+        for sub in ("knowledge", "research", "strategy", "enablement", "prototype", "work"):
             lines.append(f"- [{sub}/](/narrative/{sub}/)")
         built["narrative/index.md"] = "\n".join(lines) + "\n"
         if (ndir / "knowledge").is_dir():
@@ -419,14 +445,40 @@ def build_all(root, today=None):
         pub = manifest_dest.get(rel)
         pub_str = f"published → {pub}" if pub else "unpublished"
         if desc:
-            comps = ", ".join(desc.get("components") or [])
-            comp_str = f" · connects: {comps}" if comps else ""
+            comp_names = ", ".join(desc.get("components") or [])
+            comp_str = f" · connects: {comp_names}" if comp_names else ""
             lines.append(f"- [{desc.get('title') or slug.name}](/{rel}/) — "
                          f"{desc.get('description', '')} ({pub_str}){comp_str}")
         else:
             lines.append(f"- [{slug.name}](/{rel}/) — _no artifact.md descriptor "
                          f"yet_ ({pub_str})")
     built["views/artifacts.md"] = "\n".join(lines) + "\n"
+
+    # views/prototypes.md
+    lines = [MARKER + "# Prototypes", ""]
+    if not prototypes:
+        lines.append("_No prototypes yet._")
+    else:
+        by_home = {}
+        for sr, d in prototypes:
+            by_home.setdefault(d.get("_home", "?"), []).append((sr, d))
+        comp_order = [f["id"] for f in comps]
+        for home in comp_order + ["narrative"]:
+            group = by_home.get(home, [])
+            if not group:
+                continue
+            home_title = titles.get(home, home.title())
+            lines.append(f"## {home_title}")
+            for sr, d in group:
+                current = d.get("current", "v1")
+                versions = d.get("versions", {})
+                ver_list = ", ".join(sorted(versions.keys())) if versions else "—"
+                lines.append(f"- [{d.get('title', sr)}](/{sr}/{current}/index.html)"
+                             f" — {d.get('description', '')} "
+                             f"(status: {d.get('status', '?')}, "
+                             f"current: {current}, versions: {ver_list})")
+            lines.append("")
+    built["views/prototypes.md"] = "\n".join(lines).rstrip("\n") + "\n"
 
     return built
 

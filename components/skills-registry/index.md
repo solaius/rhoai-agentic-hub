@@ -9,6 +9,7 @@ Related: [Skills Catalog](/components/skills-catalog/index.md)
 - [research/](/components/skills-registry/research/)
 - [strategy/](/components/skills-registry/strategy/)
 - [enablement/](/components/skills-registry/enablement/)
+- [prototype/](/components/skills-registry/prototype/)
 - [work/](/components/skills-registry/work/)
 
 ## Connections

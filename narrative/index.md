@@ -7,4 +7,5 @@ The story layer: pillars, cross-component stories, and the strategy spine.
 - [research/](/narrative/research/)
 - [strategy/](/narrative/strategy/)
 - [enablement/](/narrative/enablement/)
+- [prototype/](/narrative/prototype/)
 - [work/](/narrative/work/)

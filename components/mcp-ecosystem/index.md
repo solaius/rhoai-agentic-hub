@@ -9,6 +9,7 @@ Related: [MCP Gateway](/components/mcp-gateway/index.md) · [MCP Catalog](/compo
 - [research/](/components/mcp-ecosystem/research/)
 - [strategy/](/components/mcp-ecosystem/strategy/)
 - [enablement/](/components/mcp-ecosystem/enablement/)
+- [prototype/](/components/mcp-ecosystem/prototype/)
 - [work/](/components/mcp-ecosystem/work/)
 
 ## Connections
