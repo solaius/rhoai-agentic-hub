@@ -160,6 +160,13 @@ Ask the user for:
 If the user provides this information upfront (e.g. "close #1, we shipped
 it, spec at docs/specs/..."), skip the questions and proceed to the gate.
 
+Then check for documentation impact:
+- Does this enhancement add, change, or remove a user-facing capability?
+  If yes, `docs/capabilities.md` needs updating -- the relevant capability
+  section plus the pain-points and day-in-the-life tables if affected.
+- If the user confirms docs need updating, include it in the completion
+  gate below. If the user says no docs impact, proceed without it.
+
 ### 6. Gate and execute
 
 Show the user:
@@ -168,6 +175,7 @@ enhance → complete #N <title>
   outcome: <summary>
   closes: github issue #N
   moves to: docs/enhancements-complete.md under ## YYYY-MM-DD
+  docs update: <yes -- capabilities.md section X | no -- no capability change>
 ```
 
 Wait for OK.
@@ -175,6 +183,10 @@ Wait for OK.
 On OK:
   a. Remove the entry from `docs/enhancements.md`.
   b. Update the `Last groomed` date in the enhancements.md header to today.
+  b2. If docs update is yes: verify `docs/capabilities.md` has been
+      updated for this enhancement. If not yet done, pause and update
+      the relevant sections before proceeding. Add `docs/capabilities.md`
+      to the commit in step (e).
   c. Add a completion entry to `docs/enhancements-complete.md` under
      today's `## YYYY-MM-DD` heading. If no heading for today exists,
      create it at the TOP of the completed items (before the most recent
