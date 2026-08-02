@@ -4,6 +4,7 @@ description: Chronological capture trail — newest first (reserved OKF log file
 timestamp: 2026-07-05
 ---
 ## 2026-08-02
+- **Creation** -- fact-konflux-ai-asset-pipeline-positioning: Konflux pipeline is shared platform infra (not catalog/registry feature) for scanning/signing/attesting skills, MCP servers, and agents; first target skills, extend to MCP+agents; belongs under RHAISTRAT-1339 or new cross-cutting STRAT.
 - **Update** -- RHAISTRAT-1940 PM assigned (existential risk mitigated); Peter working with EX + PE teams on initial catalog skills list, deadline before 3.6 EA1.
 
 ## 2026-07-30
