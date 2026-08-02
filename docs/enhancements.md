@@ -7,7 +7,7 @@
   on completion, the item moves to
   [enhancements-complete.md](/docs/enhancements-complete.md) with a
   completion date and outcome summary.
-- **Owner:** Peter Double -- **Last groomed:** 2026-08-01
+- **Owner:** Peter Double -- **Last groomed:** 2026-08-02
 - **Convention:** when an enhancement completes that adds, changes, or
   removes a user-facing capability, update
   [docs/capabilities.md](docs/capabilities.md) as part of the completion --
@@ -30,10 +30,12 @@ evaluations) alongside the hub's existing research lenses. Shares the JTBD
 Knowledge Registry dependency with #1 -- both need the `restricted/` path
 story settled once.
 
-**[#3 Prototyping skills](https://github.com/solaius/rhoai-agentic-hub/issues/3).**
-Thin delegation wrappers for pm-toolkit's prototype repo skills -- find or
-clone the RHOAI prototype repo from internal GitLab and delegate to its own
-AGENTS.md for PatternFly-based UI work. VPN-dependent.
+**[#15 Native prototype system](https://github.com/solaius/rhoai-agentic-hub/issues/15).**
+Build native UI prototyping into the hub -- a `prototype/` skeleton leg with
+versioned directories, `prototype.yaml` metadata, PatternFly MCP-grounded
+generation, generated views, and the `hub.prototype` skill. Supersedes #3's
+delegation approach with a self-contained solution needing no VPN or external
+repos.
 
 ## Later (data-gated or low urgency)
 

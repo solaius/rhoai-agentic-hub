@@ -5,6 +5,14 @@ See [/docs/enhancements.md](/docs/enhancements.md) for open items.
 
 ---
 
+## 2026-08-02
+
+**#3 Prototyping skills.** Superseded by native prototype system (#15).
+The original approach (thin delegation to internal GitLab prototype repo,
+VPN-dependent) was replaced with a native `prototype/` skeleton leg,
+`hub.prototype` skill, PatternFly MCP integration, and generated views
+([/docs/specs/2026-08-02-prototype-system-design.md](/docs/specs/2026-08-02-prototype-system-design.md)).
+
 ## 2026-07-09
 
 **#5 Disclosure lint.** `restricted/lint-patterns.txt`
