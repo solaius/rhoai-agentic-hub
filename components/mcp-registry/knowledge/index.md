@@ -12,6 +12,7 @@
 - [Gaurav Singh](/components/mcp-registry/knowledge/person-gaurav-singh.md) — Product/Engineering — authored the RHOAI restricted use entitlement for OpenShift & MCP Lifecycle Operator FAQ; owns distribution/entitlement decisions.
 
 ## question
+- [How should MCP server icons transfer from Catalog to Registry?](/components/mcp-registry/knowledge/question-icon-transfer-catalog-to-registry.md) — The catalog stores icons as base64 SVGs; MLflow expects icon URLs. Air-gapped clusters rule out URL-only approaches. Needs MLflow team input.
 - [Which lifecycle states are required for 3.5 Dev Preview vs. later?](/components/mcp-registry/knowledge/question-lifecycle-states-35-dp-scope.md) — Open question on how much of the proposed 4-track governance model (lifecycle/approval/verification/certification) needs to ship in the 3.5 DP cut.
 - [What MCP metadata should be mandatory for registry records?](/components/mcp-registry/knowledge/question-mcp-metadata-mandatory-fields.md) — Open question on which MCP server metadata fields the registry should require vs. treat as optional.
 - [MCP Registry data model — MVP finalization gaps](/components/mcp-registry/knowledge/question-mcp-registry-mvp-data-model-gaps.md) — Six specific decisions still needed to finalize the MCP Registry data model for 3.5 Dev Preview.

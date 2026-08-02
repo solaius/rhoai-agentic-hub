@@ -1,6 +1,6 @@
 ---
 name: hub.enhance
-description: Create, start, complete, or reprioritize hub enhancement items -- the bridge between enhancements.md (narrative) and GitHub issues (actionable tracking). Use when the user says "new enhancement", "add an enhancement", "I have an idea for the hub", "start #N", "work on #N", "build #N", "pick up #N", "complete enhancement #N", "close enhancement #N", "move #N to next/later/someday", "promote #N", "demote #N", or when an improvement idea for the hub itself surfaces mid-session. Also use when the user says "enhance", "backlog item", "hub improvement", or references enhancements.md. Every write is gated.
+description: Create, start, complete, or reprioritize hub enhancement items -- the bridge between enhancements.md (narrative) and GitHub issues (actionable tracking). Use when the user says "new enhancement", "add an enhancement", "I have an idea for the hub", "start #N", "work on #N", "build #N", "pick up #N", "complete enhancement #N", "close enhancement #N", "move #N to next/later/someday", "promote #N", "demote #N", or when an improvement idea for the hub repo itself surfaces mid-session. Also use when the user says "enhance", "backlog item", "hub improvement", or references enhancements.md. NOT for RHOAI product enhancements -- those are RFEs (/rfe.create) or knowledge entries (hub.capture / hub.file). Every write is gated.
 ---
 
 # hub.enhance
@@ -12,6 +12,28 @@ in sync.
 
 Input: an action (create, start, complete, or reprioritize) plus the
 enhancement details, from the user's words or session context.
+
+## Step 0: Scope check — hub repo or RHOAI product?
+
+Before proceeding, determine whether the idea improves **this repo** (its
+skills, tooling, conventions, indexes, scripts, publishing pipeline) or the
+**RHOAI product** (a feature, gap, or behavior in OpenShift AI components
+like Catalog, Registry, Gateway, Studio, MCPLO, etc.).
+
+| Signal | It's a hub enhancement | It's a product enhancement |
+|---|---|---|
+| Subject | Skills, indexes, scripts, conventions, doctor, publish | MCP servers, models, agents, platform behavior |
+| Actionable by | Changing files in this repo | Filing an RFE or Jira ticket |
+| Example | "The reindex script should detect stale views" | "The registry should accept inline icon data" |
+
+**If it's a product enhancement**, stop and redirect:
+> This sounds like an RHOAI product enhancement, not a hub repo improvement.
+> - To file it as an RFE: `/rfe.create`
+> - To capture it as knowledge: `hub.capture` or `hub.file`
+>
+> Want me to proceed with one of those instead?
+
+Only continue with hub.enhance if the idea is clearly about this repo.
 
 ## Actions
 
