@@ -160,12 +160,48 @@ Ask the user for:
 If the user provides this information upfront (e.g. "close #1, we shipped
 it, spec at docs/specs/..."), skip the questions and proceed to the gate.
 
-Then check for documentation impact:
+Then run the documentation impact checklist. For each category, check
+whether the enhancement introduced something that needs wiring. Skip
+categories that clearly don't apply, but err on the side of checking --
+missed wiring is how gaps like "the doctor doesn't know about the new
+MCP dependency" happen.
+
+**Capabilities:**
 - Does this enhancement add, change, or remove a user-facing capability?
   If yes, `docs/capabilities.md` needs updating -- the relevant capability
   section plus the pain-points and day-in-the-life tables if affected.
-- If the user confirms docs need updating, include it in the completion
-  gate below. If the user says no docs impact, proceed without it.
+
+**MCP / tool dependencies:**
+- Does this enhancement introduce a new MCP server, plugin, or external
+  tool dependency? If yes, check all three:
+  - `docs/mcp-servers.md` has a section for the new server (config block,
+    prerequisites, troubleshooting)
+  - `docs/setup.md` mentions it (following the existing "Optional (...)"
+    pattern)
+  - `scripts/doctor.sh` has a config check (section 8 for MCP servers,
+    section 2 for plugins) and a probe or prerequisite check where
+    applicable
+
+**Skill wiring:**
+- Does this enhancement add a new hub skill? If yes, check:
+  - `AGENTS.md` skills table lists it
+  - `docs/skills.md` documents the skill (invocation, what it does, the
+    chain it participates in)
+  - `docs/working-here.md` filing table or daily loop mentions it where
+    relevant
+
+**Convention changes:**
+- Does this enhancement change the component skeleton, type vocabulary,
+  entry shapes, or publishing rules? If yes, check:
+  - The relevant convention file is updated (`conventions/layout.md`,
+    `conventions/type-vocabulary.md`, etc.)
+  - `docs/architecture.md` reflects the change (skeleton table, views
+    table, mermaid diagram)
+  - `README.md` is still accurate (if it references the changed structure)
+  - `docs/tooling.md` documents any new linter rules or indexer behavior
+
+Present the checklist results to the user. If any items need updating,
+include them in the completion gate below.
 
 ### 6. Gate and execute
 
@@ -175,7 +211,11 @@ enhance → complete #N <title>
   outcome: <summary>
   closes: github issue #N
   moves to: docs/enhancements-complete.md under ## YYYY-MM-DD
-  docs update: <yes -- capabilities.md section X | no -- no capability change>
+  docs impact:
+    capabilities: <updated | no change>
+    mcp/tools:    <updated (patternfly-docs in doctor, mcp-servers.md, setup.md) | no new deps>
+    skill wiring: <updated (AGENTS.md, skills.md) | no new skills>
+    conventions:  <updated (layout.md, architecture.md) | no changes>
 ```
 
 Wait for OK.
@@ -183,10 +223,14 @@ Wait for OK.
 On OK:
   a. Remove the entry from `docs/enhancements.md`.
   b. Update the `Last groomed` date in the enhancements.md header to today.
-  b2. If docs update is yes: verify `docs/capabilities.md` has been
-      updated for this enhancement. If not yet done, pause and update
-      the relevant sections before proceeding. Add `docs/capabilities.md`
-      to the commit in step (e).
+  b2. For each docs impact category marked as needing an update: verify the
+      files have been updated. If any are not yet done, pause and update
+      them before proceeding. Add all updated files to the commit in step (e).
+      Common files by category:
+      - capabilities: `docs/capabilities.md`
+      - mcp/tools: `docs/mcp-servers.md`, `docs/setup.md`, `scripts/doctor.sh`
+      - skill wiring: `AGENTS.md`, `docs/skills.md`, `docs/working-here.md`
+      - conventions: `conventions/layout.md`, `docs/architecture.md`, `README.md`, `docs/tooling.md`
   c. Add a completion entry to `docs/enhancements-complete.md` under
      today's `## YYYY-MM-DD` heading. If no heading for today exists,
      create it at the TOP of the completed items (before the most recent
