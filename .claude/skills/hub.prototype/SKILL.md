@@ -82,7 +82,7 @@ Input: `<component>/<slug>` identifying an existing prototype.
    - Add new entry under `versions:`
    - Preserve all existing version entries
 9. GATE: inline confirm before committing (same pattern as CREATE step 10).
-10. REINDEX: `python scripts/hub_index.py`.
+10. REINDEX + LINT: `python scripts/hub_lint.py` then `python scripts/hub_index.py`.
 11. COMMIT: stage prototype files + regenerated indexes/views explicitly,
     NEVER `git add -A`; check `git diff --cached --stat`, then commit with
     pathspecs:

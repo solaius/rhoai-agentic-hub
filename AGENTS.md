@@ -14,7 +14,6 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 | `components/<id>/` | all content for one component area — identical skeleton: `knowledge/ research/ strategy/ enablement/ prototype/ work/` |
 | `components/components.yaml` | the routing table (which components exist) |
 | `narrative/` | the story layer: pillars, cross-component stories, strategy spine — same skeleton as a component |
-| `prototype/` | versioned UI prototypes (self-contained HTML + PatternFly CDN); `prototype.yaml` metadata per slug |
 | `memory/` | working context: profiles (current state), facts, log |
 | `conventions/` | THE RULEBOOK — read before writing any content |
 | `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people, narrative-map, faq, jtbd, artifacts) |
