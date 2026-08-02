@@ -3,6 +3,9 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-08-02
+- **Update** -- RHAISTRAT-1940 PM assigned (existential risk mitigated); Peter working with EX + PE teams on initial catalog skills list, deadline before 3.6 EA1.
+
 ## 2026-07-30
 - **Creation** — fact-rosa-mcp-server-guidance: customer guidance to use Red Hat build of Kubernetes MCP server (not upstream) for ROSA/OCP AI tool connections; confirmed by Calum Murray.
 

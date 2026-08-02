@@ -1,8 +1,8 @@
 ---
 type: fact
 title: Pre-loaded skills (RHAISTRAT-1940) -- catalog empty-launch risk
-description: RHAISTRAT-1940 (pre-loaded skills) is the top risk for catalog value -- without it the catalog launches empty; candidate content identified (starter kits, MCP configs, prompts, RH-authored skills) but owner/curation unresolved.
-timestamp: 2026-07-23
+description: RHAISTRAT-1940 (pre-loaded skills) -- PM assigned 2026-08-02 (existential risk mitigated); Peter working with EX and PE teams to build the skills list; deadline before 3.6 EA1 completes so EA2+Stable have time for integration.
+timestamp: 2026-08-02
 tags: [skills-catalog, content, risk, rhaistrat]
 components: [skills-catalog]
 review_after: 2026-09-23
@@ -24,5 +24,11 @@ day one.
 | Prompt templates | RHOAI documentation | Needs curation |
 | Red Hat-authored MLOps/OpenShift skills | Internal teams | Needs identification |
 
-**Unresolved**: who curates, what ships first, partner content pipeline.
-No PM assigned to this STRAT as of 2026-07-23.
+**Update 2026-08-02**: PM now assigned to RHAISTRAT-1940 (existential
+risk mitigated). Peter Double working with Emerging Technology (EX) and
+Partnership Ecosystem (PE) teams to build the initial skills list.
+Timeline constraint: list must be understood before 3.6 EA1 completes
+so that EA2 and Stable releases have time to integrate the content.
+
+**Previously unresolved** (2026-07-23): who curates, what ships first,
+partner content pipeline, no PM assigned.

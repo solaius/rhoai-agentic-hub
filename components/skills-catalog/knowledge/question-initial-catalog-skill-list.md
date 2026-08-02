@@ -2,8 +2,8 @@
 type: question
 title: What is the initial list of skills for the RHOAI Skill Catalog?
 status: open
-description: What Red Hat and partner skills should ship pre-loaded in the RHOAI Skill Catalog out of the box? Ann Marie Fred tagged Peter Double as the owner; also ties to catalog.redhat.com/en/ai/skills and RHAISTRAT-1940 (pre-loaded content).
-timestamp: 2026-07-30
+description: What Red Hat and partner skills should ship pre-loaded in the RHOAI Skill Catalog out of the box? Peter working with EX and PE teams to build the list; deadline before 3.6 EA1 (EA2+Stable for integration). RHAISTRAT-1940 PM now assigned.
+timestamp: 2026-08-02
 tags: [skills-catalog, content, partnerships, pre-loaded]
 components: [skills-catalog]
 asks:
@@ -22,6 +22,12 @@ could verge into Agent Ops and Adel's area."
 Catherine Weeks also asked: "Who is responsible for defining what skills
 we'll put into the public domain - is there a team already working on
 this or does this need to be defined?"
+
+**Update 2026-08-02**: Peter Double is actively working with Emerging
+Technology (EX) and Partnership Ecosystem (PE) teams to build the
+initial skills list. RHAISTRAT-1940 now has a PM assigned. Timeline
+constraint: the list must be understood before 3.6 EA1 completes so
+that EA2 and Stable releases have time to integrate the content.
 
 **Dependencies**:
 - RHAISTRAT-1940 (pre-loaded content risk -- without content, catalog
