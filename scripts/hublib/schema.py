@@ -22,7 +22,7 @@ PREFIX_TO_TYPE = {
     "pillar-": "pillar",
     "story-": "story",
 }
-SKELETON_DIRS = {"knowledge", "research", "strategy", "enablement", "work"}
+SKELETON_DIRS = {"knowledge", "research", "strategy", "enablement", "work", "prototype"}
 RESERVED = {"index.md", "log.md"}
 RESEARCH_EXEMPT = {"index.md", "REVIEW-NOTES.md"}
 REQUIRED_BASE = ("type", "description", "timestamp")
@@ -48,6 +48,8 @@ PERSONAS = ("ai-engineer", "platform-engineer", "agentops-admin",
             "business-consumer", "data-scientist", "cluster-admin", "rhoai-admin")
 # qa asks[].by role buckets (spec §5.3, owner-confirmed).
 ASK_BY = ("customer", "partner", "sales", "ssa", "pm", "eng", "exec", "other")
+PROTOTYPE_STATUSES = ("active", "superseded", "archived")
+PROTOTYPE_REQUIRED = ("title", "description", "status", "current", "versions", "components")
 AGENTS_BUDGET = 150
 MEMORY_INDEX_BUDGET = 200
 
@@ -199,6 +201,48 @@ def _lint_research(root, research, warnings):
                                 f"(see conventions/research.md)")
 
 
+def _lint_prototypes(root, prototype_dir, errors, warnings, component_ids):
+    """Validate prototype/ slug directories and their prototype.yaml files."""
+    if not prototype_dir.is_dir():
+        return
+    for slug in sorted(p for p in prototype_dir.iterdir() if p.is_dir()):
+        rel = _rel(root, slug)
+        yaml_path = slug / "prototype.yaml"
+        if not yaml_path.is_file():
+            errors.append(f"{rel}: missing prototype.yaml")
+            continue
+        try:
+            data = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
+        except yaml.YAMLError as exc:
+            errors.append(f"{rel}/prototype.yaml: invalid YAML: {exc}")
+            continue
+        yrel = _rel(root, yaml_path)
+        for field in PROTOTYPE_REQUIRED:
+            if not data.get(field):
+                errors.append(f"{yrel}: missing required field '{field}'")
+        status = data.get("status")
+        if status and status not in PROTOTYPE_STATUSES:
+            errors.append(f"{yrel}: status must be {'|'.join(PROTOTYPE_STATUSES)}")
+        current = data.get("current")
+        if current and not (slug / str(current)).is_dir():
+            errors.append(f"{yrel}: current '{current}' does not point to an existing directory")
+        versions = data.get("versions")
+        if isinstance(versions, dict):
+            for vname in versions:
+                vdir = slug / str(vname)
+                if vdir.is_dir() and not (vdir / "index.html").is_file():
+                    errors.append(f"{_rel(root, vdir)}: missing index.html")
+        comps = data.get("components")
+        if comps is not None:
+            if not isinstance(comps, list) or not all(isinstance(x, str) for x in comps):
+                errors.append(f"{yrel}: components must be a list of component ids")
+            else:
+                for cid in comps:
+                    if cid not in component_ids:
+                        errors.append(f"{yrel}: unknown component id '{cid}' "
+                                      f"(not in components/components.yaml)")
+
+
 def lint_entry(root, path, allowed_types, check_prefix, errors, warnings, component_ids=None):
     rel = _rel(root, path)
     if gitcrypt.is_git_crypt_blob(path):
@@ -291,6 +335,7 @@ def _lint_tree(root, base, errors, warnings, component_ids):
                     lint_entry(root, entry, KNOWLEDGE_TYPES, True, errors, warnings, component_ids=component_ids)
             _lint_artifacts(root, comp / "enablement", errors, warnings, component_ids)
             _lint_research(root, comp / "research", warnings)
+            _lint_prototypes(root, comp / "prototype", errors, warnings, component_ids)
     narrative = base / "narrative"
     if narrative.is_dir():
         for child in sorted(narrative.iterdir()):
@@ -309,6 +354,7 @@ def _lint_tree(root, base, errors, warnings, component_ids):
                            component_ids=component_ids)
         _lint_artifacts(root, narrative / "enablement", errors, warnings, component_ids)
         _lint_research(root, narrative / "research", warnings)
+        _lint_prototypes(root, narrative / "prototype", errors, warnings, component_ids)
     memory = base / "memory"
     if memory.is_dir():
         for entry in sorted(memory.rglob("*.md")):
