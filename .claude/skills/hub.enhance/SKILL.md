@@ -1,6 +1,6 @@
 ---
 name: hub.enhance
-description: Create, complete, or reprioritize hub enhancement items -- the bridge between enhancements.md (narrative) and GitHub issues (actionable tracking). Use when the user says "new enhancement", "add an enhancement", "I have an idea for the hub", "complete enhancement #N", "close enhancement #N", "move #N to next/later/someday", "promote #N", "demote #N", or when an improvement idea for the hub itself surfaces mid-session. Also use when the user says "enhance", "backlog item", "hub improvement", or references enhancements.md. Every write is gated.
+description: Create, start, complete, or reprioritize hub enhancement items -- the bridge between enhancements.md (narrative) and GitHub issues (actionable tracking). Use when the user says "new enhancement", "add an enhancement", "I have an idea for the hub", "start #N", "work on #N", "build #N", "pick up #N", "complete enhancement #N", "close enhancement #N", "move #N to next/later/someday", "promote #N", "demote #N", or when an improvement idea for the hub itself surfaces mid-session. Also use when the user says "enhance", "backlog item", "hub improvement", or references enhancements.md. Every write is gated.
 ---
 
 # hub.enhance
@@ -10,14 +10,15 @@ The hub tracks its own improvements in two linked systems: `docs/enhancements.md
 detail -- scope, acceptance criteria, starting points). This skill keeps them
 in sync.
 
-Input: an action (create, complete, or reprioritize) plus the enhancement
-details, from the user's words or session context.
+Input: an action (create, start, complete, or reprioritize) plus the
+enhancement details, from the user's words or session context.
 
 ## Actions
 
 Determine which action the user needs:
 
 - **create** -- a new enhancement idea. Go to step 1.
+- **start** -- begin working on an enhancement. Go to step 9.
 - **complete** -- an enhancement is done. Go to step 5.
 - **reprioritize** -- move an enhancement between tiers. Go to step 7.
 
@@ -208,3 +209,34 @@ On OK:
   e. Push: `git push`
 
 On reject: discard everything.
+
+---
+
+## Start (steps 9-10)
+
+### 9. Load the enhancement context
+
+Fetch the GitHub issue to get the full context the brainstorming skill
+needs:
+  `gh issue view <N> --json title,body,labels`
+
+Read `docs/enhancements.md` for the narrative entry -- this gives the
+strategic framing that the issue body alone may not convey.
+
+### 10. Hand off to brainstorming
+
+Invoke the `superpowers:brainstorming` skill with the enhancement context
+pre-loaded. Frame the handoff so brainstorming has everything it needs
+without the user re-explaining:
+
+> Starting work on enhancement #N: **<title>**
+>
+> **Strategic context** (from enhancements.md):
+> <the narrative paragraph>
+>
+> **Scope and acceptance criteria** (from the GitHub issue):
+> <the issue body>
+
+The brainstorming skill takes over from here. Its output flows into the
+standard pipeline (spec -> plan -> implement). Hub.enhance is not involved
+again until the work is complete (use the **complete** action then).
