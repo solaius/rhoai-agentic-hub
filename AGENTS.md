@@ -11,9 +11,10 @@ This repo is a PM knowledge hub operated by humans and agents together. It is
 ## Map
 | path | holds |
 |---|---|
-| `components/<id>/` | all content for one component area — identical skeleton: `knowledge/ research/ strategy/ enablement/ work/` |
+| `components/<id>/` | all content for one component area — identical skeleton: `knowledge/ research/ strategy/ enablement/ prototype/ work/` |
 | `components/components.yaml` | the routing table (which components exist) |
 | `narrative/` | the story layer: pillars, cross-component stories, strategy spine — same skeleton as a component |
+| `prototype/` | versioned UI prototypes (self-contained HTML + PatternFly CDN); `prototype.yaml` metadata per slug |
 | `memory/` | working context: profiles (current state), facts, log |
 | `conventions/` | THE RULEBOOK — read before writing any content |
 | `views/` | generated cross-cutting indexes (decisions, questions, stale, jira, people, narrative-map, faq, jtbd, artifacts) |
@@ -58,6 +59,7 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.jira-sync | diff stored Jira scopes + watched keys; propose updates via the gate |
 | hub.jira-triage | run the RFE triage ceremony for a component - scan, review in a browser, gated batch write-back to Jira (labels, comments, close, approve) |
 | hub.jira-hygiene | audit one Jira issue against its type checklist (read-only) |
+| hub.prototype | create/version/publish/list prototypes — grounded in component knowledge, PatternFly MCP, and upstream repos |
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
 | hub.publish | add/update a publish manifest entry (gated) |

@@ -68,6 +68,24 @@ private or move hosts without breaking a single published URL.
 **Removing an entry removes the published copy** on the next publish run —
 that is the intended unpublish path, not an accident to guard against.
 
+### Prototypes
+
+Individual prototypes publish like any other artifact:
+
+    - source: components/mcp-registry/prototype/registry-ui/v2/
+      dest: mcp-registry/prototype/registry-ui/
+      audience: internal
+      title: MCP Registry UI Prototype (v2)
+      description: Interactive mockup of the Registry list/detail/version UI
+
+The generated prototype portal publishes as a single entry:
+
+    - source: views/prototypes-portal.html
+      dest: prototypes/
+      audience: internal
+      title: Prototype Portal
+      description: Auto-generated index of all prototypes across components
+
 ## One-time setup: `PAGES_PUSH_TOKEN`
 
 `publish.yml` pushes to the pages repo with a repository secret:

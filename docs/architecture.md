@@ -97,6 +97,7 @@ error:
 | `research/` | deep documents (numbered series optional) |
 | `strategy/` | strategy docs, RFE roadmaps, outcomes |
 | `enablement/` | one self-contained subdirectory per artifact (deck, hub site, blog) |
+| `prototype/` | versioned UI prototypes, each with `prototype.yaml` + self-contained HTML |
 | `work/` | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored) |
 
 **Working context vs domain knowledge:** "the 3.5 date moved" is memory;
@@ -127,6 +128,7 @@ otherwise hide, derived entirely from entry frontmatter:
 | `views/faq.md` | all `qa` entries — unanswered, most-asked (by `asks:` count), by component |
 | `views/jtbd.md` | all `jtbd` entries by status × component, evidence-count flagged |
 | `views/artifacts.md` | every enablement artifact + publish state from the manifest |
+| `views/prototypes.md` | all prototypes, grouped by component, with version and status |
 
 ## The trust model
 
