@@ -8,6 +8,14 @@ review_after: 2026-10-23
 
 # Skills Catalog research -- upstream projects and standards
 
+> **Superseded by [08-upstream-refresh](/components/skills-catalog/research/08-upstream-refresh.md)
+> (2026-08-02)** for KEP-0005 merger (skills catalog now being built in
+> kubeflow/hub), EX agentic-collections format mapping, catalog.redhat.com/en/ai
+> federation question, ecosystem growth (40+ native agents, 70+ total),
+> MLflow #22833 superseding RFC-0008, and security crisis (Snyk ToxicSkills).
+> Kubeflow hub extensibility model, agentskills.io spec details, npx CLI
+> patterns, and ODH repo analysis below remain current.
+
 ## 1. Kubeflow Hub catalog patterns
 
 kubeflow/hub (Apache-2.0, Go 57% / TypeScript 29%, alpha, v0.3.12) is the

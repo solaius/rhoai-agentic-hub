@@ -44,6 +44,18 @@ agentic packs (~68 skills) now filed -- see
 Peter confirmed interest in bringing these into the RHOAI catalog as the
 primary seed content pool.
 
+**Research-backed curation recommendation** (2026-08-02, research
+09-requirements-refresh): 30-35 curated skills from 4 packs for 3.6 TP:
+- rh-basic (6) -- foundation, GREEN maturity
+- rh-sre (9-10) -- evaluated skills only, GREEN maturity
+- ocp-admin (3) -- all skills, GREEN maturity
+- rh-ai-engineer (11) -- ORANGE maturity, needs fast-track promotion
+Deferred: rh-developer (ORANGE, overlaps quickstarts), rh-virt (GREEN
+but non-core persona), rh-automation (ORANGE, adjacent persona).
+SkillsBench evidence: curated +16.2pp pass rate vs uncurated.
+See [fact-ex-onboarding-36-viable-without-konflux](/components/skills-catalog/knowledge/fact-ex-onboarding-36-viable-without-konflux.md),
+[question-rh-ai-engineer-pack-promotion](/components/skills-catalog/knowledge/question-rh-ai-engineer-pack-promotion.md).
+
 **Related**: [fact-skills-preloaded-content-risk](/components/skills-catalog/knowledge/fact-skills-preloaded-content-risk.md),
 [fact-redhat-agentic-skills-seed-content](/components/skills-catalog/knowledge/fact-redhat-agentic-skills-seed-content.md),
 [ref-ex-agentic-collections-repo](/components/skills-catalog/knowledge/ref-ex-agentic-collections-repo.md),

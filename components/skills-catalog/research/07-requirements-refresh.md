@@ -9,6 +9,15 @@ supersedes_context: "Updates 04-requirements (2026-07-23) with initial content l
 
 # Skills Catalog research -- requirements refresh
 
+> **Superseded by [09-requirements-refresh](/components/skills-catalog/research/09-requirements-refresh.md)
+> (2026-08-02)** for EX-to-RHOAI onboarding pipeline (8 stages, Konflux
+> bypass viable for 3.6 TP), content curation (30-35 skills from 4 packs),
+> pack readiness assessment (rh-ai-engineer ORANGE but most valuable),
+> trust tier classification (platformProvided), and EU AI Act Article 50
+> compliance (now in effect, 5/7 packs exposed). Partner verification
+> program, installation UX methods, skill card/eval standards, signature
+> architecture, syndication, and metadata governance below remain current.
+
 ## 1. Initial content list requirements
 
 Ann Marie Fred's architectural strategy GDoc surfaces the first concrete
