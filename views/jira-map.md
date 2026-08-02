@@ -476,9 +476,9 @@ _summaries withheld — the source Jira is not anonymously readable_
 _swept 2026-08-02 · `(project = RHAISTRAT AND (summary ~ "\"Skill Catalog\"" OR summary ~ "\"Skills Catalog\"" OR key in (RHAISTRAT-1780, RHAISTRAT-1940, RHAISTRAT-1339))) OR (project = RHAIRFE AND (summary ~ "\"skill catalog\"" OR summary ~ "\"skills catalog\"" OR key in (RHAIRFE-2207, RHAIRFE-2382, RHAIRFE-1567))) OR (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"skill catalog\"" OR summary ~ "skill-catalog"))`_
 _summaries withheld — the source Jira is not anonymously readable_
 
-- RHAIRFE-1567 · Feature Request · Stakeholder review · —
-- RHAIRFE-2207 · Feature Request · Approved · 3.5 GA RHOAI RELEASE
-- RHAIRFE-2382 · Feature Request · Approved · —
+- RHAIRFE-1567 · Feature Request · Stakeholder review · — → [RHAIRFE-1567: Reusable safety skills in the Skills Catalog](/components/skills-catalog/knowledge/ref-rhairfe-1567-safety-skills.md)
+- RHAIRFE-2207 · Feature Request · Approved · 3.5 GA RHOAI RELEASE → [RHAIRFE-2207: Skills Catalog discovery and acquisition RFE](/components/skills-catalog/knowledge/ref-rhairfe-2207-skills-catalog-rfe.md)
+- RHAIRFE-2382 · Feature Request · Approved · — → [RHAIRFE-2382: Pre-loaded skills RFE (counterpart of RHAISTRAT-1940)](/components/skills-catalog/knowledge/ref-rhairfe-2382-preloaded-skills-rfe.md)
 - RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
 - RHAISTRAT-1780 · Feature · New · 3.6 EA2 RHOAI RELEASE → [RHAISTRAT-1780: Skills Catalog -- Discovery and Acquisition](/components/skills-catalog/knowledge/ref-rhaistrat-1780-skills-catalog.md)
 - RHAISTRAT-1940 · Feature · New · — → [RHAISTRAT-1940: Pre-loaded skills for out-of-box value](/components/skills-catalog/knowledge/ref-rhaistrat-1940-preloaded-skills.md)
