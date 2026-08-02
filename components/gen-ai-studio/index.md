@@ -7,6 +7,7 @@ Prompt/agent iteration studio — playground UX, usability research, studio inte
 - [research/](/components/gen-ai-studio/research/)
 - [strategy/](/components/gen-ai-studio/strategy/)
 - [enablement/](/components/gen-ai-studio/enablement/)
+- [prototype/](/components/gen-ai-studio/prototype/)
 - [work/](/components/gen-ai-studio/work/)
 
 ## Connections

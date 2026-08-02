@@ -7,6 +7,7 @@ Agent operations — observability, SDLC oversight, AgentOps positioning and tal
 - [research/](/components/agent-ops/research/)
 - [strategy/](/components/agent-ops/strategy/)
 - [enablement/](/components/agent-ops/enablement/)
+- [prototype/](/components/agent-ops/prototype/)
 - [work/](/components/agent-ops/work/)
 
 ## Connections

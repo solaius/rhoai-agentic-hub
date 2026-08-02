@@ -9,4 +9,5 @@ Related: [MCP Gateway](/components/mcp-gateway/index.md) · [Agent Interop](/com
 - [research/](/components/ai-gateway/research/)
 - [strategy/](/components/ai-gateway/strategy/)
 - [enablement/](/components/ai-gateway/enablement/)
+- [prototype/](/components/ai-gateway/prototype/)
 - [work/](/components/ai-gateway/work/)

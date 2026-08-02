@@ -41,7 +41,7 @@
   audience: public
   title: MCP Registry — Targeted User Stories
   description: Scrolling deck framing the Registry problem/solution via targeted user stories for RHOAI 3.5 Dev Preview.
-- source: components/mcp-registry/enablement/registry-ui-prototype/
+- source: components/mcp-registry/prototype/registry-ui/v2/
   dest: mcp-registry/ui-prototype/
   audience: public
   title: MCP Registry UI Prototype (MLflow-style)

@@ -7,6 +7,7 @@ Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAI
 - [research/](/components/agent-memory/research/)
 - [strategy/](/components/agent-memory/strategy/)
 - [enablement/](/components/agent-memory/enablement/)
+- [prototype/](/components/agent-memory/prototype/)
 - [work/](/components/agent-memory/work/)
 
 ## Connections

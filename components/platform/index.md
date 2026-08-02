@@ -7,6 +7,7 @@ Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, 
 - [research/](/components/platform/research/)
 - [strategy/](/components/platform/strategy/)
 - [enablement/](/components/platform/enablement/)
+- [prototype/](/components/platform/prototype/)
 - [work/](/components/platform/work/)
 
 ## Connections

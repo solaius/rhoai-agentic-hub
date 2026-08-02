@@ -445,8 +445,8 @@ def build_all(root, today=None):
         pub = manifest_dest.get(rel)
         pub_str = f"published → {pub}" if pub else "unpublished"
         if desc:
-            comps = ", ".join(desc.get("components") or [])
-            comp_str = f" · connects: {comps}" if comps else ""
+            comp_names = ", ".join(desc.get("components") or [])
+            comp_str = f" · connects: {comp_names}" if comp_names else ""
             lines.append(f"- [{desc.get('title') or slug.name}](/{rel}/) — "
                          f"{desc.get('description', '')} ({pub_str}){comp_str}")
         else:
