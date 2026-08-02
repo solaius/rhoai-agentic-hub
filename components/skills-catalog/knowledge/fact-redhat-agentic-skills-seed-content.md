@@ -19,10 +19,18 @@ live Red Hat API connections.
 **catalog.redhat.com/en/ai**: lists agentic skill packs with install
 instructions for Claude Code, Cursor, and OpenShift Dev Spaces.
 
+**GitHub source**: RHEcosystemAppEng/agentic-collections -- 7 packs,
+~68 skills total, Apache 2.0. See
+[ref-ex-agentic-collections-repo](/components/skills-catalog/knowledge/ref-ex-agentic-collections-repo.md).
+
 These are purpose-built, subscription-backed, live-API-connected skills
 -- not scraped community content. Converting them to SKILL.md format
 catalog entries is the fastest path to solving RHAISTRAT-1940 (pre-loaded
 content).
+
+**Detailed inventory**: see
+[fact-ex-agentic-skills-detailed-inventory](/components/skills-catalog/knowledge/fact-ex-agentic-skills-detailed-inventory.md)
+for the full pack-by-pack breakdown with skill counts and personas.
 
 Additional seed candidates:
 - opendatahub-io/ai-helpers (already in SKILL.md format)

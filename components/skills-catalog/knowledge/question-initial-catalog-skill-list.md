@@ -38,5 +38,13 @@ that EA2 and Stable releases have time to integrate the content.
 - catalog.redhat.com/en/ai/skills (existing external catalog -- should
   these lists align?)
 
+**EX skills inventory** (2026-08-02): detailed breakdown of all 7 EX
+agentic packs (~68 skills) now filed -- see
+[fact-ex-agentic-skills-detailed-inventory](/components/skills-catalog/knowledge/fact-ex-agentic-skills-detailed-inventory.md).
+Peter confirmed interest in bringing these into the RHOAI catalog as the
+primary seed content pool.
+
 **Related**: [fact-skills-preloaded-content-risk](/components/skills-catalog/knowledge/fact-skills-preloaded-content-risk.md),
-[fact-redhat-agentic-skills-seed-content](/components/skills-catalog/knowledge/fact-redhat-agentic-skills-seed-content.md)
+[fact-redhat-agentic-skills-seed-content](/components/skills-catalog/knowledge/fact-redhat-agentic-skills-seed-content.md),
+[ref-ex-agentic-collections-repo](/components/skills-catalog/knowledge/ref-ex-agentic-collections-repo.md),
+[ref-redhat-ai-catalog-page](/components/skills-catalog/knowledge/ref-redhat-ai-catalog-page.md)
