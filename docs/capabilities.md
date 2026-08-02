@@ -25,6 +25,7 @@ this system solves their problems.
 | "Strategy docs are disconnected from Jira reality" | One living strategy doc per component synthesized from knowledge + research + Jira — refresh rewrites in place with history, includes a Jira coverage map and gap-derived candidate RFEs. [Research & Strategy](#research--strategy) |
 | "Customer feedback is trapped in transcripts" | Extract structured signals from notes/emails/Jira, track locally, sync to a shared Sheet — all data lives in a restricted encrypted tree. [Customer Tracking](#customer-tracking) |
 | "Building a deck takes a full day" | Red Hat-branded slide decks and scrolling narratives in minutes — brand standards, design tokens, and templates built into the skill. [Content Creation](#content-creation) |
+| "UI prototypes look nothing like the real product" | Prototypes grounded in the component's real architecture, upstream patterns, and PatternFly MCP-validated components — not invented from scratch. [Content Creation](#content-creation) |
 | "I'm worried about leaking NDA content" | Inline approve on every tracked write with public-vs-restricted choice, encrypted restricted tree, publish allowlist, and disclosure lint. [Trust & Security](#trust--security) |
 
 ## A day in the life
@@ -39,6 +40,7 @@ Run **[hub.standup](#daily-operations)** and read a structured brief. It pulls f
 - **A decision, date change, or useful link** surfaces mid-work. Hit **[hub.capture](#memory--continuity)** — the reflex for durable items. Takes seconds, not a filing exercise. It classifies (profile update / new fact / knowledge entry), shows a one-line confirm, files it in the right place, reindexes, and commits.
 - **Need to go deeper** on a component or narrative topic. Run **[hub.research](#research--strategy)** and it fans out across lenses (landscape, upstream, architecture, requirements, competitive, jira-gap) with a living executive summary. Re-runs refresh — numbering continues, contradicted findings get supersede notes, nothing is lost.
 - **Stakeholder asks for a deck.** Use **[presentation-create](#content-creation)** and get a Red Hat-branded slide deck or scrolling narrative in minutes — self-contained HTML with all assets, brand standards and design tokens built in.
+- **Need a UI prototype** for stakeholder review. Run **[hub.prototype](#content-creation)** — it loads the component's architecture, upstream repos, and strategy, queries PatternFly MCP for every component it will use, and generates versioned HTML mockups grounded in reality.
 - **Customer meeting prep.** Check the **[restricted tracker](#customer-tracking)** for signals from prior conversations, then update it afterward with notes from the new meeting.
 - **Jira issue quality check.** Run **[hub.jira-hygiene](#jira--project-management)** to audit one issue against type-specific checklists (naming, links, Fix Version, Components, labels) — read-only, reports findings in chat.
 
@@ -58,7 +60,7 @@ Run **[hub.consolidate](#memory--continuity)** to sweep scratch memory, dedupe a
 
 ### Knowledge Management
 
-The hub files everything with one routing rule: **component × type**. That's it. Story-shaped content (pillars, cross-component stories, the strategy spine) goes in `narrative/`; everything else picks a component from the routing table. Current partitions: skills-registry, mcp-gateway, mcp-registry, mcp-catalog, mcp-lifecycle-operator, mcp-ecosystem, agent-registry, agent-memory, agent-ops, gen-ai-studio, and platform (cross-cutting). Each partition has the identical skeleton: `knowledge/`, `research/`, `strategy/`, `enablement/`, `work/`.
+The hub files everything with one routing rule: **component × type**. That's it. Story-shaped content (pillars, cross-component stories, the strategy spine) goes in `narrative/`; everything else picks a component from the routing table. Current partitions: skills-registry, mcp-gateway, mcp-registry, mcp-catalog, mcp-lifecycle-operator, mcp-ecosystem, agent-registry, agent-memory, agent-ops, gen-ai-studio, and platform (cross-cutting). Each partition has the identical skeleton: `knowledge/`, `research/`, `strategy/`, `enablement/`, `prototype/`, `work/`.
 
 **Key capabilities:**
 
@@ -107,6 +109,7 @@ Building enablement no longer takes a full day. The hub generates Red Hat-brande
 - **presentation-create** — create or update Red Hat-branded slide decks (keyboard-navigated, full-screen) or scrolling narratives (vertical-scroll, fixed header nav). Staged under a component's `enablement/<slug>/` as self-contained HTML with all assets. Brand standards, design tokens, and templates built into the skill's `references/`. Custom illustration assets supported. Building never publishes — hand off to hub.publish when ready.
 - **blog-create** — multi-agent drafting + iterative review pipeline for Red Hat blog posts. Drafts land under `enablement/`. Final approved draft ships via **Workfront** (the Red Hat blog submission process), never hub.publish.
 - **blog-mockup** — quick Red Hat-branded HTML preview of any blog content. Lightweight alternative to blog-create's full pipeline. Output ships via hub.publish only on request.
+- **hub.prototype** — create versioned UI prototypes for any component. Deep-reads the component's knowledge, research, strategy, related components, Jira scope, and upstream repos before generating. Mandatory PatternFly MCP component planning ensures correct PF6 class names, HTML structure, and design tokens. Produces self-contained HTML + PatternFly 6 CDN files under `prototype/<slug>/v1/` with `prototype.yaml` metadata. Versions coexist on disk (v1, v2, ...) for side-by-side stakeholder comparison. Cross-component prototypes live in `narrative/prototype/`. Publishable via hub.publish.
 - **Knowledge hub sites** — multi-page enablement sites organized as understand/sell/build/govern/plan. Built with presentation-create, refreshable from live sources (GDocs, GitHub, Jira, Slack, local entries) via hub.refresh-site. Currently five hub sites live: MCP Gateway (23 pages), MCP Management (22 pages), MCP Catalog (14 pages), MCP Lifecycle Operator (16 pages), MCP Registry (12 pages).
 - **Currently 19 enablement artifacts, 20 published** to the pages site. Landing page auto-generated with area grouping and NEW/UPDATED badges for artifacts published or changed in the last 14 days.
 
