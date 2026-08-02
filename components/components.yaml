@@ -15,6 +15,9 @@ components:
   title: Skills Catalog
   description: The skills storefront in RHOAI AI Hub — discover and consume Red Hat, partner, and community AI agent skills; Kubeflow hub surface alongside MCP and agent catalogs.
   related: [skills-registry, agent-catalog]
+  jira:
+    jql: '(project = RHAISTRAT AND (summary ~ "\"Skill Catalog\"" OR summary ~ "\"Skills Catalog\"" OR key in (RHAISTRAT-1780, RHAISTRAT-1940, RHAISTRAT-1339))) OR (project = RHAIRFE AND (summary ~ "\"skill catalog\"" OR summary ~ "\"skills catalog\"" OR key in (RHAIRFE-2207, RHAIRFE-2382, RHAIRFE-1567))) OR (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"skill catalog\"" OR summary ~ "skill-catalog"))'
+    ref_types: [Outcome, Feature, Feature Request]
 - id: mcp-gateway
   title: MCP Gateway
   description: Runtime MCP traffic governance — Envoy/RHCL gateway, roadmap, and entitlement model.

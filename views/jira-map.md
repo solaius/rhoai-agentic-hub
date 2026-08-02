@@ -116,12 +116,12 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHAISTRAT-1753 · Feature · New · — → [RHAISTRAT-1753: Kagenti and OpenShell Coexistence Spike](/components/agent-interop/knowledge/ref-rhaistrat-1753-kagenti-openshell-coexistence.md)
 - RHAISTRAT-1758 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1758: Agent Deployments View](/components/agent-interop/knowledge/ref-rhaistrat-1758-agent-deployments-view.md)
 - RHAISTRAT-1773 · Feature · In Progress · 3.5 GA RHOAI RELEASE → [RHAISTRAT-1773: MCP Lifecycle Operator TP Productization](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1773-tp-productization.md)
-- RHAISTRAT-1780 · Feature · New · —
+- RHAISTRAT-1780 · Feature · New · — → [RHAISTRAT-1780: Skills Catalog -- Discovery and Acquisition](/components/skills-catalog/knowledge/ref-rhaistrat-1780-skills-catalog.md)
 - RHAISTRAT-1791 · Outcome · New · —
 - RHAISTRAT-1859 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1937 · Feature · In Progress · 3.5 GA RHOAI RELEASE
 - RHAISTRAT-1938 · Feature · Closed · 3.5 GA RHOAI RELEASE
-- RHAISTRAT-1940 · Feature · New · —
+- RHAISTRAT-1940 · Feature · New · — → [RHAISTRAT-1940: Pre-loaded skills for out-of-box value](/components/skills-catalog/knowledge/ref-rhaistrat-1940-preloaded-skills.md)
 - RHAISTRAT-1952 · Feature · Closed · —
 - RHAISTRAT-1955 · Feature · New · — → [RHAISTRAT-1955: Agent Lifecycle Management](/components/agent-interop/knowledge/ref-rhaistrat-1955-agent-lifecycle.md)
 - RHAISTRAT-1956 · Feature · New · — → [RHAISTRAT-1956: Agent Metadata Extraction](/components/agent-interop/knowledge/ref-rhaistrat-1956-agent-metadata-extraction.md)
@@ -471,6 +471,18 @@ _summaries withheld — the source Jira is not anonymously readable_
 - RHOAIENG-70053 · Epic · New · —
 - RHOAIENG-75440 · Task · In Progress · —
 - RHOAIENG-75459 · Task · New · —
+
+## skills-catalog
+_swept 2026-08-02 · `(project = RHAISTRAT AND (summary ~ "\"Skill Catalog\"" OR summary ~ "\"Skills Catalog\"" OR key in (RHAISTRAT-1780, RHAISTRAT-1940, RHAISTRAT-1339))) OR (project = RHAIRFE AND (summary ~ "\"skill catalog\"" OR summary ~ "\"skills catalog\"" OR key in (RHAIRFE-2207, RHAIRFE-2382, RHAIRFE-1567))) OR (project = RHOAIENG AND component = "AI Hub" AND (summary ~ "\"skill catalog\"" OR summary ~ "skill-catalog"))`_
+_summaries withheld — the source Jira is not anonymously readable_
+
+- RHAIRFE-1567 · Feature Request · Stakeholder review · —
+- RHAIRFE-2207 · Feature Request · Approved · 3.5 GA RHOAI RELEASE
+- RHAIRFE-2382 · Feature Request · Approved · —
+- RHAISTRAT-1339 · Outcome · In Progress · — → [RHAISTRAT-1339: RHOAI Outcome for MCP Lifecycle Operator](/components/mcp-lifecycle-operator/knowledge/ref-rhaistrat-1339-rhoai-outcome.md)
+- RHAISTRAT-1780 · Feature · New · 3.6 EA2 RHOAI RELEASE → [RHAISTRAT-1780: Skills Catalog -- Discovery and Acquisition](/components/skills-catalog/knowledge/ref-rhaistrat-1780-skills-catalog.md)
+- RHAISTRAT-1940 · Feature · New · — → [RHAISTRAT-1940: Pre-loaded skills for out-of-box value](/components/skills-catalog/knowledge/ref-rhaistrat-1940-preloaded-skills.md)
+- RHOAIENG-66140 · Task · Closed · —
 
 ## Referenced elsewhere
 - HATSTRAT-314 → [HATSTRAT-314](/components/agent-interop/knowledge/ref-hatstrat-314.md)
