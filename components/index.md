@@ -9,6 +9,7 @@
 - [MCP Catalog](/components/mcp-catalog/index.md) — The MCP server storefront in RHOAI — discover and deploy RH, partner, community, and approved enterprise MCP servers; AI Hub surface and release train (DP 3.4 → TP/GA 3.6).
 - [Agent Registry](/components/agent-registry/index.md) — Post-deployment agent registry, agentic base images, and agent lifecycle management (formerly Kagenti; sandboxing/identity/interop moved to agent-interop; catalog/starter kits moved to agent-catalog).
 - [AI Gateway](/components/ai-gateway/index.md) — AI-native proxy/gateway for all AI traffic — Praxis runtime replacing Envoy's AI layer, MaaS integration, Responses/Messages API, API translation, guardrails, agentic loop orchestration.
+- [AI Asset Pipeline](/components/ai-asset-pipeline/index.md) — Konflux-based trust pipeline for scanning, signing, attesting, and OCI-packaging AI assets (skills, MCP servers, agents) — extends the existing model trust pipeline to all AI asset types; shared platform infrastructure consumed by catalogs and registries.
 - [Platform](/components/platform/index.md) — Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
 - [Agent Memory](/components/agent-memory/index.md) — Agent memory/knowledge research, proposals (Feast, MemoryHub, OGX), and the RHAISTRAT-1345 outcome.
 - [Agent Ops](/components/agent-ops/index.md) — Agent operations — observability, SDLC oversight, AgentOps positioning and talk tracks.

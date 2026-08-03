@@ -4,7 +4,7 @@ title: Konflux AI asset supply chain pipeline is shared platform infrastructure
 description: The Konflux pipeline for scanning, signing, attesting, and OCI-packaging AI assets (skills, MCP servers, agents) is shared platform infra upstream of both catalog and registry -- not a feature of either; artifact-type-aware scan profiles, shared output contract; first target skills, extend to MCP+agents; belongs under RHAISTRAT-1339 or new cross-cutting STRAT.
 timestamp: 2026-08-02
 tags: [platform, konflux, supply-chain, skills-catalog, mcp-catalog, agent-catalog, architecture]
-components: [platform, skills-catalog, mcp-catalog, agent-catalog]
+components: [platform, ai-asset-pipeline, skills-catalog, mcp-catalog, agent-catalog]
 review_after: 2026-11-02
 source: session analysis 2026-08-02, synthesized from Ann Marie Fred architectural strategy GDoc + competitive/architecture research
 ---
@@ -57,6 +57,11 @@ Solutions -- the umbrella Outcome) or as a **new cross-cutting
 RHAISTRAT** for AI asset supply chain security. Does not belong under
 any single asset type's STRAT.
 
-**Current gap**: this work is not yet planned. Epic-sized. See
+**Update 2026-08-03**: Adam Bellusci (AI Hub owner) confirmed
+extend-existing-pipeline direction. Now tracked as the
+[ai-asset-pipeline](/components/ai-asset-pipeline/) component. See
+[decision-extend-existing-model-pipeline](/components/ai-asset-pipeline/knowledge/decision-extend-existing-model-pipeline.md).
+
+**Current gap**: this work is not yet planned in Jira. Epic-sized. See
 [fact-skills-supply-chain-security](/components/skills-catalog/knowledge/fact-skills-supply-chain-security.md)
 for the threat landscape and mitigation plan detail.

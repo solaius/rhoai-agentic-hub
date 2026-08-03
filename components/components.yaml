@@ -63,6 +63,10 @@ components:
   jira:
     jql: '(project = RHAISTRAT AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR (project = RHAIRFE AND (summary ~ "\"AI Gateway\"" OR summary ~ "\"Praxis\"")) OR key in (RHAISTRAT-2452, RHAISTRAT-2241, RHAISTRAT-2240, RHAISTRAT-2018, RHAISTRAT-1812, RHAISTRAT-1073, RHAIRFE-2258, RHAIRFE-2920)'
     ref_types: [Outcome, Feature]
+- id: ai-asset-pipeline
+  title: AI Asset Pipeline
+  description: Konflux-based trust pipeline for scanning, signing, attesting, and OCI-packaging AI assets (skills, MCP servers, agents) — extends the existing model trust pipeline to all AI asset types; shared platform infrastructure consumed by catalogs and registries.
+  related: [skills-catalog, mcp-catalog, agent-catalog, platform]
 - id: platform
   title: Platform
   description: Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, people, personas, org process. Story/strategy content lives in /narrative/.
