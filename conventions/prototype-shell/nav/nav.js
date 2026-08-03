@@ -124,3 +124,18 @@ if (!window.__navInitialized) {
     if (navRoot) initNavDisplay(navRoot);
   });
 }
+
+// ===== THEME TOGGLE =====
+function toggleTheme() {
+  const body = document.body;
+  const moon = document.getElementById('theme-icon-moon');
+  const sun = document.getElementById('theme-icon-sun');
+  const isDark = body.classList.toggle('dark-mode');
+  if (isDark) {
+    moon.style.display = 'none';
+    sun.style.display = '';
+  } else {
+    moon.style.display = '';
+    sun.style.display = 'none';
+  }
+}
