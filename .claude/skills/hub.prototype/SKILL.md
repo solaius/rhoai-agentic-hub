@@ -9,6 +9,7 @@ Input: a subcommand (`create`, `version`, `publish`, `list`) plus a
 component id and/or slug. Default subcommand: `create`.
 
 Spec: /docs/specs/2026-08-02-prototype-system-design.md.
+Spec: /docs/specs/2026-08-03-prototype-template-system-design.md.
 Structure: /conventions/layout.md (prototype/ skeleton leg, prototype.yaml
 schema).
 
@@ -39,6 +40,23 @@ Before any subcommand, verify the prototype dependencies are available.
    verification."
 
 Skip Step 0 for LIST mode (no generation, no MCP needed).
+
+### Step 0.5: Shell freshness check
+
+Before any CREATE or VERSION operation, verify the shared prototype
+shell exists:
+
+1. Check that `conventions/prototype-shell/shell.html` exists.
+2. If missing, run `python scripts/extract_uxd_styles.py` to create it
+   from the UXD prototype repo.
+3. If present, read `conventions/prototype-shell/extraction-metadata.yaml`
+   and check the `extracted_at` timestamp. If older than 30 days, warn:
+   > Shell files were extracted on [date]. Run
+   > `python scripts/extract_uxd_styles.py --branch <current>`
+   > to refresh from the latest UXD prototype.
+4. Also load `components/platform/knowledge/fact-uxd-prototype-design-standards.md`
+   and `components/platform/knowledge/ref-uxd-rhoai-prototype-repo.md`
+   for RHOAI-specific design context.
 
 ---
 
@@ -170,6 +188,14 @@ h. **Restricted context** — if `restricted/` exists locally, load the
    feedback). NDA content informs design decisions but NEVER surfaces in
    the output (this repo is PUBLIC).
 
+i. **UXD design standards** — read
+   `components/platform/knowledge/fact-uxd-prototype-design-standards.md`
+   for verified CSS values, spacing, and component patterns. Read
+   `components/platform/knowledge/ref-uxd-rhoai-prototype-repo.md` for
+   GitLab API access to the UXD source when needed. If the prototype
+   needs a component pattern not in the patterns library, fetch the
+   relevant TSX file from the UXD repo via the GitLab API.
+
 ### Step 2: Scope
 
 With context loaded, surface what was learned in a brief summary (2-5
@@ -265,67 +291,79 @@ d. **Query AI prompt guidance** from the PatternFly MCP:
 
    Fetch the ai-helpers docs for anti-patterns and common AI mistakes.
 
-e. **Produce a component plan** (shown to user, NOT a file) mapping each
-   prototype section/element to:
-   - The specific PatternFly component and its CSS class
-   - The HTML structure derived from the React examples
-   - Any PatternFly design token references for custom styling
+e. **Select a page pattern** from `conventions/prototype-shell/patterns/`:
+   - `catalog` — faceted filter sidebar + card grid + toggle group
+   - `detail` — two-column: section cards left + metadata sidebar right
+   - `admin-table` — table with toolbar + tabs
+   - `modal` — register/deploy overlay (used as --extra-pattern)
+   - `empty` — blank content area for custom layouts
 
-   Example format:
+   Match the prototype scope to the closest pattern. If the scope spans
+   multiple patterns (e.g., catalog + detail + admin), the primary view
+   determines the pattern; additional views are written as content
+   fragments.
+
+f. **Produce a content plan** (shown to user, NOT a file) mapping each
+   prototype section to:
+   - The selected pattern and its placeholders
+   - Which content fragments the skill will generate
+   - Which placeholders map to which content files
+
+   Example:
    ```
-   Component Plan:
-   - Page shell: pf-v6-c-page (with pf-v6-c-masthead, pf-v6-c-page__sidebar)
-   - Server list: pf-v6-c-table with pf-v6-c-toolbar (bulk select, filter, pagination)
-   - Status badges: pf-v6-c-label (green=active, blue=draft, red=deprecated)
-   - Detail panel: pf-v6-c-drawer (primary-detail pattern)
-   - Empty state: pf-v6-c-empty-state (when no servers match filter)
+   Content Plan:
+   Pattern: catalog (with modal extra-pattern)
+   Content fragments:
+   - page_title.html → {{PAGE_TITLE}}: "Skills"
+   - page_description.html → {{PAGE_DESCRIPTION}}
+   - filter_sections.html → {{FILTER_SECTIONS}}: persona, category, pack
+   - toggle_buttons.html → {{TOGGLE_BUTTONS}}: All/RH/Partner/Enterprise
+   - cards.html → {{CARDS}}: 68 skill cards
+   - scripts.js → {{CONTENT_SCRIPTS}}: data arrays, filter/render logic
+   - modal_fields.html → {{MODAL_FIELDS}}: register form
    ```
 
-f. User confirms the component plan before generation proceeds.
+g. User confirms the content plan before generation proceeds.
 
 ### Step 7: Generate
 
-Write self-contained HTML to `components/<id>/prototype/<slug>/v1/index.html`.
+Write content fragments to
+`components/<id>/prototype/<slug>/v1/content/` and assemble with the
+build script.
 
-Requirements:
+a. **Write content fragments**: for each placeholder in the selected
+   pattern, write a corresponding file in the `content/` directory.
+   File naming convention: lowercase placeholder name with underscores,
+   plus `.html` or `.js` extension.
 
-a. **PatternFly 6 CDN**: load from unpkg or CDN:
-   ```html
-   <link rel="stylesheet" href="https://unpkg.com/@patternfly/patternfly@6/patternfly.min.css">
+   - `page_title.html` → `{{PAGE_TITLE}}`
+   - `filter_sections.html` → `{{FILTER_SECTIONS}}`
+   - `cards.html` → `{{CARDS}}`
+   - `scripts.js` → `{{CONTENT_SCRIPTS}}` (auto-wrapped in `<script>`)
+   - etc.
+
+   Content fragments contain ONLY the content for that placeholder —
+   no page shell, no nav, no CSS.
+
+b. **Realistic data**: same rules as before — use real field names,
+   status values, entity relationships from the architecture grounding.
+   No lorem ipsum.
+
+c. **Run the build script**:
+   ```bash
+   python scripts/build_prototype.py \
+     --pattern <pattern-name> \
+     --content components/<id>/prototype/<slug>/v1/content/ \
+     --output components/<id>/prototype/<slug>/v1/index.html \
+     --component "<Component Display Name>" \
+     --version v1
    ```
 
-b. **HTML structure**: match what the PatternFly React components render.
-   The MCP examples show component composition; derive the equivalent DOM
-   structure and class names. Use `pf-v6-c-*` for components,
-   `pf-v6-l-*` for layouts, `pf-v6-u-*` for utilities.
+   If the prototype uses a modal, add `--extra-patterns modal`.
 
-c. **Design tokens**: all colors, spacing, and typography use PatternFly
-   CSS custom properties (`--pf-t--global--*`), never hardcoded values.
-   Example: `color: var(--pf-t--global--color--brand--default)` not
-   `color: #06c`.
-
-d. **Realistic data**: use real field names, status values, entity
-   relationships from the architecture grounding. No lorem ipsum. If the
-   prototype shows a list of MCP servers, use names like
-   "postgres-mcp-server", "slack-mcp-server" with realistic version
-   numbers, lifecycle states, and tool counts.
-
-e. **Accessibility**: proper ARIA labels, keyboard navigation, semantic
-   HTML, heading hierarchy, per the PatternFly accessibility docs from
-   step 6.
-
-f. **Interactivity**: prototype interactions with vanilla JavaScript (no
-   frameworks). Tab switching, drawer open/close, filter toggling,
-   toolbar actions. Keep it lightweight — this demonstrates the UX, not
-   production logic.
-
-g. **Self-contained**: everything in one HTML file (inline CSS for custom
-   styles, inline JS for interactions). External dependencies only for
-   the PatternFly CDN stylesheet and any CDN-hosted icon fonts.
-
-h. **Create the directory structure**: `components/<id>/prototype/<slug>/v1/`
-   with `index.html`. Create an `assets/` subdirectory only if needed
-   (images, icons not available via CDN).
+d. **The skill NEVER writes**: page shell HTML, masthead, sidebar nav,
+   CSS overrides, or PatternFly CDN links. These come from the shared
+   shell. The skill generates ONLY content fragments.
 
 ### Step 8: Verify
 
@@ -445,10 +483,17 @@ Never auto-publish. Publishing is a separate disclosure decision.
    only for the PatternFly CDN. No cross-file imports, no shared
    stylesheets, no build artifacts.
 
-5. **Versioned, not overwritten.** v1 and v2 coexist on disk for
+5. **Template-first, not from-scratch.** The page shell, nav, and CSS
+   come from `conventions/prototype-shell/`, extracted from the UXD
+   prototype repo. The skill generates only content fragments. Run
+   `python scripts/extract_uxd_styles.py` to refresh the shell when
+   the UXD team releases a new branch. Run
+   `python scripts/build_prototype.py` to assemble the final HTML.
+
+6. **Versioned, not overwritten.** v1 and v2 coexist on disk for
    side-by-side comparison. Never modify a committed version's HTML —
    create a new version instead (unless fixing a rendering bug before the
    first commit).
 
-6. **The gate is sacred.** Nothing touches git before the user approves.
+7. **The gate is sacred.** Nothing touches git before the user approves.
    Show what will be written, wait for OK.
