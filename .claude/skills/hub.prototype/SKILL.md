@@ -181,7 +181,13 @@ f. **Upstream repos** — any `ref-` entries pointing to GitHub/GitLab repos:
    files (e.g., types, schemas, route definitions).
 
 g. **Existing prototypes** — read `prototype.yaml` files in this and
-   related components' `prototype/` directories for continuity.
+   related components' `prototype/` directories for continuity. Also
+   open sibling prototypes' latest `index.html` to identify reusable
+   UI patterns (toggle switches, kebab menus, status badges, pill
+   buttons, manage/detail page layouts). Match these patterns in the
+   new prototype for cross-prototype visual consistency — the RHOAI
+   UI should look like one product, not a collection of independent
+   prototypes.
 
 h. **Restricted context** — if `restricted/` exists locally, load the
    component's restricted knowledge (customer requirements, field
@@ -319,7 +325,7 @@ f. **Produce a content plan** (shown to user, NOT a file) mapping each
    - filter_sections.html → {{FILTER_SECTIONS}}: persona, category, pack
    - toggle_buttons.html → {{TOGGLE_BUTTONS}}: All/RH/Partner/Enterprise
    - cards.html → {{CARDS}}: 68 skill cards
-   - scripts.js → {{CONTENT_SCRIPTS}}: data arrays, filter/render logic
+   - app.js → shell {{SCRIPTS}} block: data arrays, filter/render logic
    - modal_fields.html → {{MODAL_FIELDS}}: register form
    ```
 
@@ -339,17 +345,57 @@ a. **Write content fragments**: for each placeholder in the selected
    - `page_title.html` → `{{PAGE_TITLE}}`
    - `filter_sections.html` → `{{FILTER_SECTIONS}}`
    - `cards.html` → `{{CARDS}}`
-   - `scripts.js` → `{{CONTENT_SCRIPTS}}` (auto-wrapped in `<script>`)
+   - `app.js` → falls through to shell `{{SCRIPTS}}` block (see naming below)
    - etc.
 
    Content fragments contain ONLY the content for that placeholder —
    no page shell, no nav, no CSS.
 
-b. **Realistic data**: same rules as before — use real field names,
+   **Fragment naming — avoid collisions.** The build script maps
+   filenames to placeholders via `fragment_name_to_placeholder()`.
+   Two files that map to the same placeholder will collide — only the
+   first (alphabetically) wins; the other is silently dropped. The
+   build script warns on collision, but prevention is better:
+
+   - Name the main JS file `app.js` (maps to `{{APP}}`, no pattern
+     match, falls through to the shell's `{{SCRIPTS}}` block alongside
+     nav.js). This is the recommended convention.
+   - `content_scripts.html` maps to `{{CONTENT_SCRIPTS}}` — use it for
+     extra HTML views injected at the end of the pattern content.
+   - NEVER have both `scripts.js` AND `content_scripts.html` — both
+     map to `{{CONTENT_SCRIPTS}}` and collide.
+
+b. **Multi-view prototypes**: when the prototype has multiple views
+   (e.g., catalog browse + skill detail + admin), the selected pattern
+   provides the primary view. Additional views go in
+   `content_scripts.html` (replaces `{{CONTENT_SCRIPTS}}` at the end
+   of the pattern). Structure:
+
+   - Each extra view: `<div id="view-<name>" class="view">...</div>`
+   - Extra CSS in a `<style>` block at the top of the fragment
+   - The shell's `shell.css` already provides:
+     `.view { display: none; } .view.active { display: block; }`
+   - In `app.js`, wrap the pattern's content in a view container at
+     DOMContentLoaded (the pattern doesn't include a wrapper):
+     ```js
+     var appContent = document.querySelector('.app-content');
+     var firstExtra = document.getElementById('view-detail');
+     var wrapper = document.createElement('div');
+     wrapper.id = 'view-catalog';
+     wrapper.className = 'view active';
+     while (appContent.firstChild && appContent.firstChild !== firstExtra) {
+       wrapper.appendChild(appContent.firstChild);
+     }
+     appContent.insertBefore(wrapper, appContent.firstChild);
+     ```
+   - View switching uses class-based toggling (`active` class), never
+     inline `style.display` — the CSS `.view` rule overrides it.
+
+c. **Realistic data**: same rules as before — use real field names,
    status values, entity relationships from the architecture grounding.
    No lorem ipsum.
 
-c. **Run the build script**:
+d. **Run the build script**:
    ```bash
    python scripts/build_prototype.py \
      --pattern <pattern-name> \
@@ -361,7 +407,7 @@ c. **Run the build script**:
 
    If the prototype uses a modal, add `--extra-patterns modal`.
 
-d. **The skill NEVER writes**: page shell HTML, masthead, sidebar nav,
+e. **The skill NEVER writes**: page shell HTML, masthead, sidebar nav,
    CSS overrides, or PatternFly CDN links. These come from the shared
    shell. The skill generates ONLY content fragments.
 

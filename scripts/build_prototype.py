@@ -148,6 +148,23 @@ def assemble(args: argparse.Namespace) -> None:
     # Sort for deterministic assembly
     content_files = sorted(content_dir.iterdir()) if content_dir.is_dir() else []
 
+    # Detect placeholder collisions before processing
+    placeholder_sources: dict[str, list[str]] = {}
+    for fpath in content_files:
+        if not fpath.is_file():
+            continue
+        ph = fragment_name_to_placeholder(fpath.name)
+        placeholder_sources.setdefault(ph, []).append(fpath.name)
+    for ph, sources in placeholder_sources.items():
+        if len(sources) > 1:
+            print(
+                f"Warning: placeholder collision — {', '.join(sources)} "
+                f"all map to {ph}. Only the first (alphabetically) will "
+                f"replace the pattern placeholder; others may be silently "
+                f"dropped. Rename one to avoid this.",
+                file=sys.stderr,
+            )
+
     for fpath in content_files:
         if not fpath.is_file():
             continue
