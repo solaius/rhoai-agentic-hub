@@ -71,23 +71,33 @@ def fetch_gitlab_file(project_id: str, file_path: str, branch: str) -> str:
 # ── CSS extraction ─────────────────────────────────────────────────────────
 
 def write_shell_css(css_content: str, shell_dir: Path, branch: str) -> Path:
-    """Write app.css content to shell.css with an extraction header."""
+    """Write app.css to uxd-reference.css as a reference file.
+
+    Does NOT overwrite shell.css -- that file is the verified prototype
+    CSS maintained separately. The UXD app.css is written to
+    uxd-reference.css for comparison and manual merging.
+    """
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     header = (
         f"/*\n"
-        f" * shell.css -- extracted from UXD RHOAI prototype\n"
+        f" * uxd-reference.css -- raw UXD app.css for reference\n"
         f" *\n"
         f" * Source : https://{GITLAB_HOST}/uxd/prototypes/rhoai\n"
         f" * Branch : {branch}\n"
         f" * File   : src/app/app.css\n"
         f" * Date   : {now}\n"
         f" *\n"
-        f" * This file is auto-extracted by scripts/extract_uxd_styles.py.\n"
-        f" * Manual edits will be overwritten on the next extraction run.\n"
+        f" * This is the UXD team's React-specific CSS. It does NOT work\n"
+        f" * directly with the static HTML shell. Use it as a reference\n"
+        f" * when updating shell.css with new UXD styles.\n"
+        f" *\n"
+        f" * shell.css is the verified CSS for the static prototype shell.\n"
         f" */\n\n"
     )
-    out = shell_dir / "shell.css"
+    out = shell_dir / "uxd-reference.css"
     out.write_text(header + css_content, encoding="utf-8")
+    print(f"  NOTE: UXD CSS written to uxd-reference.css (NOT shell.css)")
+    print(f"        shell.css is maintained separately with verified styles.")
     return out
 
 
@@ -317,7 +327,7 @@ def main() -> int:
         out = write_shell_css(fetched[css_path], shell_dir, args.branch)
         print(f"\nWrote {out.relative_to(REPO_ROOT)}")
     else:
-        print(f"\nWARNING: {css_path} was not fetched; shell.css not updated")
+        print(f"\nWARNING: {css_path} was not fetched; uxd-reference.css not written")
 
     # ── Structural analysis ───────────────────────────────────────────────
     layout_path = "src/app/AppLayout/AppLayout.tsx"
