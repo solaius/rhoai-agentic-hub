@@ -7,7 +7,7 @@
   on completion, the item moves to
   [enhancements-complete.md](/docs/enhancements-complete.md) with a
   completion date and outcome summary.
-- **Owner:** Peter Double -- **Last groomed:** 2026-08-02
+- **Owner:** Peter Double -- **Last groomed:** 2026-08-03
 - **Convention:** when an enhancement completes that adds, changes, or
   removes a user-facing capability, update
   [docs/capabilities.md](docs/capabilities.md) as part of the completion --

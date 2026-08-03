@@ -29,6 +29,8 @@ takes.
 | `python scripts/hub_env.py --setup` | back up `~/.bashrc`, remove the retired `ai-asset-registry` block, write or repair the hub block; idempotent, refuses to touch a profile whose markers are malformed | driven by `doctor.sh setup`; rarely by hand |
 | `python scripts/hub_slack.py --check` | probe the Slack xoxc/xoxd tokens against `auth.test` (doctor section 9 runs it) | Slack MCP tools misbehaving: registration is not validity, and the tokens expire |
 | `bash scripts/doctor.sh [check\|setup]` | machine health check (`check`, read-only, default) or fix mode (`setup`) | new machine; anything environmental feels off |
+| `python scripts/build_prototype.py --pattern <p> --content <dir> --output <path> --component <name> --version <v>` | assemble a self-contained prototype HTML from shell + pattern + content fragments; warns on placeholder collisions | driven by `hub.prototype` step 7; can also run standalone to rebuild a prototype |
+| `python scripts/extract_uxd_styles.py [--branch <b>]` | extract shared shell, CSS, nav, and patterns from the UXD prototype repo into `conventions/prototype-shell/`; requires GitLab API access (VPN) | once per UXD branch release; or when `hub.prototype` reports stale shell files |
 | `python -m pytest scripts/tests -v` | the test suite for all of the above | when changing anything in `scripts/` |
 
 The single most common failure: edit an entry, forget

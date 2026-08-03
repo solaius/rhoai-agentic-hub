@@ -58,6 +58,7 @@ CI-verified.
 | `narrative/<skeleton>` | the story layer: pillars, cross-component stories, strategy spine | humans + skills |
 | `memory/` | working context: profiles, facts, log | the gate only |
 | `conventions/` | the normative rulebook | humans (rarely changes) |
+| `conventions/prototype-shell/` | shared prototype shell, CSS, nav, and page patterns extracted from UXD repo; assembled by `build_prototype.py` | `extract_uxd_styles.py` + `hub.prototype` |
 | `views/` | cross-cutting generated indexes | `hub_index.py` only |
 | `publish/manifest.yaml` | the public-site allowlist | `hub.publish` |
 | `restricted/` | gitignored mirror for NDA content | same rules, local only |

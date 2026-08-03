@@ -5,6 +5,20 @@ See [/docs/enhancements.md](/docs/enhancements.md) for open items.
 
 ---
 
+## 2026-08-03
+
+**#15 Prototype template system.** Extended the native prototype system with
+a multi-file template pipeline: shared shell + CSS extracted from the UXD
+prototype repo (`extract_uxd_styles.py`), page patterns (catalog, detail,
+admin-table, modal, empty), content fragment assembly (`build_prototype.py`),
+and `conventions/prototype-shell/` as the reusable asset directory. The
+skills-catalog v2 rebuild confirmed the full end-to-end pipeline (18 content
+fragments, catalog + modal patterns, 166KB assembled output). Also added
+placeholder collision detection in the build script, multi-view prototype
+guidance and fragment naming conventions in the `hub.prototype` skill, and
+cross-prototype visual consistency checks. Spec:
+[/docs/superpowers/specs/2026-08-03-prototype-template-system-design.md](/docs/superpowers/specs/2026-08-03-prototype-template-system-design.md).
+
 ## 2026-08-02
 
 **#15 Native prototype system.** Added `prototype/` as the sixth skeleton
