@@ -252,49 +252,105 @@ function showDetail(idx) {
   navigateTo('detail');
 }
 
-// ===== ADMIN =====
-function switchAdminTab(tabId, btn) {
-  document.querySelectorAll('#admin-tabs .pf-v6-c-tabs__item').forEach(function(i){i.classList.remove('pf-m-current');});
-  document.querySelectorAll('#admin-tabs .pf-v6-c-tabs__link').forEach(function(l){l.setAttribute('aria-selected','false');});
-  document.querySelectorAll('.admin-tab-content').forEach(function(c){c.style.display='none';});
-  btn.closest('.pf-v6-c-tabs__item').classList.add('pf-m-current');
-  btn.setAttribute('aria-selected','true');
-  document.getElementById('admintab-'+tabId).style.display='';
-}
-function renderAdminTable() {
-  var body = document.getElementById('admin-table-body');
+// ===== ADMIN (Skill catalog sources) =====
+function renderAdminSources() {
+  var body = document.getElementById('admin-sources-body');
   body.innerHTML = '';
-  SKILLS.forEach(function(s,i) {
-    body.innerHTML += '<tr class="pf-v6-c-table__tr" role="row" data-admin-pack="'+s.pack+'" data-admin-name="'+s.name.toLowerCase()+'"><td class="pf-v6-c-table__td" role="cell"><a href="#" onclick="showDetail('+i+');return false;" style="color:var(--pf-t--global--color--brand--default);text-decoration:none;">'+s.name+'</a></td><td class="pf-v6-c-table__td" role="cell"><span class="pf-v6-c-label pf-m-outline pf-m-compact"><span class="pf-v6-c-label__content">'+s.pack+'</span></span></td><td class="pf-v6-c-table__td" role="cell"><span class="pf-v6-c-label pf-m-compact pf-m-'+tierColor(s.trustTier)+'"><span class="pf-v6-c-label__content">'+s.trustTier+'</span></span></td><td class="pf-v6-c-table__td" role="cell">'+signingLabel(s.signing)+'</td><td class="pf-v6-c-table__td" role="cell"><span class="status-dot '+s.status+'"></span>'+s.status+'</td><td class="pf-v6-c-table__td" role="cell"><button class="pf-v6-c-button pf-m-plain" type="button" aria-label="Actions"><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg></button></td></tr>';
+  SOURCES.forEach(function(src, i) {
+    var kebabId = 'kebab-' + i;
+    body.innerHTML += '<tr>' +
+      '<td><span class="source-name">' + src.name + '</span></td>' +
+      '<td><span class="visibility-label">All skills</span></td>' +
+      '<td>YAML file</td>' +
+      '<td><label class="pf-v6-c-switch"><input type="checkbox" ' + (src.status === 'active' ? 'checked' : '') + '><span class="pf-v6-c-switch__toggle"></span></label></td>' +
+      '<td><span class="validation-label">' + (src.status === 'active' ? 'Ready' : 'Pending') + '</span></td>' +
+      '<td><div class="kebab-wrapper"><button class="kebab-btn" type="button" aria-label="Actions" onclick="toggleKebab(\'' + kebabId + '\')"><svg fill="currentColor" height="1.2em" width="1.2em" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg></button><div class="kebab-menu" id="' + kebabId + '"><button onclick="openManageSource(' + i + ');closeAllKebabs();">Manage source</button><button onclick="navigateTo(\'catalog\');closeAllKebabs();">View in catalog</button></div></div></td>' +
+      '</tr>';
   });
 }
-function filterAdminTable() {
-  var search = document.getElementById('admin-search').value.toLowerCase();
-  var pack = document.getElementById('admin-filter-pack').value;
-  var rows = document.querySelectorAll('#admin-table-body tr');
-  var visible = 0;
-  rows.forEach(function(r) {
-    var matchSearch = !search || r.dataset.adminName.indexOf(search)!==-1;
-    var matchPack = !pack || r.dataset.adminPack === pack;
-    r.style.display = matchSearch && matchPack ? '' : 'none';
-    if(matchSearch && matchPack) visible++;
-  });
-  document.getElementById('admin-item-count').textContent = visible + ' skill' + (visible!==1?'s':'');
+
+function toggleKebab(id) {
+  var menu = document.getElementById(id);
+  var wasOpen = menu.classList.contains('open');
+  closeAllKebabs();
+  if (!wasOpen) menu.classList.add('open');
 }
-function renderAdminPacks() {
-  var body = document.getElementById('admin-packs-body');
-  body.innerHTML = '';
-  PACKS.forEach(function(p) {
-    var matColor = p.maturity === 'GREEN' ? 'green' : 'orange';
-    body.innerHTML += '<tr class="pf-v6-c-table__tr" role="row"><td class="pf-v6-c-table__td" role="cell"><strong>'+p.name+'</strong></td><td class="pf-v6-c-table__td" role="cell">'+p.persona+'</td><td class="pf-v6-c-table__td" role="cell">'+p.count+'</td><td class="pf-v6-c-table__td" role="cell"><span class="pf-v6-c-label pf-m-compact pf-m-'+matColor+'"><span class="pf-v6-c-label__content">'+p.maturity+'</span></span></td><td class="pf-v6-c-table__td" role="cell" style="font-family:var(--pf-t--global--font--family--mono);font-size:var(--pf-t--global--font--size--xs);">'+p.repo+'</td><td class="pf-v6-c-table__td" role="cell"><span class="status-dot '+p.status+'"></span>'+p.status+'</td></tr>';
-  });
+
+function closeAllKebabs() {
+  document.querySelectorAll('.kebab-menu').forEach(function(m) { m.classList.remove('open'); });
 }
-function renderSourceCards() {
-  var cont = document.getElementById('source-cards');
-  cont.innerHTML = '';
-  SOURCES.forEach(function(src) {
-    cont.innerHTML += '<div class="pf-v6-c-card"><div class="pf-v6-c-card__header" style="display:flex;justify-content:space-between;align-items:center;"><div class="pf-v6-c-card__title"><span class="pf-v6-c-card__title-text">'+src.name+'</span></div><span class="pf-v6-c-label pf-m-compact pf-m-'+(src.status==='active'?'green':'orange')+'"><span class="pf-v6-c-label__content">'+src.status+'</span></span></div><div class="pf-v6-c-card__body"><dl class="pf-v6-c-description-list pf-m-compact pf-m-horizontal" style="--pf-v6-c-description-list--m-horizontal__term--width:6rem;"><div class="pf-v6-c-description-list__group"><dt class="pf-v6-c-description-list__term"><span class="pf-v6-c-description-list__text">Type</span></dt><dd class="pf-v6-c-description-list__description"><span class="pf-v6-c-label pf-m-outline pf-m-compact"><span class="pf-v6-c-label__content">'+src.type+'</span></span></dd></div><div class="pf-v6-c-description-list__group"><dt class="pf-v6-c-description-list__term"><span class="pf-v6-c-description-list__text">Repository</span></dt><dd class="pf-v6-c-description-list__description" style="font-family:var(--pf-t--global--font--family--mono);font-size:var(--pf-t--global--font--size--xs);">'+src.repo+'</dd></div><div class="pf-v6-c-description-list__group"><dt class="pf-v6-c-description-list__term"><span class="pf-v6-c-description-list__text">Skills</span></dt><dd class="pf-v6-c-description-list__description">'+src.skills+'</dd></div></dl><p style="margin-top:var(--pf-t--global--spacer--sm);font-size:var(--pf-t--global--font--size--sm);color:var(--pf-t--global--text--color--subtle);">'+src.description+'</p></div><div class="pf-v6-c-card__footer"><button class="pf-v6-c-button pf-m-secondary pf-m-small" type="button">Edit</button> <button class="pf-v6-c-button pf-m-link pf-m-small" type="button">Sync now</button></div></div>';
+
+function openManageSource(idx) {
+  var src = SOURCES[idx];
+  document.getElementById('manage-source-name').textContent = src.name;
+  document.getElementById('manage-source-yaml').textContent = src.name.toLowerCase().replace(/\s+/g, '-') + '-catalog.yaml';
+  var totalSkills = src.skills;
+  document.getElementById('manage-source-skills-count').textContent = totalSkills + ' skills from ' + src.repo.split('/').pop();
+
+  var includedList = document.getElementById('manage-included-list');
+  includedList.innerHTML = '';
+
+  var includedNames = [];
+  var excludedNames = [];
+  if (src.name === 'ex-agentic-plugins') {
+    includedNames = ['CVE Explainer','Diagnostic Data Gathering','Security MCP Setup','Product Lifecycle Advisor','Support Severity Helper','Bootstrap Installer','Cluster Health Check','Node Troubleshooter','Pod Diagnostics','Service Mesh Analyzer','Log Aggregator Setup','Alert Rule Generator'];
+    excludedNames = ['Backup Strategy Advisor','Multi-Cluster VM Manager','GPU Passthrough Setup'];
+  } else if (src.name === 'openshift-agentic-skills') {
+    includedNames = ['Cluster Configuration Advisor','Operator Lifecycle Manager','Namespace Provisioner'];
+  } else if (src.name === 'odh-ai-helpers') {
+    includedNames = ['Model Serving Setup','vLLM Configuration','KServe Deployment Helper','NVIDIA NIM Integration','Pipeline Builder','Model Registry Manager'];
+  }
+
+  var includedSkills = SKILLS.filter(function(s) { return includedNames.indexOf(s.name) !== -1; });
+  var excludedSkills = SKILLS.filter(function(s) { return excludedNames.indexOf(s.name) !== -1; });
+
+  document.getElementById('manage-included-count').textContent = includedNames.length + ' of ' + totalSkills + ' skills included:';
+
+  var textarea = document.getElementById('manage-included-textarea');
+  if (textarea) textarea.value = includedNames.join(', ');
+
+  var excludeTextarea = document.getElementById('manage-excluded-textarea');
+  if (excludeTextarea) excludeTextarea.value = excludedNames.length ? excludedNames.join(', ') : '';
+
+  includedSkills.forEach(function(s) {
+    includedList.innerHTML += '<div class="skill-include-item"><span class="skill-include-icon"><svg fill="currentColor" height="1.2em" width="1.2em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg></span><span>' + s.name + '</span></div>';
   });
+
+  var excludedTab = document.getElementById('manage-tab-excluded');
+  if (excludedSkills.length > 0) {
+    excludedTab.innerHTML = '<p style="font-size:14px;color:#151515;margin:0 0 12px;">' + excludedNames.length + ' of ' + totalSkills + ' skills excluded:</p>';
+    excludedSkills.forEach(function(s) {
+      excludedTab.innerHTML += '<div class="skill-include-item"><span style="color:#c9190b;"><svg fill="currentColor" height="1.2em" width="1.2em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg></span><span>' + s.name + '</span></div>';
+    });
+  } else {
+    excludedTab.innerHTML = '<p style="font-size:14px;color:#6a6e73;margin:0;">No skills are excluded from this source.</p>';
+  }
+
+  var toggle = document.getElementById('manage-visibility-toggle');
+  toggle.classList.remove('expanded');
+  document.getElementById('manage-visibility-content').style.display = 'none';
+
+  document.querySelectorAll('.manage-tab').forEach(function(t,i) {
+    t.classList.toggle('active', i === 0);
+  });
+  document.getElementById('manage-tab-included').style.display = '';
+  document.getElementById('manage-tab-excluded').style.display = 'none';
+
+  navigateTo('manage-source');
+}
+
+function toggleManageVisibility() {
+  var toggle = document.getElementById('manage-visibility-toggle');
+  var content = document.getElementById('manage-visibility-content');
+  toggle.classList.toggle('expanded');
+  content.style.display = toggle.classList.contains('expanded') ? '' : 'none';
+}
+
+function switchManageTab(tab, btn) {
+  document.querySelectorAll('.manage-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('manage-tab-included').style.display = tab === 'included' ? '' : 'none';
+  document.getElementById('manage-tab-excluded').style.display = tab === 'excluded' ? '' : 'none';
 }
 
 // ===== VIEW NAVIGATION =====
@@ -324,7 +380,14 @@ function navigateTo(view) {
     }
   }
 
-  if(view === 'catalog' || view === 'detail') {
+  if(view === 'manage-source') {
+    expandNav(settingsItem, true);
+    if(settingsItem) settingsItem.classList.add('pf-m-current');
+    expandNav(skillResources, true);
+    if(skillResources) skillResources.classList.add('pf-m-current');
+    var adminLink2 = document.querySelector('[data-nav="admin"]');
+    if(adminLink2) { adminLink2.classList.add('pf-m-current'); adminLink2.closest('.pf-v6-c-nav__item').classList.add('pf-m-current'); }
+  } else if(view === 'catalog' || view === 'detail') {
     expandNav(settingsItem, false);
     expandNav(skillResources, false);
     var skillsLink = document.querySelector('[data-nav="catalog"]');
@@ -362,9 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
   appContent.insertBefore(catalogWrapper, appContent.firstChild);
 
   renderCards();
-  renderAdminTable();
-  renderAdminPacks();
-  renderSourceCards();
+  renderAdminSources();
 
   function initNavDisplay(container) {
     var items = container.querySelectorAll(':scope > .pf-v6-c-nav__item.pf-m-expandable');
@@ -381,4 +442,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   var navRoot = document.querySelector('.pf-v6-c-nav > .pf-v6-c-nav__list');
   if (navRoot) initNavDisplay(navRoot);
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.kebab-wrapper')) closeAllKebabs();
+  });
 });
