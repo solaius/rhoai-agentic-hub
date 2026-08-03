@@ -12,6 +12,7 @@ Platform components and org reference — AI Gateway, AI Hub UI, releases/SKUs, 
 
 ## Connections
 - reference · [Agentic AI FAQ (includes OpenShell/Kagenti positioning)](/components/agent-interop/knowledge/ref-kagenti-openshell-faq.md) — Comprehensive FAQ covering full agentic strategy, OpenShell positioning, Kagenti wind-down, ogx, MCP gateway, partners, field guidance. Maintained by Adel Zaalouk, last updated Jul 7 2026.
+- reference · [opendatahub-io/model-metadata-collection -- AI asset metadata tool](/components/ai-asset-pipeline/knowledge/ref-model-metadata-collection.md) — Go tool that extracts/enriches/catalogs metadata from OCI model images and MCP servers; already multi-asset (models + MCP); generates catalog YAML for Kubeflow Hub; the natural extension point for skills and agents.
 - fact · [MCPLO key decisions from Slack (Feb-Jul 2026)](/components/mcp-lifecycle-operator/knowledge/fact-mcplo-key-decisions-from-slack.md) — 10 major architecture and process decisions from
 - person · [Ju Lim](/components/mcp-lifecycle-operator/knowledge/person-ju-lim.md) — Sr. Manager, Product Management, Hybrid Platforms -- drives OCP5 Intelligent Platform / applied AI story, MCPLO productization, RHOAI Limited packaging.
 - question · [OLS transition to MCPLO-deployed OCP MCP server](/components/mcp-lifecycle-operator/knowledge/question-ols-mcplo-transition.md) — Open -- OLS currently uses its own internal OCP MCP server; when MCPLO is productized, OLS will ask users to install via MCPLO. Transition plan and subscription implications unclear.

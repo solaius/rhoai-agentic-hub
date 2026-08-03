@@ -25,6 +25,7 @@
 - [Slack Channels by Product Area](/components/platform/knowledge/fact-slack-channels-by-product-area.md) — Living index of 28+ Slack channels organized by product area — use to find discussion context when researching any topic.
 - [Stakeholder map — supporting cast](/components/platform/knowledge/fact-stakeholder-map.md) — Names, roles, and one-line context for roughly 80 people mentioned once or twice in the old registry, grouped by area, who didn't warrant a standalone person entry.
 - [Red Hat Summit 2026 (May 11-14, Atlanta) — AI asset registry content](/components/platform/knowledge/fact-summit-2026.md) — Summit 2026 dates, partner-catalog blog plan, demo scope, and other agentic content slated for the event.
+- [RHOAI dashboard design standards from UXD prototype](/components/platform/knowledge/fact-uxd-prototype-design-standards.md) — Key design standards extracted from the UXD prototype (3.6 branch) -- page shell structure (#prototype wrapper, pf-m-fill container), CSS patterns (#f2f2f2 canvas, 16px border-radius cards, 24px content margins), .design/ folder spec for design history and rationale.
 
 ## person
 - [Adel Zaalouk](/components/platform/knowledge/person-adel-zaalouk.md) — Agentic Strategy maintainer — recurring voice across base-images scope, UBI version, and messaging-guide review.
@@ -55,3 +56,4 @@
 - [PatternFly Design System](/components/platform/knowledge/ref-patternfly-design-system.md) — Red Hat's open source design system (v6.4.0) — the required component/token library for all RHOAI UI and prototypes.
 - [Requesting Red Hat AI Documentation](/components/platform/knowledge/ref-requesting-rhai-documentation.md) — RHAI CCS documentation request process guide — docs levels by release type, Jira intake, definitions of Ready/Done.
 - [#forum-ai-asset-management](/components/platform/knowledge/ref-slack-forum-ai-asset-management.md) — The AI asset management forum — MCP Catalog/Registry, Agent Catalog/Deployments, Skills Registry (MLflow upstream), OpenShell, AI Hub; ~105 msgs/week; where the 2026-07-09 no-deploy-in-3.5 call landed.
+- [UXD RHOAI prototype repo (GitLab, branch 3.6)](/components/platform/knowledge/ref-uxd-rhoai-prototype-repo.md) — UXD team's RHOAI prototype repo -- React/PF6 source for all dashboard pages; the canonical reference for page layout, nav, cards, modals, and CSS patterns; deployed at pages.redhat.com; branch tracks the current release (3.6 as of Aug 2026).
