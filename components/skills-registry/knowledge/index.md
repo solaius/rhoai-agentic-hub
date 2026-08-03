@@ -20,3 +20,4 @@
 - [B-Step62/mlflow (branch: skill-registry-mvp)](/components/skills-registry/knowledge/ref-mlflow-skill-registry-mvp-branch.md) — Databricks' Skills Registry MVP prototype — full CRUD, CLI, UI, and Claude Code integration. Not merged upstream.
 - [MLflow RFC PR #27 -- post-MVP Skill Registry design](/components/skills-registry/knowledge/ref-mlflow-skills-registry-post-mvp-rfc.md) — Post-MVP RFC for the MLflow Skill Registry -- extends RFC-0008 (PR
 - [ODH skills-registry (plugin marketplace)](/components/skills-registry/knowledge/ref-odh-skills-registry.md) — The org plugin marketplace this hub consumes shared skills from — registry.yaml → marketplace.json/catalog.md
+- [Skills Product -- Scoping/Discussion (Adel Zaalouk)](/components/skills-registry/knowledge/ref-skills-scoping-gdoc.md) — Adel Zaalouk's product scoping doc for Skills in RHOAI -- companion to the Agent Registry scoping doc; defines skills product scope, registry design, and catalog relationship.
