@@ -1,0 +1,29 @@
+<div class="form-group">
+  <label class="form-label">Skill name <span class="required">*</span></label>
+  <input class="form-input" type="text" id="reg-skill-name" readonly style="background:#f6f6f6;">
+</div>
+<div class="form-group">
+  <label class="form-label">Registry namespace <span class="required">*</span> <span class="help-icon" title="The MLflow registry namespace where this skill will be registered">?</span></label>
+  <select class="form-select" id="reg-namespace">
+    <option value="default">default</option>
+    <option value="production">production</option>
+    <option value="staging">staging</option>
+    <option value="development">development</option>
+  </select>
+</div>
+<div class="form-group">
+  <label class="form-label">Version</label>
+  <input class="form-input" type="text" id="reg-version" readonly style="background:#f6f6f6;">
+</div>
+<div class="form-group">
+  <label class="form-label">Pack</label>
+  <input class="form-input" type="text" id="reg-pack" readonly style="background:#f6f6f6;">
+</div>
+<div class="form-group">
+  <label class="form-label">Tags <span class="help-icon" title="Metadata tags for discovery and categorization in the registry">?</span></label>
+  <div class="form-tags" id="reg-tags"></div>
+</div>
+<div class="form-group">
+  <label class="form-label">Description</label>
+  <textarea class="form-input" id="reg-description" rows="3" style="resize:vertical;background:#f6f6f6;" readonly></textarea>
+</div>

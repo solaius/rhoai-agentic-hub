@@ -1,0 +1,63 @@
+<!-- Persona -->
+<div class="filter-section">
+  <div class="filter-section-title">Persona</div>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="General" onchange="filterCards()"> General Red Hat Users</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="SRE" onchange="filterCards()"> Site Reliability Engineers</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="Developer" onchange="filterCards()"> Application Developers</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="Virt Admin" onchange="filterCards()"> Virtualization Admins</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="OCP Admin" onchange="filterCards()"> OpenShift Administrators</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="AI/ML Engineer" onchange="filterCards()"> AI/ML Engineers</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-persona-cb" value="Automation Lead" onchange="filterCards()"> Automation Leads</label>
+</div>
+<!-- Category -->
+<div class="filter-section" id="filter-category-section">
+  <div class="filter-section-title">Category</div>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Security" onchange="filterCards()"> Security</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Diagnostics" onchange="filterCards()"> Diagnostics</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Operations" onchange="filterCards()"> Operations</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Serving" onchange="filterCards()"> Serving</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="CI/CD" onchange="filterCards()"> CI/CD</label>
+  <div id="category-more" style="display:none;">
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Setup" onchange="filterCards()"> Setup</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Lifecycle" onchange="filterCards()"> Lifecycle</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Support" onchange="filterCards()"> Support</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Networking" onchange="filterCards()"> Networking</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Observability" onchange="filterCards()"> Observability</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Capacity" onchange="filterCards()"> Capacity</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Scaffolding" onchange="filterCards()"> Scaffolding</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Performance" onchange="filterCards()"> Performance</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Build" onchange="filterCards()"> Build</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Packaging" onchange="filterCards()"> Packaging</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Migration" onchange="filterCards()"> Migration</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="IDE" onchange="filterCards()"> IDE</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Design" onchange="filterCards()"> Design</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Data" onchange="filterCards()"> Data</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Quality" onchange="filterCards()"> Quality</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Testing" onchange="filterCards()"> Testing</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Integration" onchange="filterCards()"> Integration</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Pipelines" onchange="filterCards()"> Pipelines</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Registry" onchange="filterCards()"> Registry</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Authoring" onchange="filterCards()"> Authoring</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Infrastructure" onchange="filterCards()"> Infrastructure</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Platform" onchange="filterCards()"> Platform</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Provisioning" onchange="filterCards()"> Provisioning</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Storage" onchange="filterCards()"> Storage</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Data Protection" onchange="filterCards()"> Data Protection</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Compute" onchange="filterCards()"> Compute</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Disaster Recovery" onchange="filterCards()"> Disaster Recovery</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Configuration" onchange="filterCards()"> Configuration</label>
+    <label class="filter-checkbox"><input type="checkbox" class="filter-category-cb" value="Operators" onchange="filterCards()"> Operators</label>
+  </div>
+  <button class="filter-show-more" onclick="toggleCategoryMore()">Show more</button>
+</div>
+<!-- Pack -->
+<div class="filter-section">
+  <div class="filter-section-title">Pack</div>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="rh-basic" onchange="filterCards()"> rh-basic</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="rh-sre" onchange="filterCards()"> rh-sre</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="rh-developer" onchange="filterCards()"> rh-developer</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="rh-virt" onchange="filterCards()"> rh-virt</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="ocp-admin" onchange="filterCards()"> ocp-admin</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="rh-ai-engineer" onchange="filterCards()"> rh-ai-engineer</label>
+  <label class="filter-checkbox"><input type="checkbox" class="filter-pack-cb" value="rh-automation" onchange="filterCards()"> rh-automation</label>
+</div>

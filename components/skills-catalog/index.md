@@ -20,4 +20,4 @@ Related: [Skills Registry](/components/skills-registry/index.md) · [Agent Catal
 - fact · [Ramesh's position -- skills need no governance; governance at agent level](/components/skills-registry/knowledge/fact-ramesh-skills-governance-position.md) — Ramesh argues skills are static resources with no behavior/deployment, needing no governance layer; governance belongs at agent create/deploy/execute level; registry value is lower than catalog value for skills specifically.
 
 ## Prototypes
-- [Skills Catalog UI](/components/skills-catalog/prototype/skills-catalog-ui/v1/index.html) — Full skills catalog prototype -- browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) -- populated with 68 EX public library skills across 7 packs. (active)
+- [Skills Catalog UI](/components/skills-catalog/prototype/skills-catalog-ui/v2/index.html) — Full skills catalog prototype -- browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) -- populated with 68 EX public library skills across 7 packs. (active)
