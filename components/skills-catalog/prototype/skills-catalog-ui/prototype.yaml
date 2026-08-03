@@ -1,0 +1,9 @@
+title: Skills Catalog UI
+description: Full skills catalog prototype -- browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) -- populated with 68 EX public library skills across 7 packs.
+status: active
+current: v1
+versions:
+  v1:
+    timestamp: 2026-08-02
+    summary: Initial prototype with 3 views (catalog browse, skill detail, admin), 68 skills from EX agentic-collections, PatternFly 6 CDN
+components: [skills-catalog]
