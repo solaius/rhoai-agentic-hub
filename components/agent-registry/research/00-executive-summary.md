@@ -1,6 +1,6 @@
 ---
 title: Agent Registry research — executive summary
-description: Living synthesis after the 2026-08-03 requirements refresh — P1-P11 customer problems independently validated (P4 shadow IT may be underweighted), three Jiri design questions answered with external evidence (four-layer versioning, OCI-style dependency pinning, three-tier visibility scoping), eight gap requirements surfaced, and the play remains RFC-0008 Phase 2 upstream plus owning the unowned post-deployment join.
+description: Living synthesis after the 2026-08-03 requirements + competitive refresh — Google GA'd July 30, AWS GA imminent (Aug 6 namespace migration), Gartner "Guardian Agents" category established, EU AI Act live, 7 new funded entrants; wedge holds but window narrows to 6-9 months; P1-P11 validated, three design questions answered, dependency immutability is a differentiator.
 timestamp: 2026-08-03
 review_after: 2026-11-03
 ---
@@ -8,14 +8,14 @@ review_after: 2026-11-03
 # Agent Registry research — executive summary
 
 This is the living synthesis for the agent-registry research series.
-**Refresh run 2026-08-03** (standard depth, requirements lens only) —
-triggered by Adel Zaalouk's product scoping doc (P1-P11 customer
-problems, product scope decisions) and three new design questions from
-Jiri Daněk's review. Prior refresh: 2026-07-16 (standard depth, 4
-lenses: upstream, landscape, architecture, requirements). Docs 01-06
-are the migrated April 2026 series; docs 07-11 are the July refresh;
-doc 12 is this requirements refresh. Sibling research is standing
-context throughout:
+**Refresh run 2026-08-03** (standard depth, requirements + competitive
+lenses) — triggered by Adel Zaalouk's product scoping doc (P1-P11
+customer problems, product scope decisions), three new design questions
+from Jiri Daněk's review, and the competitive lens gap flagged since
+July. Prior refresh: 2026-07-16 (standard depth, 4 lenses: upstream,
+landscape, architecture, requirements). Docs 01-06 are the migrated
+April 2026 series; docs 07-11 are the July refresh; docs 12-13 are this
+refresh. Sibling research is standing context throughout:
 [agent-interop 00](/components/agent-interop/research/00-executive-summary.md)
 (2026-08-03) and
 [agent-catalog 00](/components/agent-catalog/research/00-executive-summary.md)
@@ -37,6 +37,7 @@ context throughout:
 | [10-requirements](10-requirements.md) | requirements | **2026-07-16** |
 | [11-jira-gap](11-jira-gap.md) | jira-gap | **2026-07-16** |
 | [12-requirements-refresh](12-requirements-refresh.md) | requirements | **new 2026-08-03** |
+| [13-competitive](13-competitive.md) | competitive | **new 2026-08-03** |
 
 ## The bottom line
 
@@ -61,8 +62,12 @@ cards anymore, so the schema's `verified`/`identity`/`trust_domain`
 fields have no producer; **(3) hold the wedge** — nobody ships a
 self-managed, disconnected, governed fleet registry with lineage, and
 regulation now effectively mandates the record shape we'd govern — but
-the window is time-boxed by IBM's eventual on-prem port and by Solo.io's
-`agentregistry` occupying the OSS slot (CNCF Sandbox review 2026-09-22).
+the window is narrowing: Google Agent Registry GA'd July 30 (two GA
+cloud competitors now), AWS GA is imminent (Aug 6 namespace migration),
+Gartner established "Guardian Agents" as a category, and Solo.io's
+four-project OSS suite continues building. **Estimated window: 6-9
+months** (down from 6-12 in July), time-boxed by IBM's eventual on-prem
+port and Solo.io's agentregistry CNCF Sandbox status.
 
 **New in this refresh:** **(4) the product scope is now defined** — Adel's
 scoping doc establishes discover/register/audit as the three end
@@ -163,6 +168,45 @@ dependencies cannot be unilaterally deprecated.
     immutability enforcement, interoperability profile tracking,
     behavioral drift detection (12).
 
+## Key findings (2026-08-03 competitive)
+
+24. **Google Agent Registry GA'd July 30.** RHOAI now faces two GA cloud
+    competitors (Google + Microsoft), not one. Google's SPIFFE-based
+    agent identity is cloud-neutral by design — a closer architectural
+    competitor than Entra Agent ID (13).
+25. **AWS GA imminent.** August 6 namespace migration
+    (`bedrock-agentcore` → `agent-registry`) is a strong GA signal;
+    production-scale quotas (5,000 sessions, 200 TPS) shipped July.
+    Three GA competitors approaching (13).
+26. **ARD federated discovery protocol announced by Google.** The first
+    vendor-backed federated agent discovery standard. If ARD becomes
+    de facto, RHOAI's 3.7+ federation roadmap must adopt or compete (13).
+27. **Microsoft cross-cloud registry sync in preview.** Agent 365 can
+    discover/inventory agents across AWS Bedrock and Google Cloud — the
+    most direct threat to RHOAI's multi-cloud positioning. Entra Agent
+    ID criticized as "doesn't work outside Azure" (the cross-cloud
+    story has substance gaps) (13).
+28. **Gartner "Guardian Agents" category established (Feb 2026,
+    inaugural).** Explicitly calls for "independent guardian agent layers
+    that work across clouds and platforms" — this IS the RHOAI
+    positioning. AX (Agent Experience) appears in Platform Engineering
+    Hype Cycle (13).
+29. **Seven new funded entrants ($160M+ total).** Geordie AI, JetStream
+    ($34M), Oasis Security ($120M Series B), AvePoint AgentPulse,
+    Kosmoy, Credo AI, Arthur AI. All SaaS, none on-prem — but shaping
+    buyer expectations (13).
+30. **Solo.io four-project suite.** agentgateway has air-gapped docs;
+    agentregistry does not yet. kagent has 300+ contributors from major
+    vendors. The OSS alternative is building faster than the RHOAI
+    registry (13).
+31. **EU AI Act took effect August 2.** Cross-platform agent governance
+    is now a compliance requirement. NIST SP 800-53 agent overlays
+    targeting Q4 2026 will create procurement requirements (13).
+32. **Wedge window narrows to 6-9 months** (from 6-12 in July). The
+    on-prem/disconnected gap is unfilled but under pressure from
+    Microsoft cross-cloud sync, Google ARD, and Solo.io air-gapped
+    momentum (13).
+
 ## Boundary notes (siblings)
 
 - The registry-shaped Jira surface (RHAISTRAT-1355, -1697, -1758, -1955,
@@ -196,10 +240,9 @@ dependencies cannot be unilaterally deprecated.
 
 ## Lens gaps
 
-- **competitive not run as a separate lens** — competitive signals were
-  folded into 08 by plan; a dedicated pass (e.g. IBM ACP on-prem
-  tracking, AWS GA pricing) remains available:
-  `hub.research agent-registry competitive`.
+- ~~**competitive not run as a separate lens**~~ — DONE same day
+  (2026-08-03), see [13-competitive](13-competitive.md): vendor deltas,
+  7 new entrants, analyst coverage, updated wedge assessment.
 
 ## Recommended follow-ups (not auto-run)
 
@@ -225,15 +268,18 @@ dependencies cannot be unilaterally deprecated.
   two refreshes) is now comprehensive enough to synthesize a living
   strategy doc.
 - **Watch list for next refresh**: RFC-0008 PR #26 review state; OpenShell
-  Go SDK PR series; Solo.io agentregistry CNCF review (2026-09-22); IBM
-  ACP on-prem port; AWS registry GA + pricing; ARD adoption; Forrester
-  ADP Wave Q4 2026; NIST AI Agent Interoperability Profile (Q4 2026).
+  Go SDK PR series; Solo.io agentregistry CNCF Sandbox decision (board
+  review may have occurred); IBM ACP on-prem port; AWS registry GA +
+  pricing (post-Aug-6 namespace migration); Google ARD adoption beyond
+  Google; Microsoft cross-cloud sync GA; Forrester ADP Wave Q4 2026;
+  NIST SP 800-53 agent overlays (Q4 2026); NIST AI Agent
+  Interoperability Profile (Q4 2026).
 
 ## Verification
 
 Standard run — no adversarial verification pass. The 2026-07-16 refresh
 verified agent-sandbox versions and four load-bearing URLs. The 2026-08-03
-requirements refresh cites primary sources inline for all graded claims;
-URLs from the research agent's findings are provided as-found — primary
-source verification recommended for any load-bearing citation before it
-enters strategy or external-facing documents.
+requirements + competitive refresh cites primary sources inline for all
+graded claims; URLs from the research agents' findings are provided
+as-found — primary source verification recommended for any load-bearing
+citation before it enters strategy or external-facing documents.
