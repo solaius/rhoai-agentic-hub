@@ -3,6 +3,10 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-08-03
+- **Creation** -- intake(ai-asset-pipeline): new component partition -- Konflux-based trust pipeline for scanning/signing/attesting skills, MCP servers, agents; extends existing model pipeline (Adam Bellusci confirmed 2026-08-03). 8 new entries: overview, decision, 5 refs (Konflux, SkillSpector, KitOps, model-metadata-collection, Conforma), person (Adam Bellusci). Positioning fact updated with component link.
+- **Creation** -- ref-gitlab-cee-access: gitlab.cee.redhat.com access patterns — git sslVerify config, curl API, WebFetch limitation, known repos (uxd/prototypes/rhoai).
+
 ## 2026-08-02
 - **Creation** -- fact-konflux-ai-asset-pipeline-positioning: Konflux pipeline is shared platform infra (not catalog/registry feature) for scanning/signing/attesting skills, MCP servers, and agents; first target skills, extend to MCP+agents; belongs under RHAISTRAT-1339 or new cross-cutting STRAT.
 - **Update** -- RHAISTRAT-1940 PM assigned (existential risk mitigated); Peter working with EX + PE teams on initial catalog skills list, deadline before 3.6 EA1.
