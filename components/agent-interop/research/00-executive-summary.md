@@ -2,7 +2,7 @@
 title: "Agent Interop Research: Executive Summary"
 description: Living synthesis across competitive, upstream, architecture, requirements, landscape, jira-gap, deployment, and operations lenses for agent interoperability on Red Hat AI.
 timestamp: 2026-07-11
-updated: 2026-07-27
+updated: 2026-08-03
 review_after: 2026-09-11
 ---
 
@@ -28,6 +28,7 @@ operations.
 | [06-jira-gap](06-jira-gap.md) | jira-gap | internal cross-ref | 2026-07-11 |
 | [07-deployment](07-deployment.md) | deployment | 30+ | 2026-07-27 |
 | [08-operations](08-operations.md) | operations | 40+ | 2026-07-27 |
+| [09-competitive](09-competitive.md) | competitive (refresh) | 15+ | 2026-08-03 |
 
 ## Key findings
 
@@ -46,9 +47,48 @@ RHOAI has neither protocol natively today.
 
 RHOAI trails on market timing. Azure AI Foundry Agent Service went GA
 May 2025, AWS Bedrock Agents GA March 2025, Google rebranded to Gemini
-Enterprise April 2026. OpenShell Dev Preview targets Jul-Aug 2026, GA
-not until 2027. The 12-18 month gap means RHOAI must differentiate on
-**security, compliance, and hybrid cloud** rather than time-to-market.
+Enterprise April 2026. OpenShell Dev Preview ships Aug 20, 2026; TP
+targets Sep-Nov 2026; GA early 2027. The gap means RHOAI must
+differentiate on **security, compliance, and hybrid cloud** rather than
+time-to-market.
+
+### Competitive landscape has shifted (09-competitive, 2026-08-03)
+
+Three developments since the original competitive lens change the
+strategic picture:
+
+1. **Tigera Lynx shipped fleet governance at GA (Jun 17)** -- eBPF
+   discovery, Cedar policy, SPIFFE identity, AI-CSPM with compliance
+   packs, production bank deployments. Lynx owns the fleet governance
+   narrative that OpenShell lacks. The strategy repo's "partner vs.
+   competitor" conditional resolved: Lynx shipped first.
+
+2. **KARS hit v1.0 (Jul 1)** -- end-to-end encrypted inter-agent mesh
+   (Signal Protocol), per-pod Rust router, 8 framework integrations,
+   GitOps-native governance, A2A live, AGT integration. More capable
+   than the hub's prior assessment ("starting point"). OpenShell's
+   remaining advantage is per-binary depth (process-level vs. pod-level
+   enforcement).
+
+3. **OpenAI Agents SDK ships 7 official sandbox providers (Apr 2026)**
+   -- Blaxel, Cloudflare, Daytona, E2B, Modal, Runloop, Vercel.
+   OpenShell is not among them. Ecosystem visibility gap for the largest
+   agent developer audience.
+
+Additionally, checkpoint/restore is now table stakes across the category
+(E2B, Daytona, Cloudflare, Vercel, Runloop, Microsandbox, CodeSandbox
+all ship it). OpenShell's CAP 972 work is urgent. Daytona went
+closed-source (Jun 2026), reducing OSS competitive pressure but
+validating commercial value ($1M ARR in <3 months).
+
+OpenShell's core differentiators remain unique and validated: per-binary
+policy, L7 TLS MITM, denial intelligence, and the three-layer coverage
+(isolation + behavioral + credentials). No competitor has matched this
+depth. The 88% security incident rate (BeyondScale 2026) validates the
+security-first positioning.
+
+See [09-competitive](09-competitive.md) for the full refresh including
+updated threat ranking, net-new competitors, and recommended actions.
 
 ### Industry definitions have converged (landscape lens)
 
@@ -249,7 +289,8 @@ garbage collection, compliance templates, Grafana dashboards).
 4. **Regulated industry focus**: Banking at 47% production deployment; compliance-first agent templates
 5. **Universal BYO onboarding**: Agent onboarding across MCP, A2A, and all major frameworks with automated security scanning
 6. **Intent-based authorization**: the "why" layer above SPIFFE identity has no standard -- first mover advantage
-7. **Shadow agent discovery**: enterprise shadow agent inventory tooling is a recognized gap with no mature solution
+7. **Shadow agent discovery**: ~~enterprise shadow agent inventory tooling is a recognized gap with no mature solution~~ **Partially closed**: Tigera Lynx ships eBPF-powered shadow agent discovery and quarantine at GA (Jun 2026). OpenShell would need to match or partner.
+8. **OpenAI SDK provider integration**: OpenShell as an official sandbox provider for the OpenAI Agents SDK -- architecturally compatible, high visibility, moderate effort
 
 ## Recommended follow-ups
 
@@ -288,3 +329,16 @@ garbage collection, compliance templates, Grafana dashboards).
   engineering needed for RHOAI disconnected installs
 - **Warm pool integration tracking**: feasibility study complete
   (#2199), implementation in progress across 6+ upstream issues
+- ~~**competitive refresh**~~: DONE (2026-08-03) -- see
+  [09-competitive](09-competitive.md). Key findings: Lynx GA (fleet
+  governance gap), KARS v1.0 (elevated threat), OpenAI SDK ecosystem
+  gap, checkpoint/restore now table stakes.
+- **Fleet governance build-vs-partner decision**: Lynx owns the
+  narrative; decide whether to build fleet governance into OpenShell
+  or partner with Tigera. Strategy decision, not engineering.
+- **OpenAI SDK provider integration**: propose OpenShell as an official
+  sandbox provider for the OpenAI Agents SDK
+- **CAP 972 checkpoint/restore**: urgent Red Hat input needed before
+  upstream proposal merges without alignment
+- **KARS field positioning update**: "starting point" no longer
+  accurate; differentiate on per-binary depth and compliance
