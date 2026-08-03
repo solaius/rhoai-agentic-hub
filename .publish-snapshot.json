@@ -36,8 +36,8 @@
     "source": "components/mcp-registry/enablement/registry-hub"
   },
   "skills-catalog/ui-prototype": {
-    "badge": "new",
-    "hash": "f09da5bbccf8406f17ffc66488230e196b180756a91da07a187855b74af3f4ae",
+    "badge": "updated",
+    "hash": "63663125cfc11e3de2d4d73ea93635bd6eb71b07f23ac90be2d682f3486fad02",
     "published": "2026-08-03",
     "source": "components/skills-catalog/prototype/skills-catalog-ui/v1"
   }

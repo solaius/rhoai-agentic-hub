@@ -1,0 +1,256 @@
+<style>
+  .detail-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .detail-card-section { padding: 24px; border: 1px solid #e5e7eb; border-radius: 16px; background: #fff; margin-bottom: 16px; }
+  .detail-section-title { font-size: 20px; font-weight: 500; margin: 0 0 16px; color: #151515; }
+  .detail-sidebar { width: 290px; flex-shrink: 0; padding: 24px; border: 1px solid #e5e7eb; border-radius: 16px; background: #fff; align-self: flex-start; }
+  .detail-field { margin-bottom: 20px; }
+  .detail-field-label { font-size: 14px; font-weight: 500; color: #6b7280; margin-bottom: 4px; }
+  .detail-field-value { font-size: 14px; color: #151515; }
+  .readme-content { font-size: 14px; line-height: 1.7; color: #151515; }
+  .readme-content h1 { font-size: 28px; font-weight: 700; margin: 24px 0 12px; border-bottom: 1px solid #e5e5e5; padding-bottom: 8px; }
+  .readme-content h2 { font-size: 22px; font-weight: 600; margin: 20px 0 10px; }
+  .readme-content h3 { font-size: 18px; font-weight: 600; margin: 16px 0 8px; }
+  .readme-content p { margin: 8px 0; }
+  .readme-content code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  .readme-content pre { background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto; margin: 12px 0; }
+  .readme-content pre code { background: none; padding: 0; }
+  .readme-content ul, .readme-content ol { padding-left: 24px; margin: 8px 0; }
+  .readme-content li { margin: 4px 0; }
+  .readme-content table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+  .readme-content th, .readme-content td { border: 1px solid #d2d2d2; padding: 8px 12px; text-align: left; font-size: 13px; }
+  .readme-content th { background: #f6f8fa; font-weight: 600; }
+  .install-block { background: var(--pf-t--global--background--color--secondary--default); border-radius: var(--pf-t--global--border--radius--small); padding: var(--pf-t--global--spacer--md); font-family: var(--pf-t--global--font--family--mono); font-size: var(--pf-t--global--font--size--sm); margin-bottom: var(--pf-t--global--spacer--sm); position: relative; overflow-x: auto; white-space: pre; }
+  .install-block .copy-btn { position: absolute; top: 8px; right: 8px; }
+  .compat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--pf-t--global--spacer--sm); }
+  .compat-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--pf-t--global--border--color--default); border-radius: var(--pf-t--global--border--radius--small); }
+  .compat-item .compat-icon { color: var(--pf-t--global--color--status--success--default); }
+  .compat-item.partial .compat-icon { color: var(--pf-t--global--color--status--warning--default); }
+  .view { display: none; }
+  .view.active { display: block; }
+  .tier-section-header { font-size: 18px; font-weight: 500; margin: 24px 0 4px; }
+  .tier-section-subtext { font-size: 14px; color: #6a6e73; margin-bottom: 16px; }
+
+  /* Admin sources table */
+  .admin-sources-table { width: 100%; border-collapse: collapse; }
+  .admin-sources-table th { text-align: left; font-size: 14px; font-weight: 700; color: #151515; padding: 12px 16px; border-bottom: 1px solid #d2d2d2; }
+  .admin-sources-table td { font-size: 14px; color: #151515; padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+  .admin-sources-table tr:last-child td { border-bottom: 1px solid #d2d2d2; }
+  .admin-sources-table .source-name { color: #0066cc; font-weight: 400; cursor: default; }
+  .help-icon-inline { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid #6a6e73; color: #6a6e73; font-size: 11px; margin-left: 6px; cursor: help; vertical-align: middle; }
+
+  /* Toggle switch */
+  .pf-v6-c-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+  .pf-v6-c-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .pf-v6-c-switch__toggle { width: 42px; height: 24px; background: #d2d2d2; border-radius: 12px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle { background: #0066cc; }
+  .pf-v6-c-switch__toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+  .pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle::after { transform: translateX(18px); }
+  .pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle::before { content: '\2713'; position: absolute; left: 8px; top: 3px; color: #fff; font-size: 12px; font-weight: 700; z-index: 1; }
+
+  /* Validation label */
+  .validation-label { display: inline-flex; align-items: center; padding: 2px 10px; border: 1px solid #d2d2d2; border-radius: 4px; font-size: 13px; color: #151515; background: #fff; }
+
+  /* Visibility label */
+  .visibility-label { display: inline-flex; align-items: center; padding: 2px 10px; border: 1px solid #d2d2d2; border-radius: 4px; font-size: 13px; color: #6a6e73; background: #fff; }
+
+  /* Kebab menu */
+  .kebab-wrapper { position: relative; display: inline-block; }
+  .kebab-btn { background: none; border: none; cursor: pointer; padding: 8px; color: #151515; border-radius: 4px; }
+  .kebab-btn:hover { background: #f0f0f0; }
+  .kebab-menu { position: absolute; right: 0; top: 100%; background: #fff; border: 1px solid #d2d2d2; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.12); z-index: 100; min-width: 180px; padding: 4px 0; display: none; }
+  .kebab-menu.open { display: block; }
+  .kebab-menu button { display: block; width: 100%; text-align: left; padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 14px; color: #151515; font-family: inherit; }
+  .kebab-menu button:hover { background: #f0f0f0; }
+
+  /* Add source button (blue pill) */
+  .btn-add-source { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: #0066cc; color: #fff; border: none; border-radius: 999px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  .btn-add-source:hover { background: #004080; }
+  .btn-add-source svg { fill: currentColor; }
+
+  /* Manage source page */
+  .manage-source-form { flex: 1; min-width: 0; }
+  .manage-field-label { font-size: 14px; font-weight: 700; color: #151515; margin: 0 0 8px; }
+  .manage-field-value { padding: 10px 14px; background: #f5f5f5; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px; color: #151515; margin-bottom: 24px; }
+  .manage-preview { width: 380px; flex-shrink: 0; }
+  .manage-preview-card { border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; }
+  .manage-preview-title { font-size: 20px; font-weight: 500; margin: 0 0 16px; color: #151515; }
+  .manage-tabs { display: flex; border-bottom: 1px solid #d2d2d2; margin-bottom: 16px; }
+  .manage-tab { padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 14px; font-family: inherit; color: #6a6e73; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .manage-tab.active { color: #0066cc; border-bottom-color: #0066cc; font-weight: 500; }
+  .skill-include-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; color: #151515; }
+  .skill-include-icon { color: #3e8635; }
+  .btn-save { display: inline-flex; align-items: center; padding: 10px 28px; background: #0066cc; color: #fff; border: none; border-radius: 999px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  .btn-save:hover { background: #004080; }
+  .btn-cancel { display: inline-flex; align-items: center; padding: 10px 16px; background: none; color: #0066cc; border: none; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+  .btn-cancel:hover { text-decoration: underline; }
+  .expandable-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; font-size: 14px; color: #0066cc; font-family: inherit; padding: 4px 0; }
+  .expandable-toggle svg { transition: transform 0.2s; }
+  .expandable-toggle.expanded svg { transform: rotate(90deg); }
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 14px; font-weight: 500; color: #151515; margin-bottom: 6px; }
+  .form-label .required { color: #c9190b; margin-left: 2px; }
+  .form-label .help-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1px solid #6a6e73; color: #6a6e73; font-size: 11px; margin-left: 6px; cursor: help; vertical-align: middle; }
+  .form-input { width: 100%; box-sizing: border-box; padding: 8px 12px; font-size: 14px; border: 1px solid #d2d2d2; border-radius: 6px; background: #f6f6f6; color: #151515; font-family: inherit; }
+  .form-input:focus { outline: 2px solid #0066cc; border-color: #0066cc; background: #fff; }
+  .form-select { width: 100%; box-sizing: border-box; padding: 8px 12px; font-size: 14px; border: 1px solid #d2d2d2; border-radius: 6px; background: #fff; color: #151515; font-family: inherit; cursor: pointer; appearance: auto; }
+  .form-select:focus { outline: 2px solid #0066cc; border-color: #0066cc; }
+  .form-help-text { font-size: 13px; color: #6a6e73; margin-top: 4px; }
+  .form-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+</style>
+
+<!-- ==================== DETAIL VIEW ==================== -->
+<div id="view-detail" class="view">
+  <div style="padding:16px 24px 0;">
+    <nav class="pf-v6-c-breadcrumb" aria-label="Breadcrumb">
+      <ol class="pf-v6-c-breadcrumb__list" role="list">
+        <li class="pf-v6-c-breadcrumb__item">
+          <a href="#" class="pf-v6-c-breadcrumb__link" onclick="navigateTo('catalog');return false;">Skills Catalog</a>
+        </li>
+        <li class="pf-v6-c-breadcrumb__item">
+          <span class="pf-v6-c-breadcrumb__item-divider">
+            <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>
+          </span>
+          <span class="pf-v6-c-breadcrumb__link pf-m-current" id="breadcrumb-skill-name"></span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <div style="padding:16px 24px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <span class="page-title-icon" style="width:48px;height:48px;">
+        <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+      </span>
+      <div>
+        <h1 id="detail-title" style="font-size:24px;font-weight:500;margin:0;"></h1>
+        <div class="detail-badges" id="detail-badges" style="margin-top:4px;"></div>
+      </div>
+    </div>
+    <button class="pf-v6-c-button pf-m-primary" type="button" onclick="openRegisterModal()">Register</button>
+  </div>
+  <div style="display:flex;gap:16px;padding:0 24px 24px;">
+    <div style="flex:1;min-width:0;">
+      <div class="detail-card-section" id="detail-description-section">
+        <h2 class="detail-section-title">Description</h2>
+        <p id="detail-description" style="color:#151515;line-height:1.6;margin:0;"></p>
+      </div>
+      <div class="detail-card-section" id="detail-install-section">
+        <h2 class="detail-section-title">Install</h2>
+        <p style="color:#6a6e73;margin:0 0 16px;">Copy the command for your preferred agent harness.</p>
+        <div id="install-commands"></div>
+      </div>
+      <div class="detail-card-section" id="detail-compat-section">
+        <h2 class="detail-section-title">Compatibility</h2>
+        <p style="color:#6a6e73;margin:0 0 16px;">Tested and supported agent frameworks.</p>
+        <div class="compat-grid" id="compat-grid"></div>
+      </div>
+      <div class="detail-card-section" id="detail-readme-section">
+        <h2 class="detail-section-title" id="readme-heading" style="display:flex;align-items:center;gap:8px;">README</h2>
+        <div id="detail-readme" class="readme-content"></div>
+      </div>
+    </div>
+    <div class="detail-sidebar">
+      <h2 class="detail-section-title" style="margin-bottom:24px;">Skill details</h2>
+      <div id="detail-fields"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== ADMIN VIEW (Skill catalog sources) ==================== -->
+<div id="view-admin" class="view">
+  <div style="padding:24px 24px 0;">
+    <h1 style="font-size:28px;font-weight:500;margin:0 0 8px;color:#151515;">Skill catalog sources</h1>
+    <p style="font-size:14px;color:#6a6e73;margin:0 0 24px;max-width:800px;">Add and manage skill catalog sources. Each source is a YAML catalog file that can contain multiple skills for users in your organization.</p>
+    <button class="btn-add-source" type="button" onclick="alert('Add a source dialog would open here')">
+      <svg height="1em" width="1em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
+      Add a source
+    </button>
+  </div>
+  <div style="padding:24px;">
+    <table class="admin-sources-table" id="admin-sources-table">
+      <thead>
+        <tr>
+          <th style="width:28%;">Name</th>
+          <th style="width:16%;">Skill visibility <span class="help-icon-inline" title="Controls which skills from this source are visible in the skill catalog">?</span></th>
+          <th style="width:14%;">Source type</th>
+          <th style="width:12%;">Enable <span class="help-icon-inline" title="Enable or disable this catalog source">?</span></th>
+          <th style="width:18%;">Validation status</th>
+          <th style="width:48px;"></th>
+        </tr>
+      </thead>
+      <tbody id="admin-sources-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ==================== MANAGE SOURCE VIEW ==================== -->
+<div id="view-manage-source" class="view">
+  <div style="padding:16px 24px 0;">
+    <nav class="pf-v6-c-breadcrumb" aria-label="Breadcrumb">
+      <ol class="pf-v6-c-breadcrumb__list" role="list">
+        <li class="pf-v6-c-breadcrumb__item">
+          <a href="#" class="pf-v6-c-breadcrumb__link" onclick="navigateTo('admin');return false;">Skill catalog sources</a>
+        </li>
+        <li class="pf-v6-c-breadcrumb__item">
+          <span class="pf-v6-c-breadcrumb__item-divider">
+            <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>
+          </span>
+          <span class="pf-v6-c-breadcrumb__link pf-m-current">Manage source</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <div style="display:flex;gap:40px;padding:24px;">
+    <div class="manage-source-form">
+      <h1 style="font-size:28px;font-weight:500;margin:0 0 8px;color:#151515;">Manage source</h1>
+      <p style="font-size:14px;color:#6a6e73;margin:0 0 32px;max-width:600px;">Configure which skills from this pre-loaded catalog source are visible in the skill catalog.</p>
+
+      <div class="manage-field-label">Name</div>
+      <div class="manage-field-value" id="manage-source-name"></div>
+
+      <div class="manage-field-label">Catalog YAML file</div>
+      <div class="manage-field-value" id="manage-source-yaml"></div>
+
+      <div class="manage-field-label">Skills</div>
+      <p style="font-size:14px;color:#151515;margin:0 0 16px;" id="manage-source-skills-count"></p>
+
+      <button class="expandable-toggle" id="manage-visibility-toggle" onclick="toggleManageVisibility()">
+        <svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>
+        Skill visibility
+      </button>
+      <div id="manage-visibility-content" style="display:none;padding:16px 0 0;">
+        <p style="font-size:14px;color:#151515;line-height:1.6;margin:0 0 24px;max-width:700px;">Optionally filter which skills from your source appear in the skill catalog. If no filters are set, all skills from the source will be visible.</p>
+
+        <div class="manage-field-label">Included skills</div>
+        <p style="font-size:14px;color:#151515;line-height:1.5;margin:0 0 8px;max-width:700px;">Enter skill names to include from this source. Separate names with commas. Use an asterisk suffix for prefix matching (Example: rh-sre*).</p>
+        <textarea class="form-input" id="manage-included-textarea" rows="4" style="resize:vertical;max-width:700px;background:#fff;" placeholder="Example: CVE Explainer, Cluster Health Check, rh-sre*"></textarea>
+
+        <div style="margin-top:32px;">
+          <div class="manage-field-label">Excluded skills</div>
+          <p style="font-size:14px;color:#151515;line-height:1.5;margin:0 0 8px;max-width:700px;">Enter skill names to exclude from this source. Separate names with commas. Use wildcards for pattern matching (Example: *experimental*).</p>
+          <textarea class="form-input" id="manage-excluded-textarea" rows="4" style="resize:vertical;max-width:700px;background:#fff;" placeholder="Example: *preview*"></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:48px;display:flex;align-items:center;gap:16px;">
+        <button class="btn-save" type="button" onclick="alert('Source saved');navigateTo('admin');">Save</button>
+        <button class="btn-cancel" type="button" onclick="navigateTo('admin')">Cancel</button>
+      </div>
+    </div>
+    <div class="manage-preview">
+      <div class="manage-preview-card">
+        <h2 class="manage-preview-title">Skill catalog preview</h2>
+        <div class="manage-tabs">
+          <button class="manage-tab active" onclick="switchManageTab('included',this)">Skills included</button>
+          <button class="manage-tab" onclick="switchManageTab('excluded',this)">Skills excluded</button>
+        </div>
+        <div id="manage-tab-included">
+          <p style="font-size:14px;color:#151515;margin:0 0 12px;" id="manage-included-count"></p>
+          <div id="manage-included-list"></div>
+        </div>
+        <div id="manage-tab-excluded" style="display:none;">
+          <p style="font-size:14px;color:#6a6e73;margin:0;">No skills are excluded from this source.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
