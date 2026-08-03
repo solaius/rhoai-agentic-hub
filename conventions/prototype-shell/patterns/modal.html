@@ -1,0 +1,20 @@
+<!-- Pattern: modal — append after main content; standalone overlay fragment -->
+<div class="modal-backdrop hidden" id="{{MODAL_ID}}-backdrop" onclick="if(event.target===this)closeModal()">
+  <div class="register-modal" role="dialog" aria-labelledby="{{MODAL_ID}}-title" aria-modal="true">
+    <div class="register-modal__header">
+      <h2 class="register-modal__title" id="{{MODAL_ID}}-title">{{MODAL_TITLE}}</h2>
+      <button class="register-modal__close" aria-label="Close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="register-modal__body">
+      {{MODAL_FIELDS}}
+    </div>
+    <div class="register-modal__footer">
+      <button class="pf-v6-c-button pf-m-primary" type="button" onclick="submitModal()">{{MODAL_PRIMARY_ACTION}}</button>
+      <button class="pf-v6-c-button pf-m-link" type="button" onclick="closeModal()">Close</button>
+      <span class="spacer"></span>
+      <button class="pf-v6-c-button pf-m-secondary" type="button" onclick="resetModalForm()">Reset</button>
+    </div>
+  </div>
+</div>
+
+{{MODAL_SCRIPTS}}

@@ -1,0 +1,1631 @@
+/*
+ * shell.css -- extracted from UXD RHOAI prototype
+ *
+ * Source : https://gitlab.cee.redhat.com/uxd/prototypes/rhoai
+ * Branch : 3.6
+ * File   : src/app/app.css
+ * Date   : 2026-08-03T16:10:42Z
+ *
+ * This file is auto-extracted by scripts/extract_uxd_styles.py.
+ * Manual edits will be overwritten on the next extraction run.
+ */
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* 16px padding between page title (h1) and subtitle */
+#prototype .pf-v6-c-page__main-container h1 + p {
+  margin-top: var(--pf-v5-global--spacer--md);
+}
+
+/* Low fidelity mode styling — scoped to #prototype so it doesn't affect the context panel or prototype masthead */
+#prototype.fidelity-low {
+  font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+  filter: grayscale(100%);
+}
+
+#prototype.fidelity-low * {
+  font-family: "Comic Sans MS", "Comic Sans", cursive !important;
+}
+
+#context-panel-toggle-btn svg {
+  color: white;
+}
+
+#prototype-feature-flags-item button:hover {
+  color: white;
+}
+
+#prototype-fidelity-item button,
+#prototype-fidelity-item .pf-v6-c-menu-toggle__toggle-icon {
+  color: white;
+}
+
+#prototype-fidelity-item button:hover {
+  color: white;
+}
+
+#prototype-masthead {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* Offset modals below the prototype masthead when it is present */
+body:has(#prototype-masthead) {
+  --prototype-masthead-offset: 45px;
+}
+
+.pf-v6-c-masthead__logo {
+  width: 60px;
+}
+
+.pf-v6-c-masthead .pf-v6-c-toolbar__content-section {
+  align-items: center !important;
+}
+
+#apollo-canvas-masthead h1 {
+  margin: 6px;
+}
+
+#apollo-canvas-masthead {
+  background-color: var(--pf-v6-global--BackgroundColor--200);
+  color: var(--pf-v6-global--Color--100);
+}
+
+/*
+ * Filled PatternFly Page main (AppLayout uses isContentFilled → pf-m-fill).
+ * White background so the padding around the content area doesn't show as a gray box.
+ */
+#prototype .pf-v6-c-page__main-container.pf-m-fill {
+  --pf-v6-c-page__main-container--BackgroundColor: #ffffff;
+  background: #ffffff !important;
+}
+
+/* Scroll surface behind stacked PageSections — otherwise only thin gaps show the container color */
+#prototype #primary-app-container.pf-v6-c-page__main {
+  background-color: #ffffff !important;
+  /* Reserve scrollbar space so tab switches don't shift the page horizontally */
+  scrollbar-gutter: stable;
+}
+
+/* Home route: every PageSection uses the same canvas (#f2f2f2 == rgba(242,242,242,1)); white stays on Cards */
+#prototype [data-testid="home-page"] > section.pf-v6-c-page__main-section {
+  background-color: rgba(242, 242, 242, 1) !important;
+}
+
+/* Home — shared section title size (PatternFly global font size md ≈ 1rem) */
+#prototype .rhoai-home-section-title-md {
+  font-size: var(--pf-t--global--font--size--md) !important;
+  line-height: var(--pf-t--global--font--line-height--body);
+}
+
+/* Home — Projects section heading: #FFE8CC circle + standard icon before title */
+#prototype [data-testid="landing-page-projects"] .rhoai-projects-section-heading__icon {
+  flex-shrink: 0;
+}
+
+#prototype [data-testid="landing-page-projects"] .rhoai-projects-section-heading__icon-mark {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#prototype [data-testid="landing-page-projects"] .rhoai-projects-section-heading__icon-mark svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+/* Home — Projects gallery: top accent bar (same geometry as Task assistant Gen AI column card) */
+#prototype [data-testid="landing-page-projects"] .rhoai-project-card.pf-v6-c-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#prototype [data-testid="landing-page-projects"] .rhoai-project-card__accent {
+  height: 5px;
+  width: 54px;
+  margin: 0 auto var(--pf-t--global--spacer--md) auto;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background-color: #f8ae54;
+}
+
+/* Custom icon background colors */
+:root {
+  --ai-setup--BackgroundColor: #ffe8cc; /* used for setting up things, like projects and connections */
+  --ai-development--BackgroundColor: #daf2f2; /* used for development resources like workbenches, pipelines, playground, catalog */
+  --ai-deployment--BackgroundColor: #ece6ff; /* used for deployments and use cases that follow, like observe and monitor, registry */
+}
+
+/* AutoRAG specific styles */
+/* AutoRAG main content inset — 16px top, 24px left/right, 16px bottom */
+#autorag-page-content-area.pf-v6-c-page__main-section.pf-m-no-padding {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* AutoRAG home page spacing — Figma 12-833 / 65-8147.
+   NOTE: --pf-v5-global--spacer--* vars are undefined in this PF6 app; use px or --pf-t-- tokens. */
+#autorag-page-content-area.autorag-home-page {
+  display: flex;
+  flex-direction: column;
+}
+
+#autorag-page-content-area.autorag-home-page #autorag-first-page-masthead {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+/* 24px between actions row and pagination (Figma container gap) */
+#autorag-page-content-area.autorag-home-page #autorag-content {
+  margin-top: 24px;
+}
+
+/* Create / configure experiment: fill white panel, pin footer to wrapper bottom */
+#autorag-page-content-area.autorag-creating,
+#autorag-page-content-area.autorag-configuring {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+}
+
+#autorag-page-content-area.autorag-creating #autorag-content {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding-bottom: 72px;
+}
+
+/* Configure: scrollable content region; cards use viewport-based height for internal scroll */
+#autorag-page-content-area.autorag-configuring #autorag-content {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 72px;
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-configurations-page,
+#autorag-configurations-grid-wrapper {
+  background-color: var(--pf-t--global--background--color--primary--default);
+  min-width: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#autorag-configurations-grid-wrapper {
+  padding-inline: 1px;
+}
+
+#autorag-configurations-grid {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  align-items: start;
+}
+
+#autorag-configurations-grid > .pf-v6-l-grid__item {
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+#autorag-page-content-area.autorag-configuring #autorag-documents-card,
+#autorag-page-content-area.autorag-configuring #autorag-configure-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: calc(100vh - 360px);
+  max-height: calc(100vh - 360px);
+  min-height: 320px;
+  overflow: hidden;
+}
+
+#autorag-page-content-area.autorag-configuring #autorag-documents-card.pf-v6-c-card,
+#autorag-page-content-area.autorag-configuring #autorag-configure-card.pf-v6-c-card {
+  --pf-v6-c-card--Overflow: hidden;
+  overflow: hidden !important;
+}
+
+#autorag-configure-card {
+  position: relative;
+  z-index: 1;
+}
+
+#autorag-run-experiment-footer,
+#autorag-create-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+/* Experiment flows: remove grey canvas padding and fill white */
+#prototype .pf-v6-c-page__main-container:has(#autorag-page-content-area.autorag-creating),
+#prototype .pf-v6-c-page__main-container:has(#autorag-page-content-area.autorag-configuring) {
+  padding: 0 !important;
+  background-color: var(--pf-t--global--background--color--primary--default) !important;
+  --pf-v6-c-page__main-container--BackgroundColor: var(--pf-t--global--background--color--primary--default);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+#prototype #primary-app-container:has(#autorag-page-content-area.autorag-creating),
+#prototype #primary-app-container:has(#autorag-page-content-area.autorag-creating) > #autorag-page-content-area,
+#prototype #primary-app-container:has(#autorag-page-content-area.autorag-configuring),
+#prototype #primary-app-container:has(#autorag-page-content-area.autorag-configuring) > #autorag-page-content-area {
+  flex: 1;
+  min-height: 0;
+}
+
+#prototype #primary-app-container:has(#autorag-page-content-area.autorag-creating),
+#prototype #primary-app-container:has(#autorag-page-content-area.autorag-configuring) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  padding: 0 !important;
+  background-color: var(--pf-t--global--background--color--primary--default) !important;
+}
+
+#prototype .pf-v6-c-page__main-container:has(#autorag-page-content-area.autorag-configuring) {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* AutoRAG: white content surfaces on the 3.5 gray page canvas (matches AI asset endpoints / Playground) */
+/* Fill the PF page main container — removes the gray padding band inside the rounded frame */
+#prototype #primary-app-container:has(#autorag-page-content-area) {
+  padding: 0 !important;
+  background-color: var(--pf-t--global--background--color--primary--default) !important;
+  --pf-v6-c-page__main-container--BackgroundColor: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-page-content-area {
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-experiments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background-color: var(--pf-t--global--background--color--primary--default);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  padding: var(--pf-t--global--spacer--md);
+}
+
+#autorag-experiments-list .pf-v6-c-table {
+  --pf-v6-c-table--BackgroundColor: var(--pf-t--global--background--color--primary--default);
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-configure-card .pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-page-content-area .pf-v6-c-card {
+  --pf-v6-c-card--BackgroundColor: var(--pf-t--global--background--color--primary--default);
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-configurations-page {
+  background-color: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-experiments-list [data-figma-node='65-7984'] {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+#autorag-experiments-list [data-figma-node='65-7984'] .pf-v6-c-pagination,
+#autorag-experiments-list [data-figma-node='65-7984'] .pf-v5-c-pagination {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Knowledge setup card — Figma 2043-16789 (Document upload boards) */
+#autorag-documents-card .pf-v6-c-card__body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px;
+  background-color: #ffffff;
+}
+
+#autorag-documents-card .autorag-knowledge-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overscroll-behavior: contain;
+}
+
+#autorag-documents-card .autorag-knowledge-section {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+#autorag-documents-card .autorag-knowledge-subsection {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+#autorag-documents-card .autorag-knowledge-subsection-title,
+#autorag-documents-card .autorag-knowledge-subsection .pf-v6-c-title {
+  margin-bottom: 4px;
+}
+
+#autorag-documents-card .autorag-knowledge-intro p {
+  margin-top: 4px;
+  margin-bottom: 0;
+  font-size: var(--pf-t--global--font--size--md);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+#autorag-documents-card .autorag-knowledge-helper {
+  margin: 0;
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+#autorag-documents-card .autorag-knowledge-helper-spaced {
+  margin: 0 0 8px;
+}
+
+#autorag-documents-card .autorag-knowledge-connection-row {
+  gap: 16px;
+}
+
+#autorag-documents-card .autorag-knowledge-file-selector {
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#autorag-documents-card .autorag-knowledge-browse {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#autorag-documents-card .autorag-knowledge-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#autorag-documents-card .autorag-knowledge-upload-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+#autorag-documents-card .autorag-knowledge-upload-progress,
+#autorag-documents-card .autorag-knowledge-upload-row .pf-v6-c-progress {
+  margin-top: 8px;
+}
+
+#autorag-documents-card .autorag-knowledge-bucket-hint {
+  padding: 16px;
+  margin: 0 8px;
+  border: 1px dashed var(--pf-t--global--border--color--default);
+  border-radius: 4px;
+  text-align: center;
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--sm);
+}
+
+#documents-file-upload .pf-v6-c-multiple-file-upload__main {
+  box-sizing: content-box;
+}
+
+#autorag-configure-card .autorag-evaluation-file-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#autorag-configure-card .autorag-evaluation-subsection-title,
+#autorag-configure-card .autorag-evaluation-browse .pf-v6-c-title,
+#autorag-configure-card .autorag-evaluation-upload .pf-v6-c-title {
+  margin-bottom: 4px;
+}
+
+#autorag-configure-card .autorag-evaluation-helper {
+  margin: 0;
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--regular);
+}
+
+#autorag-configure-card .autorag-evaluation-helper-spaced {
+  margin: 0 0 8px;
+}
+
+#autorag-configure-card .autorag-evaluation-browse {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#autorag-configure-card .autorag-evaluation-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#autorag-configure-card .autorag-evaluation-upload-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--pf-t--global--border--color--default);
+}
+
+#autorag-configure-card .autorag-evaluation-upload-progress,
+#autorag-configure-card .autorag-evaluation-upload-row .pf-v6-c-progress {
+  margin-top: 8px;
+}
+
+#autorag-configure-card .autorag-evaluation-bucket-hint {
+  padding: 16px;
+  border: 1px dashed var(--pf-t--global--border--color--default);
+  border-radius: 4px;
+  text-align: center;
+  color: var(--pf-t--global--text--color--subtle);
+  font-size: var(--pf-t--global--font--size--sm);
+}
+
+#evaluation-source-file-upload .pf-v6-c-multiple-file-upload__main {
+  box-sizing: content-box;
+}
+
+/* Remove PF Page main container Stack gutter when AutoRAG configurations page is shown (class toggled from AutoRAG.tsx) */
+#primary-app-container.autorag-configurations-active,
+#primary-app-container.autorag-configurations-active.pf-v6-l-stack,
+#primary-app-container.autorag-configurations-active .pf-v6-l-stack.pf-m-gutter {
+  --pf-v6-l-stack--m-gutter--Gap: 0 !important;
+  gap: 0 !important;
+}
+
+/* Ensure PatternFly checkboxes use brand color (fix black appearance when --pf-t--global--color--brand--default is undefined) */
+#primary-app-container .pf-v6-c-check,
+#primary-app-container .pf-v6-c-check__input,
+#primary-app-container .pf-v6-c-check input[type="checkbox"] {
+  accent-color: #06c;
+}
+
+/* Commenting: visible focus for keyboard users on discussion thread row */
+[data-discussion-thread-row]:focus-visible {
+  outline: 2px solid var(--pf-t--global--color--brand--default);
+  outline-offset: 2px;
+}
+
+/* Discussions tab: force single-column layout so list is below toolbar/Summarize (matches prod) */
+#discussions-tab-root {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Context panel: overflow tabs dropdown shows full tab labels */
+#context-panel-feature-tabs .pf-m-overflow .pf-v6-c-menu__content,
+#context-panel-primary-tabs .pf-m-overflow .pf-v6-c-menu__content {
+  min-width: max-content;
+}
+#context-panel-feature-tabs .pf-m-overflow .pf-v6-c-menu__list,
+#context-panel-primary-tabs .pf-m-overflow .pf-v6-c-menu__list {
+  white-space: nowrap;
+}
+
+/* Prototype Launcher */
+.prototype-launcher-card {
+  border: 1px solid #d2d2d2 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  height: 100% !important;
+}
+#prototype-launcher-toolbar .pf-v6-c-toolbar__content {
+  gap: 0;
+}
+#prototype-launcher-toolbar .pf-v6-c-toolbar__item {
+  margin-inline-end: 0;
+}
+.prototype-launcher-row-e2e,
+.prototype-launcher-row-e2e td {
+  background-color: var(--pf-v6-chart-color-blue-100, #92c5f9) !important;
+}
+.prototype-launcher-card.prototype-launcher-card-e2e {
+  background-color: var(--pf-v6-chart-color-blue-100, #92c5f9) !important;
+}
+
+/* Playground header icon - ensure icon color visible (restored after 3.4 merge) */
+.playground-header .playground-header-icon {
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+/* Playground page - fill viewport, white canvas (no gray gutter) */
+#prototype:has(.playground-page) .pf-v6-c-page__main-container.pf-m-fill {
+  background-color: #ffffff !important;
+}
+
+#prototype:has(.playground-page) #primary-app-container.pf-v6-c-page__main {
+  background-color: #ffffff !important;
+}
+
+#prototype .playground-page {
+  background-color: #ffffff !important;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#prototype .playground-page > .pf-v6-c-page__main-section {
+  background-color: #ffffff !important;
+}
+
+#prototype .playground-page .playground-body-section {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-page__main-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer__main {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer__content {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer__body {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+#prototype .playground-page .playground-main-content {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+}
+
+#prototype .playground-page .playground-body-section > .pf-v6-c-drawer {
+  height: 100%;
+  min-height: 0;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer__main {
+  height: 100%;
+  min-height: 0;
+  align-items: stretch;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer__content {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+#prototype .playground-page .playground-body-section .pf-v6-c-drawer__body {
+  height: 100%;
+  min-height: 0;
+}
+
+/* Playground config panel: no padding so header extends edge-to-edge */
+#build-panel-drawer {
+  padding: 0 !important;
+}
+
+/* Override PF panel scroll — only the inner body scrolls; footer stays visible */
+.playground-page #build-panel-drawer.pf-v6-c-drawer__panel {
+  overflow: hidden !important;
+  align-self: stretch !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  height: 100% !important;
+}
+
+/* Resizable drawer: panel-main is a flex column so footer pins to bottom */
+.playground-page #build-panel-drawer.pf-v6-c-drawer__panel .pf-v6-c-drawer__panel-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.playground-settings-drawer {
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Override generic drawer__body height:100% so header/tabs/footer share the panel */
+#prototype .playground-page #configure-panel-content.playground-settings-drawer__body.pf-v6-c-drawer__body {
+  flex: 1 1 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.playground-settings-drawer__footer {
+  flex: 0 0 auto;
+  z-index: 3;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.playground-page .playground-settings-drawer-container.pf-v6-c-drawer.pf-m-inline {
+  height: 100%;
+  min-height: 0;
+}
+
+.playground-page .playground-settings-drawer-container.pf-v6-c-drawer.pf-m-inline > .pf-v6-c-drawer__main > .pf-v6-c-drawer__panel {
+  height: 100%;
+  min-height: 0;
+}
+
+.playground-page .playground-compare-chat-title-active {
+  color: rgba(0, 102, 204, 1) !important;
+}
+
+/* Push (equal panels) with toggle: Chat 1/2 toggle buttons span full header width */
+.playground-compare-config-header-toggle {
+  padding-right: 8px;
+}
+.playground-compare-config-toggle-wrapper {
+  width: 100%;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+.playground-compare-config-toggle-wrapper .pf-v6-c-toggle-group {
+  flex: 1;
+  width: 100%;
+}
+.playground-compare-config-toggle-wrapper .pf-v6-c-toggle-group__item {
+  flex: 1;
+}
+.playground-compare-config-toggle-wrapper .pf-v6-c-toggle-group__button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+.playground-compare-config-toggle-wrapper .pf-v6-c-toggle-group__button.pf-m-selected {
+  background-color: rgba(0, 102, 204, 1);
+}
+
+/* Playground slider input width - make all slider inputs the same width */
+.slider-fixed-input .pf-v6-c-slider__value .pf-v6-c-form-control {
+  width: 66px !important;
+  min-width: 66px !important;
+}
+
+/* Hide number input spinners/arrows */
+.slider-fixed-input input[type="number"]::-webkit-outer-spin-button,
+.slider-fixed-input input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.slider-fixed-input input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Playground overlay panel toggle button */
+.playground-panel-toggle button:hover {
+  background-color: var(--pf-v6-global--BackgroundColor--200);
+}
+
+/* Panel toggle button shadow for better visibility */
+#build-panel-drawer .pf-v6-c-button.pf-m-tertiary {
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Playground chatbot white background - scoped to playground for merge safety */
+.playground-page .pf-chatbot-white-bg,
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content,
+.playground-page .pf-chatbot-white-bg .pf-chatbot__messagebox {
+  background-color: #ffffff !important;
+}
+
+/* Push (equal panels) with blue border: blue border around the chat being configured */
+.playground-page .playground-compare-active-chat-border {
+  border: 2px solid rgba(0, 102, 204, 1);
+  border-radius: var(--pf-t--global--BorderRadius--sm);
+  box-sizing: border-box;
+}
+
+/* Push (equal panels) 4: gray background on the chat NOT being configured */
+.playground-page .playground-compare-inactive-chat .pf-chatbot-white-bg,
+.playground-page .playground-compare-inactive-chat .pf-chatbot-white-bg .pf-chatbot__content,
+.playground-page .playground-compare-inactive-chat .pf-chatbot-white-bg .pf-chatbot__messagebox {
+  background-color: var(--pf-t--global--background--color--secondary--default) !important;
+}
+.playground-page .playground-compare-inactive-chat .pf-chatbot-white-bg .pf-chatbot__footer {
+  background-color: var(--pf-t--global--background--color--secondary--default) !important;
+}
+
+/* Playground chatbot footer white background */
+.playground-page .pf-chatbot-white-bg .pf-chatbot__footer {
+  background-color: #ffffff !important;
+}
+
+/* Playground chatbot message bar border - override both element and ::after pseudo-element */
+.playground-page .pf-chatbot-white-bg .pf-chatbot__message-bar {
+  border: 1px solid var(--pf-t--global--border--color--default) !important;
+}
+.playground-page .pf-chatbot-white-bg .pf-chatbot__message-bar::after {
+  border-color: var(--pf-t--global--border--color--default) !important;
+}
+
+/* Playground page - prevent outer scrollbar */
+.playground-page {
+  overflow: hidden !important;
+}
+
+.playground-page .pf-v6-c-page__main-section {
+  overflow: hidden !important;
+}
+
+/* Playground chatbot - hide scrollbar track, only show thumb when scrolling needed */
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content {
+  overflow-y: auto !important;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* Firefox - hide by default */
+}
+
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content:hover {
+  scrollbar-color: var(--pf-t--global--border--color--default) transparent; /* Firefox - show on hover */
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content::-webkit-scrollbar {
+  width: 6px;
+  background: transparent;
+}
+
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.playground-page .pf-chatbot-white-bg .pf-chatbot__content:hover::-webkit-scrollbar-thumb {
+  background: var(--pf-t--global--border--color--default);
+}
+
+/* Constrain modal backdrops to the page area when the context panel is open,
+   and keep them below the prototype masthead */
+.pf-v6-c-backdrop {
+  inset-block-start: var(--prototype-masthead-offset, 0px) !important;
+  inset-inline-start: var(--context-panel-width, 0px) !important;
+  width: calc(100% - var(--context-panel-width, 0px)) !important;
+  height: calc(100% - var(--prototype-masthead-offset, 0px)) !important;
+}
+
+#deploy-mcp-server-embed-modal.pf-v6-c-modal-box {
+  max-height: calc(100% - 2rem);
+}
+
+#deploy-mcp-server-embed-modal-body {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+#selected-vector-stores-table tbody tr {
+  border-bottom: none !important;
+}
+
+#selected-vector-stores-table tbody tr td {
+  border-bottom: none !important;
+  border-top: 1px solid var(--pf-t--global--border--color--default) !important;
+}
+
+/* Prompt textarea - fill container height */
+.prompt-textarea-fill {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.prompt-textarea-fill > .pf-v6-c-form-control {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.prompt-textarea-fill > .pf-v6-c-form-control > textarea {
+  flex: 1;
+}
+
+/* Gear icon spin animation for configure panel toggle */
+@keyframes gear-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(90deg); }
+}
+
+.gear-icon-spin {
+  animation: gear-spin 0.3s ease-in-out;
+}
+
+/*
+ * Floating Navigator chatbot toggle: rounded square (not pill) — matches assistant Message avatar corners below.
+ * `ChatbotToggle` `isRound={false}`; fixed 3rem square so size matches the prior round control.
+ */
+#project-navigator-chatbot-toggle.pf-chatbot__button {
+  border-radius: var(--pf-t--global--border--radius--small);
+  box-sizing: border-box;
+  height: 3rem;
+  width: 3rem;
+}
+
+/*
+ * Navigator assistant Message avatars: square with rounded corners (global small radius, same as toggle + plain buttons),
+ * not circular — `Message` `hasRoundAvatar={false}` plus this class (see ModelCatalogChatbot).
+ */
+#project-navigator-chatbot-root .lightspeed-chatbot-message-bot-avatar.pf-v6-c-avatar {
+  --pf-v6-c-avatar--BorderRadius: var(--pf-t--global--border--radius--small);
+  --pf-v6-c-avatar--Height: 3rem;
+  --pf-v6-c-avatar--Width: 3rem;
+}
+
+/*
+ * User messages: PatternFly Chatbot defaults to brand blue for bubbles and list wrappers;
+ * Navigator uses black for the user avatar SVG and these scoped overrides (text stays on-brand / inverse).
+ */
+#project-navigator-chatbot-root .pf-chatbot__message--user .pf-chatbot__message-text {
+  background-color: #000000;
+}
+
+#project-navigator-chatbot-root .pf-chatbot__message--user .pf-chatbot__message-ordered-list,
+#project-navigator-chatbot-root .pf-chatbot__message--user .pf-chatbot__message-unordered-list {
+  background-color: #000000;
+}
+
+/*
+ * Welcome bubble only: catalog task shortcuts are the next sibling after `Message`, so default
+ * `.pf-chatbot__message` bottom padding (`--pf-t--global--spacer--lg`) reads as double spacing before badges.
+ */
+#project-navigator-chatbot-root #project-navigator-lightspeed-welcome.pf-chatbot__message {
+  padding-bottom: var(--pf-t--global--spacer--sm);
+}
+
+/*
+ * Docked chatbot: `.pf-chatbot-container` uses `overflow: hidden`. Flex items default to `min-width: auto`,
+ * so long footnote copy and the message bar row can clip on the inline-start edge. Allow shrinking + wrapping.
+ */
+#project-navigator-chatbot-root .pf-chatbot-container {
+  min-width: 0;
+}
+
+#project-navigator-chatbot-root .pf-chatbot__footer-container {
+  min-width: 0;
+}
+
+#project-navigator-chatbot-root .pf-chatbot__footnote {
+  align-self: stretch;
+  max-width: 100%;
+  min-width: 0;
+}
+
+#project-navigator-chatbot-root .pf-chatbot__footnote .pf-v6-c-button {
+  height: auto;
+  justify-content: flex-start;
+  min-height: unset;
+  text-align: start;
+  white-space: normal;
+}
+
+#project-navigator-chatbot-root .pf-chatbot__message-bar-input {
+  min-width: 0;
+}
+
+/*
+ * Catalog / registry / deployments: after a catalog-task shortcut prefills the message bar, expand the textarea
+ * (badges only exist when `navigatorWelcomeModelSlug` is unset — see `showCatalogTaskShortcuts`).
+ */
+#project-navigator-chatbot-root.navigator-catalog-use-case-expanded .pf-chatbot__message-bar textarea {
+  min-height: 7.5rem !important;
+  height: auto !important;
+  transition: min-height var(--pf-t--global--motion--duration--md)
+    var(--pf-t--global--motion--timing-function--default);
+}
+
+#project-navigator-chatbot-root.navigator-catalog-use-case-expanded span.pf-chatbot__message-textarea {
+  height: auto !important;
+  min-height: 7.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #project-navigator-chatbot-root.navigator-catalog-use-case-expanded .pf-chatbot__message-bar textarea {
+    transition: none;
+  }
+}
+
+/*
+ * Recommendation cards (`RankedRecommendationCards` rows + scripted codegen tier stacks): staggered fade-in.
+ */
+@keyframes navigator-recommendation-card-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+#project-navigator-chatbot-root .navigator-recommendation-card-reveal {
+  animation: navigator-recommendation-card-fade-in var(--pf-t--global--motion--duration--md)
+    var(--pf-t--global--motion--timing-function--accelerate) forwards;
+  opacity: 0;
+}
+
+#project-navigator-chatbot-root .navigator-recommendation-card-reveal:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+#project-navigator-chatbot-root .navigator-recommendation-card-reveal:nth-child(2) {
+  animation-delay: 350ms;
+}
+
+#project-navigator-chatbot-root .navigator-recommendation-card-reveal:nth-child(3) {
+  animation-delay: 700ms;
+}
+
+#project-navigator-chatbot-root .navigator-recommendation-card-reveal:nth-child(4) {
+  animation-delay: 1050ms;
+}
+
+#project-navigator-chatbot-root .navigator-recommendation-card-reveal:nth-child(5) {
+  animation-delay: 1400ms;
+}
+
+/* Deploy prompt / “Which model…” after staggered cards */
+#project-navigator-chatbot-root .navigator-recommendation-follow-up-reveal {
+  animation: navigator-recommendation-card-fade-in var(--pf-t--global--motion--duration--md)
+    var(--pf-t--global--motion--timing-function--accelerate) forwards;
+  opacity: 0;
+  animation-delay: 1050ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #project-navigator-chatbot-root .navigator-recommendation-card-reveal,
+  #project-navigator-chatbot-root .navigator-recommendation-follow-up-reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Predefined scenario cards (`ChatbotWelcomePrompt` under ModelCatalogChatbot): staggered fade-in — nine cards */
+@keyframes lightspeed-predefined-prompt-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion {
+  animation: lightspeed-predefined-prompt-fade-in var(--pf-t--global--motion--duration--md) var(--pf-t--global--motion--timing-function--accelerate) forwards;
+  opacity: 0;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(2) {
+  animation-delay: 75ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(3) {
+  animation-delay: 150ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(4) {
+  animation-delay: 225ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(5) {
+  animation-delay: 300ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(6) {
+  animation-delay: 375ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(7) {
+  animation-delay: 450ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(8) {
+  animation-delay: 525ms;
+}
+
+#project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion:nth-child(9) {
+  animation-delay: 600ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #project-navigator-predefined-use-cases .pf-chatbot__prompt-suggestions > .pf-chatbot__prompt-suggestion {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Navigator chatbot closed glyph: compass SVG (`navigator-compass-icon.svg`) uses currentColor */
+.lightspeed-chatbot-toggle-closed-icon {
+  color: var(--pf-t--global--icon--color--inverse);
+}
+
+/* ~40px glyph in the 3rem round toggle (default SVG scale read small) */
+.lightspeed-chatbot-toggle-closed-icon svg {
+  display: block;
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+}
+
+/* Navigator compass mark beside the chatbot header title (size via rules below) */
+.lightspeed-chatbot-header-mark {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  line-height: 0;
+  /* Optical alignment with Title cap height / line box (mark reads slightly high without this) */
+  transform: translateY(3px);
+}
+
+.lightspeed-chatbot-header-mark svg {
+  display: block;
+  /*
+   * Title uses `size="2xl"` (`--pf-t--global--font--size--heading--lg` / 2xl font).
+   * The SVG artwork sits inside viewBox padding; scale past `heading--2xl` so the glyph
+   * reads closer to the word’s cap height (PF has no larger heading-size token after 2xl).
+   */
+  height: calc(var(--pf-t--global--font--size--heading--2xl) * 1.4) !important;
+  width: calc(var(--pf-t--global--font--size--heading--2xl) * 1.4) !important;
+}
+
+/*
+ * Dark page theme: PF “inverse” toggle surface becomes light gray; we want a black pill + white ring.
+ * Closed toggle uses compass SVG (currentColor → white); open chevron uses --pf-v6-c-button__icon--Color.
+ */
+html.pf-v6-theme-dark #project-navigator-chatbot-toggle.pf-chatbot__button {
+  background-color: var(--pf-t--color--black);
+  --pf-v6-c-button__icon--Color: var(--pf-t--color--white);
+  border: var(--pf-t--global--border--width--box--default) solid var(--pf-t--color--white);
+  box-sizing: border-box;
+}
+
+html.pf-v6-theme-dark #project-navigator-chatbot-toggle.pf-chatbot__button .lightspeed-chatbot-toggle-closed-icon {
+  color: var(--pf-t--color--white);
+}
+
+html.pf-v6-theme-dark #project-navigator-chatbot-toggle.pf-chatbot__button:hover,
+html.pf-v6-theme-dark #project-navigator-chatbot-toggle.pf-chatbot__button:focus {
+  background-color: var(--pf-t--color--gray--90);
+  border: var(--pf-t--global--border--width--box--default) solid var(--pf-t--color--white);
+}
+
+html.pf-v6-theme-dark #project-navigator-chatbot-toggle.pf-chatbot__button.pf-chatbot__button--active {
+  background-color: var(--pf-t--color--black);
+  border: var(--pf-t--global--border--width--box--default) solid var(--pf-t--color--white);
+}
+
+#results-table-card .autorag-columns-selected-count {
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--subtle);
+  white-space: nowrap;
+}
+
+/* Sticky action column — match row striping, rank highlight, and hover via PF token */
+#autorag-results-table .pf-v6-c-table__sticky-cell {
+  z-index: 2;
+}
+
+#autorag-results-table thead .pf-v6-c-table__sticky-cell {
+  z-index: 3;
+  --pf-v6-c-table__sticky-cell--BackgroundColor: var(--pf-t--global--background--color--primary--default);
+}
+
+#autorag-results-table tbody tr.autorag-results-row--striped {
+  background-color: #f5f5f5;
+  --pf-v6-c-table__sticky-cell--BackgroundColor: #f5f5f5;
+}
+
+#autorag-results-table tbody tr.autorag-rank-one-row {
+  background-color: #e7f1fa;
+  --pf-v6-c-table__sticky-cell--BackgroundColor: #e7f1fa;
+}
+
+#autorag-results-table tbody tr:not(.autorag-rank-one-row):hover {
+  background-color: #ebebeb;
+  --pf-v6-c-table__sticky-cell--BackgroundColor: #ebebeb;
+}
+
+#autorag-results-table tbody tr.autorag-rank-one-row:hover {
+  background-color: #cce0f5;
+  --pf-v6-c-table__sticky-cell--BackgroundColor: #cce0f5;
+}
+
+/* Clip last scrollable column so metric bars don't bleed into the action column */
+#autorag-results-table .autorag-results-last-scroll-col {
+  overflow: hidden;
+  padding-inline-end: 8px;
+}
+
+#autorag-results-table .autorag-results-metric-cell {
+  overflow: hidden;
+}
+
+#autorag-results-table .autorag-metric-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-width: 0;
+  cursor: default;
+}
+
+#autorag-results-table .autorag-metric-bar__track {
+  position: relative;
+  flex: 0 0 80px;
+  width: 80px;
+  min-width: 0;
+  height: 8px;
+  overflow: hidden;
+  background-color: #e8e8e8;
+  border-radius: 2px;
+}
+
+#autorag-results-table .autorag-metric-bar__fill {
+  height: 100%;
+  background-color: #0066cc;
+  border-radius: 2px;
+}
+
+#autorag-results-table .autorag-metric-bar__ci {
+  position: absolute;
+  top: 50%;
+  height: 8px;
+  transform: translateY(-50%);
+  background-color: rgba(0, 102, 204, 0.15);
+  border: 1px solid rgba(0, 102, 204, 0.45);
+  border-radius: 2px;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+#autorag-results-table .autorag-metric-bar__value {
+  flex: 0 0 auto;
+  min-width: 36px;
+  font-variant-numeric: tabular-nums;
+}
+
+#autorag-results-table .autorag-model-names-embedding {
+  font-size: var(--pf-t--global--font--size--sm);
+  color: var(--pf-t--global--text--color--subtle);
+}
+
+#column-management-modal #column-quick-select {
+  margin-bottom: var(--pf-t--global--spacer--md);
+}
+
+/* Home — Task assistant: section background + translucent card shell */
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-root {
+  position: relative;
+  border-radius: var(--pf-t--global--border--radius--medium);
+  overflow: hidden;
+  box-shadow: none;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-card.pf-v6-c-card {
+  --pf-v6-c-card--BackgroundColor: var(--pf-t--global--background--color--primary--default);
+  background-color: var(--pf-t--global--background--color--primary--default);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-card.pf-v6-c-card::before {
+  content: '';
+  position: absolute;
+  top: auto;
+  left: auto;
+  right: -140px;
+  bottom: -130px;
+  width: 620px;
+  height: 621px;
+  background-image: var(--rhoai-task-assistant-illustration);
+  background-size: 620px 621px;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  box-shadow: none;
+  outline: none;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-card.pf-v6-c-card.pf-m-expanded::before {
+  opacity: 1;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-section-card.pf-v6-c-card
+  > * {
+  position: relative;
+  z-index: 2;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-card.pf-v6-c-card,
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-card .pf-v6-c-card__expandable-content,
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-capabilities-body {
+  overflow: hidden;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-section-card.pf-v6-c-card
+  .pf-v6-c-card__header {
+  align-items: flex-start;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-section-card.pf-v6-c-card
+  .pf-v6-c-card__header-toggle,
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-section-card.pf-v6-c-card
+  .pf-v6-c-card__actions {
+  margin-top: 0;
+}
+
+/* Home — Task assistant expanded: inner column cards + accent bar */
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card {
+  position: relative;
+  height: 100%;
+  background: var(--pf-t--global--background--color--primary--default);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card__accent {
+  height: 5px;
+  width: 54px;
+  margin: 0 auto;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-column-card[data-accent="ai-hub"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: #6753ac;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-column-card[data-accent="gen-ai"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: #ef9234;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-column-card[data-accent="develop"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: #37a3a3;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card__body {
+  padding: var(--pf-t--global--spacer--md);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--pf-t--global--spacer--sm);
+  min-width: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card__intro {
+  width: 100%;
+  min-width: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card__icon-mark {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-column-card__icon-mark svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+/* Intro copy lives in CardBody above the grid so it shares body inset and lines up with column cards (e.g. AI hub) */
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-header-body {
+  margin: 0 0 var(--pf-t--global--spacer--sm) 0;
+  padding-left: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-collapsed-labels {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-collapsed-label {
+  border-radius: 9999px;
+}
+
+/* Custom SVG in label icon slot: match PF Icon m-body-lg + keep mark centered with label text on the row */
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-collapsed-label.pf-v6-c-label
+  .pf-v6-c-label__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-collapsed-label__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+#prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-collapsed-label__icon svg {
+  width: var(--pf-t--global--icon--size--font--body--lg);
+  height: var(--pf-t--global--icon--size--font--body--lg);
+  flex-shrink: 0;
+  display: block;
+}
+
+#prototype
+  [data-testid="home-task-assistant"]
+  .rhoai-task-assistant-section-card.pf-v6-c-card:not(.pf-m-expanded)
+  .pf-v6-c-card__header-toggle {
+  align-self: center;
+}
+
+@media (max-width: 1200px) {
+  #prototype [data-testid="home-task-assistant"] .rhoai-task-assistant-section-card.pf-v6-c-card::before {
+    right: -190px;
+    bottom: -170px;
+  }
+}
+
+#prototype [data-testid="home-enable-your-team"] .rhoai-enable-team-card-icon-shell {
+  flex-shrink: 0;
+}
+
+#prototype [data-testid="home-enable-your-team"] .rhoai-enable-team-card-icon-mark {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#prototype [data-testid="home-enable-your-team"] .rhoai-enable-team-card-icon-mark svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+}
+
+#prototype [data-testid="home-enable-your-team"] .rhoai-enable-team-item-card {
+  height: 100%;
+}
+
+/* Deployments fleet mini dashboard metric cards (agents + MCP) */
+#prototype #agent-deployments-dashboard .agent-deployments-dashboard-metric-card,
+#prototype #mcp-deployments-dashboard .agent-deployments-dashboard-metric-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  text-align: inherit;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: var(--pf-t--global--background--color--primary--default);
+  border: 1px solid var(--pf-t--global--border--color--default);
+  border-radius: var(--pf-t--global--border--radius--medium);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+#prototype #agent-deployments-dashboard .agent-deployments-dashboard-metric-card:hover,
+#prototype #mcp-deployments-dashboard .agent-deployments-dashboard-metric-card:hover {
+  border-color: var(--pf-t--global--border--color--hover);
+}
+
+#prototype #agent-deployments-dashboard .agent-deployments-dashboard-metric-card:focus-visible,
+#prototype #mcp-deployments-dashboard .agent-deployments-dashboard-metric-card:focus-visible {
+  outline: 2px solid var(--pf-t--global--color--brand--default);
+  outline-offset: 2px;
+}
+
+#prototype #agent-deployments-dashboard .agent-deployments-dashboard-metric-card--selected,
+#prototype #mcp-deployments-dashboard .agent-deployments-dashboard-metric-card--selected {
+  border-color: var(--pf-t--global--color--brand--default);
+  box-shadow: 0 0 0 1px var(--pf-t--global--color--brand--default);
+}
+
+#prototype #agent-deployments-dashboard .agent-deployments-dashboard-metric-card .rhoai-task-assistant-column-card__accent,
+#prototype #mcp-deployments-dashboard .agent-deployments-dashboard-metric-card .rhoai-task-assistant-column-card__accent {
+  height: 5px;
+  width: 54px;
+  margin: 0 auto;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+#prototype #agent-deployments-dashboard .agent-deployments-dashboard-metric-card .rhoai-task-assistant-column-card__body,
+#prototype #mcp-deployments-dashboard .agent-deployments-dashboard-metric-card .rhoai-task-assistant-column-card__body {
+  padding: var(--pf-t--global--spacer--md);
+  flex: 1;
+  min-width: 0;
+}
+
+#prototype
+  #agent-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="total"]
+  .rhoai-task-assistant-column-card__accent,
+#prototype
+  #mcp-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="total"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: var(--pf-t--global--color--brand--default);
+}
+
+#prototype
+  #agent-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="ready"]
+  .rhoai-task-assistant-column-card__accent,
+#prototype
+  #mcp-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="running"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: var(--pf-t--global--color--status--success--default);
+}
+
+#prototype
+  #agent-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="provisioning"]
+  .rhoai-task-assistant-column-card__accent,
+#prototype
+  #mcp-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="pending"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: var(--pf-t--global--color--status--info--default);
+}
+
+#prototype
+  #agent-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="error"]
+  .rhoai-task-assistant-column-card__accent,
+#prototype
+  #mcp-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="unavailable"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: var(--pf-t--global--color--status--danger--default);
+}
+
+#prototype
+  #agent-deployments-dashboard
+  .agent-deployments-dashboard-metric-card[data-accent="restricted"]
+  .rhoai-task-assistant-column-card__accent {
+  background-color: var(--pf-t--global--border--color--default);
+}

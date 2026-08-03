@@ -1,0 +1,13 @@
+branch: "3.6"
+project_id: 155361
+extracted_at: "2026-08-03T16:10:42Z"
+source_url: "https://gitlab.cee.redhat.com/uxd/prototypes/rhoai"
+deployed_url: "https://rhoai-deploy-playground-ux-921ee2.pages.redhat.com"
+files_fetched:
+  - src/app/app.css
+  - src/app/AppLayout/AppLayout.tsx
+  - src/app/routes.tsx
+  - src/app/AIHub/MCPServers/MCPCatalog.tsx
+  - src/app/AIHub/MCPServers/MCPCatalogDetails.tsx
+  - src/app/AIHub/MCPServers/DeployMCPServerModal.tsx
+notes: "CSS extracted directly from app.css. Shell HTML and nav maintained manually from AppLayout.tsx and routes.tsx analysis."

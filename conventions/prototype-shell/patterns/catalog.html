@@ -1,0 +1,82 @@
+<!-- Pattern: catalog — filterable card gallery with sidebar filters, search, and toggle group -->
+<!-- Page title -->
+<div class="content-section">
+  <h1 class="page-title">
+    <span class="page-title-icon">{{PAGE_ICON}}</span>
+    <span class="page-title-text">{{PAGE_TITLE}}</span>
+  </h1>
+</div>
+
+<!-- Tabs -->
+<div class="content-section no-pad-top" style="padding-bottom:0;">
+  <div class="pf-v6-c-tabs" style="--pf-v6-c-tabs--before--BorderColor:transparent;border-bottom:1px solid #d2d2d2;padding-bottom:0;">
+    <ul class="pf-v6-c-tabs__list" role="tablist">
+      <li class="pf-v6-c-tabs__item pf-m-current" role="presentation">
+        <button class="pf-v6-c-tabs__link" role="tab" aria-selected="true"><span class="pf-v6-c-tabs__item-text">{{TAB_1}}</span></button>
+      </li>
+      <li class="pf-v6-c-tabs__item" role="presentation">
+        <button class="pf-v6-c-tabs__link" role="tab" aria-selected="false"><span class="pf-v6-c-tabs__item-text">{{TAB_2}}</span></button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Description -->
+<div class="content-section" style="padding-bottom:16px;">
+  <p style="color:#6a6e73;margin:0;">{{PAGE_DESCRIPTION}}</p>
+</div>
+
+<!-- Two-column layout: filter sidebar + content -->
+<div style="display:flex;gap:24px;padding:0 24px 24px;">
+  <!-- Left filter sidebar -->
+  <div class="filter-sidebar">
+    {{FILTER_SECTIONS}}
+  </div>
+  <!-- Right content area -->
+  <div style="flex:1;min-width:0;padding-left:24px;">
+
+    <!-- Pill search bar -->
+    <div style="border:1px solid #e5e7eb;border-radius:6px;padding:8px 16px 8px 40px;position:relative;max-width:400px;margin-top:4px;">
+      <svg fill="#6a6e73" height="1em" width="1em" viewBox="0 0 512 512" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+      <input type="text" id="search-input" oninput="filterCards()" placeholder="{{SEARCH_PLACEHOLDER}}" style="border:none;background:transparent;width:100%;outline:none;font-size:14px;font-family:inherit;">
+    </div>
+
+    <!-- Hidden filter value (driven by toggle group) -->
+    <input type="hidden" id="filter-trust" value="">
+
+    <!-- Toggle group -->
+    <div class="toggle-group" id="tier-toggle">
+      {{TOGGLE_BUTTONS}}
+    </div>
+
+    <!-- Item count -->
+    <div style="font-size:14px;color:#6a6e73;margin-bottom:8px;" id="item-count">{{ITEM_COUNT}}</div>
+
+    <!-- Active filter labels -->
+    <div class="active-filters" id="active-filters"></div>
+
+    <!-- Tier section header (populated dynamically) -->
+    <div id="tier-section-header" style="display:none;"></div>
+
+    <!-- Card gallery -->
+    <div class="skill-gallery" id="skill-gallery">{{CARDS}}</div>
+    <div class="empty-state-wrapper" id="empty-state" style="display:none;">
+      <div class="pf-v6-c-empty-state">
+        <div class="pf-v6-c-empty-state__content">
+          <div class="pf-v6-c-empty-state__icon">
+            <svg fill="currentColor" height="3em" width="3em" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
+          </div>
+          <div class="pf-v6-c-empty-state__title">
+            <h2 class="pf-v6-c-empty-state__title-text">{{EMPTY_TITLE}}</h2>
+          </div>
+          <div class="pf-v6-c-empty-state__body">{{EMPTY_BODY}}</div>
+          <div class="pf-v6-c-empty-state__actions">
+            <button class="pf-v6-c-button pf-m-link" type="button" onclick="clearFilters()">Clear all filters</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{CONTENT_SCRIPTS}}

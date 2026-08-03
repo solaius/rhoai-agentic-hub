@@ -1,0 +1,231 @@
+      <nav class="pf-v6-c-nav" aria-label="RHOAI navigation">
+        <ul class="pf-v6-c-nav__list" role="list">
+
+              <!-- Home -->
+              <li class="pf-v6-c-nav__item">
+                <a href="#" class="pf-v6-c-nav__link" onclick="return false;">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M30.707,15.293l-1.9997-1.9997-.0006-.0006L17.0605,1.6465c-.585-.585-1.5361-.585-2.1211,0L3.2933,13.2927l-.0006.0006-1.9997,1.9997c-.3906.3906-.3906,1.0234,0,1.4141s1.0234.3906,1.4141,0l.293-.293v13.0859c0,.8271.6729,1.5,1.5,1.5h23c.8271,0,1.5-.6729,1.5-1.5v-13.0859l.293.293c.1953.1953.4512.293.707.293s.5117-.0977.707-.293c.3906-.3906.3906-1.0234,0-1.4141ZM13,29v-10h6v10h-6ZM27,29h-6v-10.5c0-.8271-.6729-1.5-1.5-1.5h-7c-.8271,0-1.5.6729-1.5,1.5v10.5h-6v-14.5859L16,3.4141l11,11v14.5859Z"></path></svg></span>
+                  Home
+                </a>
+              </li>
+
+              <!-- Projects -->
+              <li class="pf-v6-c-nav__item">
+                <a href="#" class="pf-v6-c-nav__link" onclick="return false;">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M29.5,8h-1.6904l-.6816-3.208c-.0986-.4619-.5068-.792-.9785-.792h-9.2988c-.4717,0-.8799.3301-.9785.792l-.6816,3.208h-7.6904c-.8271,0-1.5.6729-1.5,1.5v12.5c0,.5522.4473,1,1,1s1-.4478,1-1v-12h8c.4717,0,.8799-.3301.9785-.792l.6816-3.208h7.6797l.6816,3.208c.0986.4619.5068.792.9785.792h2v16H3V9c0-.5522-.4473-1-1-1s-1,.4478-1,1v17.5c0,.8271.6729,1.5,1.5,1.5h27c.8271,0,1.5-.6729,1.5-1.5V9.5c0-.8271-.6729-1.5-1.5-1.5Z"></path></svg></span>
+                  Projects
+                </a>
+              </li>
+
+              <!-- AI hub (expandable, current, expanded) -->
+              <li class="pf-v6-c-nav__item pf-m-expandable pf-m-expanded pf-m-current" id="nav-ai-hub">
+                <button class="pf-v6-c-nav__link" aria-expanded="true" onclick="toggleNavSection(this)">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M8.5,2H3.5c-.82715,0-1.5.67285-1.5,1.5v5c0,.82715.67285,1.5,1.5,1.5h5c.82715,0,1.5-.67285,1.5-1.5V3.5c0-.82715-.67285-1.5-1.5-1.5ZM8,8h-4v-4h4v4ZM28.5,2h-5c-.82715,0-1.5.67285-1.5,1.5v5c0,.82715.67285,1.5,1.5,1.5h5c.82715,0,1.5-.67285,1.5-1.5V3.5c0-.82715-.67285-1.5-1.5-1.5ZM28,8h-4v-4h4v4ZM8.5,22H3.5c-.82715,0-1.5.67285-1.5,1.5v5c0,.82715.67285,1.5,1.5,1.5h5c.82715,0,1.5-.67285,1.5-1.5v-5c0-.82715-.67285-1.5-1.5-1.5ZM8,28h-4v-4h4v4ZM28.5,22h-5c-.82715,0-1.5.67285-1.5,1.5v5c0,.82715.67285,1.5,1.5,1.5h5c.82715,0,1.5-.67285,1.5-1.5v-5c0-.82715-.67285-1.5-1.5-1.5ZM28,28h-4v-4h4v4ZM18.98633,4.33203c-.08203.48828-.50586.83398-.98535.83398-.05469,0-.11035-.00488-.16699-.01367-1.20117-.20312-2.4668-.20312-3.66797,0-.55469.08301-1.06152-.27637-1.15234-.82031-.0918-.54492.27539-1.06055.82031-1.15234,1.41992-.23828,2.91211-.23828,4.33203,0,.54492.0918.91211.60742.82031,1.15234ZM5.15234,14.16602c-.10156.60059-.15234,1.21777-.15234,1.83398s.05078,1.2334.15234,1.83398c.0918.54492-.27539,1.06055-.82031,1.15234-.05664.00879-.1123.01367-.16699.01367-.47949,0-.90332-.3457-.98535-.83398-.11914-.70996-.17969-1.43848-.17969-2.16602s.06055-1.45605.17969-2.16602c.09082-.54395.59766-.90527,1.15234-.82031.54492.0918.91211.60742.82031,1.15234ZM18.98633,27.66797c.0918.54492-.27539,1.06055-.82031,1.15234-.70996.11914-1.43848.17969-2.16602.17969s-1.45605-.06055-2.16602-.17969c-.54492-.0918-.91211-.60742-.82031-1.15234.09082-.54395.59863-.9082,1.15234-.82031,1.20117.20312,2.4668.20312,3.66797,0,.55176-.08789,1.06055.27637,1.15234.82031ZM26.84766,17.83398c.10156-.60059.15234-1.21777.15234-1.83398s-.05078-1.2334-.15234-1.83398c-.0918-.54492.27539-1.06055.82031-1.15234.55273-.08594,1.06055.27637,1.15234.82031.11914.70996.17969,1.43848.17969,2.16602s-.06055,1.45605-.17969,2.16602c-.08203.48828-.50586.83398-.98535.83398-.05469,0-.11035-.00488-.16699-.01367-.54492-.0918-.91211-.60742-.82031-1.15234Z"></path></svg></span>
+                  AI hub
+                  <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                </button>
+                <section class="pf-v6-c-nav__subnav">
+                  <ul class="pf-v6-c-nav__list" role="list">
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Agents</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Models</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">MCP servers</a></li>
+                    <li class="pf-v6-c-nav__item pf-m-current"><a href="#" class="pf-v6-c-nav__link pf-m-current" data-nav="catalog" onclick="navigateTo('catalog');return false;">Skills</a></li>
+                  </ul>
+                </section>
+              </li>
+
+              <!-- Gen AI studio (expandable, collapsed) -->
+              <li class="pf-v6-c-nav__item pf-m-expandable">
+                <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M4.60352,13h8.89648c.82715,0,1.5-.67285,1.5-1.5V2.60352c0-.50781-.30371-.96143-.77246-1.15527-.4668-.19336-1.00293-.08691-1.36133.27148L3.71875,10.86719c-.3584.35938-.46387.89404-.26953,1.3623s.64746.77051,1.1543.77051ZM13,4.41406v6.58594h-6.58594l6.58594-6.58594Z M28.5,16H3.5c-.82715,0-1.5.67285-1.5,1.5v11c0,.82715.67285,1.5,1.5,1.5h5.5c.55273,0,1-.44727,1-1,0-3.30859,2.69141-6,6-6s6,2.69141,6,6c0,.55273.44727,1,1,1h5.5c.82715,0,1.5-.67285,1.5-1.5v-11c0-.82715-.67285-1.5-1.5-1.5ZM28,28h-4.0625c-.49316-3.94043-3.86523-7-7.9375-7s-7.44434,3.05957-7.9375,7h-4.0625v-10h24v10Z M19.5,13h8c.82715,0,1.5-.67285,1.5-1.5V3.5c0-.82715-.67285-1.5-1.5-1.5h-8c-.82715,0-1.5.67285-1.5,1.5v8c0,.82715.67285,1.5,1.5,1.5ZM20,4h7v7h-7v-7Z"></path></svg></span>
+                  Gen AI studio
+                  <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                </button>
+                <section class="pf-v6-c-nav__subnav">
+                  <ul class="pf-v6-c-nav__list" role="list">
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">AI asset endpoints</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Playground</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Prompt management</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">API keys</a></li>
+                  </ul>
+                </section>
+              </li>
+
+              <!-- Develop & train (expandable, collapsed) -->
+              <li class="pf-v6-c-nav__item pf-m-expandable">
+                <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M31.3429,25.373l-3.4551-7.7606c-.0005-.0014-.0012-.0026-.0018-.004l-3.5773-8.0352V3h1c.5527,0,1-.4473,1-1s-.4473-1-1-1h-1.5c-.8271,0-1.5.6729-1.5,1.5v7.2861c0,.1406.0293.2783.0869.4062l3.0308,6.8076h-6.1177c-.5527,0-1,.4473-1,1s.4473,1,1,1h7.0081l3.1999,7.1875c.2803.6299.2256,1.3223-.1494,1.9014-.376.5791-.9873.9111-1.6777.9111H10.9279c-.6904,0-1.3018-.332-1.6777-.9111-.375-.5791-.4297-1.2715-.1484-1.9023l1.2373-2.7803c.2236-.5039-.0029-1.0957-.5078-1.3203-.5029-.2227-1.0957.0029-1.3203.5078l-1.2363,2.7793c-.5537,1.2422-.4424,2.6641.2988,3.8047.7402,1.1406,1.9941,1.8223,3.3545,1.8223h16.7617c1.3604,0,2.6143-.6816,3.3545-1.8223.7412-1.1406.8525-2.5625.2988-3.8047Z M13.299,3h1.0098v6c0,.5527.4473,1,1,1s1-.4473,1-1V2.5c0-.8271-.6729-1.5-1.5-1.5h-1.5098c-.5527,0-1,.4473-1,1s.4473,1,1,1Z M8.3087,10c2.2061,0,4-1.7939,4-4s-1.7939-4-4-4-4,1.7939-4,4,1.7939,4,4,4ZM8.3087,4c1.1025,0,2,.8975,2,2s-.8975,2-2,2-2-.8975-2-2,.8975-2,2-2Z M8.3087,16c0-2.2061-1.7939-4-4-4S.3087,13.7939.3087,16s1.7939,4,4,4,4-1.7939,4-4ZM4.3087,18c-1.1025,0-2-.8975-2-2s.8975-2,2-2,2,.8975,2,2-.8975,2-2,2Z M15.3087,12c-.5527,0-1,.4473-1,1v6c0,.5527.4473,1,1,1s1-.4473,1-1v-6c0-.5527-.4473-1-1-1Z M1.3087,10c.5527,0,1-.4473,1-1V3c0-.5527-.4473-1-1-1s-1,.4478-1,1v6c0,.5527.4473,1,1,1Z M10.3087,13v6c0,.5527.4473,1,1,1s1-.4473,1-1v-6c0-.5527-.4473-1-1-1s-1,.4473-1,1Z"></path></svg></span>
+                  Develop &amp; train
+                  <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                </button>
+                <section class="pf-v6-c-nav__subnav">
+                  <ul class="pf-v6-c-nav__list" role="list">
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Workbenches</a></li>
+                    <li class="pf-v6-c-nav__item pf-m-expandable">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Feature store
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Overview</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Entities</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Data sources</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Data sets</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Features</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Feature views</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Feature services</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item pf-m-expandable">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Pipelines
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Pipeline definitions</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Runs</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Artifacts</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Executions</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Evaluations</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Experiments</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Training jobs</a></li>
+                  </ul>
+                </section>
+              </li>
+
+              <!-- Observe & monitor (expandable, collapsed, with badge) -->
+              <li class="pf-v6-c-nav__item pf-m-expandable">
+                <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M30,29H3v-3c0-.5522-.4473-1-1-1s-1,.4478-1,1v3.5c0,.8271.6729,1.5,1.5,1.5h27.5c.5527,0,1-.4478,1-1s-.4473-1-1-1Z M2,15c.5527,0,1-.4478,1-1V2c0-.5522-.4473-1-1-1s-1,.4478-1,1v12c0,.5522.4473,1,1,1Z M2,22c.2559,0,.5117-.0977.707-.293l6.293-6.293,5.9395,5.9395c.584.585,1.5371.585,2.1211,0l13.6465-13.6465c.3906-.3906.3906-1.0234,0-1.4141s-1.0234-.3906-1.4141,0l-13.293,13.293-5.9395-5.9395c-.5664-.5664-1.5547-.5664-2.1211,0l-6.6465,6.6465c-.3906.3906-.3906,1.0234,0,1.4141.1953.1953.4512.293.707.293Z"></path></svg></span>
+                  Observe &amp; monitor
+                  <span class="pf-v6-c-label pf-m-blue pf-m-outline pf-m-compact" style="font-size:10px;"><span class="pf-v6-c-label__content"><span class="pf-v6-c-label__text">Review</span></span></span>
+                  <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                </button>
+                <section class="pf-v6-c-nav__subnav">
+                  <ul class="pf-v6-c-nav__list" role="list">
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Dashboard</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Workload metrics</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Infrastructure <span class="pf-v6-c-label pf-m-blue pf-m-outline pf-m-compact" style="font-size:10px;"><span class="pf-v6-c-label__content"><span class="pf-v6-c-label__text">Review</span></span></span></a></li>
+                  </ul>
+                </section>
+              </li>
+
+              <!-- Learning resources -->
+              <li class="pf-v6-c-nav__item">
+                <a href="#" class="pf-v6-c-nav__link" onclick="return false;">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M21,16h4c.5527,0,1-.4473,1-1s-.4473-1-1-1h-4c-.5527,0-1,.4473-1,1s.4473,1,1,1Z M21,21h4c.5527,0,1-.4473,1-1s-.4473-1-1-1h-4c-.5527,0-1,.4473-1,1s.4473,1,1,1Z M23,24h-2c-.5527,0-1,.4473-1,1s.4473,1,1,1h2c.5527,0,1-.4473,1-1s-.4473-1-1-1Z M29.5,9h-13.0859L8.707,1.293c-.2852-.2861-.7148-.3721-1.0898-.2168-.374.1543-.6172.5195-.6172.9238v7H2.5c-.8271,0-1.5.6729-1.5,1.5v19c0,.8271.6729,1.5,1.5,1.5h27c.8271,0,1.5-.6729,1.5-1.5V10.5c0-.8271-.6729-1.5-1.5-1.5ZM9,4.4141l6,6v17.1719l-6-6V4.4141ZM3,11h4v11c0,.2656.1055.5195.293.707l6.293,6.293H3V11ZM29,29h-12V11h12v18Z"></path></svg></span>
+                  Learning resources
+                </a>
+              </li>
+
+              <!-- Applications (expandable, collapsed) -->
+              <li class="pf-v6-c-nav__item pf-m-expandable">
+                <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M29.9004,14.9902c-.3408-1.7241-1.6577-3.1929-3.354-3.7417-.8535-.2754-1.7148-.3232-2.5464-.146v-3.6025c0-.8271-.6729-1.5-1.5-1.5h-4.6025c.1772-.8315.1299-1.6919-.146-2.5464-.5488-1.6963-2.0176-3.0132-3.7417-3.354-1.4956-.2959-3.0215.082-4.1826,1.0361s-1.8271,2.3628-1.8271,3.8643c0,.3384.0347.6724.104,1H3.5c-.8271,0-1.5.6729-1.5,1.5v5.0547c0,.3579.1914.6885.5015.8667.3105.1787.6934.1772,1.0015-.0024.7715-.4487,1.5884-.5386,2.4282-.2671,1.0166.3286,1.8047,1.2026,2.0073,2.2261.1816.9209-.0381,1.8179-.6191,2.5249-.9014,1.0972-2.5049,1.4424-3.8159.6782-.3086-.1792-.6909-.1802-1.002-.0029-.3101.1787-.5015.5093-.5015.8672v5.0547c0,.8271.6729,1.5,1.5,1.5h4.6025c-.1772.8306-.1304,1.6904.145,2.5439.5474,1.6978,2.0161,3.0146,3.7407,3.356.335.0664.6714.0991,1.0044.0991,1.1567,0,2.2773-.3931,3.1792-1.1338,1.1616-.9541,1.8281-2.3633,1.8281-3.8652,0-.3384-.0347-.6724-.104-1h4.604c.8271,0,1.5-.6729,1.5-1.5v-3.604c1.7808.3784,3.6953-.3008,4.8643-1.7231.9541-1.1611,1.332-2.6855,1.0361-4.1826ZM27.3193,17.9028c-.9009,1.0972-2.5049,1.4424-3.8159.6782-.3096-.1792-.6914-.1802-1.002-.0029-.3101.1787-.5015.5093-.5015.8672v4.5547h-5.5547c-.3579,0-.6885.1914-.8672.5015-.1782.3105-.1772.6924.0029,1.002.2778.4771.4189.9805.4189,1.4966,0,.9014-.3999,1.7466-1.0977,2.3198-.7075.5811-1.6055.8013-2.5259.6182-1.0239-.2026-1.8975-.9907-2.2256-2.0083-.2705-.8394-.1807-1.6558.2681-2.4268.1802-.3091.1812-.6914.0024-1.0015-.1782-.3101-.5088-.5015-.8667-.5015h-5.5547v-3.104c1.7817.3784,3.6953-.3008,4.8643-1.7231.9541-1.1611,1.332-2.6855,1.0361-4.1826-.3408-1.7241-1.6577-3.1929-3.354-3.7417-.854-.2754-1.7144-.3232-2.5464-.146v-3.1025h5.5547c.3579,0,.6885-.1914.8672-.5015.1782-.3105.1772-.6924-.0029-1.002-.2778-.4771-.4189-.9805-.4189-1.4966,0-.9009.3999-1.7461,1.0972-2.3193.7065-.5815,1.6011-.8003,2.5249-.6191,1.0234.2026,1.8975.9907,2.2261,2.0073.2715.8398.1816,1.6567-.2671,2.4282-.1802.3096-.1812.6914-.0024,1.0015.1782.3101.5088.5015.8667.5015h5.5547v4.5547c0,.3579.1914.6885.5015.8667.3101.1787.6924.1772,1.0015-.0024.7715-.4487,1.5884-.5386,2.4282-.2671,1.0166.3286,1.8047,1.2026,2.0073,2.2261.1816.9209-.0381,1.8179-.6191,2.5249Z"></path></svg></span>
+                  Applications
+                  <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                </button>
+                <section class="pf-v6-c-nav__subnav">
+                  <ul class="pf-v6-c-nav__list" role="list">
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Enabled</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Explore</a></li>
+                  </ul>
+                </section>
+              </li>
+
+              <!-- Settings (expandable, collapsed) -->
+              <li class="pf-v6-c-nav__item pf-m-expandable" id="nav-settings">
+                <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                  <span class="nav-icon"><svg class="pf-v6-svg" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true" role="img" width="1em" height="1em"><path d="M16,11.125c-2.688,0-4.875,2.187-4.875,4.875s2.187,4.875,4.875,4.875,4.875-2.187,4.875-4.875-2.187-4.875-4.875-4.875ZM16,19.125c-1.7231,0-3.125-1.4019-3.125-3.125s1.4019-3.125,3.125-3.125,3.125,1.4019,3.125,3.125-1.4019,3.125-3.125,3.125Z M31.6387,13.2632c-.1152-.6592-.688-1.1382-1.3623-1.1382h-3.0586c-.1558-.4531-.3374-.894-.5435-1.3193l2.1558-2.1558c.4766-.4766.5435-1.2207.1577-1.7705-1.0596-1.5063-2.3608-2.8076-3.8682-3.8677-.5488-.3848-1.293-.3193-1.7695.1582l-2.1558,2.1558c-.4248-.2061-.8657-.3877-1.3193-.5435V1.7236c0-.6743-.479-1.2471-1.1387-1.3623-1.7979-.3135-3.6743-.3135-5.4731,0-.6592.1152-1.1382.688-1.1382,1.3623v3.0586c-.4531.1558-.894.3374-1.3193.5435l-2.1558-2.1558c-.4761-.4761-1.2212-.543-1.7705-.1577-1.5063,1.0596-2.8076,2.3608-3.8677,3.8682-.3853.5488-.3184,1.293.1582,1.7695l2.1558,2.1558c-.2061.4253-.3877.8662-.5435,1.3193H1.7236c-.6743,0-1.2471.479-1.3623,1.1387-.1567.8989-.2363,1.8198-.2363,2.7363s.0796,1.8374.2363,2.7368c.1152.6592.688,1.1382,1.3623,1.1382h3.0586c.1558.4531.3374.894.5435,1.3193l-2.1558,2.1558c-.4766.4766-.5435,1.2207-.1577,1.7705,1.0596,1.5063,2.3608,2.8076,3.8682,3.8677.5479.3838,1.293.3193,1.7695-.1582l2.1558-2.1558c.4253.2061.8662.3877,1.3193.5435v3.0586c0,.6743.479,1.2471,1.1387,1.3623.8989.1567,1.8198.2363,2.7363.2363s1.8374-.0796,2.7368-.2363c.6592-.1152,1.1382-.688,1.1382-1.3623v-3.0586c.4536-.1558.8945-.3374,1.3193-.5435l2.1558,2.1558c.4766.4761,1.2202.5425,1.7705.1577,1.5063-1.0596,2.8076-2.3608,3.8677-3.8682.3853-.5488.3184-1.293-.1582-1.7695l-2.1558-2.1558c.2061-.4253.3877-.8662.5435-1.3193h3.0586c.6743,0,1.2471-.479,1.3623-1.1387.1567-.8989.2363-1.8198.2363-2.7363s-.0796-1.8374-.2363-2.7368ZM29.9653,18.125h-3.3901c-.3911,0-.7349.2598-.8418.6362-.2173.7671-.5186,1.4976-.895,2.1714-.1909.3418-.1318.7686.145,1.0454l2.3896,2.3901c-.8467,1.1494-1.856,2.1587-3.0049,3.0049l-2.3901-2.3896c-.2773-.2773-.7031-.3364-1.0459-.145-.6724.376-1.4028.6772-2.1709.895-.3765.1069-.6362.4507-.6362.8418v3.3901c-1.4014.2119-2.8486.2119-4.25,0v-3.3901c0-.3911-.2598-.7349-.6362-.8418-.7671-.2173-1.4976-.5186-2.1714-.895-.3433-.1914-.7695-.1323-1.0454.145l-2.3901,2.3896c-1.1494-.8467-2.1587-1.856-3.0049-3.0049l2.3896-2.3901c.2769-.2769.3359-.7036.145-1.0454-.3765-.6738-.6777-1.4043-.895-2.1714-.1069-.3765-.4507-.6362-.8418-.6362h-3.3901c-.106-.7007-.1597-1.4141-.1597-2.125s.0537-1.4243.1597-2.125h3.3901c.3911,0,.7349-.2598.8418-.6362.2173-.7671.5186-1.4976.895-2.1714.1909-.3418.1318-.7686-.145-1.0454l-2.3896-2.3901c.8467-1.1494,1.856-2.1587,3.0049-3.0049l2.3901,2.3896c.2759.2759.7021.3354,1.0454.145.6738-.3765,1.4043-.6777,2.1714-.895.3765-.1069.6362-.4507.6362-.8418v-3.3901c1.4014-.2119,2.8486-.2119,4.25,0v3.3901c0,.3911.2598.7349.6362.8418.7681.2178,1.4985.519,2.1709.895.3428.1904.7686.1309,1.0459-.145l2.3901-2.3896c1.1494.8467,2.1587,1.856,3.0049,3.0049l-2.3896,2.3901c-.2769.2769-.3359.7036-.145,1.0454.3765.6738.6777,1.4043.895,2.1714.1069.3765.4507.6362.8418.6362h3.3901c.106.7007.1597,1.4141.1597,2.125s-.0537,1.4243-.1597,2.125Z"></path></svg></span>
+                  Settings
+                  <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                </button>
+                <section class="pf-v6-c-nav__subnav">
+                  <ul class="pf-v6-c-nav__list" role="list">
+                    <li class="pf-v6-c-nav__item pf-m-expandable">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Cluster settings
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">General settings</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Storage classes</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item pf-m-expandable">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Environment setup
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Workbench images</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Hardware profiles</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Connection types</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Workbench templates</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item pf-m-expandable">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Model resources and operations
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Serving runtimes</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Model registry settings</a></li>
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Model catalog settings</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item pf-m-expandable" id="nav-mcp-resources">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        MCP resources
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">MCP catalog sources</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <!-- Skill resources (expandable) -->
+                    <li class="pf-v6-c-nav__item pf-m-expandable" id="nav-skill-resources">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Skill resources
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" data-nav="admin" onclick="navigateTo('admin');return false;">Skill catalog sources</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item pf-m-expandable">
+                      <button class="pf-v6-c-nav__link" aria-expanded="false" onclick="toggleNavSection(this)">
+                        Agent resources
+                        <span class="pf-v6-c-nav__toggle-icon"><svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                      </button>
+                      <section class="pf-v6-c-nav__subnav">
+                        <ul class="pf-v6-c-nav__list" role="list">
+                          <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Agent catalog sources</a></li>
+                        </ul>
+                      </section>
+                    </li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">User management</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Subscriptions</a></li>
+                    <li class="pf-v6-c-nav__item"><a href="#" class="pf-v6-c-nav__link" onclick="return false;">Policies <span class="pf-v6-c-label pf-m-grey pf-m-outline pf-m-compact" style="font-size:10px;"><span class="pf-v6-c-label__content"><span class="pf-v6-c-label__text">TBD</span></span></span></a></li>
+                  </ul>
+                </section>
+              </li>
+        </ul>
+      </nav>
