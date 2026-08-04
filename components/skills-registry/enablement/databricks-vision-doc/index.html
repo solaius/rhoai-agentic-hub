@@ -204,8 +204,8 @@
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
     }
 
     .capability-card {
@@ -286,28 +286,104 @@
       transform: translateY(0);
     }
 
+    .journey-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      background: var(--bg-card);
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+    .journey-meta-item .meta-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--rh-red);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .journey-meta-item .meta-value {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .journey-outcome {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: rgba(62,134,53,0.08);
+      border: 1px solid rgba(62,134,53,0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .journey-outcome .outcome-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--rh-green);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .journey-outcome .outcome-value {
+      font-size: 0.95rem;
+      color: var(--rh-green);
+      font-weight: 600;
+    }
     /* === JOURNEY STEPS === */
     .journey-steps {
-      margin-top: 1rem;
-      padding-left: 1rem;
-      border-left: 2px solid var(--border-subtle);
+      margin-top: 1.25rem;
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
     }
     .journey-step {
       position: relative;
-      padding: 0.5rem 0 0.5rem 1.5rem;
-      font-size: 0.85rem;
+      flex: 1;
+      min-width: 160px;
+      padding: 0.75rem 1rem 0.75rem 1.25rem;
+      font-size: 0.8rem;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.45;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-right: 1.5rem;
+    }
+    .journey-step:last-child {
+      margin-right: 0;
     }
     .journey-step::before {
       content: '';
       position: absolute;
-      left: -0.4rem;
-      top: 0.85rem;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 3px 0 0 3px;
       background: var(--rh-red);
+    }
+    .journey-step::after {
+      content: '\2192';
+      position: absolute;
+      right: -1.15rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .journey-step:last-child::after {
+      content: none;
+    }
+    @media (max-width: 768px) {
+      .journey-steps { flex-direction: column; }
+      .journey-step { margin-right: 0; margin-bottom: 0.5rem; }
+      .journey-step::after { content: none; }
+      .journey-meta { grid-template-columns: 1fr; }
     }
 
     /* === CALLOUT === */
@@ -464,112 +540,116 @@
 
       <!-- Journey 1 -->
       <div class="journey-card animate-on-scroll">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 1</span>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 1</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">AI ENGINEER</span>
         </div>
-        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0.5rem;">Skill Discovery with Trust</h3>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 1.5rem; margin-top: 1rem;">
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Persona</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">AI Engineer building a customer service agent</div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Skill Discovery with Trust</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">An AI Engineer building a customer service agent finds <strong style="color: var(--text-primary);">47 skill options</strong> across GitHub, ClawHub, and LangChain Hub -- with no way to know which is safe, approved by IT, or compliant with company policy.</div>
           </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Problem</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">47 skill options across GitHub, ClawHub, LangChain Hub — no way to know which is safe, approved, compliant</div>
-          </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Value</div>
-            <div style="font-size: 0.85rem; color: var(--rh-green); font-weight: 600;">Compliant skill in minutes instead of weeks</div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">Search the MLflow registry with filters for <strong style="color: var(--text-primary);">trust tier</strong> (Verified vs Community), <strong style="color: var(--text-primary);">approval status</strong>, and <strong style="color: var(--text-primary);">security scan results</strong>. See IT-approved options instantly. View full provenance before installing.</div>
           </div>
         </div>
         <div class="journey-steps">
-          <div class="journey-step">Search registry → filter by trust tier (Verified/Community) + approval status + security scan</div>
+          <div class="journey-step">Search & filter by trust tier + scan status</div>
           <div class="journey-step">See IT-approved options</div>
-          <div class="journey-step">View skill detail (security scan, approval history, usage metrics)</div>
+          <div class="journey-step">View security scan & approval history</div>
           <div class="journey-step">One-click install with version pinning</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Compliant skill in minutes instead of weeks waiting for IT review of 47 options</span>
         </div>
       </div>
 
       <!-- Journey 2 -->
       <div class="journey-card animate-on-scroll">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 2</span>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 2</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">SECURITY ARCHITECT</span>
         </div>
-        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0.5rem;">Shadow AI Discovery</h3>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 1.5rem; margin-top: 1rem;">
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Persona</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">Security Architect auditing AI asset usage</div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Shadow AI Discovery</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">A Security Architect needs to audit AI asset usage. <strong style="color: var(--text-primary);">23 agents are deployed across 8 teams</strong> -- IT has zero visibility into what skills they're using, where they came from, or whether they've been scanned.</div>
           </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Problem</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">23 agents deployed across 8 teams, IT has zero visibility into skills used</div>
-          </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Value</div>
-            <div style="font-size: 0.85rem; color: var(--rh-green); font-weight: 600;">Visibility within hours. Compliance audit passes.</div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">Run a discovery scan across the organization. The registry surfaces <strong style="color: var(--text-primary);">47 skills total, 14 ungoverned</strong> -- with full impact analysis showing which agents, environments, and teams are affected.</div>
           </div>
         </div>
         <div class="journey-steps">
-          <div class="journey-step">Run discovery scan → registry finds 47 skills, 14 ungoverned</div>
-          <div class="journey-step">View impact (which agents, which environments, which teams)</div>
-          <div class="journey-step">Flag and notify</div>
-          <div class="journey-step">Enforce policy</div>
+          <div class="journey-step">Run discovery scan</div>
+          <div class="journey-step">Identify 14 ungoverned skills</div>
+          <div class="journey-step">View impact by agent, env, team</div>
+          <div class="journey-step">Flag, notify & enforce policy</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Visibility into shadow AI within hours instead of never. Compliance audit passes.</span>
         </div>
       </div>
 
       <!-- Journey 3 -->
       <div class="journey-card animate-on-scroll">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 3</span>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 3</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">PLATFORM ENGINEER</span>
         </div>
-        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0.5rem;">Vulnerability Response</h3>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 1.5rem; margin-top: 1rem;">
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Persona</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">Platform Engineer responding to CVE in a skill dependency</div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Vulnerability Response</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">A security scanner flags a CVE in a Python library used by <strong style="color: var(--text-primary);">12 skills across 6 production agents</strong>. The Platform Engineer needs to understand blast radius, coordinate patching, and verify remediation across the organization.</div>
           </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Problem</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">CVE in a library used by 12 skills across 6 production agents</div>
-          </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Value</div>
-            <div style="font-size: 0.85rem; color: var(--rh-green); font-weight: 600;">Enterprise-wide remediation in hours, not weeks</div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">View the <strong style="color: var(--text-primary);">dependency graph</strong> instantly. See which skills are affected, which agents consume them, and which environments are at risk. Deprecate vulnerable versions, auto-notify teams, and track patching to completion.</div>
           </div>
         </div>
         <div class="journey-steps">
-          <div class="journey-step">View dependency graph → see blast radius (12 skills, 6 agents)</div>
+          <div class="journey-step">View dependency & blast radius</div>
           <div class="journey-step">Deprecate vulnerable versions</div>
-          <div class="journey-step">Notify teams → track patching</div>
-          <div class="journey-step">Verify remediation</div>
+          <div class="journey-step">Auto-notify affected teams</div>
+          <div class="journey-step">Track & verify remediation</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Enterprise-wide vulnerability remediation in hours, not weeks. Full visibility into adoption.</span>
         </div>
       </div>
 
       <!-- Journey 4 -->
       <div class="journey-card animate-on-scroll">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 4</span>
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 4</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">COMPLIANCE OFFICER</span>
         </div>
-        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0.5rem;">Compliance Audit</h3>
-        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 1.5rem; margin-top: 1rem;">
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Persona</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">Compliance Officer preparing for EU AI Act audit</div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Compliance Audit</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">EU AI Act Article 17 (deadline Dec 2027) requires documented quality management systems for high-risk AI. Auditors will ask: <strong style="color: var(--text-primary);">"How do you ensure AI skills are from verified sources and haven't been tampered with?"</strong></div>
           </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Problem</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary);">Auditors will ask about provenance, signing, approval workflows</div>
-          </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.25rem;">Value</div>
-            <div style="font-size: 0.85rem; color: var(--rh-green); font-weight: 600;">Pass audit. Documented quality management system.</div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">Generate an audit report showing the <strong style="color: var(--text-primary);">full provenance chain</strong> for all 47 production skills: publisher identity, security scan results, cryptographic signatures, and the complete approval workflow history.</div>
           </div>
         </div>
         <div class="journey-steps">
-          <div class="journey-step">Generate audit report → see provenance chain for all 47 production skills</div>
-          <div class="journey-step">View publisher identity, scan results, signatures, approval history</div>
+          <div class="journey-step">Generate provenance report</div>
+          <div class="journey-step">View signatures & scan results</div>
           <div class="journey-step">Export with embedded signatures</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Pass the audit. Documented quality management system meeting EU AI Act requirements.</span>
         </div>
       </div>
     </div>
