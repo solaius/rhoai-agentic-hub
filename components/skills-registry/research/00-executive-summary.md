@@ -1,152 +1,184 @@
 ---
-title: Skills Registry Research - Executive Summary
-description: Synthesis of all skills ecosystem research into actionable findings for RHOAI Skills Registry strategy.
-source: ai-asset-registry/skills/skills-registry/research/00-executive-summary.md (as of 2026-07-05)
-timestamp: 2026-07-06
-review_after: 2026-08-05
+title: Skills Registry Research -- Executive Summary
+description: Living synthesis of all skills registry research -- 8-doc series covering ecosystem, upstream MLflow, landscape, competitive, requirements, and RHOAI patterns. Refreshed August 2026.
+timestamp: 2026-08-04
+review_after: 2026-11-04
 ---
 
-# Skills Registry Research - Executive Summary
+# Skills Registry Research -- Executive Summary
 
-**Date**: 2026-04-15
-**Author**: Peter Double (Principal PM - MCP & AI Asset Registries)
-**Purpose**: Synthesize all skills ecosystem research into actionable findings for RHOAI Skills Registry strategy.
+**Last refreshed**: 2026-08-04
+**Series**: 8 documents (4 original April 2026, 4 refresh August 2026)
 
 ---
 
-## The Bottom Line
+## The Bottom Line (August 2026)
 
-**There is no standardized skills registry anywhere.** The market has tool definitions (MCP), agent protocols (A2A), packaging formats (npm, OCI, pip), and community catalogs (ClawHub, LangChain Hub) — but no one has built the governance layer. MLflow issue #20435 is literally waiting for a design proposal. This is Red Hat's gap to fill.
+**The gap is closing fast.** In April 2026, no standardized skills registry
+existed anywhere. By August, Databricks Unity Catalog, JFrog, and Microsoft
+APM all shipped production-grade solutions. SKILL.md won the format war
+(40+ tools). Red Hat now owns the upstream MLflow skills registry design
+(RFC-0008, authored by Bill Murdock) but faces a narrowing window as
+competitors converge on GA.
+
+**Red Hat's differentiation holds**: hybrid-first, MLflow-native,
+Kubernetes-governed skills governance that spans on-prem, edge, and
+multi-cloud. No competitor offers this. The EU AI Act enforcement
+(August 2 2026) creates a compliance forcing function that favors
+portable, auditable governance -- Red Hat's strength.
+
+**Immediate action**: Thursday 2026-08-07 PM sync with Databricks PM Adam
+and tech lead Yuki is the next critical alignment gate. Doc 08 has the
+user journeys and vision doc structure ready.
 
 ---
 
 ## Research Documents
 
-| # | Document | What It Covers |
-|---|----------|---------------|
-| 01 | [Skills Ecosystem](01-skills-ecosystem.md) | Terminology, framework analysis, packaging formats, metadata schemas, composition patterns, standards |
-| 02 | [MLflow Upstream](02-mlflow-upstream.md) | MLflow issues/PRs, registry architecture, Databricks prototype, Red Hat contributor activity |
-| 03 | [Skill Management Landscape](03-skill-management-landscape.md) | 30+ platforms surveyed, feature comparison matrix, enterprise vs. open source, emerging standards |
-| 04 | [RHOAI Patterns & Meetings](04-rhoai-patterns-and-meetings.md) | MCP registry patterns, meeting transcript analysis, decisions, open questions, people |
+| # | Document | Lens | Date | What it covers |
+|---|----------|------|------|----------------|
+| 01 | [Skills Ecosystem](01-skills-ecosystem.md) | landscape | 2026-04 | Terminology, framework analysis, packaging formats, metadata schemas, composition patterns, standards |
+| 02 | [MLflow Upstream](02-mlflow-upstream.md) | upstream | 2026-04 | MLflow issues/PRs, registry architecture, Databricks prototype, Red Hat contributor activity |
+| 03 | [Skill Management Landscape](03-skill-management-landscape.md) | landscape | 2026-04 | 30+ platforms surveyed, feature comparison matrix, enterprise vs. open source, emerging standards |
+| 04 | [RHOAI Patterns & Meetings](04-rhoai-patterns-and-meetings.md) | — | 2026-04 | MCP registry patterns, meeting transcript analysis, decisions, open questions, people |
+| 05 | [Skills Landscape Refresh](05-skills-landscape-refresh-2026-08.md) | landscape | 2026-08 | SKILL.md universality, Unity Catalog agents, Nvidia skills maturation, UIE/Compass discovery, OCP5 distribution |
+| 06 | [Competitive Analysis](06-competitive-skills-registries-2026-08.md) | competitive | 2026-08 | AWS/Google/Databricks/IBM/Nvidia/Anthropic/Microsoft competitive deep dives, positioning matrix, threats |
+| 07 | [MLflow Upstream Refresh](07-mlflow-upstream-refresh-2026-08.md) | upstream | 2026-08 | RFC-0008/0009 status, strategy pivot to user-journeys-first, Red Hat authorship, Databricks PM sync setup |
+| 08 | [User Journeys for Databricks](08-user-journeys-databricks-alignment.md) | requirements | 2026-08 | 7 user journeys, agent-first UX shift, vision doc structure, mockup recommendations for Thursday sync |
 
 ---
 
-## Ten Key Findings
+## Key Findings (August 2026 Refresh)
 
-### 1. "Skill" means different things at different levels
-At the tool level (LangChain, CrewAI), a skill = a function. At the plugin level (Semantic Kernel), a skill = a group of functions. At the agent level (A2A), a skill = a capability. For RHOAI, the right level is **the Semantic Kernel/A2A level: a named, versioned, reusable capability** that may contain multiple tools.
+### What changed since April
 
-### 2. No unified skills specification exists
-MCP standardizes tool-level protocol. A2A standardizes agent-level discovery. **Nobody standardizes the skill layer in between** — packaging, lifecycle, composition, governance. This is the gap.
+**1. SKILL.md crossed the chasm**
+From 7 tools (Dec 2025) to 40+ (Aug 2026). Anthropic, OpenAI, Microsoft,
+Google, JetBrains, AWS, Databricks, ByteDance all ship compatible
+implementations. The format question from April is settled.
 
-### 3. The SKILL.md format is emerging as de facto standard
-Launched by Anthropic (Dec 2025), adopted by OpenAI Codex, Google Gemini CLI, GitHub Copilot, VS Code. Directory with YAML frontmatter + markdown instructions + optional scripts/resources. Progressive disclosure model (metadata at startup, instructions on demand, resources during execution).
+**2. Enterprise registries shipped**
+- Databricks Unity Catalog (DAIS June 2026): agents, skills, MCP as
+  UC securables with governance, tracing, budget controls
+- JFrog Agent Skills Registry (GTC March 2026): scan-verify-sign with
+  NVIDIA SkillSpector integration
+- Microsoft APM: dependency manager with lockfiles and multi-agent support
+- AWS Agent Registry: preview with Cedar-based policy (GA March 2026)
 
-### 4. MLflow has no skills registry — and is waiting for one
-- Issue #20435 requests skills version management. Maintainer Corey Zumar invited a design proposal in February. Nobody has submitted one.
-- PR #21725 adds skills to evaluation framework only (not registry).
-- The Databricks prototype stores markdown as MLflow artifacts (privately, not public).
-- The likely path: skills as a specialized entity type extending the Prompt Registry pattern.
+**3. Red Hat owns the upstream design**
+Bill Murdock (jwm4) authored RFC-0008 (MVP Skill Registry) and RFC-0009
+(Extended Skill Bundles) in mlflow/rfcs. RFC-0008 is under active review
+with 28 commits. This is a dramatic shift from April when we were waiting
+for an opportunity to submit.
 
-### 5. Packaging is fragmented across 7+ formats
-Python packages, npm, OCI containers, OCI artifacts, OpenAPI specs, MCP Registry packages, Markdown/YAML. The meeting consensus: skills are "more like prompts than MCPs" — file-based, not deployed services. OCI artifacts are "heavy" and "not consumable" for individual skills (Hunter Gerlach, Ann Marie Fred).
+**4. RFC strategy pivoted**
+Matt Prahl's new approach: user-journey-only RFC first, get cross-company
+alignment (RH + Databricks + AWS), then technical implementation RFC.
+Root insight: vision misalignment is the blocker, not technical details.
 
-### 6. Security is a first-order concern
-The ClawHub crisis (12-20% malicious skills, CVE-2026-25253 for RCE) proved skill registries face supply chain attacks identical to npm/PyPI plus prompt injection vectors. JFrog's scan-verify-sign approach is the enterprise standard. Skills contain executable code — need code scanning, not just container scanning.
+**5. Databricks governance disconnect surfaced**
+Databricks uses Unity Catalog for governance; their MLflow mantra is "make
+MLflow famous." They're open to skills/agent registry if it increases
+GenAI adoption but won't prioritize non-Databricks-roadmap work. This
+clarifies where Red Hat's governance value-add belongs: on top of MLflow,
+not in it.
 
-### 7. Two consumption models exist: client-side vs. server-side
-- **Client-side**: Download skill code, run it locally in your agent (currently dominant)
-- **Server-side**: Server executes the skill via Responses API (emerging, more governable)
-- These are "very disjoint right now" (Ann Marie Fred) — the registry needs to support both.
+**6. Red Hat's internal skills ecosystem is fragmented**
+UIE/Compass team (300+ engineers) has a skills registry with scorecards
+and marketplace publishing -- RHAI team was unaware until 2026-08-04.
+OCP5 ships skills with operators. No "editor-in-chief" for RH skills
+portfolio. Light Trail team building MCP hosting. At least 3 parallel
+efforts with no coordination.
 
-### 8. The MCP registry pattern transfers directly (7/10 user stories)
-The two-tier entity model (Skill + SkillVersion), four governance tracks (lifecycle, approval, verification, certification), workspace scoping, and trust tiers all apply unchanged. The key difference: skills have no deployment/runtime phase — steps 6-7 of the 8-stage lifecycle are fundamentally different.
+**7. Skills customization is a real enterprise need**
+Generic skills break for enterprise SDLC. Josh Salomon prototyping
+extension-point model (customization without forking) in Ozark. This
+maps to a broader industry gap -- no platform solves skill composition
+or declarative customization.
 
-### 9. Enterprise governance is the differentiator
-AWS Agent Registry (preview April 2026) has Cedar-based policy. IBM watsonx Orchestrate has 400+ validated tools. JFrog provides cryptographic provenance. Google has Cloud API Registry for tool governance. None of them are open source or run on-prem. **Red Hat's differentiation: enterprise-grade governance for skills running on your infrastructure.**
+### What still holds from April
 
-### 10. Three critical decisions are unresolved
-1. **Skills catalog: yes or no?** Peter is skeptical; Adam says catalogs always come first with customers.
-2. **Packaging format**: No consensus — markdown files, OCI artifacts, zip bundles? Start with markdown in MLflow artifacts.
-3. **Relationship to Llama Stack Skills API**: Francisco Arceo is building this. Complement or compete?
-
----
-
-## Competitive Positioning
-
-| Competitor | Strength | RHOAI Differentiator |
-|------------|----------|---------------------|
-| AWS Agent Registry | Cedar-based policy, semantic search | Open source, on-prem, federated (MLflow + Kubeflow) |
-| IBM watsonx Orchestrate | 400+ tools, "any agent any framework" | Not locked to IBM cloud, deeper governance |
-| Google Cloud API Registry | Native GCP integration | Multi-cloud, hybrid, self-managed |
-| JFrog Agent Skills Registry | Supply chain security, provenance | Broader governance (lifecycle, approval, certification), not just security |
-| ClawHub (OpenClaw) | 18K+ skills, community scale | Enterprise governance, security, trust tiers |
-| Kong MCP Registry | API governance integration | Full AI asset lifecycle, not just MCP |
-| Microsoft Copilot Studio | Enterprise deployment, MCP steering | Open source, framework-agnostic |
-
----
-
-## Architecture Patterns Worth Adopting
-
-### From MCP Registry (internal)
-- Two-tier entity model (Skill + SkillVersion)
-- Four independent governance tracks
-- Workspace-scoped RBAC
-- Metadata-first records
-- "Store state, automate later" MVP approach
-
-### From the Market
-- **Three-persona model** (AWS): Admin / Publisher / Consumer
-- **Trust tiers with publisher verification** (VS Code Marketplace, JFrog)
-- **Progressive disclosure** (SKILL.md spec): metadata at startup, content on demand
-- **Policy-as-code** (AWS Cedar): External policy enforcement
-- **Supply chain security** (JFrog): Scan, verify, sign on upload
-
-### From Developer Ecosystems
-- **SemVer + lockfiles** (npm/pip): Version pinning for reproducibility
-- **Organizational scoping** (npm @org/package): Prevent name squatting
-- **OCI distribution** (Docker Hub): Leverage existing registry infrastructure
-- **Declarative packaging with overrides** (Helm): Template/values separation
+- Enterprise governance remains the differentiator (governance gap in
+  MLflow is unchanged)
+- MCP registry patterns transfer (7/10 user stories still apply)
+- Security is first-order concern (ClawHub crisis validated this)
+- Two consumption models (client-side vs server-side) remain disjoint
 
 ---
 
-## Recommended Next Steps
+## Competitive Positioning (Updated August 2026)
+
+| Competitor | Strength | Status | RHOAI Differentiator |
+|------------|----------|--------|---------------------|
+| Databricks Unity AI | First-class UC governance, budget controls, MCP | GA | Open source, on-prem, not locked to Databricks cloud |
+| AWS Agent Registry | Cedar policy, semantic search, 3-persona model | Preview | Multi-cloud, no AWS lock-in, MLflow-native |
+| Google Cloud API Registry | GCP integration, MCP via Apigee | Preview | Not locked to GCP, broader governance |
+| IBM watsonx Orchestrate | 400+ tools, AI asset discovery, any-framework | GA | Not locked to IBM, deeper lifecycle governance |
+| JFrog + NVIDIA | Supply chain security, SkillSpector, provenance | GA | Broader governance (lifecycle, approval), not just security |
+| Microsoft Agent Framework | Unified SK+AutoGen, MCP steering committee | GA | Open source, not locked to Azure/M365 |
+| Anthropic Marketplace | ~600 skills, growing ecosystem | GA | Enterprise governance, on-prem, multi-framework |
+
+**Red Hat's unique position**: the only open-source, hybrid-first,
+MLflow-native skills governance platform. Every competitor is locked to
+a single cloud or ecosystem.
+
+---
+
+## Superseded Findings
+
+The following April findings are superseded by August research:
+
+| April finding | August status | Superseded by |
+|---------------|---------------|---------------|
+| "No standardized skills registry anywhere" (00, line 19) | Databricks, JFrog, Microsoft all shipped | 05 section 2 |
+| "Nobody has submitted [a design proposal]" (00, line 37) | Bill Murdock authored RFC-0008/0009 | 07 section 1 |
+| "SKILL.md format is emerging" (00, finding 3) | SKILL.md is now universal (40+ tools) | 05 section 1 |
+| "Databricks prototype may ship first" risk (02, line 261) | Red Hat now owns the upstream design | 07 executive summary |
+| Competitive table (00, lines 77-85) | All competitors advanced significantly | 06 full analysis |
+
+---
+
+## Recommended Actions
 
 ### Immediate (This Week)
-1. **Follow up with Edson Tirelli** on Databricks prototype status — is the end-of-April target still on track?
-2. **Contact Matt Prahl** about Red Hat requirements already shared with Databricks via Slack
-3. **Review Microsoft Azure Skills** (https://github.com/microsoft/azure-skills) — Microsoft expressed interest in Red Hat's skills future
 
-### Short-Term (April-May)
-4. **Draft a design proposal for MLflow issue #20435** — skills version management. This is the upstream opportunity. Nobody else has done it.
-5. **Define RHOAI skill descriptor schema** — synthesize MCP annotations, A2A skill fields, and governance metadata into a proposed schema
-6. **Decide on packaging MVP** — recommend starting with SKILL.md format stored as MLflow artifacts (aligned with Databricks prototype), with OCI artifact packaging as Phase 2
+1. **Thursday PM sync** (2026-08-07): Bring vision doc + UI mockups to
+   Databricks. Doc 08 has the user journey structure and mockup
+   recommendations. Key message: "our enterprise customers need
+   governance Databricks customers get from Unity Catalog."
 
-### Medium-Term (3.5 Planning)
-7. **Write skills registry user stories** — adapt 7 transferable MCP user stories + add skills-specific stories (consumption, dependency tracking)
-8. **Resolve catalog question** — is a skills catalog needed for 3.5, or is registry-only sufficient for Dev Preview?
-9. **Define skills ingestion pipeline** — adapted from MCP pipeline: validate -> scan code -> evaluate -> register (no containerize step)
-10. **Coordinate with Francisco Arceo** on Llama Stack Skills API alignment
+2. **Compass alignment session**: Greg Bowman arranging follow-up with
+   UIE/Compass team. Evaluate before spinning up separate RHAI skills
+   repo (decision from today's meeting).
+
+### Short-term (August)
+
+3. **RFC-0008 merge push**: Address B-Step62's review feedback (UI
+   mockups, field inference). Matt's suggestion to defer trace linking
+   should accelerate merge.
+
+4. **Internal skills coordination**: Resolve the no-editor-in-chief
+   problem. At minimum, map the 3+ parallel efforts (Compass, RHAI
+   MLflow, OCP5 operators) and identify overlap.
+
+### Medium-term (3.6 planning)
+
+5. **RHOAI governance layer design**: The governance gap (lifecycle
+   states, approval workflows, certification, trust tiers) is still
+   unaddressed upstream and remains the value-add. Design it now.
+
+6. **Skills-catalog research**: Run hub.research on skills-catalog
+   with landscape + architecture lenses -- the Compass/UIE discovery
+   and OCP5 distribution model create new architecture questions.
 
 ---
 
-## Open Questions for Stakeholder Input
+## Lenses Not Run
 
-1. **Peter**: Do you want to submit the MLflow #20435 design proposal, or should Red Hat engineering (Dan Kuc/Matt Prahl) drive it?
-2. **Adam Bellusci**: For 3.5 Dev Preview, is skills registry alone sufficient or is catalog also needed?
-3. **Edson Tirelli**: What's the actual status of the Databricks prototype? Can we see it?
-4. **Ann Marie Fred**: Did the ODH repo for validated skills proceed? Can we build on it?
-5. **Adel Zaalouk**: How do skills fit into the agentic strategy for Summit messaging?
-
----
-
-## File Index
-
-```
-skills/skills-registry/research/
-  00-executive-summary.md          <- This file
-  01-skills-ecosystem.md           <- Terminology, frameworks, packaging, metadata, standards
-  02-mlflow-upstream.md            <- MLflow issues, PRs, architecture, Databricks context
-  03-skill-management-landscape.md <- 30+ platforms, comparison matrix, market gaps
-  04-rhoai-patterns-and-meetings.md <- MCP patterns, meeting transcripts, decisions, people
-```
+- **architecture**: not requested; recommend for follow-up -- the
+  Compass/UIE discovery and MLflow RFC architecture decisions create
+  design questions worth researching. Retry:
+  `hub.research skills-registry architecture`
+- **jira-gap**: no `jira:` block in components.yaml for skills-registry;
+  add one to enable. Retry after adding scope:
+  `hub.research skills-registry jira-gap`

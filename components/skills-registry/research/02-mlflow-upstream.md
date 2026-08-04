@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # MLflow Skills Registry - Upstream Research
 
+> Partially superseded 2026-08-04 by [07-mlflow-upstream-refresh-2026-08](07-mlflow-upstream-refresh-2026-08.md) -- Red Hat now owns the upstream design (RFC-0008/0009 authored by Bill Murdock); Databricks MVP risk resolved; RFC strategy pivoted to user-journeys-first.
+
 **Date**: 2026-04-15
 **Author**: Peter Double (Principal PM - MCP)
 **Purpose**: Document MLflow's current and planned work on skills, identify Red Hat's opportunity to drive upstream design.

@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # AI Skill Management Landscape Survey
 
+> Partially superseded 2026-08-04 by [06-competitive-skills-registries-2026-08](06-competitive-skills-registries-2026-08.md) -- all major competitors advanced significantly since April; competitive positioning table updated.
+
 > **Date**: 2026-04-15
 > **Author**: Peter Double (Principal PM - MCP)
 > **Purpose**: Comprehensive survey of existing platforms, tools, and solutions for AI skill management to inform the RHOAI Skills Registry design.

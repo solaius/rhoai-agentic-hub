@@ -8,6 +8,8 @@ review_after: 2026-08-05
 
 # AI Skills Ecosystem Research
 
+> Partially superseded 2026-08-04 by [05-skills-landscape-refresh-2026-08](05-skills-landscape-refresh-2026-08.md) -- SKILL.md is now universal (40+ tools), not "emerging"; enterprise registries shipped (Databricks, JFrog, Microsoft).
+
 **Date**: 2026-04-15
 **Author**: Peter Double (Principal PM - MCP)
 **Purpose**: Comprehensive landscape analysis of how AI skills are defined, packaged, composed, and governed across frameworks, protocols, and emerging standards. Informs the Skills registry design within the AI Asset Registry proposal for RHOAI.
