@@ -35,6 +35,12 @@
     "published": "2026-08-01",
     "source": "components/mcp-registry/enablement/registry-hub"
   },
+  "platform/rh1-2027-cfp-proposals": {
+    "badge": "new",
+    "hash": "bbf8beba5538d20748bbbd3f3bb1691905d58fe2767da03b16073a5cffab82a8",
+    "published": "2026-08-04",
+    "source": "components/platform/enablement/rh1-2027-cfp-proposals"
+  },
   "skills-catalog/ui-prototype": {
     "badge": "updated",
     "hash": "f8e1a6df7f606f7bbbb7382dabd588b9e3eebe02d63b82e36aa6f5bc661abc5f",
