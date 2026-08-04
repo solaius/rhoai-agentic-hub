@@ -111,3 +111,8 @@
   audience: internal
   title: AI Skills Governance Vision for MLflow
   description: Vision document for Databricks PM sync — enterprise governance gap, user journeys, and the case for skills governance in MLflow.
+- source: components/platform/enablement/rh1-2027-cfp-proposals/
+  dest: platform/rh1-2027-cfp-proposals/
+  audience: internal
+  title: Red Hat One 2027 — CFP Proposal Candidates
+  description: 14-slide deck presenting 10 ranked CFP proposal ideas for RH1 2027, with CAI support matrix and recommended submission strategy.
