@@ -106,3 +106,8 @@
   audience: internal
   title: Skills Catalog UI Prototype
   description: Interactive skills catalog prototype — browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) — populated with 68 EX public library skills across 7 packs.
+- source: components/skills-registry/enablement/databricks-vision-doc/
+  dest: skills-registry/databricks-vision-doc/
+  audience: internal
+  title: AI Skills Governance Vision for MLflow
+  description: Vision document for Databricks PM sync — enterprise governance gap, user journeys, and the case for skills governance in MLflow.
