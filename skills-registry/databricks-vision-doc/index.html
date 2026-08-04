@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Making MLflow the Enterprise Standard for AI Skills — Red Hat OpenShift AI</title>
+  <meta name="description" content="A vision for open-source skills governance that makes MLflow famous with the enterprise customers who need it most" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* === TOKENS === */
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --nav-height: 56px;
+    }
+
+    /* === BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-text);
+      font-size: var(--fs-body);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === NAVIGATION === */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(21, 21, 21, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .nav-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hat {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: var(--rh-red);
+      color: white;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 0.65rem;
+      border-radius: 4px;
+    }
+    .nav-title {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-family: var(--font-text);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* === SECTIONS === */
+    section {
+      padding: 5rem 1.5rem;
+      scroll-margin-top: calc(var(--nav-height) + 16px);
+    }
+    .section-inner {
+      max-width: var(--content-max);
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      margin-bottom: var(--space-sm);
+    }
+    .section-divider {
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(238,0,0,0.18), rgba(238,0,0,0.35), rgba(238,0,0,0.18), transparent);
+      margin: 0;
+    }
+
+    /* === TYPOGRAPHY === */
+    .display-xl { font-family: var(--font-sans); font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-family: var(--font-sans); font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .h2 { font-family: var(--font-sans); font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.01em; font-weight: 700; color: var(--text-primary); margin: var(--space-xl) 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; }
+    .accent     { color: var(--rh-red); }
+
+    /* === HERO === */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding-top: calc(var(--nav-height) + 3rem);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -100px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(238,0,0,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* === CARDS === */
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color 300ms, transform 200ms, box-shadow 300ms;
+    }
+    .card:hover {
+      border-color: rgba(238, 0, 0, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(238, 0, 0, 0.08);
+    }
+
+    .problem-card {
+      background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02));
+      border: 1px solid rgba(238,0,0,0.2);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .problem-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--rh-red), #ff4444);
+    }
+
+    .journey-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .capability-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--accent-color);
+      border-radius: 0 8px 8px 0;
+      padding: 1.25rem;
+      transition: border-color 300ms, transform 200ms;
+    }
+    .capability-card:hover {
+      transform: translateY(-2px);
+      border-left-color: var(--rh-red);
+    }
+
+    /* === STATS === */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .stat {
+      text-align: center;
+    }
+    .stat-value {
+      font-family: var(--font-sans);
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* === GRIDS === */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* === TAG === */
+    .tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      background: rgba(238,0,0,0.12);
+      color: var(--rh-red);
+      margin-bottom: 0.5rem;
+    }
+
+    /* === SCROLL ANIMATIONS === */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .journey-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      padding: 1.25rem;
+      background: var(--bg-card);
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+    }
+    .journey-meta-item .meta-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--rh-red);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+    .journey-meta-item .meta-value {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .journey-outcome {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: rgba(62,134,53,0.08);
+      border: 1px solid rgba(62,134,53,0.25);
+      border-radius: 8px;
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+    }
+    .journey-outcome .outcome-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--rh-green);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .journey-outcome .outcome-value {
+      font-size: 0.95rem;
+      color: var(--rh-green);
+      font-weight: 600;
+    }
+    /* === JOURNEY STEPS === */
+    .journey-steps {
+      margin-top: 1.25rem;
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .journey-step {
+      position: relative;
+      flex: 1;
+      min-width: 160px;
+      padding: 0.75rem 1rem 0.75rem 1.25rem;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      margin-right: 1.5rem;
+    }
+    .journey-step:last-child {
+      margin-right: 0;
+    }
+    .journey-step::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 3px 0 0 3px;
+      background: var(--rh-red);
+    }
+    .journey-step::after {
+      content: '\2192';
+      position: absolute;
+      right: -1.15rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .journey-step:last-child::after {
+      content: none;
+    }
+    @media (max-width: 768px) {
+      .journey-steps { flex-direction: column; }
+      .journey-step { margin-right: 0; margin-bottom: 0.5rem; }
+      .journey-step::after { content: none; }
+      .journey-meta { grid-template-columns: 1fr; }
+    }
+
+    /* === CALLOUT === */
+    .callout {
+      background: rgba(238,0,0,0.04);
+      border-left: 3px solid var(--rh-red);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .callout p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .callout strong {
+      color: var(--text-primary);
+    }
+
+    /* === REDUCED MOTION === */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 180ms !important; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      html { scroll-behavior: auto; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 2rem; --fs-display-lg: 1.5rem; --fs-body-lead: 1rem; }
+      section { padding: 3rem 1.25rem; }
+      .nav-links { display: none; }
+      .hero { min-height: 60vh; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    }
+    @media (max-width: 1024px) {
+      .nav-links { gap: 1rem; font-size: 0.75rem; }
+    }
+
+    /* === PRINT === */
+    @media print {
+      nav { display: none; }
+      section { page-break-inside: avoid; padding: 2rem 0; }
+      .hero { min-height: auto; padding-top: 1rem; }
+      .animate-on-scroll { opacity: 1; transform: none; }
+      body { background: var(--bg-canvas); color: var(--text-primary); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="hat">RH</div>
+        <span class="nav-title">MLflow Skills Governance</span>
+      </div>
+      <div class="nav-links">
+        <a href="#hero">Vision</a>
+        <a href="#gap">The Gap</a>
+        <a href="#journeys">User Journeys</a>
+        <a href="#solution">The Vision</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">MLFLOW SKILLS GOVERNANCE</div>
+      <h1 class="display-xl animate-on-scroll">Making MLflow the <span class="accent">Enterprise Standard</span> for AI Skills</h1>
+      <p class="lead animate-on-scroll">A vision for open-source skills governance that makes MLflow famous with the enterprise customers who need it most</p>
+
+      <div class="stats-grid animate-on-scroll">
+        <div class="stat">
+          <div class="stat-value" style="color: var(--rh-red);">40+</div>
+          <div class="stat-label">tools adopted SKILL.md</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: var(--text-primary);">800+</div>
+          <div class="stat-label">malicious skills in ClawHub crisis</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: var(--text-primary);">3</div>
+          <div class="stat-label">customers built their own registries</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color: var(--rh-red);">Aug 2</div>
+          <div class="stat-label">EU AI Act enforcement began</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE GOVERNANCE GAP ===== -->
+  <section id="gap">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE PROBLEM</div>
+      <h2 class="display-lg animate-on-scroll">The Enterprise Governance Gap</h2>
+      <p class="lead animate-on-scroll">Enterprise customers without Unity Catalog face ungoverned AI skill sprawl — shadow AI, compliance risk, supply chain attacks</p>
+
+      <div class="grid-3 animate-on-scroll">
+        <div class="problem-card">
+          <div class="tag">SCENARIO</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Shadow AI Sprawl</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            A Fortune 500 bank discovers 47 AI skills running across 23 agents. 14 are ungoverned — pulled from public registries with <strong style="color: var(--text-primary);">no security scan, no approval, no audit trail.</strong> IT has zero visibility.
+          </p>
+        </div>
+
+        <div class="problem-card">
+          <div class="tag">SCENARIO</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Supply Chain Attack</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            The ClawHub crisis proved it: <strong style="color: var(--text-primary);">800+ malicious skills</strong> infiltrated the largest public registry. CVE-2026-25253 enabled remote code execution. China banned government use. Skills need the same supply chain security as software packages.
+          </p>
+        </div>
+
+        <div class="problem-card">
+          <div class="tag">SCENARIO</div>
+          <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.5rem;">Compliance Deadline</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            <strong style="color: var(--text-primary);">EU AI Act enforcement began August 2, 2026.</strong> Article 17 requires documented quality management systems for high-risk AI. Auditors will ask: "How do you ensure AI skills are from verified sources and haven't been tampered with?"
+          </p>
+        </div>
+      </div>
+
+      <h3 class="h2 animate-on-scroll">Why Unity Catalog Doesn't Solve This</h3>
+      <div class="animate-on-scroll">
+        <div class="callout">
+          <p><strong>Unity Catalog governs data.</strong> Skills and tools are ungoverned code artifacts proliferating across teams outside Databricks' ecosystem.</p>
+        </div>
+        <div class="callout">
+          <p><strong>Red Hat's customers run fragmented multi-cloud/on-prem infrastructure.</strong> No centralized governance platform.</p>
+        </div>
+        <div class="callout">
+          <p><strong>These are financial services, healthcare, government, telecom</strong> — "very conservative and very focused on governance."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== USER JOURNEYS ===== -->
+  <section id="journeys">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE CORE OF THE VISION</div>
+      <h2 class="display-lg animate-on-scroll">What Enterprise Customers Need</h2>
+      <p class="lead animate-on-scroll">Four user journeys showing why governance is a requirement for production deployment, not a nice-to-have.</p>
+
+      <!-- Journey 1 -->
+      <div class="journey-card animate-on-scroll">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 1</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">AI ENGINEER</span>
+        </div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Skill Discovery with Trust</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">An AI Engineer building a customer service agent finds <strong style="color: var(--text-primary);">47 skill options</strong> across GitHub, ClawHub, and LangChain Hub -- with no way to know which is safe, approved by IT, or compliant with company policy.</div>
+          </div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">Search the MLflow registry with filters for <strong style="color: var(--text-primary);">trust tier</strong> (Verified vs Community), <strong style="color: var(--text-primary);">approval status</strong>, and <strong style="color: var(--text-primary);">security scan results</strong>. See IT-approved options instantly. View full provenance before installing.</div>
+          </div>
+        </div>
+        <div class="journey-steps">
+          <div class="journey-step">Search & filter by trust tier + scan status</div>
+          <div class="journey-step">See IT-approved options</div>
+          <div class="journey-step">View security scan & approval history</div>
+          <div class="journey-step">One-click install with version pinning</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Compliant skill in minutes instead of weeks waiting for IT review of 47 options</span>
+        </div>
+      </div>
+
+      <!-- Journey 2 -->
+      <div class="journey-card animate-on-scroll">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 2</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">SECURITY ARCHITECT</span>
+        </div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Shadow AI Discovery</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">A Security Architect needs to audit AI asset usage. <strong style="color: var(--text-primary);">23 agents are deployed across 8 teams</strong> -- IT has zero visibility into what skills they're using, where they came from, or whether they've been scanned.</div>
+          </div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">Run a discovery scan across the organization. The registry surfaces <strong style="color: var(--text-primary);">47 skills total, 14 ungoverned</strong> -- with full impact analysis showing which agents, environments, and teams are affected.</div>
+          </div>
+        </div>
+        <div class="journey-steps">
+          <div class="journey-step">Run discovery scan</div>
+          <div class="journey-step">Identify 14 ungoverned skills</div>
+          <div class="journey-step">View impact by agent, env, team</div>
+          <div class="journey-step">Flag, notify & enforce policy</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Visibility into shadow AI within hours instead of never. Compliance audit passes.</span>
+        </div>
+      </div>
+
+      <!-- Journey 3 -->
+      <div class="journey-card animate-on-scroll">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 3</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">PLATFORM ENGINEER</span>
+        </div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Vulnerability Response</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">A security scanner flags a CVE in a Python library used by <strong style="color: var(--text-primary);">12 skills across 6 production agents</strong>. The Platform Engineer needs to understand blast radius, coordinate patching, and verify remediation across the organization.</div>
+          </div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">View the <strong style="color: var(--text-primary);">dependency graph</strong> instantly. See which skills are affected, which agents consume them, and which environments are at risk. Deprecate vulnerable versions, auto-notify teams, and track patching to completion.</div>
+          </div>
+        </div>
+        <div class="journey-steps">
+          <div class="journey-step">View dependency & blast radius</div>
+          <div class="journey-step">Deprecate vulnerable versions</div>
+          <div class="journey-step">Auto-notify affected teams</div>
+          <div class="journey-step">Track & verify remediation</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Enterprise-wide vulnerability remediation in hours, not weeks. Full visibility into adoption.</span>
+        </div>
+      </div>
+
+      <!-- Journey 4 -->
+      <div class="journey-card animate-on-scroll">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(238,0,0,0.12); color: var(--rh-red); padding: 0.2rem 0.6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">JOURNEY 4</span>
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.05em;">COMPLIANCE OFFICER</span>
+        </div>
+        <h3 style="font-family: var(--font-sans); font-weight: 700; font-size: 1.3rem; color: var(--text-primary); margin-bottom: 0;">Compliance Audit</h3>
+        <div class="journey-meta">
+          <div class="journey-meta-item">
+            <div class="meta-label">The problem</div>
+            <div class="meta-value">EU AI Act Article 17 (deadline Dec 2027) requires documented quality management systems for high-risk AI. Auditors will ask: <strong style="color: var(--text-primary);">"How do you ensure AI skills are from verified sources and haven't been tampered with?"</strong></div>
+          </div>
+          <div class="journey-meta-item">
+            <div class="meta-label">What governance enables</div>
+            <div class="meta-value">Generate an audit report showing the <strong style="color: var(--text-primary);">full provenance chain</strong> for all 47 production skills: publisher identity, security scan results, cryptographic signatures, and the complete approval workflow history.</div>
+          </div>
+        </div>
+        <div class="journey-steps">
+          <div class="journey-step">Generate provenance report</div>
+          <div class="journey-step">View signatures & scan results</div>
+          <div class="journey-step">Export with embedded signatures</div>
+        </div>
+        <div class="journey-outcome">
+          <span class="outcome-label">Value</span>
+          <span class="outcome-value">Pass the audit. Documented quality management system meeting EU AI Act requirements.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== THE VISION ===== -->
+  <section id="solution">
+    <div class="section-inner">
+      <div class="section-label animate-on-scroll">THE SOLUTION</div>
+      <h2 class="display-lg animate-on-scroll">Making MLflow Famous with Governance</h2>
+      <p class="lead animate-on-scroll">MLflow is already the open-source standard for ML lifecycle. Skills governance is the next step that makes it the enterprise standard for agentic AI.</p>
+
+      <div class="grid-3 animate-on-scroll">
+        <div class="capability-card" style="--accent-color: var(--rh-teal);">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(0,149,150,0.12); color: var(--rh-teal); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">AGENT-FIRST</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0.5rem 0;">Agent-First Experience</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            Extend MLflow from experiment-centric to agent-centric. Agents and their skills are first-class entities alongside experiments and models.
+          </p>
+        </div>
+
+        <div class="capability-card" style="--accent-color: var(--rh-blue);">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">OPEN STANDARDS</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0.5rem 0;">Open Standards</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            Built on Agent Skills spec (SKILL.md, 40+ tools), MCP Registry spec, OCI artifacts. Not a proprietary format — the industry standard.
+          </p>
+        </div>
+
+        <div class="capability-card" style="--accent-color: var(--rh-green);">
+          <span style="font-family: var(--font-mono); font-size: 0.6rem; background: rgba(62,134,53,0.15); color: var(--rh-green); padding: 0.15rem 0.5rem; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">GOVERNANCE</span>
+          <h3 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0.5rem 0;">Enterprise Governance</h3>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            Lifecycle states, approval workflows, trust tiers, security scanning, cryptographic signing, provenance tracking. What enterprises need to go to production.
+          </p>
+        </div>
+      </div>
+
+      <h3 class="h2 animate-on-scroll">What We're Asking</h3>
+      <div class="animate-on-scroll">
+        <div class="grid-2">
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.75rem;">Alignment on User Journeys</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              Do these user journeys resonate with MLflow's GenAI adoption vision? User-journey RFC first, then technical implementation — aligned with MLflow's iterative approach.
+            </p>
+          </div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.75rem;">What We're NOT Proposing</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+              <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+                <span style="position: absolute; left: 0; top: 0.7rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-red);"></span>
+                Replacing Unity Catalog
+              </li>
+              <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+                <span style="position: absolute; left: 0; top: 0.7rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-red);"></span>
+                Competing with Databricks downstream
+              </li>
+              <li style="padding: 0.3rem 0 0.3rem 1rem; position: relative; font-size: 0.85rem; color: var(--text-secondary);">
+                <span style="position: absolute; left: 0; top: 0.7rem; width: 5px; height: 5px; border-radius: 50%; background: var(--rh-red);"></span>
+                Forcing a specific implementation
+              </li>
+            </ul>
+          </div>
+
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.5rem;">
+            <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.75rem;">What We ARE Proposing</h4>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+              Making MLflow the open-source, vendor-neutral governance platform for enterprises that need it. The wedge that makes MLflow indispensable.
+            </p>
+          </div>
+
+        </div>
+
+        <div style="background: linear-gradient(135deg, rgba(238,0,0,0.06), rgba(238,0,0,0.02)); border: 1px solid rgba(238,0,0,0.2); border-radius: 12px; padding: 1.5rem; margin-top: 1rem;">
+          <h4 style="font-family: var(--font-sans); font-weight: 600; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.75rem;">Competitive Pressure</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            <strong style="color: var(--text-primary);">AWS, Google, and IBM have all shipped competing agent/skills registries in 2026.</strong> If MLflow doesn't add governance, enterprises will adopt proprietary alternatives. Adding governance makes MLflow the open-source answer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer style="padding: 3rem 1.5rem; text-align: center;">
+    <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Prepared for Databricks PM Sync — August 7, 2026</div>
+    <div style="font-family: var(--font-sans); font-size: 1rem; font-weight: 600; color: var(--text-primary);">Red Hat + Databricks: Making MLflow Famous</div>
+  </footer>
+
+  <!-- ===== SCROLL ANIMATION OBSERVER ===== -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Active nav link tracking
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--text-primary)'
+              : 'var(--text-muted)';
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => navObserver.observe(section));
+  </script>
+</body>
+</html>

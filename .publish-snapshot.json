@@ -40,5 +40,11 @@
     "hash": "f8e1a6df7f606f7bbbb7382dabd588b9e3eebe02d63b82e36aa6f5bc661abc5f",
     "published": "2026-08-04",
     "source": "components/skills-catalog/prototype/skills-catalog-ui/v1"
+  },
+  "skills-registry/databricks-vision-doc": {
+    "badge": "new",
+    "hash": "10cca996921082924b2aa93290b5ce5a25b1f29eb2eb65b453970eb5ac4e8359",
+    "published": "2026-08-04",
+    "source": "components/skills-registry/enablement/databricks-vision-doc"
   }
 }
