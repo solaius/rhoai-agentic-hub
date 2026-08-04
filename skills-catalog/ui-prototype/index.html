@@ -271,6 +271,59 @@
     /* Nav active state */
     .pf-v6-c-nav__link.pf-m-current { font-weight: var(--pf-t--global--font--weight--body--bold); }
 
+    /* Admin sources table */
+    .admin-sources-table { width: 100%; border-collapse: collapse; }
+    .admin-sources-table th { text-align: left; font-size: 14px; font-weight: 700; color: #151515; padding: 12px 16px; border-bottom: 1px solid #d2d2d2; }
+    .admin-sources-table td { font-size: 14px; color: #151515; padding: 16px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+    .admin-sources-table tr:last-child td { border-bottom: 1px solid #d2d2d2; }
+    .admin-sources-table .source-name { color: #0066cc; font-weight: 400; cursor: default; }
+    .help-icon-inline { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; border: 1px solid #6a6e73; color: #6a6e73; font-size: 11px; margin-left: 6px; cursor: help; vertical-align: middle; }
+    .validation-label { display: inline-flex; align-items: center; padding: 2px 10px; border: 1px solid #d2d2d2; border-radius: 4px; font-size: 13px; color: #151515; background: #fff; }
+    .visibility-label { display: inline-flex; align-items: center; padding: 2px 10px; border: 1px solid #d2d2d2; border-radius: 4px; font-size: 13px; color: #6a6e73; background: #fff; }
+
+    /* Toggle switch */
+    .pf-v6-c-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+    .pf-v6-c-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .pf-v6-c-switch__toggle { width: 42px; height: 24px; background: #d2d2d2; border-radius: 12px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+    .pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle { background: #0066cc; }
+    .pf-v6-c-switch__toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+    .pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle::after { transform: translateX(18px); }
+    .pf-v6-c-switch input:checked + .pf-v6-c-switch__toggle::before { content: '\2713'; position: absolute; left: 8px; top: 3px; color: #fff; font-size: 12px; font-weight: 700; z-index: 1; }
+
+    /* Kebab menu */
+    .kebab-wrapper { position: relative; display: inline-block; }
+    .kebab-btn { background: none; border: none; cursor: pointer; padding: 8px; color: #151515; border-radius: 4px; }
+    .kebab-btn:hover { background: #f0f0f0; }
+    .kebab-menu { position: absolute; right: 0; top: 100%; background: #fff; border: 1px solid #d2d2d2; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.12); z-index: 100; min-width: 180px; padding: 4px 0; display: none; }
+    .kebab-menu.open { display: block; }
+    .kebab-menu button { display: block; width: 100%; text-align: left; padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 14px; color: #151515; font-family: inherit; }
+    .kebab-menu button:hover { background: #f0f0f0; }
+
+    /* Add source button */
+    .btn-add-source { display: inline-flex; align-items: center; gap: 8px; padding: 10px 24px; background: #0066cc; color: #fff; border: none; border-radius: 999px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+    .btn-add-source:hover { background: #004080; }
+    .btn-add-source svg { fill: currentColor; }
+
+    /* Manage source page */
+    .manage-source-form { flex: 1; min-width: 0; }
+    .manage-field-label { font-size: 14px; font-weight: 700; color: #151515; margin: 0 0 8px; }
+    .manage-field-value { padding: 10px 14px; background: #f5f5f5; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px; color: #151515; margin-bottom: 24px; }
+    .manage-preview { width: 380px; flex-shrink: 0; }
+    .manage-preview-card { border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; }
+    .manage-preview-title { font-size: 20px; font-weight: 500; margin: 0 0 16px; color: #151515; }
+    .manage-tabs { display: flex; border-bottom: 1px solid #d2d2d2; margin-bottom: 16px; }
+    .manage-tab { padding: 8px 16px; border: none; background: none; cursor: pointer; font-size: 14px; font-family: inherit; color: #6a6e73; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .manage-tab.active { color: #0066cc; border-bottom-color: #0066cc; font-weight: 500; }
+    .skill-include-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 14px; color: #151515; }
+    .skill-include-icon { color: #3e8635; }
+    .btn-save { display: inline-flex; align-items: center; padding: 10px 28px; background: #0066cc; color: #fff; border: none; border-radius: 999px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+    .btn-save:hover { background: #004080; }
+    .btn-cancel { display: inline-flex; align-items: center; padding: 10px 16px; background: none; color: #0066cc; border: none; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; }
+    .btn-cancel:hover { text-decoration: underline; }
+    .expandable-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; font-size: 14px; color: #0066cc; font-family: inherit; padding: 4px 0; }
+    .expandable-toggle svg { transition: transform 0.2s; }
+    .expandable-toggle.expanded svg { transform: rotate(90deg); }
+
     /* Compatibility table */
     .compat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--pf-t--global--spacer--sm); }
     .compat-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--pf-t--global--border--color--default); border-radius: var(--pf-t--global--border--radius--small); }
@@ -354,6 +407,71 @@
     .form-tags {
       display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
     }
+
+    /* Dark mode overrides for custom styles */
+    body.pf-v6-theme-dark { background: #1b1d21; color: #e0e0e0; }
+    .pf-v6-theme-dark .app-sidebar { background: #1b1d21; }
+    .pf-v6-theme-dark .app-content { background: #292b2f; }
+    .pf-v6-theme-dark .rhoai-masthead { background: #292b2f; }
+    .pf-v6-theme-dark .app-sidebar .pf-v6-c-nav__link { color: #c9c9c9; }
+    .pf-v6-theme-dark .app-sidebar .pf-v6-c-nav__link:hover { background: #33363b; }
+    .pf-v6-theme-dark .toggle-group { border-color: #4a4d52; }
+    .pf-v6-theme-dark .toggle-group button { background: #292b2f; color: #e0e0e0; border-color: #4a4d52; }
+    .pf-v6-theme-dark .toggle-group button:hover:not(.active) { background: #33363b; }
+    .pf-v6-theme-dark .toggle-group button.active { background: #0066cc; color: #fff; }
+    .pf-v6-theme-dark .skill-card { background: #33363b; border-color: #4a4d52; color: #e0e0e0; }
+    .pf-v6-theme-dark .skill-card:hover { border-color: #6a6e73; }
+    .pf-v6-theme-dark .filter-sidebar { border-color: #4a4d52; }
+    .pf-v6-theme-dark .filter-section { border-color: #4a4d52; }
+    .pf-v6-theme-dark .filter-section-title { color: #e0e0e0; }
+    .pf-v6-theme-dark .filter-checkbox { color: #c9c9c9; }
+    .pf-v6-theme-dark .detail-card-section { background: #33363b; border-color: #4a4d52; }
+    .pf-v6-theme-dark .detail-section-title { color: #e0e0e0; }
+    .pf-v6-theme-dark .detail-sidebar { background: #33363b; border-color: #4a4d52; }
+    .pf-v6-theme-dark .detail-field-label { color: #a0a0a0; }
+    .pf-v6-theme-dark .detail-field-value { color: #e0e0e0; }
+    .pf-v6-theme-dark .page-title-text { color: #e0e0e0; }
+    .pf-v6-theme-dark .readme-content { color: #e0e0e0; }
+    .pf-v6-theme-dark .readme-content code { background: #1b1d21; }
+    .pf-v6-theme-dark .readme-content pre { background: #1b1d21; }
+    .pf-v6-theme-dark .readme-content th { background: #292b2f; }
+    .pf-v6-theme-dark .readme-content td,
+    .pf-v6-theme-dark .readme-content th { border-color: #4a4d52; }
+    .pf-v6-theme-dark .admin-sources-table th { color: #e0e0e0; border-color: #4a4d52; }
+    .pf-v6-theme-dark .admin-sources-table td { color: #e0e0e0; border-color: #4a4d52; }
+    .pf-v6-theme-dark .admin-sources-table .source-name { color: #73bcf7; }
+    .pf-v6-theme-dark .validation-label { background: #33363b; border-color: #4a4d52; color: #e0e0e0; }
+    .pf-v6-theme-dark .visibility-label { background: #33363b; border-color: #4a4d52; color: #a0a0a0; }
+    .pf-v6-theme-dark .pf-v6-c-switch__toggle { background: #4a4d52; }
+    .pf-v6-theme-dark .kebab-btn { color: #e0e0e0; }
+    .pf-v6-theme-dark .kebab-btn:hover { background: #33363b; }
+    .pf-v6-theme-dark .kebab-menu { background: #33363b; border-color: #4a4d52; }
+    .pf-v6-theme-dark .kebab-menu button { color: #e0e0e0; }
+    .pf-v6-theme-dark .kebab-menu button:hover { background: #3e4147; }
+    .pf-v6-theme-dark .manage-field-label { color: #e0e0e0; }
+    .pf-v6-theme-dark .manage-field-value { background: #1b1d21; border-color: #4a4d52; color: #e0e0e0; }
+    .pf-v6-theme-dark .manage-preview-card { border-color: #4a4d52; }
+    .pf-v6-theme-dark .manage-preview-title { color: #e0e0e0; }
+    .pf-v6-theme-dark .manage-tabs { border-color: #4a4d52; }
+    .pf-v6-theme-dark .manage-tab { color: #a0a0a0; }
+    .pf-v6-theme-dark .manage-tab.active { color: #73bcf7; border-bottom-color: #73bcf7; }
+    .pf-v6-theme-dark .form-input { background: #1b1d21; border-color: #4a4d52; color: #e0e0e0; }
+    .pf-v6-theme-dark .form-select { background: #292b2f; border-color: #4a4d52; color: #e0e0e0; }
+    .pf-v6-theme-dark .install-block { background: #1b1d21; }
+    .pf-v6-theme-dark .compat-item { border-color: #4a4d52; color: #e0e0e0; }
+    .pf-v6-theme-dark .pf-v6-c-breadcrumb__link { color: #73bcf7; }
+    .pf-v6-theme-dark .modal-backdrop { background: rgba(0,0,0,0.7); }
+    .pf-v6-theme-dark .register-modal { background: #292b2f; }
+    .pf-v6-theme-dark .register-modal__title { color: #e0e0e0; }
+    .pf-v6-theme-dark .icon-btn { color: #c9c9c9; }
+    .pf-v6-theme-dark .icon-btn:hover { background: #33363b; }
+    .pf-v6-theme-dark .user-avatar { color: #c9c9c9; }
+    .pf-v6-theme-dark .user-avatar:hover { background: #33363b; }
+    .pf-v6-theme-dark .help-icon-inline { border-color: #6a6e73; color: #a0a0a0; }
+    .pf-v6-theme-dark .page-title-icon { background: #3d2f6b; }
+    .pf-v6-theme-dark .page-title-icon svg { fill: #b2a3d9; }
+    .pf-v6-theme-dark .btn-add-source { background: #0066cc; }
+    .pf-v6-theme-dark .btn-add-source:hover { background: #004080; }
   </style>
 </head>
 <body>
@@ -386,7 +504,7 @@
     <div class="rhoai-masthead__right">
       <button class="icon-btn" type="button" aria-label="Notifications"><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 448 512"><path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377.2C1.8 381.8 0 387.2 0 392.7C0 407.8 12.2 420 27.3 420H420.7c15.1 0 27.3-12.2 27.3-27.3c0-5.5-1.8-10.9-5.3-15.4l-14.9-18.9C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 512c35.3 0 64-28.7 64-64H160c0 35.3 28.7 64 64 64z"/></svg></button>
       <button class="icon-btn" type="button" aria-label="Toggle contrast"><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 512 512"><path d="M448 256c0-106-86-192-192-192V448c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg></button>
-      <button class="icon-btn" type="button" aria-label="Toggle dark mode"><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 384 512"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg></button>
+      <button class="icon-btn" type="button" aria-label="Toggle dark mode" onclick="toggleDarkMode()"><svg fill="currentColor" height="1em" width="1em" viewBox="0 0 384 512"><path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"/></svg></button>
       <button class="user-avatar" type="button" aria-label="User menu"><span class="avatar-circle">AI</span><span>AI Engineer</span></button>
     </div>
   </div>
@@ -745,7 +863,7 @@
               </div>
 
               <!-- Item count -->
-              <div style="font-size:14px;color:#6a6e73;margin-bottom:8px;" id="item-count">68 skills</div>
+              <div style="font-size:14px;color:#6a6e73;margin-bottom:8px;" id="item-count">73 skills</div>
 
               <!-- Active filter labels -->
               <div class="active-filters" id="active-filters"></div>
@@ -849,116 +967,104 @@
         </div>
 
         <!-- ==================== ADMIN VIEW ==================== -->
+        <!-- ==================== ADMIN VIEW (Skill catalog sources) ==================== -->
         <div id="view-admin" class="view">
-          <section class="pf-v6-c-page__main-section pf-m-light">
-            <div class="pf-v6-c-content">
-              <h1>Catalog Administration</h1>
-              <p>Manage skills, packs, trust tiers, and catalog source configurations.</p>
-            </div>
-          </section>
+          <div style="padding:24px 24px 0;">
+            <h1 style="font-size:28px;font-weight:500;margin:0 0 8px;color:#151515;">Skill catalog sources</h1>
+            <p style="font-size:14px;color:#6a6e73;margin:0 0 24px;max-width:800px;">Add and manage skill catalog sources. Each source is a YAML catalog file that can contain multiple skills for users in your organization.</p>
+            <button class="btn-add-source" type="button" onclick="alert('Add a source dialog would open here')">
+              <svg height="1em" width="1em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344V280H168c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H280v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
+              Add a source
+            </button>
+          </div>
+          <div style="padding:24px;">
+            <table class="admin-sources-table" id="admin-sources-table">
+              <thead>
+                <tr>
+                  <th style="width:28%;">Name</th>
+                  <th style="width:16%;">Skill visibility <span class="help-icon-inline" title="Controls which skills from this source are visible in the skill catalog">?</span></th>
+                  <th style="width:14%;">Source type</th>
+                  <th style="width:12%;">Enable <span class="help-icon-inline" title="Enable or disable this catalog source">?</span></th>
+                  <th style="width:18%;">Validation status</th>
+                  <th style="width:48px;"></th>
+                </tr>
+              </thead>
+              <tbody id="admin-sources-body"></tbody>
+            </table>
+          </div>
+        </div>
 
-          <!-- Admin tabs -->
-          <section class="pf-v6-c-page__main-section pf-m-light pf-m-no-padding" style="padding:0 var(--pf-t--global--spacer--md);">
-            <div class="pf-v6-c-tabs" id="admin-tabs">
-              <ul class="pf-v6-c-tabs__list" role="tablist">
-                <li class="pf-v6-c-tabs__item pf-m-current" role="presentation">
-                  <button class="pf-v6-c-tabs__link" role="tab" aria-selected="true" data-admintab="skills" onclick="switchAdminTab('skills',this)">
-                    <span class="pf-v6-c-tabs__item-text">Skills</span>
-                  </button>
+        <!-- ==================== MANAGE SOURCE VIEW ==================== -->
+        <div id="view-manage-source" class="view">
+          <div style="padding:16px 24px 0;">
+            <nav class="pf-v6-c-breadcrumb" aria-label="Breadcrumb">
+              <ol class="pf-v6-c-breadcrumb__list" role="list">
+                <li class="pf-v6-c-breadcrumb__item">
+                  <a href="#" class="pf-v6-c-breadcrumb__link" onclick="navigateTo('admin');return false;">Skill catalog sources</a>
                 </li>
-                <li class="pf-v6-c-tabs__item" role="presentation">
-                  <button class="pf-v6-c-tabs__link" role="tab" aria-selected="false" data-admintab="packs" onclick="switchAdminTab('packs',this)">
-                    <span class="pf-v6-c-tabs__item-text">Packs</span>
-                  </button>
+                <li class="pf-v6-c-breadcrumb__item">
+                  <span class="pf-v6-c-breadcrumb__item-divider">
+                    <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>
+                  </span>
+                  <span class="pf-v6-c-breadcrumb__link pf-m-current">Manage source</span>
                 </li>
-                <li class="pf-v6-c-tabs__item" role="presentation">
-                  <button class="pf-v6-c-tabs__link" role="tab" aria-selected="false" data-admintab="sources" onclick="switchAdminTab('sources',this)">
-                    <span class="pf-v6-c-tabs__item-text">Source Configs</span>
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </section>
+              </ol>
+            </nav>
+          </div>
+          <div style="display:flex;gap:40px;padding:24px;">
+            <div class="manage-source-form">
+              <h1 style="font-size:28px;font-weight:500;margin:0 0 8px;color:#151515;">Manage source</h1>
+              <p style="font-size:14px;color:#6a6e73;margin:0 0 32px;max-width:600px;">Configure which skills from this pre-loaded catalog source are visible in the skill catalog.</p>
 
-          <!-- Admin skills table -->
-          <section class="pf-v6-c-page__main-section">
-            <div id="admintab-skills" class="admin-tab-content">
-              <!-- Admin toolbar -->
-              <div class="pf-v6-c-toolbar" style="margin-bottom:var(--pf-t--global--spacer--sm);">
-                <div class="pf-v6-c-toolbar__content">
-                  <div class="pf-v6-c-toolbar__content-section" style="display:flex;gap:var(--pf-t--global--spacer--sm);align-items:center;flex-wrap:wrap;">
-                    <div class="pf-v6-c-toolbar__item" style="flex:1;min-width:200px;max-width:300px;">
-                      <div class="pf-v6-c-search-input">
-                        <div class="pf-v6-c-search-input__bar">
-                          <span class="pf-v6-c-search-input__text">
-                            <span class="pf-v6-c-search-input__icon">
-                              <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 512 512"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
-                            </span>
-                            <input class="pf-v6-c-search-input__text-input" type="text" placeholder="Search skills" aria-label="Search admin skills" id="admin-search" oninput="filterAdminTable()">
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="pf-v6-c-toolbar__item">
-                      <select class="pf-v6-c-form-control" id="admin-filter-pack" onchange="filterAdminTable()" aria-label="Filter by pack" style="min-width:140px;">
-                        <option value="">All packs</option>
-                        <option value="rh-basic">rh-basic</option>
-                        <option value="rh-sre">rh-sre</option>
-                        <option value="rh-developer">rh-developer</option>
-                        <option value="rh-virt">rh-virt</option>
-                        <option value="ocp-admin">ocp-admin</option>
-                        <option value="rh-ai-engineer">rh-ai-engineer</option>
-                        <option value="rh-automation">rh-automation</option>
-                      </select>
-                    </div>
-                    <div class="pf-v6-c-toolbar__item" style="margin-left:auto;">
-                      <span id="admin-item-count" style="font-size:var(--pf-t--global--font--size--sm);color:var(--pf-t--global--text--color--subtle);">68 skills</span>
-                    </div>
-                  </div>
+              <div class="manage-field-label">Name</div>
+              <div class="manage-field-value" id="manage-source-name"></div>
+
+              <div class="manage-field-label">Catalog YAML file</div>
+              <div class="manage-field-value" id="manage-source-yaml"></div>
+
+              <div class="manage-field-label">Skills</div>
+              <p style="font-size:14px;color:#151515;margin:0 0 16px;" id="manage-source-skills-count"></p>
+
+              <button class="expandable-toggle" id="manage-visibility-toggle" onclick="toggleManageVisibility()">
+                <svg fill="currentColor" height="0.75em" width="0.75em" viewBox="0 0 256 512"><path d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>
+                Skill visibility
+              </button>
+              <div id="manage-visibility-content" style="display:none;padding:16px 0 0;">
+                <p style="font-size:14px;color:#151515;line-height:1.6;margin:0 0 24px;max-width:700px;">Optionally filter which skills from your source appear in the skill catalog. If no filters are set, all skills from the source will be visible.</p>
+
+                <div class="manage-field-label">Included skills</div>
+                <p style="font-size:14px;color:#151515;line-height:1.5;margin:0 0 8px;max-width:700px;">Enter skill names to include from this source. Separate names with commas. Use an asterisk suffix for prefix matching (Example: rh-sre*).</p>
+                <textarea class="form-input" id="manage-included-textarea" rows="4" style="resize:vertical;max-width:700px;background:#fff;" placeholder="Example: CVE Explainer, Cluster Health Check, rh-sre*"></textarea>
+
+                <div style="margin-top:32px;">
+                  <div class="manage-field-label">Excluded skills</div>
+                  <p style="font-size:14px;color:#151515;line-height:1.5;margin:0 0 8px;max-width:700px;">Enter skill names to exclude from this source. Separate names with commas. Use wildcards for pattern matching (Example: *experimental*).</p>
+                  <textarea class="form-input" id="manage-excluded-textarea" rows="4" style="resize:vertical;max-width:700px;background:#fff;" placeholder="Example: *preview*"></textarea>
                 </div>
               </div>
 
-              <table class="pf-v6-c-table pf-m-grid-md" role="grid" aria-label="Skills administration table">
-                <thead class="pf-v6-c-table__thead">
-                  <tr class="pf-v6-c-table__tr" role="row">
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Name</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Pack</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Trust tier</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Signing</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Status</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody class="pf-v6-c-table__tbody" id="admin-table-body"></tbody>
-              </table>
-            </div>
-
-            <!-- Admin packs tab -->
-            <div id="admintab-packs" class="admin-tab-content" style="display:none;">
-              <table class="pf-v6-c-table pf-m-grid-md" role="grid" aria-label="Packs administration table">
-                <thead class="pf-v6-c-table__thead">
-                  <tr class="pf-v6-c-table__tr" role="row">
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Pack</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Persona</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Skills</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Maturity</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Source repo</th>
-                    <th class="pf-v6-c-table__th" role="columnheader" scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody class="pf-v6-c-table__tbody" id="admin-packs-body"></tbody>
-              </table>
-            </div>
-
-            <!-- Admin sources tab -->
-            <div id="admintab-sources" class="admin-tab-content" style="display:none;">
-              <div class="pf-v6-c-content">
-                <h3>Catalog source configurations</h3>
-                <p style="color:var(--pf-t--global--text--color--subtle);">YAML catalog source providers that feed skills into the catalog. Each source is baked into a ConfigMap shipped with the RHOAI operator.</p>
+              <div style="margin-top:48px;display:flex;align-items:center;gap:16px;">
+                <button class="btn-save" type="button" onclick="alert('Source saved');navigateTo('admin');">Save</button>
+                <button class="btn-cancel" type="button" onclick="navigateTo('admin')">Cancel</button>
               </div>
-              <div class="admin-source-cards" id="source-cards"></div>
             </div>
-          </section>
+            <div class="manage-preview">
+              <div class="manage-preview-card">
+                <h2 class="manage-preview-title">Skill catalog preview</h2>
+                <div class="manage-tabs">
+                  <button class="manage-tab active" onclick="switchManageTab('included',this)">Skills included</button>
+                  <button class="manage-tab" onclick="switchManageTab('excluded',this)">Skills excluded</button>
+                </div>
+                <div id="manage-tab-included">
+                  <p style="font-size:14px;color:#151515;margin:0 0 12px;" id="manage-included-count"></p>
+                  <div id="manage-included-list"></div>
+                </div>
+                <div id="manage-tab-excluded" style="display:none;">
+                  <p style="font-size:14px;color:#6a6e73;margin:0;">No skills are excluded from this source.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
   </div>
@@ -1086,7 +1192,16 @@ const SKILLS = [
   {name:"Configuration Drift Detector",slug:"drift-detect",pack:"rh-automation",persona:"Automation Lead",invocation:"/rh-auto-drift",trustTier:"Red Hat",signing:"signed",description:"Detects configuration drift between desired state and actual infrastructure, generates remediation playbooks.",version:"1.0.0",category:"Operations",apis:[],frameworks:["Claude Code","OpenCode"],status:"active",evalScore:0.86},
   {name:"Patching Orchestrator",slug:"patch-orchestrate",pack:"rh-automation",persona:"Automation Lead",invocation:"/rh-auto-patch",trustTier:"Red Hat",signing:"signed",description:"Orchestrates rolling patch operations across RHEL and OpenShift environments with pre/post checks and rollback capabilities.",version:"1.0.0",category:"Operations",apis:["Satellite API"],frameworks:["Claude Code"],status:"active",evalScore:0.88},
   {name:"Workflow Template Creator",slug:"workflow-template",pack:"rh-automation",persona:"Automation Lead",invocation:"/rh-auto-workflow",trustTier:"Red Hat",signing:"signed",description:"Creates AAP workflow templates with conditional branching, approval gates, and notification integrations.",version:"1.0.0",category:"Platform",apis:["AAP Controller API"],frameworks:["Claude Code","Cursor"],status:"active",evalScore:0.85},
-  {name:"Credential Manager",slug:"cred-manager",pack:"rh-automation",persona:"Automation Lead",invocation:"/rh-auto-creds",trustTier:"Red Hat",signing:"signed",description:"Manages automation credentials: vault encryption, credential type creation, external secret integration (HashiCorp, CyberArk).",version:"1.0.0",category:"Security",apis:["AAP Controller API"],frameworks:["Claude Code","OpenCode"],status:"active",evalScore:0.87}
+  {name:"Credential Manager",slug:"cred-manager",pack:"rh-automation",persona:"Automation Lead",invocation:"/rh-auto-creds",trustTier:"Red Hat",signing:"signed",description:"Manages automation credentials: vault encryption, credential type creation, external secret integration (HashiCorp, CyberArk).",version:"1.0.0",category:"Security",apis:["AAP Controller API"],frameworks:["Claude Code","OpenCode"],status:"active",evalScore:0.87},
+
+  // Partner skills (3)
+  {name:"Datadog Cluster Monitor",slug:"datadog-monitor",pack:"rh-sre",persona:"SRE",invocation:"/partner-datadog-monitor",trustTier:"Partner",signing:"signed",description:"Integrates Datadog monitoring with OpenShift clusters: agent deployment, custom dashboard generation, and alert correlation with cluster events.",version:"1.0.0",category:"Observability",apis:["Datadog API","OpenShift API"],frameworks:["Claude Code","Cursor"],status:"active",evalScore:0.87},
+  {name:"Snyk Security Scanner",slug:"snyk-scanner",pack:"rh-developer",persona:"Developer",invocation:"/partner-snyk-scan",trustTier:"Partner",signing:"signed",description:"Scans container images and application dependencies for vulnerabilities using Snyk. Integrates with OpenShift build pipelines for shift-left security.",version:"1.1.0",category:"Security",apis:["Snyk API"],frameworks:["Claude Code","Cursor","OpenCode"],status:"active",evalScore:0.89},
+  {name:"Palo Alto Network Policy",slug:"palo-alto-netpol",pack:"ocp-admin",persona:"OCP Admin",invocation:"/partner-paloalto-policy",trustTier:"Partner",signing:"signed",description:"Generates and validates Palo Alto-compatible network policies for OpenShift workloads. Maps Kubernetes network policies to Prisma Cloud enforcement.",version:"1.0.0",category:"Networking",apis:["Prisma Cloud API","OpenShift API"],frameworks:["Claude Code"],status:"active",evalScore:0.84},
+
+  // Enterprise / Organization skills (2)
+  {name:"Internal Compliance Auditor",slug:"internal-compliance",pack:"rh-sre",persona:"SRE",invocation:"/org-compliance-audit",trustTier:"Organization",signing:"unsigned",description:"Audits OpenShift clusters against organization-specific compliance baselines. Checks custom CIS profile overlays, internal tagging policies, and namespace naming conventions.",version:"0.5.0",category:"Security",apis:["OpenShift API"],frameworks:["Claude Code"],status:"active",evalScore:0.78},
+  {name:"Cost Allocation Reporter",slug:"cost-allocation",pack:"ocp-admin",persona:"OCP Admin",invocation:"/org-cost-report",trustTier:"Organization",signing:"unsigned",description:"Generates chargeback and showback reports by team, project, and namespace. Maps resource consumption to internal cost centers using custom label conventions.",version:"0.3.0",category:"Capacity",apis:["OpenShift API","Prometheus API"],frameworks:["Claude Code","Cursor"],status:"active",evalScore:0.75}
 ];
 
 const PACKS = [
@@ -1241,7 +1356,7 @@ function renderActiveFilters() {
   checkedPersonas.forEach(p => cont.innerHTML += `<span class="pf-v6-c-label pf-m-outline"><span class="pf-v6-c-label__content">Persona: ${p}</span><span class="pf-v6-c-label__actions"><button class="pf-v6-c-button pf-m-plain" aria-label="Remove persona filter" onclick="uncheckFilter('filter-persona-cb','${p}')">${closeIcon}</button></span></span>`);
   checkedCategories.forEach(c => cont.innerHTML += `<span class="pf-v6-c-label pf-m-outline"><span class="pf-v6-c-label__content">Category: ${c}</span><span class="pf-v6-c-label__actions"><button class="pf-v6-c-button pf-m-plain" aria-label="Remove category filter" onclick="uncheckFilter('filter-category-cb','${c}')">${closeIcon}</button></span></span>`);
   if(search) cont.innerHTML += `<span class="pf-v6-c-label pf-m-outline"><span class="pf-v6-c-label__content">Search: "${search}"</span><span class="pf-v6-c-label__actions"><button class="pf-v6-c-button pf-m-plain" aria-label="Remove search filter" onclick="document.getElementById('search-input').value='';filterCards();">${closeIcon}</button></span></span>`;
-  const hasFilters = trust || checkedPacks.length || checkedPersonas.length || checkedCategories.length || search;
+  const hasFilters = checkedPacks.length || checkedPersonas.length || checkedCategories.length || search;
   if(hasFilters) cont.innerHTML += `<button class="pf-v6-c-button pf-m-link pf-m-inline" type="button" onclick="clearFilters()" style="font-size:var(--pf-t--global--font--size--sm);">Clear all filters</button>`;
 }
 
@@ -1422,29 +1537,23 @@ function submitRegister() {
   closeRegisterModal();
 }
 
-function switchAdminTab(tabId, btn) {
-  document.querySelectorAll('#admin-tabs .pf-v6-c-tabs__item').forEach(i=>i.classList.remove('pf-m-current'));
-  document.querySelectorAll('#admin-tabs .pf-v6-c-tabs__link').forEach(l=>l.setAttribute('aria-selected','false'));
-  document.querySelectorAll('.admin-tab-content').forEach(c=>c.style.display='none');
-  btn.closest('.pf-v6-c-tabs__item').classList.add('pf-m-current');
-  btn.setAttribute('aria-selected','true');
-  document.getElementById('admintab-'+tabId).style.display='';
+// ===== DARK MODE =====
+function toggleDarkMode() {
+  document.body.classList.toggle('pf-v6-theme-dark');
 }
 
 // ===== VIEW NAVIGATION =====
 function navigateTo(view) {
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+view).classList.add('active');
+  const target = document.getElementById('view-'+view);
+  if(target) target.classList.add('active');
 
-  // Clear all nav highlights
   document.querySelectorAll('.app-sidebar .pf-v6-c-nav__link').forEach(l=>l.classList.remove('pf-m-current'));
   document.querySelectorAll('.app-sidebar .pf-v6-c-nav__item').forEach(i=>i.classList.remove('pf-m-current'));
 
-  // Collapse Settings and its sub-sections by default
   const settingsItem = document.getElementById('nav-settings');
   const skillResources = document.getElementById('nav-skill-resources');
 
-  // Helper to expand/collapse a nav section with hidden attribute
   function expandNav(li, expand) {
     if(!li) return;
     const btn = li.querySelector(':scope > button');
@@ -1466,8 +1575,14 @@ function navigateTo(view) {
     }
   }
 
-  // Highlight the correct nav item based on view
-  if(view === 'catalog' || view === 'detail') {
+  if(view === 'manage-source') {
+    expandNav(settingsItem, true);
+    if(settingsItem) settingsItem.classList.add('pf-m-current');
+    expandNav(skillResources, true);
+    if(skillResources) skillResources.classList.add('pf-m-current');
+    const adminLink2 = document.querySelector('[data-nav="admin"]');
+    if(adminLink2) { adminLink2.classList.add('pf-m-current'); adminLink2.closest('.pf-v6-c-nav__item').classList.add('pf-m-current'); }
+  } else if(view === 'catalog' || view === 'detail') {
     expandNav(settingsItem, false);
     expandNav(skillResources, false);
 
@@ -1496,7 +1611,7 @@ function navigateTo(view) {
     }
   }
 
-  window.scrollTo(0,0);
+  document.querySelector('.app-content').scrollTo(0,0);
 }
 
 // ===== NAV TOGGLE =====
@@ -1522,95 +1637,109 @@ function toggleNavSection(btn) {
   }
 }
 
-// ===== ADMIN TABLE =====
-function renderAdminTable() {
-  const body = document.getElementById('admin-table-body');
+// ===== ADMIN (Skill catalog sources) =====
+function renderAdminSources() {
+  const body = document.getElementById('admin-sources-body');
   body.innerHTML = '';
-  SKILLS.forEach((s,i) => {
-    body.innerHTML += `
-      <tr class="pf-v6-c-table__tr" role="row" data-admin-pack="${s.pack}" data-admin-name="${s.name.toLowerCase()}">
-        <td class="pf-v6-c-table__td" role="cell"><a href="#" onclick="showDetail(${i});return false;" style="color:var(--pf-t--global--color--brand--default);text-decoration:none;">${s.name}</a></td>
-        <td class="pf-v6-c-table__td" role="cell"><span class="pf-v6-c-label pf-m-outline pf-m-compact"><span class="pf-v6-c-label__content">${s.pack}</span></span></td>
-        <td class="pf-v6-c-table__td" role="cell"><span class="pf-v6-c-label pf-m-compact pf-m-${tierColor(s.trustTier)}"><span class="pf-v6-c-label__content">${s.trustTier}</span></span></td>
-        <td class="pf-v6-c-table__td" role="cell">${signingLabel(s.signing)}</td>
-        <td class="pf-v6-c-table__td" role="cell"><span class="status-dot ${s.status}"></span>${s.status}</td>
-        <td class="pf-v6-c-table__td" role="cell">
-          <div class="pf-v6-c-overflow-menu">
-            <button class="pf-v6-c-button pf-m-plain" type="button" aria-label="Actions" onclick="alert('Actions menu for ${s.name}')">
-              <svg fill="currentColor" height="1em" width="1em" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg>
-            </button>
-          </div>
-        </td>
-      </tr>
-    `;
+  SOURCES.forEach((src, i) => {
+    const kebabId = 'kebab-' + i;
+    body.innerHTML += `<tr>
+      <td><span class="source-name">${src.name}</span></td>
+      <td><span class="visibility-label">All skills</span></td>
+      <td>YAML file</td>
+      <td><label class="pf-v6-c-switch"><input type="checkbox" ${src.status === 'active' ? 'checked' : ''}><span class="pf-v6-c-switch__toggle"></span></label></td>
+      <td><span class="validation-label">${src.status === 'active' ? 'Ready' : 'Pending'}</span></td>
+      <td><div class="kebab-wrapper"><button class="kebab-btn" type="button" aria-label="Actions" onclick="toggleKebab('${kebabId}')"><svg fill="currentColor" height="1.2em" width="1.2em" viewBox="0 0 128 512"><path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z"/></svg></button><div class="kebab-menu" id="${kebabId}"><button onclick="openManageSource(${i});closeAllKebabs();">Manage source</button><button onclick="navigateTo('catalog');closeAllKebabs();">View in catalog</button></div></div></td>
+    </tr>`;
   });
 }
 
-function filterAdminTable() {
-  const search = document.getElementById('admin-search').value.toLowerCase();
-  const pack = document.getElementById('admin-filter-pack').value;
-  const rows = document.querySelectorAll('#admin-table-body tr');
-  let visible = 0;
-  rows.forEach(r => {
-    const matchSearch = !search || r.dataset.adminName.includes(search);
-    const matchPack = !pack || r.dataset.adminPack === pack;
-    r.style.display = matchSearch && matchPack ? '' : 'none';
-    if(matchSearch && matchPack) visible++;
-  });
-  document.getElementById('admin-item-count').textContent = `${visible} skill${visible!==1?'s':''}`;
+function toggleKebab(id) {
+  const menu = document.getElementById(id);
+  const wasOpen = menu.classList.contains('open');
+  closeAllKebabs();
+  if (!wasOpen) menu.classList.add('open');
 }
 
-function renderAdminPacks() {
-  const body = document.getElementById('admin-packs-body');
-  body.innerHTML = '';
-  PACKS.forEach(p => {
-    const matColor = p.maturity === 'GREEN' ? 'green' : 'orange';
-    body.innerHTML += `
-      <tr class="pf-v6-c-table__tr" role="row">
-        <td class="pf-v6-c-table__td" role="cell"><strong>${p.name}</strong></td>
-        <td class="pf-v6-c-table__td" role="cell">${p.persona}</td>
-        <td class="pf-v6-c-table__td" role="cell">${p.count}</td>
-        <td class="pf-v6-c-table__td" role="cell"><span class="pf-v6-c-label pf-m-compact pf-m-${matColor}"><span class="pf-v6-c-label__content">${p.maturity}</span></span></td>
-        <td class="pf-v6-c-table__td" role="cell" style="font-family:var(--pf-t--global--font--family--mono);font-size:var(--pf-t--global--font--size--xs);">${p.repo}</td>
-        <td class="pf-v6-c-table__td" role="cell"><span class="status-dot ${p.status}"></span>${p.status}</td>
-      </tr>
-    `;
-  });
+function closeAllKebabs() {
+  document.querySelectorAll('.kebab-menu').forEach(m => m.classList.remove('open'));
 }
 
-function renderSourceCards() {
-  const cont = document.getElementById('source-cards');
-  cont.innerHTML = '';
-  SOURCES.forEach(src => {
-    cont.innerHTML += `
-      <div class="pf-v6-c-card">
-        <div class="pf-v6-c-card__header" style="display:flex;justify-content:space-between;align-items:center;">
-          <div class="pf-v6-c-card__title"><span class="pf-v6-c-card__title-text">${src.name}</span></div>
-          <span class="pf-v6-c-label pf-m-compact pf-m-${src.status==='active'?'green':'orange'}"><span class="pf-v6-c-label__content">${src.status}</span></span>
-        </div>
-        <div class="pf-v6-c-card__body">
-          <dl class="pf-v6-c-description-list pf-m-compact pf-m-horizontal" style="--pf-v6-c-description-list--m-horizontal__term--width:6rem;">
-            <div class="pf-v6-c-description-list__group"><dt class="pf-v6-c-description-list__term"><span class="pf-v6-c-description-list__text">Type</span></dt><dd class="pf-v6-c-description-list__description"><span class="pf-v6-c-label pf-m-outline pf-m-compact"><span class="pf-v6-c-label__content">${src.type}</span></span></dd></div>
-            <div class="pf-v6-c-description-list__group"><dt class="pf-v6-c-description-list__term"><span class="pf-v6-c-description-list__text">Repository</span></dt><dd class="pf-v6-c-description-list__description" style="font-family:var(--pf-t--global--font--family--mono);font-size:var(--pf-t--global--font--size--xs);">${src.repo}</dd></div>
-            <div class="pf-v6-c-description-list__group"><dt class="pf-v6-c-description-list__term"><span class="pf-v6-c-description-list__text">Skills</span></dt><dd class="pf-v6-c-description-list__description">${src.skills}</dd></div>
-          </dl>
-          <p style="margin-top:var(--pf-t--global--spacer--sm);font-size:var(--pf-t--global--font--size--sm);color:var(--pf-t--global--text--color--subtle);">${src.description}</p>
-        </div>
-        <div class="pf-v6-c-card__footer">
-          <button class="pf-v6-c-button pf-m-secondary pf-m-small" type="button" onclick="alert('Edit source: ${src.name}')">Edit</button>
-          <button class="pf-v6-c-button pf-m-link pf-m-small" type="button" onclick="alert('Sync source: ${src.name}')">Sync now</button>
-        </div>
-      </div>
-    `;
+function openManageSource(idx) {
+  const src = SOURCES[idx];
+  document.getElementById('manage-source-name').textContent = src.name;
+  document.getElementById('manage-source-yaml').textContent = src.name.toLowerCase().replace(/\s+/g, '-') + '-catalog.yaml';
+  const totalSkills = src.skills;
+  document.getElementById('manage-source-skills-count').textContent = totalSkills + ' skills from ' + src.repo.split('/').pop();
+
+  const includedList = document.getElementById('manage-included-list');
+  includedList.innerHTML = '';
+
+  let includedNames = [];
+  let excludedNames = [];
+  if (src.name === 'ex-agentic-plugins') {
+    includedNames = ['CVE Explainer','Diagnostic Data Gathering','Security MCP Setup','Product Lifecycle Advisor','Support Severity Helper','Bootstrap Installer','Cluster Health Check','Node Troubleshooter','Pod Diagnostics','Service Mesh Analyzer','Log Aggregator Setup','Alert Rule Generator'];
+    excludedNames = ['Backup Strategy Advisor','Multi-Cluster VM Manager','GPU Passthrough Setup'];
+  } else if (src.name === 'openshift-agentic-skills') {
+    includedNames = ['Cluster Configuration Advisor','Operator Lifecycle Manager','Namespace Provisioner'];
+  } else if (src.name === 'odh-ai-helpers') {
+    includedNames = ['Model Serving Setup','vLLM Configuration','KServe Deployment Helper','NVIDIA NIM Integration','Pipeline Builder','Model Registry Manager'];
+  }
+
+  const includedSkills = SKILLS.filter(s => includedNames.includes(s.name));
+  const excludedSkills = SKILLS.filter(s => excludedNames.includes(s.name));
+
+  document.getElementById('manage-included-count').textContent = includedNames.length + ' of ' + totalSkills + ' skills included:';
+
+  const textarea = document.getElementById('manage-included-textarea');
+  if (textarea) textarea.value = includedNames.join(', ');
+
+  const excludeTextarea = document.getElementById('manage-excluded-textarea');
+  if (excludeTextarea) excludeTextarea.value = excludedNames.length ? excludedNames.join(', ') : '';
+
+  includedSkills.forEach(s => {
+    includedList.innerHTML += `<div class="skill-include-item"><span class="skill-include-icon"><svg fill="currentColor" height="1.2em" width="1.2em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg></span><span>${s.name}</span></div>`;
   });
+
+  const excludedTab = document.getElementById('manage-tab-excluded');
+  if (excludedSkills.length > 0) {
+    excludedTab.innerHTML = `<p style="font-size:14px;color:#151515;margin:0 0 12px;">${excludedNames.length} of ${totalSkills} skills excluded:</p>`;
+    excludedSkills.forEach(s => {
+      excludedTab.innerHTML += `<div class="skill-include-item"><span style="color:#c9190b;"><svg fill="currentColor" height="1.2em" width="1.2em" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg></span><span>${s.name}</span></div>`;
+    });
+  } else {
+    excludedTab.innerHTML = '<p style="font-size:14px;color:#6a6e73;margin:0;">No skills are excluded from this source.</p>';
+  }
+
+  const toggle = document.getElementById('manage-visibility-toggle');
+  toggle.classList.remove('expanded');
+  document.getElementById('manage-visibility-content').style.display = 'none';
+
+  document.querySelectorAll('.manage-tab').forEach((t,i) => t.classList.toggle('active', i === 0));
+  document.getElementById('manage-tab-included').style.display = '';
+  document.getElementById('manage-tab-excluded').style.display = 'none';
+
+  navigateTo('manage-source');
+}
+
+function toggleManageVisibility() {
+  const toggle = document.getElementById('manage-visibility-toggle');
+  const content = document.getElementById('manage-visibility-content');
+  toggle.classList.toggle('expanded');
+  content.style.display = toggle.classList.contains('expanded') ? '' : 'none';
+}
+
+function switchManageTab(tab, btn) {
+  document.querySelectorAll('.manage-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('manage-tab-included').style.display = tab === 'included' ? '' : 'none';
+  document.getElementById('manage-tab-excluded').style.display = tab === 'excluded' ? '' : 'none';
 }
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
   renderCards();
-  renderAdminTable();
-  renderAdminPacks();
-  renderSourceCards();
+  renderAdminSources();
   // Initialize nav: set inline display on ALL expandable subnavs
   // Walk the tree top-down: if a parent is collapsed, children inherit hidden
   function initNavDisplay(container) {
@@ -1628,6 +1757,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   const navRoot = document.querySelector('.pf-v6-c-nav > .pf-v6-c-nav__list');
   if (navRoot) initNavDisplay(navRoot);
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.kebab-wrapper')) closeAllKebabs();
+  });
 });
 </script>
 </body>
