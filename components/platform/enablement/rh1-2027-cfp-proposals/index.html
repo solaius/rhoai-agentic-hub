@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Red Hat One 2027 — CFP Proposal Candidates</title>
+  <meta name="description" content="Ranked CFP proposal ideas for Red Hat One 2027, grounded in customer demand, competitive intelligence, and strategic research." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --rh-teal:        #009596;
+      --rh-blue:        #0066CC;
+      --rh-blue-light:  #4394e5;
+      --rh-purple:      #6753AC;
+      --rh-green:       #3E8635;
+      --rh-orange:      #F4B400;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --fs-display-xl: 2.8rem;
+      --fs-display-lg: 2rem;
+      --fs-h2:         1.5rem;
+      --fs-body-lead:  1.15rem;
+      --fs-body:       0.95rem;
+      --fs-label:      0.7rem;
+      --fs-small:      0.6rem;
+      --space-xs:  0.5rem;
+      --space-sm:  0.75rem;
+      --space-md:  1rem;
+      --space-lg:  1.5rem;
+      --space-xl:  2rem;
+      --space-2xl: 3rem;
+      --content-max: 1100px;
+      --stagger-delay:    80ms;
+      --transition-exit:  220ms;
+      --transition-enter: 350ms;
+      --ease-out-pop:     cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    main.deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: var(--bg-canvas);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      min-height: 100vh;
+      padding: 1.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: scale(0.96);
+      transition:
+        opacity var(--transition-exit) ease-in,
+        transform var(--transition-exit) ease-in,
+        visibility 0s linear var(--transition-exit);
+    }
+    .slide-inner {
+      max-width: var(--content-max);
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .slide-eyebrow {
+      font-size: var(--fs-label);
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--rh-red);
+      font-family: var(--font-mono);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .display-xl { font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
+    .display-lg { font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
+    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; font-family: var(--font-text); }
+    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; font-family: var(--font-text); }
+    .accent     { color: var(--rh-red); }
+
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes scale-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+
+    main.deck .slide.current .anim-fade-up     { animation: fade-up    400ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-fade-in     { animation: fade-in    400ms ease-out both;           animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-right { animation: slide-right 500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-slide-left  { animation: slide-left  500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-scale-in    { animation: scale-in   450ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+
+    /* Badges */
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.55rem;
+      border-radius: 3px;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .badge-red { background: rgba(238,0,0,0.12); color: var(--rh-red); }
+    .badge-teal { background: rgba(0,149,150,0.12); color: var(--rh-teal); }
+    .badge-blue { background: rgba(0,102,204,0.12); color: var(--rh-blue-light); }
+    .badge-green { background: rgba(62,134,53,0.15); color: var(--rh-green); }
+    .badge-purple { background: rgba(103,83,172,0.12); color: var(--rh-purple); }
+    .badge-orange { background: rgba(244,180,0,0.12); color: var(--rh-orange); }
+
+    /* Rank number */
+    .rank {
+      font-family: var(--font-sans);
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(238,0,0,0.15);
+      position: absolute;
+      top: 0.5rem;
+      right: 1rem;
+      line-height: 1;
+    }
+
+    /* Stat strip */
+    .stat-strip {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .stat-strip .stat-num {
+      font-family: var(--font-sans);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--rh-red);
+      line-height: 1;
+    }
+    .stat-strip .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.2rem;
+    }
+
+    /* Summary table */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-text);
+      font-size: 0.78rem;
+    }
+    .summary-table th {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--rh-red);
+      text-align: left;
+      padding: 0.5rem 0.6rem;
+      border-bottom: 2px solid var(--rh-red);
+      font-weight: 600;
+    }
+    .summary-table td {
+      padding: 0.45rem 0.6rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      vertical-align: middle;
+    }
+    .summary-table tr:hover td {
+      background: rgba(238,0,0,0.04);
+    }
+    .summary-table .rank-cell {
+      font-family: var(--font-sans);
+      font-weight: 800;
+      color: var(--rh-red);
+      font-size: 0.85rem;
+      width: 2rem;
+      text-align: center;
+    }
+    .summary-table .title-cell {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+    }
+
+    /* Slide-level recommendation callout (visible on proposal slides, also read by notes panel JS) */
+    .slide .slide-notes {
+      margin-top: 0;
+      padding: 0.65rem 1rem 0.65rem 1.1rem;
+      background: linear-gradient(135deg, rgba(244,180,0,0.04), rgba(244,180,0,0.02));
+      border: 1px solid rgba(244,180,0,0.18);
+      border-radius: 8px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+      line-height: 1.55;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+    .slide .slide-notes::before {
+      content: 'WHY THIS RANKS HERE';
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--rh-orange);
+      background: rgba(244,180,0,0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      margin-top: 0.05rem;
+      white-space: nowrap;
+    }
+    .proposal-rule {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244,180,0,0.25), rgba(244,180,0,0.35), rgba(244,180,0,0.25), transparent);
+      margin: 0.8rem 0;
+    }
+    /* Hide notes on title, context, summary, and CTA slides — only show on proposal slides */
+    .slide[data-slide="1"] .slide-notes,
+    .slide[data-slide="2"] .slide-notes,
+    .slide[data-slide="3"] .slide-notes,
+    .slide[data-slide="14"] .slide-notes {
+      display: none;
+    }
+
+    /* Proposal slide layout */
+    .proposal-badges {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.4rem;
+    }
+    .proposal-separator {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--rh-red), rgba(238,0,0,0.15), transparent);
+      margin: 0.8rem 0;
+    }
+    .proposal-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: stretch;
+    }
+    .desc-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .desc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--rh-red), rgba(238,0,0,0.3));
+    }
+    .desc-card .desc-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--rh-red);
+      margin-bottom: 0.5rem;
+    }
+    .desc-card p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .cai-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .cai-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--rh-teal), rgba(0,149,150,0.3));
+    }
+    .cai-card .cai-level {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 3px;
+      margin-bottom: 0.6rem;
+    }
+    .cai-level-needed {
+      background: rgba(0,149,150,0.12);
+      color: var(--rh-teal);
+    }
+    .cai-level-optional {
+      background: rgba(244,180,0,0.12);
+      color: var(--rh-orange);
+    }
+    .cai-level-critical {
+      background: rgba(238,0,0,0.12);
+      color: var(--rh-red);
+    }
+    .cai-level-none {
+      background: rgba(138,138,138,0.12);
+      color: var(--text-muted);
+    }
+    .cai-card p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+      line-height: 1.6;
+      margin: 0;
+    }
+    .cai-card .cai-items {
+      list-style: none;
+      padding: 0;
+      margin: 0.4rem 0 0;
+    }
+    .cai-card .cai-items li {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+      padding: 0.2rem 0 0.2rem 1rem;
+      position: relative;
+      line-height: 1.45;
+    }
+    .cai-card .cai-items li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55rem;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--rh-teal);
+    }
+
+    /* Support matrix */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 2.5fr 1fr 1fr 1fr;
+      gap: 0;
+      font-size: 0.78rem;
+    }
+    .matrix-header {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--rh-red);
+      padding: 0.5rem 0.6rem;
+      border-bottom: 2px solid var(--rh-red);
+      font-weight: 600;
+    }
+    .matrix-cell {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-family: var(--font-text);
+      display: flex;
+      align-items: center;
+    }
+    .matrix-cell.title-col {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+    }
+    .dot-yes {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--rh-teal);
+      display: inline-block;
+    }
+    .dot-maybe {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--rh-orange);
+      display: inline-block;
+    }
+    .dot-no {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-subtle);
+      display: inline-block;
+    }
+
+    /* Controls */
+    .deck-controls {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      background: rgba(21, 21, 21, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 0.5rem 1.1rem;
+      z-index: 50;
+    }
+    .deck-controls button {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      border: none;
+      color: var(--rh-red);
+      font-size: 1.3rem;
+      cursor: pointer;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 180ms ease-out, color 180ms ease-out;
+    }
+    .deck-controls button:hover:not(:disabled) { background: rgba(238, 0, 0, 0.15); color: #ff4444; }
+    .deck-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+    .deck-dots { display: flex; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
+    .deck-dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; background: var(--text-muted); transition: background 180ms, transform 180ms; color: transparent; font-size: 0; border: none; cursor: pointer; }
+    .deck-dots button[aria-current="true"] { background: var(--rh-red); transform: scale(1.4); box-shadow: 0 0 12px rgba(238, 0, 0, 0.5); }
+    .deck-dots button:hover { background: #ff4444; }
+    .deck-counter { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.06em; padding: 0 var(--space-sm); border-left: 1px solid var(--border-subtle); }
+    .deck-controls button:focus-visible, .deck-dots button:focus-visible { outline: 2px solid var(--rh-red); outline-offset: 2px; }
+
+    /* Overview */
+    .deck-overview { position: fixed; inset: 0; background: rgba(21,21,21,0.97); backdrop-filter: blur(12px); z-index: 100; padding: 4rem 3rem; overflow-y: auto; }
+    .deck-overview[hidden] { display: none; }
+    .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1200px; margin: 0 auto; }
+    .overview-thumb { aspect-ratio: 16/10; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.8rem; cursor: pointer; text-align: left; color: var(--text-secondary); display: flex; flex-direction: column; justify-content: space-between; font-family: var(--font-sans); transition: border-color 180ms, transform 180ms; }
+    .overview-thumb:hover, .overview-thumb:focus-visible { border-color: var(--rh-red); transform: translateY(-2px); outline: none; }
+    .overview-thumb .num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-red); letter-spacing: 0.15em; }
+    .overview-thumb .ttl { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); line-height: 1.25; }
+    .overview-thumb .beat { font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    /* Notes */
+    .deck-notes { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(21,21,21,0.95); border-top: 1px solid var(--rh-red); padding: 1rem 1.5rem; z-index: 60; }
+    .deck-notes[hidden] { display: none; }
+    .notes-label { color: var(--rh-red); font-size: var(--fs-label); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin: 0 0 0.3rem; }
+    .notes-body { color: var(--text-secondary); font-size: 0.9rem; margin: 0; font-family: var(--font-text); }
+    .deck-notes kbd { font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 0.15rem 0.4rem; border-radius: 3px; color: var(--rh-red); }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 180ms !important; }
+      main.deck .slide.current .anim-fade-up,
+      main.deck .slide.current .anim-slide-right,
+      main.deck .slide.current .anim-slide-left,
+      main.deck .slide.current .anim-scale-in,
+      main.deck .slide.current .anim-fade-in { animation: fade-in 180ms ease-out both; }
+    }
+
+    @media print {
+      html, body, main.deck { overflow: visible; height: auto; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+      main.deck { background: var(--bg-canvas) !important; }
+      .deck-controls, .deck-overview, .deck-notes { display: none !important; }
+      .slide { position: relative; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto; page-break-after: always; break-after: page; background: var(--bg-canvas); padding: 0.5in; min-height: auto; }
+      .slide-eyebrow { color: var(--rh-red) !important; }
+    }
+
+    @media (max-width: 768px) {
+      :root { --fs-display-xl: 1.8rem; --fs-display-lg: 1.4rem; --fs-body-lead: 1rem; }
+      .slide { padding: 2rem 1.25rem; }
+      .deck-controls { padding: 0.3rem 0.6rem; gap: 0.5rem; }
+      .deck-controls button { width: 32px; height: 32px; font-size: 1.05rem; }
+      .deck-dots button { width: 8px; height: 8px; }
+      .overview-grid { grid-template-columns: repeat(2, 1fr); }
+      .summary-table { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" data-slide-current="1" tabindex="0">
+
+    <!-- ===== SLIDE 1: TITLE ===== -->
+    <section class="slide" data-slide="1" role="group" aria-label="Title">
+      <div class="slide-inner" style="display: flex; flex-direction: column; justify-content: center; min-height: 85vh; position: relative;">
+        <div style="position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(238,0,0,0.2) 0%, transparent 70%); pointer-events: none;"></div>
+        <div class="anim-fade-up" style="--index: 0">
+          <div class="slide-eyebrow">RED HAT ONE 2027</div>
+        </div>
+        <h1 class="display-xl anim-fade-up" style="--index: 1"><span class="accent">CFP Proposal</span> Candidates</h1>
+        <p class="lead anim-fade-up" style="--index: 2">10 ranked presentation ideas grounded in customer demand, competitive intelligence, and strategic research across the Red Hat AI agentic portfolio.</p>
+        <div class="anim-fade-up" style="--index: 3; display: flex; gap: 2.5rem; margin-top: 2rem;">
+          <div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">10</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Proposals</div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">34</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Customer accounts<br>informing topics</div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">4</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Session formats<br>covered</div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-orange);">Aug 7</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Submission<br>deadline</div>
+          </div>
+        </div>
+        <div class="slide-notes">Opening slide. RH1 2027 is January 18-21 in Las Vegas. CFP closes August 7. 7,000+ field associates attend (87% ICs). Each submission must partner with someone from Global Sales as a co-speaker.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 2: CONTEXT ===== -->
+    <section class="slide" data-slide="2" role="group" aria-label="Context">
+      <div class="slide-inner">
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">CFP REQUIREMENTS</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1">What Makes a <span class="accent">Winning</span> Proposal</h2>
+        <div class="anim-fade-up" style="--index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-red); border-radius: 0 8px 8px 0; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-red); margin-bottom: 0.4rem; font-weight: 600;">Audience</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">7,000+ Red Hat field associates: sellers, SAs, specialists, TAMs. 87% ICs, 13% managers. Americas 43%, EMEA 31%, APAC 26%.</div>
+          </div>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-teal); border-radius: 0 8px 8px 0; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-teal); margin-bottom: 0.4rem; font-weight: 600;">Session Types</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Breakouts (45 min), Panels (45 min), Interactive (45/120 min), Hands-On Labs (120 min). Variety is valued.</div>
+          </div>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-blue); border-radius: 0 8px 8px 0; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-blue-light); margin-bottom: 0.4rem; font-weight: 600;">What Wins</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Customer stories, live demos, interactive elements, practical takeaways. Include successes and failures. No product pitches.</div>
+          </div>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-orange); border-radius: 0 8px 8px 0; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-orange); margin-bottom: 0.4rem; font-weight: 600;">Requirements</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Must partner with Global Sales co-speaker. Topic: "AI Platform." Product: "Red Hat AI." Deadline: August 7, 11:59 PM EST.</div>
+          </div>
+        </div>
+        <div class="anim-fade-up" style="--index: 3; margin-top: 1.2rem; border-left: 3px solid var(--rh-red); padding: 0.6rem 1rem; background: rgba(238,0,0,0.04); border-radius: 0 6px 6px 0;">
+          <p style="font-size: 0.85rem; color: var(--text-primary); font-family: var(--font-text); line-height: 1.5; margin: 0;"><strong>Ask for CAI:</strong> Several proposals include demos, interactive workshops, or hands-on labs that would benefit from CAI team support. Those are flagged on each proposal slide and summarized on slide 14.</p>
+        </div>
+        <div class="slide-notes">Key context from the CFP Guide. The audience is internal Red Hat field associates, not customers. Each proposal must include a Global Sales co-speaker. Topic = AI Platform, Product = Red Hat AI.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 3: SUMMARY TABLE ===== -->
+    <section class="slide" data-slide="3" role="group" aria-label="Summary">
+      <div class="slide-inner">
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">AT A GLANCE</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1">All <span class="accent">10</span> Proposals Ranked</h2>
+        <div class="anim-fade-up" style="--index: 2; margin-top: 0.5rem;">
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th style="width: 2rem;">#</th>
+                <th>Title</th>
+                <th style="width: 7.5rem;">Format</th>
+                <th style="width: 9rem;">Primary Audience</th>
+                <th style="width: 5rem;">CAI</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="rank-cell">1</td>
+                <td class="title-cell">Why 88% of Agent Pilots Fail</td>
+                <td><span class="badge badge-red">Breakout</span></td>
+                <td><span class="badge badge-blue">All</span></td>
+                <td style="text-align: center;"><span class="dot-yes" title="Demo support needed"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">2</td>
+                <td class="title-cell">Token Economics: The Hidden Crisis</td>
+                <td><span class="badge badge-red">Breakout</span></td>
+                <td><span class="badge badge-blue">Sellers</span></td>
+                <td style="text-align: center;"><span class="dot-maybe" title="Optional demo"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">3</td>
+                <td class="title-cell">The Complete MCP Ecosystem</td>
+                <td><span class="badge badge-red">Breakout</span> <span class="badge badge-green">Lab</span></td>
+                <td><span class="badge badge-blue">Tech Seller</span></td>
+                <td style="text-align: center;"><span class="dot-yes" title="Demo + lab support needed"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">4</td>
+                <td class="title-cell">Agent Security: OpenShell + SPIFFE</td>
+                <td><span class="badge badge-red">Breakout</span></td>
+                <td><span class="badge badge-blue">Specialist</span></td>
+                <td style="text-align: center;"><span class="dot-yes" title="Demo support needed"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">5</td>
+                <td class="title-cell">What Enterprises Are Really Asking For</td>
+                <td><span class="badge badge-purple">Panel</span></td>
+                <td><span class="badge badge-blue">All</span></td>
+                <td style="text-align: center;"><span class="dot-no" title="No CAI needed"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">6</td>
+                <td class="title-cell">Red Hat AI Architecture for the Field</td>
+                <td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td>
+                <td><span class="badge badge-blue">Tech Seller</span></td>
+                <td style="text-align: center;"><span class="dot-maybe" title="Optional diagrams"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">7</td>
+                <td class="title-cell">Shadow Agents: The New Shadow IT</td>
+                <td><span class="badge badge-red">Breakout</span></td>
+                <td><span class="badge badge-blue">Sellers</span></td>
+                <td style="text-align: center;"><span class="dot-maybe" title="Optional demo"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">8</td>
+                <td class="title-cell">AI Supply Chain Under Attack</td>
+                <td><span class="badge badge-red">Breakout</span></td>
+                <td><span class="badge badge-blue">Tech Seller</span></td>
+                <td style="text-align: center;"><span class="dot-maybe" title="Optional demo"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">9</td>
+                <td class="title-cell">Governing AI in Regulated Industries</td>
+                <td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td>
+                <td><span class="badge badge-blue">Sellers</span></td>
+                <td style="text-align: center;"><span class="dot-no" title="No CAI needed"></span></td>
+              </tr>
+              <tr>
+                <td class="rank-cell">10</td>
+                <td class="title-cell">Hands-On: Build, Deploy, Govern an Agent</td>
+                <td><span class="badge badge-green">Lab 120m</span></td>
+                <td><span class="badge badge-blue">Specialist</span></td>
+                <td style="text-align: center;"><span class="dot-yes" title="Lab environment needed"></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="display: flex; gap: 1.5rem; margin-top: 0.8rem; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">
+            <span><span class="dot-yes" style="vertical-align: middle;"></span> CAI support needed</span>
+            <span><span class="dot-maybe" style="vertical-align: middle;"></span> Optional / nice-to-have</span>
+            <span><span class="dot-no" style="vertical-align: middle;"></span> No CAI needed</span>
+          </div>
+        </div>
+        <div class="slide-notes">Summary view of all 10 proposals. CAI column indicates which proposals need CAI team support for demos, interactive elements, or lab environments. Recommendation: submit 3-5 proposals across different formats.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 4: PROPOSAL #1 ===== -->
+    <section class="slide" data-slide="4" role="group" aria-label="Proposal 1">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">01</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #1</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">The Agentic Enterprise: Why <span class="accent">88%</span> of Agent Pilots Fail</h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-teal">or Interactive 45m</span>
+          <span class="badge badge-blue">All audiences</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div class="stat-strip" style="margin-bottom: 0.8rem;">
+            <div><div class="stat-num">88%</div><div class="stat-label">Pilots fail</div></div>
+            <div><div class="stat-num">40%</div><div class="stat-label">Projects canceled<br>(Gartner, by 2027)</div></div>
+            <div><div class="stat-num">21%</div><div class="stat-label">Have mature<br>governance</div></div>
+            <div><div class="stat-num">22%</div><div class="stat-label">Report negative<br>ROI at 12 months</div></div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>The master narrative for Red Hat AI's agentic strategy. Walks through the three enterprise blockers &mdash; governance, security, cost &mdash; and shows how Red Hat AI closes each gap with a live demo: ungoverned prototype to production-ready with identity, policy, and audit trail. Every attendee leaves with the "why Red Hat for agents" story.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Live demo of the full governance stack in action</li>
+              <li>Deploy an agent, show it running ungoverned</li>
+              <li>Add OpenShell sandboxing + SPIFFE identity</li>
+              <li>AI Gateway policy enforcement + audit trail</li>
+              <li>Before/after contrast is the dramatic arc</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">This is the #1 recommendation because it provides the master narrative every seller can use. The demo shows the full governance stack in action. Natural sales partnership with any SA or seller working AI deals. Could also run as a 45-min interactive with audience Q&amp;A.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 5: PROPOSAL #2 ===== -->
+    <section class="slide" data-slide="5" role="group" aria-label="Proposal 2">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">02</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #2</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Token Economics: The <span class="accent">Hidden Crisis</span> in Enterprise AI</h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-blue">General + Technical Seller</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div class="stat-strip" style="margin-bottom: 0.8rem;">
+            <div><div class="stat-num">90%</div><div class="stat-label">Per-token cost<br>drop since Jan 2025</div></div>
+            <div><div class="stat-num">1,001%</div><div class="stat-label">Consumption<br>growth</div></div>
+            <div><div class="stat-num">24x</div><div class="stat-label">Token usage growth<br>by 2030 (Goldman)</div></div>
+            <div><div class="stat-num">$7M</div><div class="stat-label">Avg enterprise<br>AI budget (2026)</div></div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>The Jevons Paradox for AI: cheaper tokens don't save money, they explode consumption. Uber burned its entire 2026 AI budget by April. Agentic workloads (multi-turn loops, tool calls, fan-out) accelerate the burn. Self-hosted inference on Red Hat AI (vLLM, llm-d, RHEL AI) shifts from cost optimization to structural necessity. Gives every seller the economic argument that flips the "cloud AI is easier" objection.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Data-driven slides with cost modeling</li>
+              <li>Optional live demo: self-hosted inference cost vs. API pricing</li>
+              <li>CAI could build a TCO calculator or cost modeling tool</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">Unique Red Hat argument no competitor can make — hyperscalers profit from token consumption, Red Hat profits from platform subscriptions. Every seller faces the TCO conversation. The Uber anecdote is public. Goldman Sachs 24x forecast is from their June 2026 AI economics report.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 6: PROPOSAL #3 ===== -->
+    <section class="slide" data-slide="6" role="group" aria-label="Proposal 3">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">03</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #3</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">From Discovery to Production: The <span class="accent">MCP Ecosystem</span></h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-green">or Lab 120m</span>
+          <span class="badge badge-blue">Technical Seller + Specialist</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div class="stat-strip" style="margin-bottom: 0.8rem;">
+            <div><div class="stat-num">97M</div><div class="stat-label">Monthly MCP<br>SDK downloads</div></div>
+            <div><div class="stat-num">41%</div><div class="stat-label">Of orgs in<br>MCP production</div></div>
+            <div><div class="stat-num">7+</div><div class="stat-label">Enterprise customers<br>requesting MCP Gateway</div></div>
+            <div><div class="stat-num">5</div><div class="stat-label">Launch partners<br>(Confluent, EDB, IBM...)</div></div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>The most tangible, demo-ready capability in Red Hat AI. End-to-end flow: discover an MCP server in the Catalog, deploy with the Lifecycle Operator, route through the Gateway with OAuth and tool-level auth, consume in Gen AI Studio. The only complete MCP platform. Partner ecosystem (Confluent, EDB, IBM) adds credibility. Could also run as a 120-min hands-on lab.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Live demo: Catalog &rarr; Operator &rarr; Gateway &rarr; Studio</li>
+              <li>If submitted as a lab: pre-built multi-user RHOAI environment</li>
+              <li>Demo practically runs itself &mdash; value is the governed end-to-end flow</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">MCP is the term customers are using right now. 7+ named enterprise accounts are actively requesting MCP Gateway with auth. The July 2026 MCP spec revision (stateless HTTP) is a tailwind for our Kubernetes-native approach. This could be submitted as both a breakout AND a lab — different formats, same core content.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 7: PROPOSAL #4 ===== -->
+    <section class="slide" data-slide="7" role="group" aria-label="Proposal 4">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">04</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #4</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Agent Security: <span class="accent">OpenShell</span>, SPIFFE, and Defense in Depth</h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-blue">Technical Specialist + Delivery</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div class="stat-strip" style="margin-bottom: 0.8rem;">
+            <div><div class="stat-num">15+</div><div class="stat-label">Customers asking<br>for SPIFFE identity</div></div>
+            <div><div class="stat-num">78.3%</div><div class="stat-label">Attack success rate<br>in agent testing</div></div>
+            <div><div class="stat-num">88%</div><div class="stat-label">Of security incidents<br>involved AI agents</div></div>
+            <div><div class="stat-num">3</div><div class="stat-label">Security layers<br>(kernel+ns+OPA)</div></div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>Security is the #1 blocker to enterprise agent production. Red Hat AI's three-layer security model: OpenShell for defense-in-depth sandboxing (co-engineered with NVIDIA), SPIFFE/SPIRE for agent identity (endorsed by NIST, adopted by Google Cloud), and AI Gateway in-loop policy enforcement. No competitor combines isolation + behavioral security + credential management + identity in a single runtime.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Deploy an agent in OpenShell sandbox</li>
+              <li>Trigger a malicious tool call &mdash; show sandbox containment</li>
+              <li>Show SPIFFE identity chain and audit log</li>
+              <li>"Sandbox catches the bad action" is the dramatic highlight</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">Agent identity is the #1 interoperability theme. Critical for FSI (14 accounts), defense (3 accounts), and government sellers. The NVIDIA co-engineering story (OpenShell + NemoClaw) adds enterprise weight. SPIFFE is converging as the standard — NIST, IETF AIMS, Google Cloud all align.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 8: PROPOSAL #5 ===== -->
+    <section class="slide" data-slide="8" role="group" aria-label="Proposal 5">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">05</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #5</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">What Enterprises Are <span class="accent">Really Asking For</span></h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-purple">Panel 45m</span>
+          <span class="badge badge-blue">All audiences</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.8rem;">
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Top 5 Customer Questions</div>
+              <ol style="list-style: none; padding: 0; margin: 0; counter-reset: q;">
+                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; counter-increment: q; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">1.</span>"What agents are running and who owns them?"</li>
+                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">2.</span>"How do I control costs?"</li>
+                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">3.</span>"How do I satisfy my CISO?"</li>
+                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">4.</span>"Can this run in my environment?"</li>
+                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">5.</span>"How do I avoid framework lock-in?"</li>
+              </ol>
+            </div>
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Verticals Covered</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                <span class="badge badge-red">FSI (14)</span>
+                <span class="badge badge-teal">Telco (6)</span>
+                <span class="badge badge-blue">Tech (5)</span>
+                <span class="badge badge-purple">Insurance (4)</span>
+                <span class="badge badge-orange">Defense (3)</span>
+                <span class="badge badge-green">Mfg (3)</span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); margin-top: 0.5rem; line-height: 1.45;">Panel with sales/SA partners who've been in these customer rooms. Covers demand patterns across verticals with built-in audience Q&amp;A.</div>
+            </div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>Panel format is inherently interactive and naturally includes Global Sales partners. Grounded in real conversations with 34 enterprise accounts across 11 verticals. The "top 5 questions" structure gives every seller an immediate takeaway they can use in their next customer meeting.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <p>This is a conversation, not a demo. Panel with 2&ndash;3 SAs or sellers who've been in customer rooms evaluating agentic AI. The format naturally satisfies the Global Sales co-speaker requirement.</p>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">The panel format naturally satisfies the Global Sales co-speaker requirement. Could bring 2-3 SAs or sellers who have been in customer conversations about agentic AI. The FSI dominance (14 of 34 accounts) is notable — FSI customers are the most demanding on governance and identity.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 9: PROPOSAL #6 ===== -->
+    <section class="slide" data-slide="9" role="group" aria-label="Proposal 6">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">06</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #6</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Red Hat AI <span class="accent">Architecture</span> for the Field</h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-teal">or Interactive 120m</span>
+          <span class="badge badge-blue">Technical Seller + Specialist</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Four Pillars</div>
+              <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">1. Agents</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">BYOA control plane, ~4 APIs across 1000+ frameworks</div>
+                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">2. Inference</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">Any model, any accelerator, any cloud (vLLM, llm-d)</div>
+                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">3. Data</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">RAG, customization, evaluation-driven development</div>
+                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">4. Safety &amp; Governance</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">AI Gateway, trust pipeline, sovereign AI</div>
+              </div>
+            </div>
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Competitive Positioning</div>
+              <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.78rem; font-family: var(--font-text); color: var(--text-secondary); line-height: 1.4;">
+                <div><strong style="color: var(--text-primary);">vs AWS AgentCore:</strong> Open vs locked, self-hosted vs SaaS</div>
+                <div><strong style="color: var(--text-primary);">vs Google Gemini:</strong> Multi-model vs Gemini-only</div>
+                <div><strong style="color: var(--text-primary);">vs Azure Foundry:</strong> Hybrid-first vs cloud-first</div>
+                <div><strong style="color: var(--text-primary);">vs Databricks:</strong> Full-stack vs data-centric</div>
+                <div><strong style="color: var(--text-primary);">vs watsonx:</strong> Open ecosystem vs IBM stack</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>The "how does it all fit together" session. Covers the 8-layer agentic inference stack, BYOA strategy, and competitive whiteboard. The 120-min interactive format lets attendees whiteboard architectures for their own customer scenarios.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Architecture diagrams and visual aids</li>
+              <li>Optional: interactive whiteboarding templates for customer scenarios</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">Especially valuable for sellers expanding into AI who need the complete mental model. The competitive positioning is critical — every seller faces "why not AWS/Azure/Google?" in customer conversations. The 120-min interactive is the stronger format if accepted.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 10: PROPOSAL #7 ===== -->
+    <section class="slide" data-slide="10" role="group" aria-label="Proposal 7">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">07</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #7</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;"><span class="accent">Shadow Agents</span> Are the New Shadow IT</h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-blue">General + Technical Seller</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div class="stat-strip" style="margin-bottom: 0.8rem;">
+            <div><div class="stat-num">82%</div><div class="stat-label">Enterprises found<br>unknown agents</div></div>
+            <div><div class="stat-num">47%</div><div class="stat-label">Of deployed agents<br>actively monitored</div></div>
+            <div><div class="stat-num">68%</div><div class="stat-label">Can't distinguish<br>human vs agent</div></div>
+            <div><div class="stat-num">#1</div><div class="stat-label">CISO risk for 2026<br>(Forrester)</div></div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>The "shadow IT" analogy resonates instantly with every seller who lived through that era. Gartner published its inaugural Market Guide for Guardian Agents. Red Hat AI's answer: Agent Registry for governed inventory, fleet lifecycle management, dependency immutability, and cross-cluster discovery. The only self-managed, disconnected-capable, governed fleet registry with lineage.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Optional demo: agent inventory discovery + registry governance</li>
+              <li>Statistics carry the narrative &mdash; demo adds impact but isn't required</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">Strong for FSI and regulated industry sellers. The "shadow IT" framing makes an abstract governance problem concrete. Positions Agent Registry as the governance answer. Hyperscaler registries are cloud-locked; Red Hat's is open and self-managed.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 11: PROPOSAL #8 ===== -->
+    <section class="slide" data-slide="11" role="group" aria-label="Proposal 8">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">08</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #8</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">AI Supply Chain <span class="accent">Under Attack</span></h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-blue">Technical Seller + Specialist</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div class="stat-strip" style="margin-bottom: 0.8rem;">
+            <div><div class="stat-num">36%</div><div class="stat-label">Community skills<br>have flaws</div></div>
+            <div><div class="stat-num">1,184</div><div class="stat-label">Poisoned skills<br>on ClawHub</div></div>
+            <div><div class="stat-num">78.3%</div><div class="stat-label">MCP attack<br>success rate</div></div>
+            <div><div class="stat-num">L3</div><div class="stat-label">SLSA provenance<br>(Red Hat only)</div></div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>Extends Red Hat's established trust narrative (RHEL, OpenShift content trust) into AI. Presents the threat landscape with real examples, then Red Hat's trust pipeline: Konflux for SLSA L3 provenance, SkillSpector + Snyk scanning, Red Hat signing, OCI distribution via Quay, and trust tier badges in the Skills Catalog. No competitor combines all three.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Optional demo: scanning + signing pipeline in action</li>
+              <li>Show a malicious skill caught by SkillSpector</li>
+              <li>Statistics are compelling standalone</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">The "36% of skills are flawed" stat from Snyk ToxicSkills is a conversation starter. This extends the trust story Red Hat sellers already know how to tell (RHEL content trust, OpenShift image signing) into the AI domain. Natural for regulated industry sellers.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 12: PROPOSAL #9 ===== -->
+    <section class="slide" data-slide="12" role="group" aria-label="Proposal 9">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">09</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #9</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Governing AI in <span class="accent">Regulated Industries</span></h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-teal">or Interactive 45m</span>
+          <span class="badge badge-blue">General + Technical Seller</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Regulatory Landscape</div>
+              <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text);">
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-orange);">&#9679;</span> EU AI Act high-risk provisions (enforceable Aug 2, 2026)</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-orange);">&#9679;</span> Colorado AI Act (enforceable Jun 2026)</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-teal);">&#9679;</span> NIST AI Agent Standards Initiative (Feb 2026)</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-blue-light);">&#9679;</span> Sector regulations extending to agents within 12-18 months</li>
+              </ul>
+            </div>
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Red Hat AI Compliance Map</div>
+              <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text);">
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Audit trails &rarr; AI Gateway</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Transparency metadata &rarr; Skills Catalog (Art. 50)</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Agent inventory &rarr; Agent Registry</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Identity &amp; accountability &rarr; SPIFFE</li>
+                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Sandboxed execution &rarr; OpenShell</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>Turns regulation from a customer objection into a Red Hat selling point. EMEA sellers (31% of audience) face EU AI Act questions daily. FSI sellers everywhere face compliance objections. Maps the regulatory landscape directly to Red Hat AI capabilities. Interactive format works well as a compliance mapping workshop.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <p>Strategy and positioning content. Interactive format could include a compliance mapping exercise where attendees map their own customer's regulatory requirements to Red Hat AI capabilities.</p>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">Regulatory compliance is a buying trigger, not just a feature. The EU AI Act explicitly addresses multi-agent architectures in Recitals 99-100. Industry tagging: Financial Services, Healthcare, Government. No CAI support needed — this is strategy and positioning content.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 13: PROPOSAL #10 ===== -->
+    <section class="slide" data-slide="13" role="group" aria-label="Proposal 10">
+      <div class="slide-inner" style="position: relative;">
+        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">10</div>
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #10</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Hands-On Lab: Build, Deploy, and <span class="accent">Govern</span> an Agent</h2>
+        <div class="proposal-badges anim-fade-up" style="--index: 2;">
+          <span class="badge badge-green">Lab 120m</span>
+          <span class="badge badge-blue">Technical Specialist + Delivery</span>
+        </div>
+        <div class="anim-fade-up" style="--index: 3;">
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Lab Flow (7 Steps)</div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+              <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">1. Browse Catalog</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(0,149,150,0.08); border: 1px solid rgba(0,149,150,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">2. Deploy via OpenShell</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(0,102,204,0.08); border: 1px solid rgba(0,102,204,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">3. Connect MCP Servers</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(103,83,172,0.08); border: 1px solid rgba(103,83,172,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">4. Route via Gateway</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">5. SPIFFE Identity</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(62,134,53,0.08); border: 1px solid rgba(62,134,53,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">6. Guardrails</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(244,180,0,0.08); border: 1px solid rgba(244,180,0,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">7. Observe in Studio</div>
+            </div>
+          </div>
+        </div>
+        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
+        <div class="proposal-body anim-fade-up" style="--index: 5;">
+          <div class="desc-card">
+            <div class="desc-label">Session overview</div>
+            <p>Labs are consistently the highest-rated sessions at Red Hat events. This makes the entire agentic platform tangible for technical sellers, SAs, and TAMs. The "govern an agent" angle is more compelling than "deploy an agent" because governance is the differentiator. Prior knowledge of OpenShift basics recommended.</p>
+          </div>
+          <div class="cai-card">
+            <div class="cai-level cai-level-needed">Possible CAI support</div>
+            <ul class="cai-items">
+              <li>Pre-built multi-user lab environment with full RHOAI agentic stack</li>
+              <li>3 instructors minimum for in-room support</li>
+              <li>Lab prep, environment provisioning, troubleshooting</li>
+              <li>Lead time needed: at least 2 months before event</li>
+            </ul>
+          </div>
+        </div>
+        <div class="proposal-rule"></div>
+        <div class="slide-notes">Labs need the most preparation but get the highest ratings. CFP Guide says: use business customer use cases, "start at the end," avoid "how to deploy and configure" style. The governance angle satisfies this — the lab should be framed as solving a real enterprise problem, not just clicking through install steps.</div>
+      </div>
+    </section>
+
+    <!-- ===== SLIDE 14: CAI SUPPORT + NEXT STEPS ===== -->
+    <section class="slide" data-slide="14" role="group" aria-label="CAI Support and Next Steps">
+      <div class="slide-inner">
+        <div class="slide-eyebrow anim-fade-up" style="--index: 0">NEXT STEPS</div>
+        <h2 class="display-lg anim-fade-up" style="--index: 1">CAI Support Matrix &amp; <span class="accent">Recommendation</span></h2>
+        <div class="anim-fade-up" style="--index: 2;">
+          <div class="matrix-grid" style="margin-bottom: 1rem;">
+            <div class="matrix-header">Proposal</div>
+            <div class="matrix-header" style="text-align: center;">Demo</div>
+            <div class="matrix-header" style="text-align: center;">Interactive</div>
+            <div class="matrix-header" style="text-align: center;">Lab Env</div>
+
+            <div class="matrix-cell title-col">#1 88% Pilot Failure</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+
+            <div class="matrix-cell title-col">#3 MCP Ecosystem</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
+
+            <div class="matrix-cell title-col">#4 Agent Security</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+
+            <div class="matrix-cell title-col">#10 Hands-On Lab</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
+          </div>
+          <div style="display: flex; gap: 1.5rem; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 1.2rem;">
+            <span><span class="dot-yes" style="vertical-align: middle;"></span> Needed</span>
+            <span><span class="dot-maybe" style="vertical-align: middle;"></span> Nice-to-have</span>
+            <span><span class="dot-no" style="vertical-align: middle;"></span> Not needed</span>
+          </div>
+        </div>
+        <div class="anim-fade-up" style="--index: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-red); border-radius: 0 8px 8px 0; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-red); margin-bottom: 0.4rem; font-weight: 600;">Recommended Submissions (3-5)</div>
+            <div style="font-size: 0.82rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.6;">
+              <strong style="color: var(--text-primary);">#1</strong> Master narrative (all audiences)<br>
+              <strong style="color: var(--text-primary);">#2</strong> Economic argument (sellers)<br>
+              <strong style="color: var(--text-primary);">#3</strong> Most demo-ready (technical)<br>
+              <strong style="color: var(--text-primary);">#5</strong> Format variety (panel)<br>
+              <strong style="color: var(--text-primary);">#10</strong> Highest-rated format (lab)
+            </div>
+          </div>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-orange); border-radius: 0 8px 8px 0; padding: 1rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-orange); margin-bottom: 0.4rem; font-weight: 600;">Action Items</div>
+            <div style="font-size: 0.82rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.6;">
+              <strong style="color: var(--rh-orange);">Aug 7</strong> &mdash; CFP submission deadline<br>
+              <strong style="color: var(--text-primary);">Now</strong> &mdash; Identify Global Sales co-speakers<br>
+              <strong style="color: var(--text-primary);">Now</strong> &mdash; Confirm CAI support availability<br>
+              <strong style="color: var(--text-primary);">Sep</strong> &mdash; Selection decisions communicated<br>
+              <strong style="color: var(--text-primary);">Dec 4</strong> &mdash; Content final + recordings
+            </div>
+          </div>
+        </div>
+        <div class="slide-notes">Recommended combination covers strategic narrative (#1), economic argument (#2), tangible demo (#3), format variety (#5 panel), and hands-on learning (#10 lab). Five submissions across four formats, covering all audience types and proficiency levels. The Aug 7 deadline is 3 days away.</div>
+      </div>
+    </section>
+
+    <!-- ===== OVERVIEW GRID ===== -->
+    <div class="deck-overview" hidden aria-label="Slide overview">
+      <div class="overview-grid">
+        <button class="overview-thumb" data-goto="1"><span class="num">01</span><span class="ttl">CFP Proposal Candidates</span><span class="beat">TITLE</span></button>
+        <button class="overview-thumb" data-goto="2"><span class="num">02</span><span class="ttl">What Makes a Winning Proposal</span><span class="beat">CONTEXT</span></button>
+        <button class="overview-thumb" data-goto="3"><span class="num">03</span><span class="ttl">All 10 Proposals Ranked</span><span class="beat">SUMMARY</span></button>
+        <button class="overview-thumb" data-goto="4"><span class="num">04</span><span class="ttl">#1 — Why 88% of Pilots Fail</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="5"><span class="num">05</span><span class="ttl">#2 — Token Economics</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="6"><span class="num">06</span><span class="ttl">#3 — MCP Ecosystem</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="7"><span class="num">07</span><span class="ttl">#4 — Agent Security</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="8"><span class="num">08</span><span class="ttl">#5 — Customer Panel</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="9"><span class="num">09</span><span class="ttl">#6 — Architecture for the Field</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="10"><span class="num">10</span><span class="ttl">#7 — Shadow Agents</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="11"><span class="num">11</span><span class="ttl">#8 — Supply Chain</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="12"><span class="num">12</span><span class="ttl">#9 — Regulated Industries</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="13"><span class="num">13</span><span class="ttl">#10 — Hands-On Lab</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="14"><span class="num">14</span><span class="ttl">CAI Support + Next Steps</span><span class="beat">CLOSE</span></button>
+      </div>
+    </div>
+
+    <!-- ===== NOTES PANEL ===== -->
+    <div class="deck-notes" hidden>
+      <p class="notes-label">Presenter Notes &middot; <kbd>P</kbd> to toggle</p>
+      <p class="notes-body" id="notes-body"></p>
+    </div>
+  </main>
+
+  <!-- ===== CONTROLS ===== -->
+  <nav class="deck-controls" aria-label="Slide navigation">
+    <button class="btn-prev" aria-label="Previous slide">&#x2190;</button>
+    <ol class="deck-dots" role="tablist">
+      <li><button role="tab" data-goto="1" aria-label="Go to slide 1"></button></li>
+      <li><button role="tab" data-goto="2" aria-label="Go to slide 2"></button></li>
+      <li><button role="tab" data-goto="3" aria-label="Go to slide 3"></button></li>
+      <li><button role="tab" data-goto="4" aria-label="Go to slide 4"></button></li>
+      <li><button role="tab" data-goto="5" aria-label="Go to slide 5"></button></li>
+      <li><button role="tab" data-goto="6" aria-label="Go to slide 6"></button></li>
+      <li><button role="tab" data-goto="7" aria-label="Go to slide 7"></button></li>
+      <li><button role="tab" data-goto="8" aria-label="Go to slide 8"></button></li>
+      <li><button role="tab" data-goto="9" aria-label="Go to slide 9"></button></li>
+      <li><button role="tab" data-goto="10" aria-label="Go to slide 10"></button></li>
+      <li><button role="tab" data-goto="11" aria-label="Go to slide 11"></button></li>
+      <li><button role="tab" data-goto="12" aria-label="Go to slide 12"></button></li>
+      <li><button role="tab" data-goto="13" aria-label="Go to slide 13"></button></li>
+      <li><button role="tab" data-goto="14" aria-label="Go to slide 14"></button></li>
+    </ol>
+    <span class="deck-counter">01 / 14</span>
+    <button class="btn-next" aria-label="Next slide">&#x2192;</button>
+  </nav>
+
+  <script>
+    (function () {
+      var deck = document.querySelector('main.deck');
+      var TOTAL = deck.querySelectorAll('.slide').length;
+      var dots = Array.from(document.querySelectorAll('.deck-dots button'));
+      var btnPrev = document.querySelector('.btn-prev');
+      var btnNext = document.querySelector('.btn-next');
+      var counter = document.querySelector('.deck-counter');
+      var overview = document.querySelector('.deck-overview');
+      var notes = document.querySelector('.deck-notes');
+      var notesBody = document.getElementById('notes-body');
+
+      var style = document.createElement('style');
+      var css = '';
+      for (var i = 1; i <= TOTAL; i++) {
+        css += 'main.deck[data-slide-current="' + i + '"] .slide[data-slide="' + i + '"] { opacity:1; visibility:visible; pointer-events:auto; transform:scale(1); transition: opacity var(--transition-enter) var(--ease-out-pop), transform var(--transition-enter) var(--ease-out-pop), visibility 0s linear 0s; }\n';
+      }
+      style.textContent = css;
+      document.head.appendChild(style);
+
+      var state = { current: 1, overviewOpen: false, notesOpen: false };
+
+      function clamp(n) { return Math.max(1, Math.min(TOTAL, n)); }
+
+      function getSlideNotes(n) {
+        var slide = deck.querySelector('.slide[data-slide="' + n + '"]');
+        if (!slide) return '';
+        var notesEl = slide.querySelector('.slide-notes');
+        return notesEl ? notesEl.textContent : '';
+      }
+
+      function render() {
+        deck.setAttribute('data-slide-current', String(state.current));
+        counter.textContent = String(state.current).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+        dots.forEach(function (d, i) {
+          if (i + 1 === state.current) d.setAttribute('aria-current', 'true');
+          else d.removeAttribute('aria-current');
+        });
+        Array.from(deck.querySelectorAll('.slide')).forEach(function (s) {
+          var n = parseInt(s.getAttribute('data-slide'), 10);
+          if (n === state.current) { s.classList.add('current'); s.removeAttribute('aria-hidden'); }
+          else { s.classList.remove('current'); s.setAttribute('aria-hidden', 'true'); }
+        });
+        btnPrev.disabled = state.current === 1;
+        btnNext.disabled = state.current === TOTAL;
+        if (state.notesOpen) {
+          var txt = getSlideNotes(state.current);
+          notesBody.textContent = txt || '(No notes for this slide)';
+        }
+        requestAnimationFrame(fireSlideAnimations);
+      }
+
+      function goTo(n) { var next = clamp(n); if (next === state.current) return; state.current = next; render(); syncHash(); }
+      function next() { goTo(state.current + 1); }
+      function prev() { goTo(state.current - 1); }
+
+      function syncHash() { var h = '#s=' + state.current; if (location.hash !== h) history.replaceState(null, '', h); }
+      function readHash() { var m = /^#s=(\d{1,2})$/.exec(location.hash || ''); return m ? clamp(parseInt(m[1], 10)) : 1; }
+
+      var digitBuffer = '', digitTimer = null;
+      function clearBuffer() { digitBuffer = ''; if (digitTimer) { clearTimeout(digitTimer); digitTimer = null; } }
+
+      function onKey(e) {
+        if (state.overviewOpen) return onOverviewKey(e);
+        var k = e.key;
+        if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); next(); clearBuffer(); return; }
+        if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); clearBuffer(); return; }
+        if (k === 'Home') { e.preventDefault(); goTo(1); clearBuffer(); return; }
+        if (k === 'End')  { e.preventDefault(); goTo(TOTAL); clearBuffer(); return; }
+        if (k === 'Escape') { e.preventDefault(); toggleOverview(); clearBuffer(); return; }
+        if (k === 'p' || k === 'P') { e.preventDefault(); toggleNotes(); clearBuffer(); return; }
+        if (/^[0-9]$/.test(k)) {
+          e.preventDefault();
+          digitBuffer += k;
+          if (digitTimer) clearTimeout(digitTimer);
+          if (digitBuffer.length === 2) { goTo(parseInt(digitBuffer, 10)); clearBuffer(); return; }
+          digitTimer = setTimeout(function () { var n = parseInt(digitBuffer, 10); if (n >= 1 && n <= 9) goTo(n); clearBuffer(); }, 600);
+        }
+      }
+
+      btnPrev.addEventListener('click', prev);
+      btnNext.addEventListener('click', next);
+      dots.forEach(function (d) { d.addEventListener('click', function () { goTo(parseInt(d.getAttribute('data-goto'), 10)); }); });
+      window.addEventListener('keydown', onKey);
+
+      Array.from(overview.querySelectorAll('.overview-thumb')).forEach(function (t) {
+        t.addEventListener('click', function () { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); });
+      });
+
+      function applyStaggerIndices(slide) {
+        Array.from(slide.querySelectorAll('[data-stagger] > *')).forEach(function (el, i) { el.style.setProperty('--index', String(i)); });
+      }
+      function fireSlideAnimations() { var cur = deck.querySelector('.slide.current'); if (cur) applyStaggerIndices(cur); }
+
+      function toggleOverview() { state.overviewOpen ? closeOverview() : openOverview(); }
+      function openOverview() { state.overviewOpen = true; overview.hidden = false; var active = overview.querySelector('.overview-thumb[data-goto="' + state.current + '"]'); if (active) active.focus(); }
+      function closeOverview() { state.overviewOpen = false; overview.hidden = true; deck.focus(); }
+      function onOverviewKey(e) {
+        if (e.key === 'Escape') { e.preventDefault(); closeOverview(); }
+        if (e.key === 'Enter') { var t = document.activeElement; if (t && t.classList.contains('overview-thumb')) { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); } }
+      }
+
+      function toggleNotes() { if (!notes) return; state.notesOpen = !state.notesOpen; notes.hidden = !state.notesOpen; if (state.notesOpen) { notesBody.textContent = getSlideNotes(state.current) || '(No notes for this slide)'; } }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        state.current = readHash();
+        render();
+        window.addEventListener('hashchange', function () { state.current = readHash(); render(); });
+      });
+
+      window.__deck = { goTo: goTo, next: next, prev: prev, state: state };
+    }());
+  </script>
+</body>
+</html>
