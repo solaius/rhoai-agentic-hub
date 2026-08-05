@@ -700,3 +700,85 @@ def test_narrative_prototype_accepted(tmp_path):
     errors, _ = lint_repo(root)
     assert not any("prototype" in e.lower() for e in errors)
     assert not any("not part of the narrative skeleton" in e for e in errors)
+
+
+V2_YAML = (
+    "title: Skills Catalog UI\ndescription: Fork prototype\nstatus: active\n"
+    "components: [mcp-registry]\n"
+    "source_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git\n"
+    "branch: skills-catalog-ui\nbase: upstream/3.6\n"
+    "preview_url: https://example.pages.redhat.com/branch-skills-catalog-ui/\n"
+    "current: v2\n"
+    "versions:\n"
+    "  v1: {timestamp: 2026-08-03, commit: static, summary: static era}\n"
+    "  v2: {timestamp: 2026-08-05, commit: def5678, summary: fork build}\n")
+
+
+def test_prototype_v2_accepted_without_version_dirs(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/skills-catalog-ui/prototype.yaml", V2_YAML)
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert not any("prototype" in e.lower() for e in errors)
+
+
+def test_prototype_v2_missing_required_field_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/p/prototype.yaml",
+          V2_YAML.replace(
+              "preview_url: https://example.pages.redhat.com/branch-skills-catalog-ui/\n",
+              ""))
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("missing required field 'preview_url'" in e for e in errors)
+
+
+def test_prototype_v2_current_not_in_versions_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/p/prototype.yaml",
+          V2_YAML.replace("current: v2", "current: v9"))
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("current 'v9' is not a key of versions" in e for e in errors)
+
+
+def test_prototype_v2_version_without_commit_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/p/prototype.yaml",
+          V2_YAML.replace("commit: def5678, ", ""))
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("versions.v2 needs 'commit'" in e for e in errors)
+
+
+def test_prototype_v2_snapshot_missing_fields_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/p/prototype.yaml",
+          V2_YAML + "snapshots:\n  v1: {branch: p-v1}\n")
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("snapshots.v1 needs 'branch' and 'preview_url'" in e for e in errors)
+
+
+def test_prototype_legacy_still_validated(tmp_path):
+    # No 'branch' key -> legacy path: current must be an existing dir.
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/registry-ui/prototype.yaml",
+          "title: R\ndescription: d\nstatus: active\ncurrent: v1\n"
+          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: s\n"
+          "components: [mcp-registry]\n")
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("does not point to an existing directory" in e for e in errors)

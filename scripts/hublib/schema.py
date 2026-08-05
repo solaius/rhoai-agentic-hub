@@ -50,6 +50,9 @@ PERSONAS = ("ai-engineer", "platform-engineer", "agentops-admin",
 ASK_BY = ("customer", "partner", "sales", "ssa", "pm", "eng", "exec", "other")
 PROTOTYPE_STATUSES = ("active", "superseded", "archived")
 PROTOTYPE_REQUIRED = ("title", "description", "status", "current", "versions", "components")
+PROTOTYPE_V2_REQUIRED = ("title", "description", "status", "components",
+                         "source_repo", "branch", "base", "preview_url",
+                         "current", "versions")
 AGENTS_BUDGET = 150
 MEMORY_INDEX_BUDGET = 200
 
@@ -217,21 +220,44 @@ def _lint_prototypes(root, prototype_dir, errors, warnings, component_ids):
             errors.append(f"{rel}/prototype.yaml: invalid YAML: {exc}")
             continue
         yrel = _rel(root, yaml_path)
-        for field in PROTOTYPE_REQUIRED:
-            if not data.get(field):
-                errors.append(f"{yrel}: missing required field '{field}'")
-        status = data.get("status")
-        if status and status not in PROTOTYPE_STATUSES:
-            errors.append(f"{yrel}: status must be {'|'.join(PROTOTYPE_STATUSES)}")
-        current = data.get("current")
-        if current and not (slug / str(current)).is_dir():
-            errors.append(f"{yrel}: current '{current}' does not point to an existing directory")
-        versions = data.get("versions")
-        if isinstance(versions, dict):
-            for vname in versions:
-                vdir = slug / str(vname)
-                if vdir.is_dir() and not (vdir / "index.html").is_file():
-                    errors.append(f"{_rel(root, vdir)}: missing index.html")
+        if "branch" in data:
+            for field in PROTOTYPE_V2_REQUIRED:
+                if not data.get(field):
+                    errors.append(f"{yrel}: missing required field '{field}'")
+            status = data.get("status")
+            if status and status not in PROTOTYPE_STATUSES:
+                errors.append(f"{yrel}: status must be {'|'.join(PROTOTYPE_STATUSES)}")
+            versions = data.get("versions")
+            if isinstance(versions, dict):
+                current = data.get("current")
+                if current and current not in versions:
+                    errors.append(f"{yrel}: current '{current}' is not a key of versions")
+                for vname, vdata in versions.items():
+                    if not isinstance(vdata, dict) or not vdata.get("commit"):
+                        errors.append(f"{yrel}: versions.{vname} needs 'commit' "
+                                      f"(a sha, or 'static' for migrated static-era entries)")
+            snapshots = data.get("snapshots")
+            if isinstance(snapshots, dict):
+                for sname, sdata in snapshots.items():
+                    if (not isinstance(sdata, dict) or not sdata.get("branch")
+                            or not sdata.get("preview_url")):
+                        errors.append(f"{yrel}: snapshots.{sname} needs 'branch' and 'preview_url'")
+        else:
+            for field in PROTOTYPE_REQUIRED:
+                if not data.get(field):
+                    errors.append(f"{yrel}: missing required field '{field}'")
+            status = data.get("status")
+            if status and status not in PROTOTYPE_STATUSES:
+                errors.append(f"{yrel}: status must be {'|'.join(PROTOTYPE_STATUSES)}")
+            current = data.get("current")
+            if current and not (slug / str(current)).is_dir():
+                errors.append(f"{yrel}: current '{current}' does not point to an existing directory")
+            versions = data.get("versions")
+            if isinstance(versions, dict):
+                for vname in versions:
+                    vdir = slug / str(vname)
+                    if vdir.is_dir() and not (vdir / "index.html").is_file():
+                        errors.append(f"{_rel(root, vdir)}: missing index.html")
         comps = data.get("components")
         if comps is not None:
             if not isinstance(comps, list) or not all(isinstance(x, str) for x in comps):
