@@ -37,6 +37,13 @@ install per its own docs if you'll build decks/blogs. Optional
 and Slack MCP servers are covered by steps 6–7 below plus
 [/docs/mcp-servers.md](/docs/mcp-servers.md).
 
+Optional (hub.prototype): the UXD RHOAI fork clone + Red Hat VPN --
+`bash scripts/doctor.sh setup` (section 12) clones it, wires the
+`upstream` remote, installs deps, and grants it as a working directory;
+set `UXD_FORK_DIR` in `restricted/.env` if the clone lives somewhere
+custom, and `GITLAB_CEE_TOKEN` (GitLab CEE personal token, api scope)
+to let setup verify Pages and set the fork's `PAGES_URL` CI variable.
+
 4. Run the doctor's fix mode: `bash scripts/doctor.sh setup`
    (creates a `.venv/`, installs Python deps, creates `memory/.scratch/`,
    writes `.claude/settings.local.json` with the auto-memory redirect).

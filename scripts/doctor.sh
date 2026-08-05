@@ -758,5 +758,163 @@ else
   esac
 fi
 
+echo "[12] UXD fork prototyping (hub.prototype)"
+# Silent VPN probe -- gitlab.cee.redhat.com is VPN-only. Failure is the
+# ONLY thing surfaced; success prints nothing extra (owner ruling
+# 2026-08-04: automatic, never a question).
+GITLAB_CEE="https://gitlab.cee.redhat.com"
+HTTP=$(curl -sk --connect-timeout 5 -o /dev/null -w '%{http_code}' \
+  "$GITLAB_CEE/api/v4/projects/155361" 2>/dev/null || echo 000)
+if [ "$HTTP" != "200" ]; then
+  warn "cannot reach gitlab.cee.redhat.com — connect to the Red Hat VPN (fork checks skipped: VPN)"
+else
+  # 12a. clone. UXD_FORK_DIR (restricted/.env) overrides; default probe.
+  FORK=""
+  for CAND in "${UXD_FORK_DIR:-}" "/f/code/rh/rhoai" "$HOME/code/rh/rhoai"; do
+    [ -n "$CAND" ] && [ -d "$CAND/.git" ] && FORK="$CAND" && break
+  done
+  if [ -z "$FORK" ]; then
+    if [ "$MODE" = "setup" ]; then
+      FORK="${UXD_FORK_DIR:-/f/code/rh/rhoai}"
+      if git clone git@gitlab.cee.redhat.com:pedouble/rhoai.git "$FORK" 2>/dev/null; then
+        ok "fork cloned to $FORK"
+      else
+        fail "could not clone the fork — check SSH access to gitlab.cee.redhat.com"
+        FORK=""
+      fi
+    else
+      fail "fork clone not found — set UXD_FORK_DIR in restricted/.env or run: bash scripts/doctor.sh setup"
+    fi
+  else
+    ok "fork clone at $FORK"
+  fi
+  if [ -n "$FORK" ]; then
+    # 12b. remotes: origin must be the personal fork; upstream must exist.
+    ORIGIN_URL=$(git -C "$FORK" remote get-url origin 2>/dev/null || echo "")
+    case "$ORIGIN_URL" in
+      *pedouble/rhoai*) ok "origin -> pedouble/rhoai" ;;
+      *) warn "origin is '$ORIGIN_URL' (expected pedouble/rhoai)" ;;
+    esac
+    if git -C "$FORK" remote get-url upstream >/dev/null 2>&1; then
+      ok "upstream remote configured"
+    elif [ "$MODE" = "setup" ]; then
+      git -C "$FORK" remote add upstream "$GITLAB_CEE/uxd/prototypes/rhoai.git" \
+        && git -C "$FORK" config http."$GITLAB_CEE".sslVerify false \
+        && ok "upstream remote added (uxd/prototypes/rhoai, sslVerify off for cee)" \
+        || fail "could not add upstream remote"
+    else
+      fail "no 'upstream' remote — run: bash scripts/doctor.sh setup"
+    fi
+    if git -C "$FORK" remote get-url upstream >/dev/null 2>&1; then
+      if git -C "$FORK" fetch upstream --quiet 2>/dev/null; then
+        ok "upstream fetch works"
+      else
+        warn "upstream fetch failed — check VPN/certs (git config http.$GITLAB_CEE.sslVerify false)"
+      fi
+    fi
+    # 12c. toolchain: node >= 18, npm, node_modules.
+    if command -v node >/dev/null 2>&1 && node -e 'process.exit(parseInt(process.versions.node)>=18?0:1)'; then
+      ok "node $(node --version)"
+    else
+      fail "node >= 18 required for the fork build — install Node.js"
+    fi
+    if [ -d "$FORK/node_modules" ]; then
+      ok "fork node_modules installed"
+    elif [ "$MODE" = "setup" ]; then
+      note "running npm install in the fork (takes a few minutes)..."
+      (cd "$FORK" && npm install --no-audit --no-fund >/dev/null 2>&1) \
+        && ok "npm install done (submodules init via postinstall)" \
+        || fail "npm install failed — run it manually in $FORK"
+    else
+      fail "fork node_modules missing — run: bash scripts/doctor.sh setup"
+    fi
+    # 12d. session wiring: the fork as an additional working directory so
+    # hub sessions can write there (same local-settings pattern as
+    # autoMemoryDirectory in section 3).
+    AD_RESULT=$(FORK="$FORK" "$PYTHON" - "$ROOT/.claude/settings.local.json" "$MODE" <<'PY'
+import json, os, sys
+path, mode = sys.argv[1], sys.argv[2]
+fork = os.environ["FORK"].replace("\\", "/")
+try:
+    data = json.load(open(path, encoding="utf-8"))
+except (OSError, ValueError):
+    data = {}
+dirs = data.setdefault("permissions", {}).setdefault("additionalDirectories", [])
+if fork in dirs:
+    print("ok")
+elif mode == "setup":
+    dirs.append(fork)
+    json.dump(data, open(path, "w", encoding="utf-8"), indent=2)
+    print("written")
+else:
+    print("missing")
+PY
+)
+    case "$AD_RESULT" in
+      ok) ok "fork granted as additional working directory" ;;
+      written) ok "fork added to additionalDirectories (restart Claude Code to take effect)" ;;
+      *) fail "fork not in .claude/settings.local.json additionalDirectories — run: bash scripts/doctor.sh setup" ;;
+    esac
+    # 12e. Pages + PAGES_URL CI variable. With GITLAB_CEE_TOKEN (api scope,
+    # restricted/.env): discover the fork's Pages URL and set the variable
+    # via the API. NEVER edit .gitlab-ci.yml (mr-scope-check exists to
+    # catch exactly that). Without the token: manual instructions.
+    PROJ="$GITLAB_CEE/api/v4/projects/pedouble%2Frhoai"
+    if [ -n "${GITLAB_CEE_TOKEN:-}" ]; then
+      PAGES_JSON=$(curl -sk -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$PROJ/pages" 2>/dev/null || echo "")
+      PAGES_LIVE=$(printf '%s' "$PAGES_JSON" | "$PYTHON" -c 'import json,sys
+try: print(json.load(sys.stdin).get("url",""))
+except Exception: print("")')
+      if [ -n "$PAGES_LIVE" ]; then
+        ok "fork Pages enabled: $PAGES_LIVE"
+        VAR_CODE=$(curl -sk -o /dev/null -w '%{http_code}' -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$PROJ/variables/PAGES_URL")
+        if [ "$VAR_CODE" = "200" ]; then
+          ok "PAGES_URL CI variable set"
+        elif [ "$MODE" = "setup" ]; then
+          curl -sk -o /dev/null -X POST -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" \
+            "$PROJ/variables" --data-urlencode "key=PAGES_URL" --data-urlencode "value=$PAGES_LIVE" \
+            && ok "PAGES_URL CI variable created ($PAGES_LIVE)" \
+            || fail "could not create PAGES_URL variable (token needs api scope + Maintainer)"
+        else
+          warn "PAGES_URL CI variable not set — run: bash scripts/doctor.sh setup"
+        fi
+        # keep conventions/prototype-fork.yaml in sync (tracked -- commit it).
+        SYNC=$(PAGES_LIVE="$PAGES_LIVE" "$PYTHON" - "$ROOT/conventions/prototype-fork.yaml" "$MODE" <<'PY'
+import os, re, sys
+path, mode = sys.argv[1], sys.argv[2]
+url = os.environ["PAGES_LIVE"].rstrip("/")
+text = open(path, encoding="utf-8").read()
+m = re.search(r'(?m)^pages_base_url:\s*"?([^"\n]*)"?\s*$', text)
+cur = m.group(1) if m else None
+if cur == url:
+    print("ok")
+elif mode == "setup" and m:
+    open(path, "w", encoding="utf-8").write(
+        text[:m.start()] + f'pages_base_url: "{url}"' + text[m.end():])
+    print("written")
+else:
+    print("stale")
+PY
+)
+        case "$SYNC" in
+          ok) ok "prototype-fork.yaml pages_base_url in sync" ;;
+          written) ok "prototype-fork.yaml pages_base_url written — commit the change" ;;
+          *) warn "prototype-fork.yaml pages_base_url is stale/empty — run: bash scripts/doctor.sh setup" ;;
+        esac
+      else
+        warn "fork Pages not reachable via API — check token scope, or enable Pages by pushing a branch once"
+      fi
+    else
+      PB=$(grep -E '^pages_base_url:' "$ROOT/conventions/prototype-fork.yaml" 2>/dev/null | sed 's/pages_base_url:[[:space:]]*"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
+      if [ -n "$PB" ]; then
+        ok "pages_base_url configured: $PB (no GITLAB_CEE_TOKEN — API checks skipped)"
+      else
+        warn "no GITLAB_CEE_TOKEN in restricted/.env — set PAGES_URL by hand: fork Settings > CI/CD > Variables (key PAGES_URL, value from Deploy > Pages), then put the same URL in conventions/prototype-fork.yaml pages_base_url"
+      fi
+      note "optional: GITLAB_API_TOKEN as a fork CI variable enables MR-comment previews (fork CI feature)"
+    fi
+  fi
+fi
+
 echo "== result: $PASS ok, $WARN warn, $FAIL fail"
 [ "$FAIL" -eq 0 ]

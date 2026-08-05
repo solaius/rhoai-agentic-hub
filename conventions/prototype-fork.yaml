@@ -1,0 +1,13 @@
+# UXD fork prototyping config -- single tracked source of truth for the
+# fork-based prototype pipeline (spec:
+# /docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md).
+# pages_base_url is discovered by `bash scripts/doctor.sh setup` (needs
+# GITLAB_CEE_TOKEN) or filled by hand from the fork's GitLab Pages
+# settings; commit the change when it lands. The local clone path is
+# machine-specific and lives in restricted/.env as UXD_FORK_DIR.
+upstream_repo: https://gitlab.cee.redhat.com/uxd/prototypes/rhoai
+upstream_project_id: 155361
+fork_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git
+fork_project_path: pedouble/rhoai
+base_branch: "3.6"
+pages_base_url: ""
