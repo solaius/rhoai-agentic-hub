@@ -7,7 +7,7 @@
   on completion, the item moves to
   [enhancements-complete.md](/docs/enhancements-complete.md) with a
   completion date and outcome summary.
-- **Owner:** Peter Double -- **Last groomed:** 2026-08-04
+- **Owner:** Peter Double -- **Last groomed:** 2026-08-05
 - **Convention:** when an enhancement completes that adds, changes, or
   removes a user-facing capability, update
   [docs/capabilities.md](docs/capabilities.md) as part of the completion --
@@ -27,6 +27,15 @@ real knowledge, research, strategy, and Jira) and hand generation off to a fork
 of that repo -- likely replacing the static path outright. Supersedes the P1/P8
 static-HTML principles from #15; needs a spec first, since fork topology,
 replace-vs-coexist, and the internal-vs-public hosting boundary are all open.
+
+**[#17 MLflow as a first-class prototype target](https://github.com/solaius/rhoai-agentic-hub/issues/17).**
+#16 proved prototypes belong in real codebases; the 2026-08-05 MLflow pilot
+(skills-registry RFC screens for the Databricks sync) proved the flow travels
+to a second one -- hand-orchestrated. Make MLflow a declared target:
+per-target config, doctor support for its quirks (Windows dev-server path,
+scoped verification against a dirty base), and a shareable preview story
+(Pages job or recorded screens). The registry argument runs through MLflow
+upstream -- prototyping where the argument lands is the point.
 
 **[#1 Outcome Creator integration](https://github.com/solaius/rhoai-agentic-hub/issues/1).**
 Connect the hub's component/strategy layer to Engineering's Jira outcome
