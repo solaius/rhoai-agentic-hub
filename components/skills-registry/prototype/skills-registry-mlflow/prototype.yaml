@@ -1,0 +1,11 @@
+title: Skills Registry (MLflow-native, RFC-0008)
+description: Faithful MLflow-native prototype of the skills-registry RFC screens for the Databricks sync -- skills list (Status column, pagination), prompts-style detail (version rail + viewing pane with rendered SKILL.md manifest, per-version and whole-entry delete), and a gateway-style create screen -- built in MLflow's own design system, mock-backed, demoed from a local dev server.
+status: active
+components: [skills-registry]
+source_repo: https://gitlab.cee.redhat.com/pedouble/mlflow.git
+branch: skills-registry-rfc
+base: page-composer-upstream
+preview_url: https://gitlab.cee.redhat.com/pedouble/mlflow/-/tree/skills-registry-rfc
+current: v1
+versions:
+  v1: {timestamp: 2026-08-05, commit: 2e2a6d9f, summary: Three RFC screens + create flow, reworked to the prompts layout through owner UAT; screenshots + local dev server are the demo surface}

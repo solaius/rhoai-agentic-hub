@@ -1,0 +1,11 @@
+title: Skills Registry UI (RHOAI)
+description: Governed skills registry as the Registry tab of the AI Hub Skills page -- namespace-scoped list (search, facets, pagination, register-skill modal with repo provenance) and governed detail (four-track badges, integer-version table with aliases, approval timeline) -- 47 registered of the catalog's 63 skills, stacked on the catalog prototype for the full catalog-to-registry journey.
+status: active
+components: [skills-registry]
+source_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git
+branch: skills-registry-ui
+base: skills-catalog-ui
+preview_url: https://rhoai-a4b259.pages.redhat.com/branch-skills-registry-ui/
+current: v1
+versions:
+  v1: {timestamp: 2026-08-05, commit: 72c02bdb, summary: Registry tab + governed detail, hardened through owner UAT (pagination, live search, register modal with source provenance)}
