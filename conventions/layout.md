@@ -58,6 +58,11 @@ The React pages themselves live in the UXD fork
 prototype based off `upstream/3.6`. Cross-component prototypes keep their
 metadata in `narrative/prototype/<slug>/`.
 
+Prototypes normally live in the UXD fork; an owner-approved prototype in
+another repo (e.g. the MLflow fork) records its `source_repo`/`branch`/`base`
+the same way, with `preview_url` pointing at the best viewable surface for
+that repo (a Pages deployment when one exists, else the branch URL).
+
 ## Component families
 `related:` in `components/components.yaml` declares a component's boundary
 siblings — e.g. the agent family (agent-registry · agent-interop ·
