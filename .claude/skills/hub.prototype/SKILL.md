@@ -1,545 +1,233 @@
 ---
 name: hub.prototype
-description: Create, version, publish, or list prototypes for a component or across components. Produces self-contained HTML + PatternFly 6 CDN prototypes grounded in the component's real architecture, knowledge, and upstream repos. Use when the user says "prototype", "mockup", "UI prototype", "create a prototype for <component>", "new version of the prototype", "list prototypes", or "prototype the <feature>".
+description: Create, version, or list UI prototypes for a component or across components. Generates React + PatternFly 6 pages in the UXD RHOAI fork (branch per prototype, live GitLab Pages preview), grounded in the component's real architecture, knowledge, and upstream repos. Use when the user says "prototype", "mockup", "UI prototype", "create a prototype for <component>", "new version of the prototype", "list prototypes", or "prototype the <feature>".
 ---
 
 # hub.prototype
 
-Input: a subcommand (`create`, `version`, `publish`, `list`) plus a
-component id and/or slug. Default subcommand: `create`.
+Input: a subcommand (`create`, `version`, `list`) plus a component id
+and/or slug. Default subcommand: `create`.
 
-Spec: /docs/specs/2026-08-02-prototype-system-design.md.
-Spec: /docs/specs/2026-08-03-prototype-template-system-design.md.
-Structure: /conventions/layout.md (prototype/ skeleton leg, prototype.yaml
-schema).
+Spec: /docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md
+(owner rulings R1-R6). Fork config: /conventions/prototype-fork.yaml.
+Structure: /conventions/layout.md (prototype/ leg, prototype.yaml v2).
 
-## Step 0: Prerequisites
+Prototypes are internal-only (fork GitLab Pages, Red Hat network). There
+is no publish mode: the preview URL is the shareable artifact. The fork's
+manual whole-app public deploy exists but is owner-only and NEVER fired
+by this skill (ruling R4).
 
-Before any subcommand, verify the prototype dependencies are available.
+## Step 0: Prerequisites (CREATE and VERSION)
 
-**PatternFly MCP (required):**
-1. Call `searchPatternFlyDocs` with `searchQuery: "button"` and
-   `version: "v6"`.
-2. If the call succeeds and returns results, proceed.
-3. If it fails or returns no results, STOP and tell the user:
-   > PatternFly MCP (`patternfly-docs`) is not responding. This is
-   > required for hub.prototype.
-   >
-   > Setup: run `bash scripts/doctor.sh setup` (section 8 configures
-   > it), then restart Claude Code. Requires Node.js (npx).
-   >
-   > Manual: add `patternfly-docs` to your Claude config — see
-   > [/docs/mcp-servers.md](/docs/mcp-servers.md).
+1. **VPN probe (automatic, silent).** Run
+   `curl -sk --connect-timeout 5 -o /dev/null -w '%{http_code}' https://gitlab.cee.redhat.com/api/v4/projects/155361`.
+   On `200`, proceed silently -- no output, no question. Otherwise STOP:
+   > Can't reach gitlab.cee.redhat.com -- make sure you're connected to
+   > the Red Hat VPN.
+2. **PatternFly MCP.** Call `searchPatternFlyDocs` with
+   `searchQuery: "button"`, `version: "v6"`. On failure STOP and point at
+   `bash scripts/doctor.sh setup` + /docs/mcp-servers.md.
+3. **Fork ready.** Read `conventions/prototype-fork.yaml`. Resolve the
+   clone dir (UXD_FORK_DIR from restricted/.env, else `F:/code/rh/rhoai`,
+   else `~/code/rh/rhoai`). Verify: clone exists, `git -C <fork> remote
+   get-url upstream` works, `node_modules/` present, `pages_base_url`
+   non-empty. On any miss STOP and point at
+   `bash scripts/doctor.sh setup` (section 12).
 
-**Playwright (optional — for visual verification):**
-1. Check if `browser_navigate` tool is available.
-2. If not available, note internally that step 8 (Playwright verification)
-   will be skipped. Do NOT block — prototypes still generate without it.
-3. If skipping, inform the user once: "Playwright not available — skipping
-   visual verification. Install the Playwright plugin for screenshot
-   verification."
-
-Skip Step 0 for LIST mode (no generation, no MCP needed).
-
-### Step 0.5: Shell freshness check
-
-Before any CREATE or VERSION operation, verify the shared prototype
-shell exists:
-
-1. Check that `conventions/prototype-shell/shell.html` exists.
-2. If missing, run `python scripts/extract_uxd_styles.py` to create it
-   from the UXD prototype repo.
-3. If present, read `conventions/prototype-shell/extraction-metadata.yaml`
-   and check the `extracted_at` timestamp. If older than 30 days, warn:
-   > Shell files were extracted on [date]. Run
-   > `python scripts/extract_uxd_styles.py --branch <current>`
-   > to refresh from the latest UXD prototype.
-4. Also load `components/platform/knowledge/fact-uxd-prototype-design-standards.md`
-   and `components/platform/knowledge/ref-uxd-rhoai-prototype-repo.md`
-   for RHOAI-specific design context.
-
----
+Skip Step 0 for LIST.
 
 ## Subcommand dispatch
 
-Parse the invocation to determine the mode:
-
 | invocation pattern | mode |
 |---|---|
-| `hub.prototype create <component>` | CREATE a new prototype |
+| `hub.prototype create <component>` | CREATE |
 | `hub.prototype <component>` (no subcommand) | CREATE (default) |
-| `hub.prototype version <component>/<slug>` | VERSION an existing prototype |
-| `hub.prototype publish <component>/<slug>` | PUBLISH via hub.publish |
-| `hub.prototype list` | LIST all prototypes |
-| `hub.prototype list <component>` | LIST prototypes for one component |
+| `hub.prototype version <component>/<slug>` | VERSION |
+| `hub.prototype list [<component>]` | LIST |
 
-Cross-component prototypes: use `narrative` as the component id. The
-prototype lands in `narrative/prototype/<slug>/`.
+Cross-component prototypes: use `narrative` as the component id; metadata
+lands in `narrative/prototype/<slug>/`.
 
----
+## LIST
 
-## LIST mode
+Read `views/prototypes.md`, display (filtered to the component if given).
+Done.
 
-1. Read `views/prototypes.md` and display its contents.
-2. If a component id was given, filter to that component's section.
-3. Done.
-
----
-
-## PUBLISH mode
-
-Hand off to `hub.publish` with:
-- source: `components/<id>/prototype/<slug>/` (the slug directory, not a
-  version — publishes the whole prototype including all versions)
-- If the user wants a single version published instead:
-  source: `components/<id>/prototype/<slug>/<version>/`
-- audience: `internal` (default for prototypes; user can override)
-- title and description from `prototype.yaml`
-
-Nothing else to do — hub.publish handles the gate, manifest, CI, and
-verification.
-
----
-
-## VERSION mode
-
-Input: `<component>/<slug>` identifying an existing prototype.
-
-1. LOCATE: read `components/<id>/prototype/<slug>/prototype.yaml`. If it
-   does not exist, error and suggest `create` instead.
-2. CONTEXT LOAD: same as CREATE step 1, plus:
-   - Read the CURRENT version's `index.html` to understand what exists
-   - Read ALL prior version summaries from prototype.yaml
-   - If the user provided feedback or change requests, incorporate them
-3. SCOPE: ask what changed — new feedback, architecture evolution, feature
-   additions, design refinements, or a full rethink. Accept a description,
-   a Jira key, or "iterate on the feedback."
-4. ARCHITECTURE DELTA: produce a brief (shown to user) of what changed
-   since the current version — new knowledge entries, strategy updates,
-   Jira movements, upstream changes. User confirms.
-5. COMPONENT PLANNING: same as CREATE step 6 — mandatory PatternFly MCP
-   queries for any NEW components being introduced in this version. Reused
-   components from the prior version can skip re-querying unless the user
-   reports rendering issues.
-6. GENERATE: write to the NEXT version directory
-   (`components/<id>/prototype/<slug>/v<N+1>/`). Derive N from the highest
-   existing version directory number.
-7. VERIFY: same as CREATE step 8 — Playwright screenshot + visual check.
-8. UPDATE METADATA: update `prototype.yaml`:
-   - `current: v<N+1>`
-   - Add new entry under `versions:`
-   - Preserve all existing version entries
-9. GATE: inline confirm before committing (same pattern as CREATE step 10).
-10. REINDEX + LINT: `python scripts/hub_lint.py` then `python scripts/hub_index.py`.
-11. COMMIT: stage prototype files + regenerated indexes/views explicitly,
-    NEVER `git add -A`; check `git diff --cached --stat`, then commit with
-    pathspecs:
-    `git commit -m "proto(<id>): <slug> v<N+1>" -- <those paths>`
-12. Offer `hub.publish` if a manifest entry already exists for this
-    prototype (it may need updating to point at the new version).
-
----
-
-## CREATE mode (12 steps)
+## CREATE
 
 ### Step 1: Context load
 
-Before asking a single design question, deep-read the component's
-ecosystem. Resolve the component id against `components/components.yaml`.
-If `narrative` was given, the home is `narrative/`. If the id is not found,
-offer `hub.intake` and stop.
+Unchanged from the original skill: resolve the component id against
+`components/components.yaml` (offer `hub.intake` and stop if unknown),
+then deep-read, skipping what does not exist:
 
-Load, in order (skip what does not exist — a missing input shrinks the
-prototype's grounding, never sinks the run):
-
-a. **Knowledge entries** — read `components/<id>/knowledge/index.md`, then
-   skim every `decision-`, `ref-`, `fact-` entry in the partition.
-   Architecture decisions and ref- entries pointing to design docs,
-   upstream repos, and API specs are highest priority.
-
-b. **Research series** — read `components/<id>/research/
-   00-executive-summary.md`, then landscape, architecture, and requirements
-   lens docs if they exist.
-
-c. **Strategy doc** — read `components/<id>/strategy/strategy.md` for the
-   living WHAT/WHY, gaps, and roadmap alignment.
-
-d. **Related components** — follow `related:` links in
-   `components/components.yaml` and load each sibling's
-   `knowledge/index.md`, `research/00-executive-summary.md`, and
-   `strategy/strategy.md` (e.g., prototyping the MCP Catalog should
-   understand the Registry's data model and the Lifecycle Operator's
-   deployment flow).
-
-e. **Jira scope** — read `work/jira-snapshot.yaml` for current feature
-   state. If the component has a `jira:` block in components.yaml, note
-   the active JQL scope.
-
-f. **Upstream repos** — any `ref-` entries pointing to GitHub/GitLab repos:
-   browse for real UI patterns, data models, API shapes. Use
-   `gh api repos/<owner>/<repo>/contents/<path>` or web fetch for key
-   files (e.g., types, schemas, route definitions).
-
-g. **Existing prototypes** — read `prototype.yaml` files in this and
-   related components' `prototype/` directories for continuity. Also
-   open sibling prototypes' latest `index.html` to identify reusable
-   UI patterns (toggle switches, kebab menus, status badges, pill
-   buttons, manage/detail page layouts). Match these patterns in the
-   new prototype for cross-prototype visual consistency — the RHOAI
-   UI should look like one product, not a collection of independent
-   prototypes.
-
-h. **Restricted context** — if `restricted/` exists locally, load the
-   component's restricted knowledge (customer requirements, field
-   feedback). NDA content informs design decisions but NEVER surfaces in
-   the output (this repo is PUBLIC).
-
-i. **UXD design standards** — read
-   `components/platform/knowledge/fact-uxd-prototype-design-standards.md`
-   for verified CSS values, spacing, and component patterns. Read
-   `components/platform/knowledge/ref-uxd-rhoai-prototype-repo.md` for
-   GitLab API access to the UXD source when needed. If the prototype
-   needs a component pattern not in the patterns library, fetch the
-   relevant TSX file from the UXD repo via the GitLab API.
+a. Knowledge entries (`components/<id>/knowledge/` -- decisions, refs,
+   facts; architecture and upstream-repo refs first).
+b. Research series (`research/00-executive-summary.md` + relevant lenses).
+c. Strategy doc (`strategy/strategy.md`).
+d. Related components (via `related:` in components.yaml -- their
+   knowledge index, research summary, strategy).
+e. Jira scope (`work/jira-snapshot.yaml`, stored JQL).
+f. Upstream repos (ref- entries pointing at GitHub/GitLab -- real UI
+   patterns, data models, API shapes).
+g. Existing prototypes (prototype.yaml files here and in related
+   components; open their preview URLs for continuity).
+h. Restricted context (if `restricted/` exists locally -- informs design,
+   NEVER surfaces in output; the fork branch is internal but the hub repo
+   is PUBLIC).
+i. Fork design context: the fork's `.design/features/` for the closest
+   feature area, plus `.agents/rules/design-guidelines.md`.
 
 ### Step 2: Scope
 
-With context loaded, surface what was learned in a brief summary (2-5
-sentences of the most design-relevant findings). Then ask what to
-prototype. Accept:
-
-- A description ("the server list and detail views")
-- A Jira key ("RHAISTRAT-1780")
-- A knowledge entry reference ("the primary-detail pattern from the
-  architecture research")
-- A Figma link or screenshot
-- "The whole thing" (prototype the main UI surface)
+Summarize the most design-relevant findings (2-5 sentences), then ask
+what to prototype. Accept a description, a Jira key, a knowledge entry
+reference, a Figma link/screenshot, or "the whole thing".
 
 ### Step 3: Slug
 
-Derive a kebab-case slug name from the scope (e.g., `registry-ui`,
-`catalog-card-view`, `gateway-policy-editor`). Confirm with user. The
-slug becomes the directory name: `components/<id>/prototype/<slug>/`.
+Derive a kebab-case slug (e.g. `registry-ui`). It becomes BOTH the hub
+metadata dir (`components/<id>/prototype/<slug>/`) and the fork branch
+name. If a branch of that name already exists in the fork, prefix the
+component id. Confirm with the user.
 
 ### Step 4: Architecture grounding
 
-Produce a brief (shown to user, NOT written to a file) summarizing:
-
-- **Data model**: real entities, relationships, states drawn from the
-  context load (e.g., "MCP servers have name, version, lifecycle status
-  [draft, active, deprecated], certification level, and tool manifests")
-- **API surface / interaction patterns**: real endpoints, operations, or
-  user flows from upstream repos and design docs
-- **Design constraints**: decisions from strategy or architecture entries
-  that constrain the prototype (e.g., "the registry uses a primary-detail
-  layout per decision-xyz")
-- **Grounded vs. invented**: explicitly call out which elements come from
-  real sources and which are the agent's design proposals
-
-User confirms or corrects BEFORE any HTML is generated. This is a
-mandatory checkpoint.
+Brief shown to the user (not a file): real data model (entities, fields,
+states), real API surface / interaction patterns, design constraints from
+strategy/decisions, and an explicit grounded-vs-invented split. User
+confirms BEFORE any code. Mandatory checkpoint.
 
 ### Step 5: Design decisions
 
-If the prototype involves layout or interaction choices, surface 2-3
-options as conversational text comparisons referencing the architecture
-grounding. Examples:
-
-- "Table list vs. card grid for the server list — the upstream repo uses
-  a table, but the card view would better showcase metadata badges"
-- "Side panel detail vs. full-page detail — the primary-detail pattern
-  from research suggests side panel for quick scanning"
-
-User picks. If the scope is narrow or the architecture already prescribes
-the approach, skip this step (say why).
+If layout/interaction choices exist, surface 2-3 options referencing the
+grounding; user picks. Skip (say why) if the scope prescribes the answer.
 
 ### Step 6: Component planning (MANDATORY)
 
-This step is NOT optional. Before writing any HTML, the skill MUST:
+a. List every PatternFly component the page(s) will use.
+b. Query the PatternFly MCP for each: `searchPatternFlyDocs(searchQuery,
+   version: "v6")` then `usePatternFlyDocs(name, version: "v6")` --
+   React docs apply directly now.
+c. Map the plan to the fork's existing idioms -- reuse patterns from
+   `src/app/AIHub/` (AgentCatalog's Gallery grid, MCPCatalog's
+   Sidebar filter rail, *WithTabs wrappers, `isTabContent` dual-mode).
+d. Honor the fork's rules: PatternFly components only, semantic design
+   tokens, unique kebab-case page-prefixed `id`s, WCAG 2.1 AA, no custom
+   CSS on PF components.
+e. Produce a content plan: which files under `src/app/<Area>/<Feature>/`
+   (page components, colocated typed mock data, barrel index.ts), the
+   route path(s), and the nav placement. User confirms.
 
-a. **Identify every PatternFly component** the prototype will use. List
-   them explicitly (e.g., Page, Masthead, Sidebar, Table, Toolbar,
-   Card, Badge, Label, Button, EmptyState, etc.).
+### Step 7: Generate (in the fork)
 
-b. **Query the PatternFly MCP** for each component. Use `version: "v6"`
-   on every call:
+a. `git -C <fork> fetch upstream`
+b. `git -C <fork> checkout -b <slug> upstream/3.6`
+c. Write the files from the content plan. Mock data uses real entity
+   names/fields/states from the grounding -- no lorem ipsum. Follow fork
+   code style: TS strict, `import * as React from 'react'`, members
+   inside one import alphabetized, `_`-prefixed unused params.
+d. Wire the route: `src/app/routes.tsx` import + route object entry
+   (label to appear in nav; omit label for detail routes). If the page
+   lives under AI hub, ALSO wire `filterAIHubRoutes` in
+   `src/app/AppLayout/AppLayout.tsx` (it rebuilds the AI hub nav at
+   runtime) and re-export the component through the routes barrel.
+e. Record design context per fork convention: check
+   `.design/feature-mapping.md`; add/extend the matching
+   `.design/features/<area>/design-history.md` with a dated entry.
 
-   ```
-   searchPatternFlyDocs(searchQuery: "<component name>", version: "v6")
-   ```
+### Step 8: Verify (non-negotiable)
 
-   Then fetch the design guidelines and examples for each:
+a. `npx eslint <changed files> --no-warn` -- 0 errors (use
+   `--fix` first for import sorting).
+b. `npm run build` -- passes.
+c. Optional: `npm run start:dev` (port 9000) + Playwright/browser visual
+   check; the fork's `check-patternfly-compliance` and `review-design`
+   skills as extra review passes.
 
-   ```
-   usePatternFlyDocs(name: "<component name>", version: "v6")
-   ```
+### Step 9: Metadata (in the hub)
 
-   For complex components (Table, Toolbar, Page), also fetch:
-   - The React examples (derive HTML structure from component composition)
-   - Accessibility guidelines (ARIA labels, keyboard navigation)
-
-c. **Query page-level patterns** from the PatternFly MCP for the
-   prototype's composition pattern:
-
-   ```
-   searchPatternFlyDocs(searchQuery: "primary-detail", version: "v6")
-   searchPatternFlyDocs(searchQuery: "dashboard", version: "v6")
-   searchPatternFlyDocs(searchQuery: "card view", version: "v6")
-   ```
-
-   Fetch the relevant pattern docs.
-
-d. **Query AI prompt guidance** from the PatternFly MCP:
-
-   ```
-   searchPatternFlyDocs(searchQuery: "AI", version: "v6")
-   ```
-
-   Fetch the ai-helpers docs for anti-patterns and common AI mistakes.
-
-e. **Select a page pattern** from `conventions/prototype-shell/patterns/`:
-   - `catalog` — faceted filter sidebar + card grid + toggle group
-   - `detail` — two-column: section cards left + metadata sidebar right
-   - `admin-table` — table with toolbar + tabs
-   - `modal` — register/deploy overlay (used as --extra-pattern)
-   - `empty` — blank content area for custom layouts
-
-   Match the prototype scope to the closest pattern. If the scope spans
-   multiple patterns (e.g., catalog + detail + admin), the primary view
-   determines the pattern; additional views are written as content
-   fragments.
-
-f. **Produce a content plan** (shown to user, NOT a file) mapping each
-   prototype section to:
-   - The selected pattern and its placeholders
-   - Which content fragments the skill will generate
-   - Which placeholders map to which content files
-
-   Example:
-   ```
-   Content Plan:
-   Pattern: catalog (with modal extra-pattern)
-   Content fragments:
-   - page_title.html → {{PAGE_TITLE}}: "Skills"
-   - page_description.html → {{PAGE_DESCRIPTION}}
-   - filter_sections.html → {{FILTER_SECTIONS}}: persona, category, pack
-   - toggle_buttons.html → {{TOGGLE_BUTTONS}}: All/RH/Partner/Enterprise
-   - cards.html → {{CARDS}}: 68 skill cards
-   - app.js → shell {{SCRIPTS}} block: data arrays, filter/render logic
-   - modal_fields.html → {{MODAL_FIELDS}}: register form
-   ```
-
-g. User confirms the content plan before generation proceeds.
-
-### Step 7: Generate
-
-Write content fragments to
-`components/<id>/prototype/<slug>/v1/content/` and assemble with the
-build script.
-
-a. **Write content fragments**: for each placeholder in the selected
-   pattern, write a corresponding file in the `content/` directory.
-   File naming convention: lowercase placeholder name with underscores,
-   plus `.html` or `.js` extension.
-
-   - `page_title.html` → `{{PAGE_TITLE}}`
-   - `filter_sections.html` → `{{FILTER_SECTIONS}}`
-   - `cards.html` → `{{CARDS}}`
-   - `app.js` → falls through to shell `{{SCRIPTS}}` block (see naming below)
-   - etc.
-
-   Content fragments contain ONLY the content for that placeholder —
-   no page shell, no nav, no CSS.
-
-   **Fragment naming — avoid collisions.** The build script maps
-   filenames to placeholders via `fragment_name_to_placeholder()`.
-   Two files that map to the same placeholder will collide — only the
-   first (alphabetically) wins; the other is silently dropped. The
-   build script warns on collision, but prevention is better:
-
-   - Name the main JS file `app.js` (maps to `{{APP}}`, no pattern
-     match, falls through to the shell's `{{SCRIPTS}}` block alongside
-     nav.js). This is the recommended convention.
-   - `content_scripts.html` maps to `{{CONTENT_SCRIPTS}}` — use it for
-     extra HTML views injected at the end of the pattern content.
-   - NEVER have both `scripts.js` AND `content_scripts.html` — both
-     map to `{{CONTENT_SCRIPTS}}` and collide.
-
-b. **Multi-view prototypes**: when the prototype has multiple views
-   (e.g., catalog browse + skill detail + admin), the selected pattern
-   provides the primary view. Additional views go in
-   `content_scripts.html` (replaces `{{CONTENT_SCRIPTS}}` at the end
-   of the pattern). Structure:
-
-   - Each extra view: `<div id="view-<name>" class="view">...</div>`
-   - Extra CSS in a `<style>` block at the top of the fragment
-   - The shell's `shell.css` already provides:
-     `.view { display: none; } .view.active { display: block; }`
-   - In `app.js`, wrap the pattern's content in a view container at
-     DOMContentLoaded (the pattern doesn't include a wrapper):
-     ```js
-     var appContent = document.querySelector('.app-content');
-     var firstExtra = document.getElementById('view-detail');
-     var wrapper = document.createElement('div');
-     wrapper.id = 'view-catalog';
-     wrapper.className = 'view active';
-     while (appContent.firstChild && appContent.firstChild !== firstExtra) {
-       wrapper.appendChild(appContent.firstChild);
-     }
-     appContent.insertBefore(wrapper, appContent.firstChild);
-     ```
-   - View switching uses class-based toggling (`active` class), never
-     inline `style.display` — the CSS `.view` rule overrides it.
-
-c. **Realistic data**: same rules as before — use real field names,
-   status values, entity relationships from the architecture grounding.
-   No lorem ipsum.
-
-d. **Run the build script**:
-   ```bash
-   python scripts/build_prototype.py \
-     --pattern <pattern-name> \
-     --content components/<id>/prototype/<slug>/v1/content/ \
-     --output components/<id>/prototype/<slug>/v1/index.html \
-     --component "<Component Display Name>" \
-     --version v1
-   ```
-
-   If the prototype uses a modal, add `--extra-patterns modal`.
-
-e. **The skill NEVER writes**: page shell HTML, masthead, sidebar nav,
-   CSS overrides, or PatternFly CDN links. These come from the shared
-   shell. The skill generates ONLY content fragments.
-
-### Step 8: Verify
-
-Open the generated prototype in Playwright and visually inspect:
-
-```
-browser_navigate(url: "file:///path/to/v1/index.html")
-browser_take_screenshot(type: "png", scale: "css")
-```
-
-Check:
-- Page structure renders correctly (masthead, sidebar, content areas)
-- Component layout matches the intended pattern
-- No broken styles, missing PatternFly classes, or unstyled elements
-- Text is readable, spacing is correct
-- Interactive elements look clickable/focusable
-
-If issues are found, fix the HTML and re-verify. Iterate until the
-rendering matches the component plan from step 6. Report the findings to
-the user ("the prototype renders correctly" or "fixed X issue, re-verified
-successfully").
-
-### Step 9: Metadata
-
-Generate `components/<id>/prototype/<slug>/prototype.yaml`:
+Write `components/<id>/prototype/<slug>/prototype.yaml`:
 
 ```yaml
-title: <descriptive title>
-description: <one-line description of what the prototype shows>
+title: <title>
+description: <one line>
 status: active
+components: [<id>]
+source_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git
+branch: <slug>
+base: upstream/3.6
+preview_url: <pages_base_url>/branch-<slug>/
 current: v1
 versions:
-  v1:
-    timestamp: <today YYYY-MM-DD>
-    summary: <one-line summary of this version>
-components: [<component-id>]
+  v1: {timestamp: <today>, commit: <sha after the fork commit>, summary: <one line>}
 ```
 
-If the prototype spans multiple components (e.g., shows the Registry and
-Catalog together), list all component ids in `components:`.
+`preview_url` = `pages_base_url` from conventions/prototype-fork.yaml +
+`/branch-<branch>/`.
 
-### Step 10: Gate
+### Step 10: Gate (two-part, one confirm)
 
-Show an inline summary and wait for explicit OK before committing:
-
-```
-prototype → components/<id>/prototype/<slug>/
-  v1/index.html: <description>
-  prototype.yaml: metadata (status: active, current: v1)
-  [screenshot attached above]
-
-Commit? [y/n]
-```
-
-Full content available on request. This follows the same gate pattern as
-hub.capture — nothing touches git before approval.
-
-On reject: discard everything, no writes. Ask what to change.
+Show: fork branch name, files created/changed, eslint/build results, the
+prototype.yaml content, and the computed preview URL. On OK:
+a. Fork: `git -C <fork> add <files>` then commit with a descriptive
+   message, then `git -C <fork> push -u origin <slug>`.
+b. Hub: fill `commit:` with the fork sha, then stage the prototype dir +
+   regenerated indexes (Step 11) and commit with pathspecs
+   (`proto(<id>): <slug> v1`).
+On reject: discard both sides, ask what to change.
 
 ### Step 11: Reindex
 
-On OK:
-a. Run `python scripts/hub_index.py` to regenerate views (including
-   `views/prototypes.md` and the component's `index.md`).
-b. Run `python scripts/hub_lint.py` — 0 errors required. Fix the
-   prototype files (prototype.yaml, directory structure) if lint reports
-   errors, not the scripts.
-c. Commit with explicit paths, NEVER `git add -A` (shared checkout, see
-   memory/facts/fact-concurrent-session-git-hygiene.md):
+`python scripts/hub_index.py` then `python scripts/hub_lint.py` (0
+errors). Stage `components/<id>/prototype/<slug>/`, the component
+`index.md`, `components/index.md`, `views/prototypes.md` -- never
+`git add -A`.
 
-   ```bash
-   git add components/<id>/prototype/<slug>/ \
-     components/<id>/index.md \
-     components/index.md \
-     views/prototypes.md \
-     views/
-   ```
+### Step 12: Report
 
-   Check `git diff --cached --stat` for anything this prototype did not
-   write, then commit WITH PATHSPECS:
+Print the preview URL and note it goes live when the fork pipeline
+finishes (watch: `<fork web url>/-/pipelines`). VPN required to view.
+No publish offer -- there is nothing to publish.
 
-   ```bash
-   git commit -m "proto(<id>): <slug> v1" -- <those paths>
-   ```
+## VERSION
 
-### Step 12: Offer publish
+Input: `<component>/<slug>`.
 
-Ask if the user wants to publish the prototype:
+1. Read `components/<id>/prototype/<slug>/prototype.yaml` (error +
+   suggest `create` if missing).
+2. Context: re-run the deltas of CREATE step 1 (what changed in
+   knowledge/strategy/Jira since the last version) plus the user's
+   feedback. Show a brief; user confirms.
+3. In the fork: `git -C <fork> checkout <branch>`; iterate; re-verify
+   (CREATE step 8).
+4. Snapshot on request: if the user wants the CURRENT state kept
+   viewable side by side, first `git -C <fork> branch <slug>-v<N>` (the
+   old version) and push it; record under `snapshots:` with its own
+   `/branch-<slug>-v<N>/` preview URL.
+5. Gate (same two-part shape): fork commit+push; hub prototype.yaml gets
+   a new `versions:` entry (sha, date, summary), `current:` bumped.
+6. Reindex + report preview URL (redeploys automatically on push).
 
-- "Would you like to publish this prototype via hub.publish? (audience
-  defaults to internal)"
-- If yes, hand off to `hub.publish` with the prototype's source path
-- If no, done. The prototype lives in the repo and can be published later.
+## Upstreaming (manual, opportunistic -- ruling R5)
 
-Never auto-publish. Publishing is a separate disclosure decision.
-
----
+Not a subcommand. When a design earns a place in the canonical UXD
+prototype, run the fork's own `prepare-merge-request` skill from the fork
+(branches base off upstream/3.6, so fork-local divergences never ride
+along), then record the MR URL in prototype.yaml `mr_url:` through the
+normal gate.
 
 ## Key principles
 
-1. **Grounded, not invented.** The context load (step 1) exists so the
-   prototype reflects reality — real entity names, real status values, real
-   navigation patterns from upstream projects. A prototype that invents its
-   own data model is useless for stakeholder review.
-
-2. **PatternFly accuracy is mandatory.** Step 6 is not optional. Every
-   PatternFly component used in the prototype must be validated against the
-   MCP's v6 docs before HTML generation. This prevents incorrect class
-   names, non-existent components, and accessibility gaps.
-
-3. **Static HTML, not React.** The hub is a knowledge repo, not a
-   codebase. Prototypes serve stakeholder review and design iteration, not
-   engineering handoff. No build step, no node_modules, no package.json.
-   The publish pipeline stays clean.
-
-4. **Self-contained.** One HTML file per version. External dependencies
-   only for the PatternFly CDN. No cross-file imports, no shared
-   stylesheets, no build artifacts.
-
-5. **Template-first, not from-scratch.** The page shell, nav, and CSS
-   come from `conventions/prototype-shell/`, extracted from the UXD
-   prototype repo. The skill generates only content fragments. Run
-   `python scripts/extract_uxd_styles.py` to refresh the shell when
-   the UXD team releases a new branch. Run
-   `python scripts/build_prototype.py` to assemble the final HTML.
-
-6. **Versioned, not overwritten.** v1 and v2 coexist on disk for
-   side-by-side comparison. Never modify a committed version's HTML —
-   create a new version instead (unless fixing a rendering bug before the
-   first commit).
-
-7. **The gate is sacred.** Nothing touches git before the user approves.
-   Show what will be written, wait for OK.
+1. **Grounded, not invented.** The context load exists so the prototype
+   reflects reality -- real entity names, states, navigation.
+2. **PatternFly accuracy is mandatory.** Step 6 queries the MCP for every
+   component; the fork's design rules are law.
+3. **Real app, real chrome.** The fork provides the actual RHOAI shell,
+   nav, and components -- never hand-approximate them.
+4. **Branch per prototype, off upstream/3.6.** Keeps previews isolated
+   and upstream MRs clean by construction.
+5. **Internal-only.** Preview URLs are the artifact; no public mirror
+   from this skill, ever.
+6. **The gate is sacred.** Nothing is committed or pushed -- in either
+   repo -- before the user approves.
