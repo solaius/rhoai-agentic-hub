@@ -1,7 +1,7 @@
 ---
 type: fact
-description: "audience: internal in publish/manifest.yaml deploys to this repo's gh-pages (solaius.github.io/rhoai-agentic-hub) via publish.yml; interim until protected GitLab Pages; public artifacts must not link into internal dests (lint-enforced); knowledge hubs are internal-audience by owner ruling 2026-07-11"
-timestamp: 2026-07-12
+description: "audience: internal in publish/manifest.yaml deploys to this repo's gh-pages (solaius.github.io/rhoai-agentic-hub) via publish.yml; interim until protected GitLab Pages; public artifacts must not link into internal dests (lint-enforced); knowledge hubs are internal-audience by owner ruling 2026-07-11; when asked for an 'internal' link, always build from the rhoai-agentic-hub base, never -pages"
+timestamp: 2026-08-05
 status: current
 ---
 
@@ -29,6 +29,13 @@ public site. The two hubs that were public (RHCL/Gateway, Management)
 flipped to internal the same day; the three component hubs built afterward
 (Catalog, MCPLO, Registry) entered the manifest as internal from their first
 commit.
+
+Operator rule (promoted from session feedback 2026-08-05, confused
+repeatedly before): when the user asks for an "internal" link or "internal
+hub" URL, construct it from `https://solaius.github.io/rhoai-agentic-hub/<dest>`
+-- never from the `-pages` base. The `audience:` field in
+publish/manifest.yaml decides: `internal` -> `rhoai-agentic-hub`,
+`public` -> `rhoai-agentic-hub-pages`.
 
 See [[fact-hub-network-standard-sections]] for the sections each hub now
 carries. Spec:

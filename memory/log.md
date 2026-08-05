@@ -3,6 +3,11 @@ type: fact
 description: Chronological capture trail — newest first (reserved OKF log file)
 timestamp: 2026-07-05
 ---
+## 2026-08-05
+- **Update** -- fact-internal-publish-target: folded in the operator rule from auto-memory feedback -- "internal" links always build from the rhoai-agentic-hub base, decided by the manifest audience field (confused repeatedly).
+- **Creation** -- fact-gitlab-pipeline-watch-gotcha: match pipeline sha to the pushed commit before trusting CI status; per_page=1 right after a push races pipeline creation (stale-preview incident during #16).
+- **Creation** -- fact-mlflow-fork-clone: MLflow prototyping clone layout, remotes, dirty-base caveats, and the repo-local dev-server skill as the Windows run path (RFC-0008 pilot environment; learnings in #17).
+
 ## 2026-08-03
 - **Creation** -- intake(ai-asset-pipeline): new component partition -- Konflux-based trust pipeline for scanning/signing/attesting skills, MCP servers, agents; extends existing model pipeline (Adam Bellusci confirmed 2026-08-03). 8 new entries: overview, decision, 5 refs (Konflux, SkillSpector, KitOps, model-metadata-collection, Conforma), person (Adam Bellusci). Positioning fact updated with component link.
 - **Creation** -- ref-gitlab-cee-access: gitlab.cee.redhat.com access patterns — git sslVerify config, curl API, WebFetch limitation, known repos (uxd/prototypes/rhoai).
