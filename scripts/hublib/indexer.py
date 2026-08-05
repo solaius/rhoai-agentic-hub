@@ -205,7 +205,8 @@ def build_all(root, today=None):
             lines.append("## Prototypes")
             for sr, d in comp_protos:
                 current = d.get("current", "v1")
-                lines.append(f"- [{d.get('title', sr)}](/{sr}/{current}/index.html)"
+                href = d.get("preview_url") or f"/{sr}/{current}/index.html"
+                lines.append(f"- [{d.get('title', sr)}]({href})"
                              f" — {d.get('description', '')} ({d.get('status', '?')})")
         built[f"components/{f['id']}/index.md"] = "\n".join(lines) + "\n"
 
@@ -473,10 +474,12 @@ def build_all(root, today=None):
                 current = d.get("current", "v1")
                 versions = d.get("versions", {})
                 ver_list = ", ".join(sorted(versions.keys())) if versions else "—"
-                lines.append(f"- [{d.get('title', sr)}](/{sr}/{current}/index.html)"
+                href = d.get("preview_url") or f"/{sr}/{current}/index.html"
+                extra = f", branch: {d['branch']}" if d.get("branch") else ""
+                lines.append(f"- [{d.get('title', sr)}]({href})"
                              f" — {d.get('description', '')} "
                              f"(status: {d.get('status', '?')}, "
-                             f"current: {current}, versions: {ver_list})")
+                             f"current: {current}, versions: {ver_list}{extra})")
             lines.append("")
     built["views/prototypes.md"] = "\n".join(lines).rstrip("\n") + "\n"
 

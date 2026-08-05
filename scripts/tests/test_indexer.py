@@ -425,3 +425,22 @@ def test_jira_map_refs_without_snapshots_keep_working(tmp_path):
     view = build_all(make_repo(tmp_path), today=TODAY)["views/jira-map.md"]
     assert "## Referenced elsewhere" in view
     assert "RHAIRFE-1370" in view
+
+
+def test_prototypes_view_links_preview_url_for_v2(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/mcp-registry/prototype/skills-ui/prototype.yaml",
+          "title: Skills UI\ndescription: Fork prototype\nstatus: active\n"
+          "components: [mcp-registry]\n"
+          "source_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git\n"
+          "branch: skills-ui\nbase: upstream/3.6\n"
+          "preview_url: https://example.pages.redhat.com/branch-skills-ui/\n"
+          "current: v1\n"
+          "versions:\n  v1: {timestamp: 2026-08-05, commit: abc1234, summary: s}\n")
+    built = build_all(root, today=TODAY)
+    view = built["views/prototypes.md"]
+    assert "https://example.pages.redhat.com/branch-skills-ui/" in view
+    assert "branch: skills-ui" in view
+    assert "/v1/index.html" not in view
+    comp_index = built["components/mcp-registry/index.md"]
+    assert "https://example.pages.redhat.com/branch-skills-ui/" in comp_index
