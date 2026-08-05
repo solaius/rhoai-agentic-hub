@@ -23,4 +23,4 @@ Related: [Skills Registry](/components/skills-registry/index.md) · [Agent Catal
 - reference · [Skills Product -- Scoping/Discussion (Adel Zaalouk)](/components/skills-registry/knowledge/ref-skills-scoping-gdoc.md) — Adel Zaalouk's product scoping doc for Skills in RHOAI -- companion to the Agent Registry scoping doc; defines skills product scope, registry design, and catalog relationship.
 
 ## Prototypes
-- [Skills Catalog UI](/components/skills-catalog/prototype/skills-catalog-ui/v1/index.html) — Full skills catalog prototype -- browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) -- populated with 68 EX public library skills across 7 packs. (active)
+- [Skills Catalog UI](https://rhoai-a4b259.pages.redhat.com/branch-skills-catalog-ui/) — Full skills catalog prototype -- browse (card grid with persona/category/pack facets and trust-tier toggle), skill detail (install commands, compatibility, README, register modal), and catalog source admin (add-source modal, visibility management) -- 63 EX public library skills across 7 packs, as React/PF6 pages in the UXD fork. (active)

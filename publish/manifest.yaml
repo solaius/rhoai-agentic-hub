@@ -101,11 +101,6 @@
   audience: internal
   title: Agent Registry — Engineer's Deep Dive
   description: Vertical deep-dive for engineers — the dual-entity model, post-kagenti discovery architecture, register-on-deploy flow, lifecycle join points, supply-chain queries, upstream/market strategy, and the open decisions.
-- source: components/skills-catalog/prototype/skills-catalog-ui/v1/
-  dest: skills-catalog/ui-prototype/
-  audience: internal
-  title: Skills Catalog UI Prototype
-  description: Interactive skills catalog prototype — browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) — populated with 68 EX public library skills across 7 packs.
 - source: components/skills-registry/enablement/databricks-vision-doc/
   dest: skills-registry/databricks-vision-doc/
   audience: internal

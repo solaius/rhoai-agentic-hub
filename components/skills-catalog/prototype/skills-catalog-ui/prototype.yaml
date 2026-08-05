@@ -1,9 +1,12 @@
 title: Skills Catalog UI
-description: Full skills catalog prototype -- browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) -- populated with 68 EX public library skills across 7 packs.
+description: Full skills catalog prototype -- browse (card grid with persona/category/pack facets and trust-tier toggle), skill detail (install commands, compatibility, README, register modal), and catalog source admin (add-source modal, visibility management) -- 63 EX public library skills across 7 packs, as React/PF6 pages in the UXD fork.
 status: active
-current: v1
-versions:
-  v1:
-    timestamp: 2026-08-03
-    summary: Rebuilt through template system (shell + catalog pattern + modal pattern + 18 content fragments + build_prototype.py), confirming end-to-end content pipeline
 components: [skills-catalog]
+source_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git
+branch: skills-catalog-ui
+base: upstream/3.6
+preview_url: https://rhoai-a4b259.pages.redhat.com/branch-skills-catalog-ui/
+current: v2
+versions:
+  v1: {timestamp: 2026-08-03, commit: static, summary: Static-era template-system build (retired 2026-08-05)}
+  v2: {timestamp: 2026-08-05, commit: f328700e, summary: Migrated to the UXD fork -- React/PF6 browse + detail + register modal + source admin with live preview}

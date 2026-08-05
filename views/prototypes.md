@@ -2,7 +2,7 @@
 # Prototypes
 
 ## Skills Catalog
-- [Skills Catalog UI](/components/skills-catalog/prototype/skills-catalog-ui/v1/index.html) — Full skills catalog prototype -- browse (card grid), skill detail (full page with tabs), and catalog admin (skills table, packs table, source configs) -- populated with 68 EX public library skills across 7 packs. (status: active, current: v1, versions: v1)
+- [Skills Catalog UI](https://rhoai-a4b259.pages.redhat.com/branch-skills-catalog-ui/) — Full skills catalog prototype -- browse (card grid with persona/category/pack facets and trust-tier toggle), skill detail (install commands, compatibility, README, register modal), and catalog source admin (add-source modal, visibility management) -- 63 EX public library skills across 7 packs, as React/PF6 pages in the UXD fork. (status: active, current: v2, versions: v1, v2, branch: skills-catalog-ui)
 
 ## MCP Registry
 - [MCP Registry UI Prototype (MLflow-style)](/components/mcp-registry/prototype/registry-ui/v2/index.html) — Interactive client-rendered mockups ("MLflow — MCP Servers") of the Registry list/detail/version UI; v0.2 is the more developed iteration. (status: active, current: v2, versions: v1, v2)
