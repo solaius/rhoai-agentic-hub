@@ -34,6 +34,3 @@ Related: [MCP Gateway](/components/mcp-gateway/index.md) · [MCP Catalog](/compo
 - artifact · [MCP 2026-07-28 — RHOAI Impact Analysis](/narrative/enablement/mcp-spec-rc-impact/artifact.md) — Cross-cutting analysis of the MCP protocol's 2026-07-28 breaking changes and impact across Gateway, Registry, Catalog/Lifecycle Operator/Studio, and OGX/Llama Stack Operator. Originally written against the RC; spec finalized July 28, 2026 with no material changes from RC.
 - jtbd · [Discover my skills, MCP servers, and agentic assets](/narrative/knowledge/jtbd-discover-agentic-assets.md) — When I'm building agents, I want to discover governed skills, MCP servers, and agentic assets, so I can compose capable agents from validated, approved components.
 - story · [Governed MCP access, end to end](/narrative/knowledge/story-governed-mcp-access.md) — How MCP Registry, MCP Gateway, and the MCP Ecosystem compose: from any MCP server, through governance, to safe agent consumption at runtime.
-
-## Prototypes
-- [MCP Registry UI Prototype (MLflow-style)](/components/mcp-registry/prototype/registry-ui/v2/index.html) — Interactive client-rendered mockups ("MLflow — MCP Servers") of the Registry list/detail/version UI; v0.2 is the more developed iteration. (active)

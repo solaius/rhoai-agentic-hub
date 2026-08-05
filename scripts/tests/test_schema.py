@@ -606,11 +606,7 @@ def test_related_and_jira_violations_both_surface(tmp_path):
 
 def test_prototype_dir_accepted_in_component_skeleton(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: Registry UI\ndescription: Mockup\nstatus: active\ncurrent: v1\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial\n"
-          "components: [mcp-registry]\n")
-    write(root, "components/x/prototype/registry-ui/v1/index.html", "<html></html>")
+    write(root, "components/x/prototype/registry-ui/prototype.yaml", V2_YAML)
     write(root, "components/components.yaml",
           "components:\n- id: x\n  title: X\n  description: d\n"
           "- id: mcp-registry\n  title: R\n  description: d\n")
@@ -621,7 +617,7 @@ def test_prototype_dir_accepted_in_component_skeleton(tmp_path):
 
 def test_prototype_missing_yaml_is_error(tmp_path):
     root = make_repo(tmp_path)
-    write(root, "components/x/prototype/registry-ui/v1/index.html", "<html></html>")
+    (tmp_path / "components" / "x" / "prototype" / "registry-ui").mkdir(parents=True, exist_ok=True)
     errors, _ = lint_repo(root)
     assert any("missing prototype.yaml" in e for e in errors)
 
@@ -629,7 +625,10 @@ def test_prototype_missing_yaml_is_error(tmp_path):
 def test_prototype_yaml_missing_required_field_is_error(tmp_path):
     root = make_repo(tmp_path)
     write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: Registry UI\ndescription: Mockup\n")
+          V2_YAML.replace("status: active\n", ""))
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
     errors, _ = lint_repo(root)
     assert any("missing required field 'status'" in e for e in errors)
 
@@ -637,10 +636,7 @@ def test_prototype_yaml_missing_required_field_is_error(tmp_path):
 def test_prototype_yaml_bad_status_is_error(tmp_path):
     root = make_repo(tmp_path)
     write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: Registry UI\ndescription: Mockup\nstatus: draft\ncurrent: v1\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial\n"
-          "components: [mcp-registry]\n")
-    write(root, "components/x/prototype/registry-ui/v1/index.html", "<html></html>")
+          V2_YAML.replace("status: active", "status: draft"))
     write(root, "components/components.yaml",
           "components:\n- id: x\n  title: X\n  description: d\n"
           "- id: mcp-registry\n  title: R\n  description: d\n")
@@ -648,41 +644,21 @@ def test_prototype_yaml_bad_status_is_error(tmp_path):
     assert any("status must be active|superseded|archived" in e for e in errors)
 
 
-def test_prototype_yaml_current_points_to_missing_dir_is_error(tmp_path):
+def test_prototype_yaml_missing_branch_is_error(tmp_path):
     root = make_repo(tmp_path)
     write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: Registry UI\ndescription: Mockup\nstatus: active\ncurrent: v2\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial\n"
-          "components: [mcp-registry]\n")
-    write(root, "components/x/prototype/registry-ui/v1/index.html", "<html></html>")
+          V2_YAML.replace("branch: skills-catalog-ui\n", ""))
     write(root, "components/components.yaml",
           "components:\n- id: x\n  title: X\n  description: d\n"
           "- id: mcp-registry\n  title: R\n  description: d\n")
     errors, _ = lint_repo(root)
-    assert any("current 'v2' does not point to an existing directory" in e for e in errors)
-
-
-def test_prototype_version_dir_missing_index_html_is_error(tmp_path):
-    root = make_repo(tmp_path)
-    write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: Registry UI\ndescription: Mockup\nstatus: active\ncurrent: v1\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial\n"
-          "components: [mcp-registry]\n")
-    (tmp_path / "components" / "x" / "prototype" / "registry-ui" / "v1").mkdir(parents=True, exist_ok=True)
-    write(root, "components/components.yaml",
-          "components:\n- id: x\n  title: X\n  description: d\n"
-          "- id: mcp-registry\n  title: R\n  description: d\n")
-    errors, _ = lint_repo(root)
-    assert any("missing index.html" in e for e in errors)
+    assert any("missing required field 'branch'" in e for e in errors)
 
 
 def test_prototype_yaml_unknown_component_is_error(tmp_path):
     root = make_repo(tmp_path)
     write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: Registry UI\ndescription: Mockup\nstatus: active\ncurrent: v1\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: Initial\n"
-          "components: [made-up]\n")
-    write(root, "components/x/prototype/registry-ui/v1/index.html", "<html></html>")
+          V2_YAML.replace("components: [mcp-registry]", "components: [made-up]"))
     errors, _ = lint_repo(root)
     assert any("unknown component id 'made-up'" in e for e in errors)
 
@@ -693,10 +669,7 @@ def test_narrative_prototype_accepted(tmp_path):
           "components:\n- id: mcp-registry\n  title: R\n  description: d\n"
           "- id: mcp-gateway\n  title: G\n  description: d\n")
     write(root, "narrative/prototype/ai-hub-unified/prototype.yaml",
-          "title: AI Hub Unified\ndescription: Cross-component\nstatus: active\ncurrent: v1\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-15\n    summary: Initial\n"
-          "components: [mcp-registry, mcp-gateway]\n")
-    write(root, "narrative/prototype/ai-hub-unified/v1/index.html", "<html></html>")
+          V2_YAML.replace("components: [mcp-registry]", "components: [mcp-registry, mcp-gateway]"))
     errors, _ = lint_repo(root)
     assert not any("prototype" in e.lower() for e in errors)
     assert not any("not part of the narrative skeleton" in e for e in errors)
@@ -769,16 +742,3 @@ def test_prototype_v2_snapshot_missing_fields_is_error(tmp_path):
     errors, _ = lint_repo(root)
     assert any("snapshots.v1 needs 'branch' and 'preview_url'" in e for e in errors)
 
-
-def test_prototype_legacy_still_validated(tmp_path):
-    # No 'branch' key -> legacy path: current must be an existing dir.
-    root = make_repo(tmp_path)
-    write(root, "components/x/prototype/registry-ui/prototype.yaml",
-          "title: R\ndescription: d\nstatus: active\ncurrent: v1\n"
-          "versions:\n  v1:\n    timestamp: 2026-07-09\n    summary: s\n"
-          "components: [mcp-registry]\n")
-    write(root, "components/components.yaml",
-          "components:\n- id: x\n  title: X\n  description: d\n"
-          "- id: mcp-registry\n  title: R\n  description: d\n")
-    errors, _ = lint_repo(root)
-    assert any("does not point to an existing directory" in e for e in errors)
