@@ -5,6 +5,24 @@ See [/docs/enhancements.md](/docs/enhancements.md) for open items.
 
 ---
 
+## 2026-08-05
+
+**#16 Retrofit prototyping onto the UXD RHOAI repo (React/PF6 in a fork).**
+`hub.prototype` now generates real React/PatternFly 6 pages in the UXD RHOAI
+fork (`pedouble/rhoai`) -- branch per prototype off `upstream/3.6`, live
+GitLab Pages previews, prototype.yaml v2 metadata (branch, preview URL,
+versions as commits) rendered in `views/prototypes.md`. Doctor section 12
+automates fork setup (VPN probe, upstream remote, working-directory grant,
+`PAGES_URL` via `GITLAB_CEE_TOKEN`). The static pipeline (prototype-shell,
+`build_prototype.py`, `extract_uxd_styles.py`) is retired and the docs swept.
+Shipped with it: skills-catalog migrated as the pilot (catalog + detail +
+admin + add-source, live preview); the MLflow-style registry-ui mockup
+retired with a gated public takedown; and two new skills-registry
+prototypes -- the RHOAI Registry tab (list + governed detail) and an
+MLflow-native RFC-0008 pilot in `pedouble/mlflow` for the 2026-08-07
+Databricks sync (learnings feed #17). Spec:
+[/docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md](/docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md).
+
 ## 2026-08-03
 
 **#15 Prototype template system.** Extended the native prototype system with

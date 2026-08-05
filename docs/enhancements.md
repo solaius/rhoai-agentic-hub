@@ -18,16 +18,6 @@
 
 ## Next (active candidates)
 
-**[#16 Retrofit prototyping onto the UXD RHOAI repo](https://github.com/solaius/rhoai-agentic-hub/issues/16).**
-The hub's static HTML prototypes approximate PatternFly; the UXD team's RHOAI
-repo *is* PatternFly -- React 18 + PF6 + webpack, with per-branch GitLab Pages
-previews and an MR path into the team's canonical prototype. Retrofit
-`hub.prototype` to keep what the hub is uniquely good at (grounding a design in
-real knowledge, research, strategy, and Jira) and hand generation off to a fork
-of that repo -- likely replacing the static path outright. Supersedes the P1/P8
-static-HTML principles from #15; needs a spec first, since fork topology,
-replace-vs-coexist, and the internal-vs-public hosting boundary are all open.
-
 **[#17 MLflow as a first-class prototype target](https://github.com/solaius/rhoai-agentic-hub/issues/17).**
 #16 proved prototypes belong in real codebases; the 2026-08-05 MLflow pilot
 (skills-registry RFC screens for the Databricks sync) proved the flow travels
