@@ -235,8 +235,8 @@ restart is still needed); an auth error means expired tokens.
 runs locally via `npx` and provides PatternFly v6 component documentation,
 design guidelines, accessibility docs, AI prompt guidance (from the
 `patternfly/ai-helpers` repo), and JSON schemas. `hub.prototype` queries it
-before generating any HTML to ensure correct component selection, CSS class
-names, HTML structure, and design token usage.
+during component planning -- before generating any React -- to ensure
+correct component selection, props, composition, and design token usage.
 
 **Prerequisite:** Node.js (provides `npx`). Install via your package
 manager (`brew install node`, `dnf install nodejs`, `winget install

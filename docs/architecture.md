@@ -58,7 +58,6 @@ CI-verified.
 | `narrative/<skeleton>` | the story layer: pillars, cross-component stories, strategy spine | humans + skills |
 | `memory/` | working context: profiles, facts, log | the gate only |
 | `conventions/` | the normative rulebook | humans (rarely changes) |
-| `conventions/prototype-shell/` | shared prototype shell, CSS, nav, and page patterns extracted from UXD repo; assembled by `build_prototype.py` | `extract_uxd_styles.py` + `hub.prototype` |
 | `views/` | cross-cutting generated indexes | `hub_index.py` only |
 | `publish/manifest.yaml` | the public-site allowlist | `hub.publish` |
 | `restricted/` | gitignored mirror for NDA content | same rules, local only |
@@ -98,7 +97,7 @@ error:
 | `research/` | deep documents (numbered series optional) |
 | `strategy/` | strategy docs, RFE roadmaps, outcomes |
 | `enablement/` | one self-contained subdirectory per artifact (deck, hub site, blog) |
-| `prototype/` | versioned UI prototypes, each with `prototype.yaml` + self-contained HTML |
+| `prototype/` | prototype metadata (`prototype.yaml` v2: fork branch, preview URL, versions as commits) -- the pages themselves live in the UXD fork |
 | `work/` | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored) |
 
 **Working context vs domain knowledge:** "the 3.5 date moved" is memory;
@@ -129,7 +128,7 @@ otherwise hide, derived entirely from entry frontmatter:
 | `views/faq.md` | all `qa` entries — unanswered, most-asked (by `asks:` count), by component |
 | `views/jtbd.md` | all `jtbd` entries by status × component, evidence-count flagged |
 | `views/artifacts.md` | every enablement artifact + publish state from the manifest |
-| `views/prototypes.md` | all prototypes, grouped by component, with version and status |
+| `views/prototypes.md` | all prototypes with live preview links, grouped by component, with branch, version and status |
 
 ## The trust model
 

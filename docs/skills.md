@@ -37,12 +37,14 @@ families (design decisions D8/D11):
   knowledge + research + the Jira snapshot; refresh rewrites in place +
   `## History`. Offered by intake and research; its candidate jiras feed
   `/rfe.create`.
-- **Prototype:** `hub.prototype create <component>` → context load (knowledge,
-  research, strategy, related components, Jira, upstream repos) → architecture
-  grounding brief (user confirms) → component planning (PatternFly MCP query
-  per component) → design decisions → generate HTML + PatternFly 6 CDN →
-  Playwright verify → gate → reindex → offer `hub.publish`. Version existing:
-  `hub.prototype version <component>/<slug>`.
+- **Prototype:** `hub.prototype create <component>` -> context load
+  (knowledge + research + strategy + related + Jira + upstream repos) ->
+  architecture grounding brief -> component planning (PatternFly MCP query
+  per component, fork idiom reuse) -> generate React/PF6 page(s) on
+  a fork branch off `upstream/3.6` -> `eslint` + `npm run build` -> gate
+  -> push + hub metadata -> reindex -> live preview URL. Then
+  `hub.prototype version <component>/<slug>` iterates on the same branch
+  (preview redeploys on push).
 - **Jira:** `hub.jira-sweep <component>` (scope discovery → tracked snapshot +
   gated refs) then `hub.jira-sync` on demand — diff-driven refresh; the map
   lives in [/views/jira-map.md](/views/jira-map.md). `hub.jira-hygiene` audits

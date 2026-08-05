@@ -33,7 +33,7 @@ use, never pre-created empty):
 | `research/`  | deep documents (numbered series optional) |
 | `strategy/`  | strategy docs, RFE roadmaps, outcomes — `strategy.md` is the living per-component strategy doc ([strategy.md](/conventions/strategy.md)) |
 | `enablement/`| one subdirectory per artifact (deck, hub site, blog) |
-| `prototype/` | one subdirectory per prototype, each with `prototype.yaml` + versioned directories (`v1/`, `v2/`, ...) containing self-contained HTML + PatternFly 6 CDN |
+| `prototype/` | one subdirectory per prototype holding `prototype.yaml` (v2: fork branch + preview URL); generated pages live in the UXD fork, not this repo |
 | `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored), `jira-snapshot.yaml` (machine-written by hub.jira-sweep; tracked), `triage-log.yaml` (machine-written by hub.jira-triage; tracked; carries no Jira prose by design, so it needs no redaction in this PUBLIC repo) |
 
 Anything else directly under a component is a lint **error**. `platform/` is the
@@ -42,17 +42,21 @@ story/strategy content lives in /narrative/).
 
 ### Prototype structure
 
-Each `prototype/<slug>/` contains:
-- `prototype.yaml` — metadata (required fields: title, description, status,
-  current, versions, components)
-- Versioned directories (`v1/`, `v2/`, ...) each with `index.html` as the
-  entry point and optional `assets/` for images/icons
-- `status`: `active` | `superseded` | `archived`
-- `current`: the version directory name that is "latest"
-- `components`: list of component ids this prototype covers (closed
-  vocabulary, same as knowledge entries)
+Each `prototype/<slug>/` holds exactly one file, `prototype.yaml`:
 
-Cross-component prototypes live in `narrative/prototype/`, same structure.
+- required: `title`, `description`, `status` (active | superseded |
+  archived), `components` (list of component ids), `source_repo`,
+  `branch` (fork branch, usually = slug), `base` (e.g. `upstream/3.6`),
+  `preview_url` (`<pages_base_url>/branch-<branch>/`), `current` (a key
+  of `versions`), `versions` (map `vN -> {timestamp, commit, summary}`;
+  `commit` is a fork sha, or `static` on migrated static-era entries)
+- optional: `snapshots` (map `vN -> {branch, preview_url}` for frozen
+  side-by-side branches), `mr_url` (set when upstreamed)
+
+The React pages themselves live in the UXD fork
+(`conventions/prototype-fork.yaml` points at it), one branch per
+prototype based off `upstream/3.6`. Cross-component prototypes keep their
+metadata in `narrative/prototype/<slug>/`.
 
 ## Component families
 `related:` in `components/components.yaml` declares a component's boundary

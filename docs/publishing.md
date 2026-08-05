@@ -70,21 +70,12 @@ that is the intended unpublish path, not an accident to guard against.
 
 ### Prototypes
 
-Individual prototypes publish like any other artifact:
-
-    - source: components/mcp-registry/prototype/registry-ui/v2/
-      dest: mcp-registry/prototype/registry-ui/
-      audience: internal
-      title: MCP Registry UI Prototype (v2)
-      description: Interactive mockup of the Registry list/detail/version UI
-
-The generated prototype portal publishes as a single entry:
-
-    - source: views/prototypes-portal.html
-      dest: prototypes/
-      audience: internal
-      title: Prototype Portal
-      description: Auto-generated index of all prototypes across components
+Prototypes do not publish through the manifest. They are React pages in
+the UXD RHOAI fork; the shareable artifact is the branch's GitLab Pages
+preview URL (internal, VPN), recorded in each `prototype.yaml` and
+rendered in [/views/prototypes.md](/views/prototypes.md). See
+/docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md
+(ruling R4).
 
 ## One-time setup: `PAGES_PUSH_TOKEN`
 
