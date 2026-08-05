@@ -806,10 +806,10 @@ else
       fail "no 'upstream' remote — run: bash scripts/doctor.sh setup"
     fi
     if git -C "$FORK" remote get-url upstream >/dev/null 2>&1; then
-      if git -C "$FORK" fetch upstream --quiet 2>/dev/null; then
-        ok "upstream fetch works"
+      if git -C "$FORK" ls-remote upstream HEAD >/dev/null 2>&1; then
+        ok "upstream reachable"
       else
-        warn "upstream fetch failed — check VPN/certs (git config http.$GITLAB_CEE.sslVerify false)"
+        warn "upstream not reachable — check VPN/certs (git config http.$GITLAB_CEE.sslVerify false)"
       fi
     fi
     # 12c. toolchain: node >= 18, npm, node_modules.
@@ -861,17 +861,17 @@ PY
     # catch exactly that). Without the token: manual instructions.
     PROJ="$GITLAB_CEE/api/v4/projects/pedouble%2Frhoai"
     if [ -n "${GITLAB_CEE_TOKEN:-}" ]; then
-      PAGES_JSON=$(curl -sk -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$PROJ/pages" 2>/dev/null || echo "")
+      PAGES_JSON=$(curl -sk --connect-timeout 5 -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$PROJ/pages" 2>/dev/null || echo "")
       PAGES_LIVE=$(printf '%s' "$PAGES_JSON" | "$PYTHON" -c 'import json,sys
 try: print(json.load(sys.stdin).get("url",""))
 except Exception: print("")')
       if [ -n "$PAGES_LIVE" ]; then
         ok "fork Pages enabled: $PAGES_LIVE"
-        VAR_CODE=$(curl -sk -o /dev/null -w '%{http_code}' -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$PROJ/variables/PAGES_URL")
+        VAR_CODE=$(curl -sk --connect-timeout 5 -o /dev/null -w '%{http_code}' -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$PROJ/variables/PAGES_URL")
         if [ "$VAR_CODE" = "200" ]; then
           ok "PAGES_URL CI variable set"
         elif [ "$MODE" = "setup" ]; then
-          curl -sk -o /dev/null -X POST -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" \
+          curl -sk --connect-timeout 5 -o /dev/null -X POST -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" \
             "$PROJ/variables" --data-urlencode "key=PAGES_URL" --data-urlencode "value=$PAGES_LIVE" \
             && ok "PAGES_URL CI variable created ($PAGES_LIVE)" \
             || fail "could not create PAGES_URL variable (token needs api scope + Maintainer)"
