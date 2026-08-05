@@ -1,5 +1,10 @@
 # Prototype system design
 
+> **Superseded (2026-08-04):** principles P1/P3/P8 (static HTML, on-disk
+> version dirs, static-over-React) are replaced by the UXD fork pipeline --
+> see /docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md.
+> The prototype/ skeleton leg, grounding flow, and gate discipline remain.
+
 > Approved: 2026-08-02. Adds a `prototype/` skeleton leg, a `hub.prototype`
 > skill, versioned prototypes grounded in real architecture, a generated
 > portal, and the full documentation sweep.

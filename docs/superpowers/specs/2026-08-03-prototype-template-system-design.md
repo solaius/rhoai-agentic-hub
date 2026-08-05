@@ -2,6 +2,12 @@
 
 **Date:** 2026-08-03
 **Status:** Implemented 2026-08-03
+
+> **Superseded (2026-08-04):** the entire template system (shell,
+> patterns, extract/build scripts) is retired -- prototypes now build as
+> React pages in the UXD fork itself. See
+> /docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md.
+
 **Goal:** Generate RHOAI dashboard prototypes that are visually faithful
 on first attempt by extracting reusable templates and CSS from the UXD
 prototype repo, eliminating iterative rework.
