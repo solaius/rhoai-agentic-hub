@@ -10,4 +10,4 @@ upstream_project_id: 155361
 fork_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git
 fork_project_path: pedouble/rhoai
 base_branch: "3.6"
-pages_base_url: ""
+pages_base_url: "https://rhoai-a4b259.pages.redhat.com"
