@@ -23,7 +23,11 @@ Remote mapping in the clone: `origin` → source repo, `gitlab` → push repo.
    at `bash scripts/doctor.sh setup` (section 13).
 2. If push repo configured: silent VPN probe
    `curl -sk --connect-timeout 5 -o /dev/null -w '%{http_code}' https://gitlab.cee.redhat.com/api/v4/projects/pedouble%2Fmlflow`
-   — on non-200 STOP: connect to the Red Hat VPN.
+   — pedouble/mlflow is a private project, so unauthenticated calls come
+   back `404` (not `200`) even when reachable. Any real HTTP code
+   (`200`/`301`/`401`/`404`/…) proves reachability; only `000` (no
+   connection at all) means VPN-down. STOP only on `000`: connect to the
+   Red Hat VPN.
 3. Local demo/visual verification runs through the clone's own
    `.claude/skills/dev-server/` skill — a HARD dependency on Windows.
    Backend `:5000` must be up or the app hangs on a loading skeleton;
@@ -42,7 +46,10 @@ a. Every new screen names an EXISTING MLflow page it mirrors.
    screen per new screen.
 b. Databricks design-system components only
    (`@databricks/design-system`); respect `componentId` discipline
-   (every interactive component gets one, kebab-case, page-prefixed).
+   (every interactive component gets one, kebab-case, page-prefixed) —
+   but only where the component's types actually accept the prop. e.g.
+   `SegmentedControlButton` and `TableSkeleton` do NOT (passing it there
+   is a TS2322); the group-level component carries it instead.
 c. Prop discovery: the package ships NO `index.d.ts` — read
    `node_modules/@databricks/design-system/dist-types/` for real prop
    types before using a component.

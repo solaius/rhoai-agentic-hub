@@ -1021,11 +1021,13 @@ if [ -n "$MLF" ]; then
       || fail "frontend node_modules missing — run: bash scripts/doctor.sh setup"
   fi
   # 13d. ready probe (non-blocking; does NOT boot the dev servers —
-  # that's the clone's own dev-server skill at prototype time).
-  if (cd "$MLF" && uv run mlflow --version >/dev/null 2>&1); then
+  # that's the clone's own dev-server skill at prototype time). --no-sync
+  # keeps check mode read-only: plain `uv run` can trigger uv's auto env
+  # sync (a write) even when we only want a version probe.
+  if (cd "$MLF" && uv run --no-sync mlflow --version >/dev/null 2>&1); then
     ok "mlflow importable — clone ready for use"
   else
-    warn "uv run mlflow --version failed — run: bash scripts/doctor.sh setup (uv sync)"
+    warn "uv run --no-sync mlflow --version failed — run: bash scripts/doctor.sh setup (uv sync)"
   fi
   # 13e. session wiring: additional working directory (same as 12d).
   AD13=$(FORK="$MLF" "$PYTHON" - "$ROOT/.claude/settings.local.json" "$MODE" <<'PY'
@@ -1055,10 +1057,14 @@ PY
   # 13f. Pages base URL discovery (pedouble/mlflow), token + VPN gated.
   if [ -n "${MLFLOW_PUSH_REPO:-}" ]; then
     HTTP13=$(curl -sk --connect-timeout 10 -o /dev/null -w '%{http_code}' \
-      "$GITLAB_CEE/api/v4/projects/pedouble%2Fmlflow" 2>/dev/null || echo 000)
+      "$GITLAB_CEE/api/v4/projects/pedouble%2Fmlflow" 2>/dev/null)
     # pedouble/mlflow is a private project: unauthenticated requests get a
     # 404 (not 200) even when reachable, so only "000" (no connection)
     # means unreachable/VPN-down. Any other code means the API answered.
+    # NOTE: no `|| echo 000` fallback here — curl's own -w write-out
+    # already prints "000" on connection failure; appending another
+    # "000" on top of it would yield "000000" and the check below would
+    # never match.
     if [ "$HTTP13" = "000" ]; then
       warn "cannot reach gitlab.cee.redhat.com — connect to the Red Hat VPN (mlflow Pages checks skipped)"
     elif [ -n "${GITLAB_CEE_TOKEN:-}" ]; then

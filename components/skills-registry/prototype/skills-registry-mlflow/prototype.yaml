@@ -6,6 +6,10 @@ target: mlflow
 source_repo: https://gitlab.cee.redhat.com/pedouble/mlflow.git
 branch: skills-registry-rfc
 base: page-composer-upstream
+# branch-URL stand-in (no Pages base URL yet); upgrades to a live
+# /branch-skills-registry-rfc/ Pages preview once this branch is next
+# versioned/rebased onto page-composer-upstream after it picked up the
+# Pages CI commit -- this branch predates that commit.
 preview_url: https://gitlab.cee.redhat.com/pedouble/mlflow/-/tree/skills-registry-rfc
 current: v2
 versions:
