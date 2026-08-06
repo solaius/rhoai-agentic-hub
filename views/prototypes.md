@@ -7,3 +7,6 @@
 
 ## Skills Catalog
 - [Skills Catalog UI](https://rhoai-a4b259.pages.redhat.com/branch-skills-catalog-ui/) — Full skills catalog prototype -- browse (card grid with persona/category/pack facets and trust-tier toggle), skill detail (install commands, compatibility, README, register modal), and catalog source admin (add-source modal, visibility management) -- 63 EX public library skills across 7 packs, as React/PF6 pages in the UXD fork. (status: active, current: v2, versions: v1, v2, branch: skills-catalog-ui)
+
+## MCP Registry
+- [MCP Registry (MLflow-native)](https://mlflow-e2fa8f.pages.redhat.com/branch-mcp-registry-rfc/#/mcp-registry) — Mock-backed native-MLflow prototype of the MCP server registry — list (search/status/endpoint filters, grid-list toggle), prompts-style detail (version rail, immutable server_json, tools, legal status transitions, governance-roadmap placeholder), and full-page register flow — grounded in the merged MCPServer/MCPServerVersion backend. (status: active, current: v1, versions: v1, branch: mcp-registry-rfc)

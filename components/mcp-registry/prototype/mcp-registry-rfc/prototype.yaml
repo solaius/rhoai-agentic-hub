@@ -1,0 +1,12 @@
+title: MCP Registry (MLflow-native)
+description: Mock-backed native-MLflow prototype of the MCP server registry — list (search/status/endpoint filters, grid-list toggle), prompts-style detail (version rail, immutable server_json, tools, legal status transitions, governance-roadmap placeholder), and full-page register flow — grounded in the merged MCPServer/MCPServerVersion backend.
+status: active
+components: [mcp-registry]
+target: mlflow
+source_repo: https://gitlab.cee.redhat.com/pedouble/mlflow.git
+branch: mcp-registry-rfc
+base: page-composer-upstream
+preview_url: https://mlflow-e2fa8f.pages.redhat.com/branch-mcp-registry-rfc/#/mcp-registry
+current: v1
+versions:
+  v1: {timestamp: 2026-08-06, commit: a7f01fc6, summary: List/detail/create screens, mock session store, governance roadmap placeholder}
