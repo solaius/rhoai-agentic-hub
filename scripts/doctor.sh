@@ -923,5 +923,186 @@ PY
   fi
 fi
 
+echo "[13] MLflow prototyping (hub.prototype)"
+# Spec: docs/superpowers/specs/2026-08-05-mlflow-prototype-target-design.md
+# 13a-13f. GitHub-side checks always run; gitlab-side checks (13b push
+# remote reachability, 13f Pages) are VPN/token gated like section 12.
+MLF_SRC="${MLFLOW_SOURCE_REPO:-https://github.com/mlflow/mlflow}"
+MLF_BR="${MLFLOW_SOURCE_BRANCH:-master}"
+# 13a. clone. MLFLOW_DIR overrides; default sibling of the hub repo.
+MLF=""
+SIBLING="$(dirname "$ROOT")/mlflow"
+for CAND in "${MLFLOW_DIR:-}" "$SIBLING" "$HOME/code/rh/mlflow"; do
+  [ -n "$CAND" ] && [ -d "$CAND/.git" ] && MLF="$CAND" && break
+done
+if [ -z "$MLF" ]; then
+  if [ "$MODE" = "setup" ]; then
+    MLF="${MLFLOW_DIR:-$SIBLING}"
+    note "cloning $MLF_SRC (branch $MLF_BR) to $MLF (large repo, takes a while)..."
+    if git clone --branch "$MLF_BR" "$MLF_SRC" "$MLF" >/dev/null 2>&1; then
+      ok "mlflow clone created at $MLF"
+    else
+      fail "could not clone $MLF_SRC — check the URL/branch (MLFLOW_SOURCE_REPO/MLFLOW_SOURCE_BRANCH in restricted/.env)"
+      MLF=""
+    fi
+  else
+    fail "mlflow clone not found — set MLFLOW_DIR in restricted/.env or run: bash scripts/doctor.sh setup"
+  fi
+else
+  ok "mlflow clone at $MLF"
+fi
+if [ -n "$MLF" ]; then
+  # 13b. remotes: origin = source repo; gitlab = push repo (if configured).
+  ORIGIN_URL=$(git -C "$MLF" remote get-url origin 2>/dev/null || echo "")
+  # compare ignoring a trailing .git / trailing slash
+  NORM_SRC=$(printf '%s' "$MLF_SRC" | sed 's|/$||;s|\.git$||')
+  NORM_ORI=$(printf '%s' "$ORIGIN_URL" | sed 's|/$||;s|\.git$||')
+  if [ "$NORM_ORI" = "$NORM_SRC" ]; then
+    ok "origin -> $MLF_SRC"
+  else
+    warn "origin is '$ORIGIN_URL' (expected $MLF_SRC from MLFLOW_SOURCE_REPO)"
+  fi
+  if [ -n "${MLFLOW_PUSH_REPO:-}" ]; then
+    PUSH_URL=$(git -C "$MLF" remote get-url gitlab 2>/dev/null || echo "")
+    NORM_PUSH_WANT=$(printf '%s' "$MLFLOW_PUSH_REPO" | sed 's|/$||;s|\.git$||')
+    NORM_PUSH_HAVE=$(printf '%s' "$PUSH_URL" | sed 's|/$||;s|\.git$||')
+    if [ "$NORM_PUSH_HAVE" = "$NORM_PUSH_WANT" ]; then
+      ok "gitlab remote -> $MLFLOW_PUSH_REPO"
+    elif [ -z "$PUSH_URL" ] && [ "$MODE" = "setup" ]; then
+      git -C "$MLF" remote add gitlab "$MLFLOW_PUSH_REPO" \
+        && ok "gitlab remote added ($MLFLOW_PUSH_REPO)" \
+        || fail "could not add gitlab remote"
+    elif [ -z "$PUSH_URL" ]; then
+      fail "no 'gitlab' remote — run: bash scripts/doctor.sh setup"
+    else
+      warn "gitlab remote is '$PUSH_URL' (expected $MLFLOW_PUSH_REPO from MLFLOW_PUSH_REPO)"
+    fi
+  else
+    note "MLFLOW_PUSH_REPO not set — push/Pages checks skipped (local-only prototyping)"
+  fi
+  # 13c. toolchain + prepare. uv >= 0.10.12 (older uv fails on uv.lock).
+  if command -v uv >/dev/null 2>&1; then
+    UV_V=$(uv --version 2>/dev/null | sed 's/^uv //;s/ .*//')
+    UV_OK=$("$PYTHON" -c "import sys;v='$UV_V'.split('.');print('yes' if tuple(map(int,v[:3]))>=(0,10,12) else 'no')" 2>/dev/null || echo no)
+    if [ "$UV_OK" = "yes" ]; then
+      ok "uv $UV_V"
+    else
+      warn "uv $UV_V < 0.10.12 (fails to parse uv.lock) — run: uv self update"
+    fi
+  else
+    fail "uv not installed — https://docs.astral.sh/uv/getting-started/installation/"
+  fi
+  if command -v yarn >/dev/null 2>&1 || [ -x "$HOME/.local/bin/yarn" ]; then
+    ok "yarn available"
+  elif [ "$MODE" = "setup" ] && command -v corepack >/dev/null 2>&1; then
+    corepack enable --install-directory "$HOME/.local/bin" >/dev/null 2>&1 \
+      && ok "yarn enabled via corepack (~/.local/bin)" \
+      || fail "corepack enable failed — run: corepack enable --install-directory ~/.local/bin"
+  else
+    fail "yarn missing — run: corepack enable --install-directory ~/.local/bin (then re-run doctor)"
+  fi
+  if [ "$MODE" = "setup" ]; then
+    if [ ! -d "$MLF/.venv" ] && ! (cd "$MLF" && uv sync >/dev/null 2>&1); then
+      warn "uv sync failed in $MLF — run it manually"
+    else
+      ok "python env ready (uv sync)"
+    fi
+    if [ -d "$MLF/mlflow/server/js/node_modules" ]; then
+      ok "frontend node_modules installed"
+    else
+      note "running yarn install in mlflow/server/js (~580 MB, takes a while)..."
+      (cd "$MLF/mlflow/server/js" && yarn install >/dev/null 2>&1) \
+        && ok "yarn install done" \
+        || fail "yarn install failed — run it manually in $MLF/mlflow/server/js"
+    fi
+  else
+    [ -d "$MLF/mlflow/server/js/node_modules" ] \
+      && ok "frontend node_modules installed" \
+      || fail "frontend node_modules missing — run: bash scripts/doctor.sh setup"
+  fi
+  # 13d. ready probe (non-blocking; does NOT boot the dev servers —
+  # that's the clone's own dev-server skill at prototype time).
+  if (cd "$MLF" && uv run mlflow --version >/dev/null 2>&1); then
+    ok "mlflow importable — clone ready for use"
+  else
+    warn "uv run mlflow --version failed — run: bash scripts/doctor.sh setup (uv sync)"
+  fi
+  # 13e. session wiring: additional working directory (same as 12d).
+  AD13=$(FORK="$MLF" "$PYTHON" - "$ROOT/.claude/settings.local.json" "$MODE" <<'PY'
+import json, os, sys
+path, mode = sys.argv[1], sys.argv[2]
+fork = os.environ["FORK"].replace("\\", "/")
+try:
+    data = json.load(open(path, encoding="utf-8"))
+except (OSError, ValueError):
+    data = {}
+dirs = data.setdefault("permissions", {}).setdefault("additionalDirectories", [])
+if fork in dirs:
+    print("ok")
+elif mode == "setup":
+    dirs.append(fork)
+    json.dump(data, open(path, "w", encoding="utf-8"), indent=2)
+    print("written")
+else:
+    print("missing")
+PY
+)
+  case "$AD13" in
+    ok) ok "mlflow clone granted as additional working directory" ;;
+    written) ok "mlflow clone added to additionalDirectories (restart Claude Code to take effect)" ;;
+    *) fail "mlflow clone not in .claude/settings.local.json additionalDirectories — run: bash scripts/doctor.sh setup" ;;
+  esac
+  # 13f. Pages base URL discovery (pedouble/mlflow), token + VPN gated.
+  if [ -n "${MLFLOW_PUSH_REPO:-}" ]; then
+    HTTP13=$(curl -sk --connect-timeout 5 -o /dev/null -w '%{http_code}' \
+      "$GITLAB_CEE/api/v4/projects/pedouble%2Fmlflow" 2>/dev/null || echo 000)
+    if [ "$HTTP13" != "200" ]; then
+      warn "cannot reach gitlab.cee.redhat.com — connect to the Red Hat VPN (mlflow Pages checks skipped)"
+    elif [ -n "${GITLAB_CEE_TOKEN:-}" ]; then
+      MPROJ="$GITLAB_CEE/api/v4/projects/pedouble%2Fmlflow"
+      MPAGES_JSON=$(curl -sk --connect-timeout 5 -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$MPROJ/pages" 2>/dev/null || echo "")
+      MPAGES_LIVE=$(printf '%s' "$MPAGES_JSON" | "$PYTHON" -c 'import json,sys
+try: print(json.load(sys.stdin).get("url",""))
+except Exception: print("")')
+      if [ -n "$MPAGES_LIVE" ]; then
+        ok "mlflow fork Pages enabled: $MPAGES_LIVE"
+        SYNC13=$(PAGES_LIVE="$MPAGES_LIVE" "$PYTHON" - "$ROOT/conventions/prototype-targets.yaml" "$MODE" mlflow <<'PY'
+import os, re, sys
+path, mode, target = sys.argv[1], sys.argv[2], sys.argv[3]
+url = os.environ["PAGES_LIVE"].rstrip("/")
+text = open(path, encoding="utf-8").read()
+block = re.search(r'(?ms)^  ' + re.escape(target) + r':\n.*?(?=^  \S|\Z)', text)
+if not block:
+    print("stale"); sys.exit()
+m = re.search(r'(?m)^    pages_base_url:\s*"?([^"\n]*)"?\s*$', block.group(0))
+if not m:
+    print("stale"); sys.exit()
+cur = m.group(1)
+if cur == url:
+    print("ok")
+elif mode == "setup":
+    s = block.start() + m.start()
+    e = block.start() + m.end()
+    open(path, "w", encoding="utf-8").write(
+        text[:s] + f'    pages_base_url: "{url}"' + text[e:])
+    print("written")
+else:
+    print("stale")
+PY
+)
+        case "$SYNC13" in
+          ok) ok "prototype-targets.yaml mlflow pages_base_url in sync" ;;
+          written) ok "prototype-targets.yaml mlflow pages_base_url written — commit the change" ;;
+          *) warn "prototype-targets.yaml mlflow pages_base_url is stale/empty — run: bash scripts/doctor.sh setup" ;;
+        esac
+      else
+        warn "mlflow fork Pages not reachable via API — push a branch with the Pages CI once, then re-run"
+      fi
+    else
+      note "no GITLAB_CEE_TOKEN — mlflow Pages URL discovery skipped (fill targets.mlflow.pages_base_url by hand from the fork's Deploy > Pages settings)"
+    fi
+  fi
+fi
+
 echo "== result: $PASS ok, $WARN warn, $FAIL fail"
 [ "$FAIL" -eq 0 ]
