@@ -240,6 +240,24 @@ def _lint_prototypes(root, prototype_dir, errors, warnings, component_ids):
                 if (not isinstance(sdata, dict) or not sdata.get("branch")
                         or not sdata.get("preview_url")):
                     errors.append(f"{yrel}: snapshots.{sname} needs 'branch' and 'preview_url'")
+        target = data.get("target")
+        if target is not None:
+            targets_file = root / "conventions" / "prototype-targets.yaml"
+            known = None
+            if targets_file.is_file():
+                try:
+                    tdata = yaml.safe_load(targets_file.read_text(encoding="utf-8")) or {}
+                    known = set((tdata.get("targets") or {}).keys())
+                except yaml.YAMLError:
+                    known = None
+            if known is not None and target not in known:
+                errors.append(f"{yrel}: unknown target '{target}' "
+                              f"(not in conventions/prototype-targets.yaml)")
+        composes = data.get("composes")
+        if composes is not None:
+            if not isinstance(composes, list) or not all(
+                    isinstance(x, str) and x for x in composes):
+                errors.append(f"{yrel}: composes must be a list of branch names")
         comps = data.get("components")
         if comps is not None:
             if not isinstance(comps, list) or not all(isinstance(x, str) for x in comps):

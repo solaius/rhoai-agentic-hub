@@ -742,3 +742,51 @@ def test_prototype_v2_snapshot_missing_fields_is_error(tmp_path):
     errors, _ = lint_repo(root)
     assert any("snapshots.v1 needs 'branch' and 'preview_url'" in e for e in errors)
 
+
+def test_prototype_target_known_is_ok(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "conventions/prototype-targets.yaml",
+          "targets:\n  uxd-rhoai:\n    default: true\n  mlflow:\n    pages_base_url: \"\"\n")
+    write(root, "components/x/prototype/registry-ui/prototype.yaml",
+          V2_YAML + "target: mlflow\n")
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert not any("target" in e for e in errors)
+
+
+def test_prototype_target_unknown_is_error(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "conventions/prototype-targets.yaml",
+          "targets:\n  uxd-rhoai:\n    default: true\n")
+    write(root, "components/x/prototype/registry-ui/prototype.yaml",
+          V2_YAML + "target: figma\n")
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("unknown target 'figma'" in e for e in errors)
+
+
+def test_prototype_composes_must_be_string_list(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/registry-ui/prototype.yaml",
+          V2_YAML + "composes: some-branch\n")
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert any("composes" in e for e in errors)
+
+
+def test_prototype_composes_list_is_ok(tmp_path):
+    root = make_repo(tmp_path)
+    write(root, "components/x/prototype/registry-ui/prototype.yaml",
+          V2_YAML + "composes: [skills-registry-rfc]\n")
+    write(root, "components/components.yaml",
+          "components:\n- id: x\n  title: X\n  description: d\n"
+          "- id: mcp-registry\n  title: R\n  description: d\n")
+    errors, _ = lint_repo(root)
+    assert not any("composes" in e for e in errors)
+
