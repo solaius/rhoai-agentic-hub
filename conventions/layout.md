@@ -33,7 +33,7 @@ use, never pre-created empty):
 | `research/`  | deep documents (numbered series optional) |
 | `strategy/`  | strategy docs, RFE roadmaps, outcomes — `strategy.md` is the living per-component strategy doc ([strategy.md](/conventions/strategy.md)) |
 | `enablement/`| one subdirectory per artifact (deck, hub site, blog) |
-| `prototype/` | one subdirectory per prototype holding `prototype.yaml` (v2: fork branch + preview URL); generated pages live in the UXD fork, not this repo |
+| `prototype/` | one subdirectory per prototype holding `prototype.yaml` (v2: target repo branch + preview URL); generated pages live in the prototype's target repo (UXD or MLflow fork), not this repo |
 | `work/`      | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored), `jira-snapshot.yaml` (machine-written by hub.jira-sweep; tracked), `triage-log.yaml` (machine-written by hub.jira-triage; tracked; carries no Jira prose by design, so it needs no redaction in this PUBLIC repo) |
 
 Anything else directly under a component is a lint **error**. `platform/` is the
