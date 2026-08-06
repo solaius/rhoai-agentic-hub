@@ -145,6 +145,12 @@ Print the preview URL; note it goes live when the fork pipeline finishes
 VPN required to view. In local-only mode: report the branch name and how
 to demo via the dev-server skill instead.
 
+Sharing note: previews are viewable by ANY authenticated Red Hat SSO
+user (VPN required) as long as the fork's Pages access level is
+`enabled` — doctor 13f checks and repairs this. If peers report a 404
+that works for the owner, that setting has regressed to `private`
+(members-only); run `bash scripts/doctor.sh setup`.
+
 First-deploy smoke check: once the pipeline is green, confirm the
 preview actually boots. A `302` from the URL means Pages is serving
 (Red Hat SSO redirect — normal); a white screen means the ARTIFACT

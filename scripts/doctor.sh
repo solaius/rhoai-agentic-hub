@@ -1075,6 +1075,26 @@ try: print(json.load(sys.stdin).get("url",""))
 except Exception: print("")')
       if [ -n "$MPAGES_LIVE" ]; then
         ok "mlflow fork Pages enabled: $MPAGES_LIVE"
+        # Pages access must be 'enabled' (everyone with access = any
+        # authenticated SSO user on an internal-visibility project) or
+        # 'public'. 'private' limits previews to project members — peers
+        # get a 404 that looks like a missing deployment.
+        MPAL=$(curl -sk --connect-timeout 5 -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" "$MPROJ" 2>/dev/null | "$PYTHON" -c 'import json,sys
+try: print(json.load(sys.stdin).get("pages_access_level",""))
+except Exception: print("")')
+        case "$MPAL" in
+          enabled|public) ok "mlflow Pages access: $MPAL (shareable)" ;;
+          private)
+            if [ "$MODE" = "setup" ]; then
+              curl -sk --connect-timeout 5 -o /dev/null -X PUT -H "PRIVATE-TOKEN: $GITLAB_CEE_TOKEN" \
+                "$MPROJ" --data "pages_access_level=enabled" \
+                && ok "mlflow Pages access set to 'enabled' (was private — previews now viewable by any SSO user)" \
+                || fail "could not set pages_access_level (token needs api scope + Maintainer)"
+            else
+              warn "mlflow Pages access is 'private' — only project members can view previews; run: bash scripts/doctor.sh setup"
+            fi ;;
+          *) note "mlflow pages_access_level unreadable — check token scope" ;;
+        esac
         SYNC13=$(PAGES_LIVE="$MPAGES_LIVE" "$PYTHON" - "$ROOT/conventions/prototype-targets.yaml" "$MODE" mlflow <<'PY'
 import os, re, sys
 path, mode, target = sys.argv[1], sys.argv[2], sys.argv[3]
