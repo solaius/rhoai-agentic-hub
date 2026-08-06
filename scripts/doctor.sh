@@ -1054,9 +1054,12 @@ PY
   esac
   # 13f. Pages base URL discovery (pedouble/mlflow), token + VPN gated.
   if [ -n "${MLFLOW_PUSH_REPO:-}" ]; then
-    HTTP13=$(curl -sk --connect-timeout 5 -o /dev/null -w '%{http_code}' \
+    HTTP13=$(curl -sk --connect-timeout 10 -o /dev/null -w '%{http_code}' \
       "$GITLAB_CEE/api/v4/projects/pedouble%2Fmlflow" 2>/dev/null || echo 000)
-    if [ "$HTTP13" != "200" ]; then
+    # pedouble/mlflow is a private project: unauthenticated requests get a
+    # 404 (not 200) even when reachable, so only "000" (no connection)
+    # means unreachable/VPN-down. Any other code means the API answered.
+    if [ "$HTTP13" = "000" ]; then
       warn "cannot reach gitlab.cee.redhat.com — connect to the Red Hat VPN (mlflow Pages checks skipped)"
     elif [ -n "${GITLAB_CEE_TOKEN:-}" ]; then
       MPROJ="$GITLAB_CEE/api/v4/projects/pedouble%2Fmlflow"

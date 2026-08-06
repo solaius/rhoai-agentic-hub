@@ -26,6 +26,6 @@ targets:
     source_branch_default: master
     push_repo_env: MLFLOW_PUSH_REPO
     push_project_path: pedouble/mlflow
-    pages_base_url: ""
+    pages_base_url: "https://mlflow-e2fa8f.pages.redhat.com"
     clone_dir_env: MLFLOW_DIR
     instructions: targets/mlflow.md
