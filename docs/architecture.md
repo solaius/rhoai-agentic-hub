@@ -97,7 +97,7 @@ error:
 | `research/` | deep documents (numbered series optional) |
 | `strategy/` | strategy docs, RFE roadmaps, outcomes |
 | `enablement/` | one self-contained subdirectory per artifact (deck, hub site, blog) |
-| `prototype/` | prototype metadata (`prototype.yaml` v2: fork branch, preview URL, versions as commits) -- the pages themselves live in the UXD fork |
+| `prototype/` | prototype metadata (`prototype.yaml` v2: target repo branch, preview URL, versions as commits) -- the pages themselves live in the prototype's target repo (UXD or MLflow fork, per `conventions/prototype-targets.yaml`) |
 | `work/` | active drafts, RFE pipeline artifacts, `transcripts/` (gitignored) |
 
 **Working context vs domain knowledge:** "the 3.5 date moved" is memory;

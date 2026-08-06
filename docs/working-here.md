@@ -27,7 +27,7 @@
 | SKU/pricing detail | `restricted/components/…` — NEVER tracked |
 | "does the registry work air-gapped?" (asked by an SSA) | `components/mcp-registry/knowledge/qa-…md` — recurrence appends to `asks:` |
 | a user job for UX/Docs | `components/<f>/knowledge/jtbd-…md` (persona from the locked list) |
-| UI mockup for a component | `components/<f>/prototype/<slug>/prototype.yaml` (metadata; the React page lives on a branch of the UXD fork); cross-component → `narrative/prototype/<slug>/` |
+| UI mockup for a component | `components/<f>/prototype/<slug>/prototype.yaml` (metadata; the React page lives on a branch of the prototype's target repo -- UXD fork by default, MLflow fork for `target: mlflow`); cross-component → `narrative/prototype/<slug>/` |
 | cross-component strategy deck or write-up | `narrative/enablement/<slug>/` (+ `artifact.md`) or `narrative/{research,strategy}/` |
 | a strategic pillar or connective story | `narrative/knowledge/pillar-…md` / `story-…md` |
 

@@ -5,6 +5,21 @@ See [/docs/enhancements.md](/docs/enhancements.md) for open items.
 
 ---
 
+## 2026-08-06
+
+**#17 MLflow as a first-class prototype target.** MLflow is now a declared
+`hub.prototype` target: `conventions/prototype-targets.yaml` registry
+(uxd-rhoai default + mlflow), SKILL.md split into a target-agnostic spine
+with per-target instruction files, doctor section 13 (clone-if-missing,
+uv/yarn prepare, Pages discovery), `MLFLOW_*` env vars with public-upstream
+fallbacks, `target:`/`composes:` lint, and per-branch GitLab Pages previews
+on `pedouble/mlflow` (CI job + static-files packaging + type fixes landed on
+`page-composer-upstream`, `pages_base_url` committed). Acceptance pilot:
+`mcp-registry-rfc` created end-to-end on the new target -- native-MLflow
+list/detail/create screens grounded in the merged MCPServer backend, live at
+`/branch-mcp-registry-rfc/` and owner-verified
+([/docs/superpowers/specs/2026-08-05-mlflow-prototype-target-design.md](/docs/superpowers/specs/2026-08-05-mlflow-prototype-target-design.md)).
+
 ## 2026-08-05
 
 **#16 Retrofit prototyping onto the UXD RHOAI repo (React/PF6 in a fork).**
