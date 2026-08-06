@@ -58,7 +58,7 @@ are PROFILE updates (update in place + ## History), not new files.
 | hub.jira-sync | diff stored Jira scopes + watched keys; propose updates via the gate |
 | hub.jira-triage | run the RFE triage ceremony for a component - scan, review in a browser, gated batch write-back to Jira (labels, comments, close, approve) |
 | hub.jira-hygiene | audit one Jira issue against its type checklist (read-only) |
-| hub.prototype | create/version/list prototypes — React/PF6 pages in the UXD fork with live previews, grounded in component knowledge, PatternFly MCP, and upstream repos |
+| hub.prototype | create/version/list prototypes — multi-target (UXD RHOAI fork default, MLflow fork) React pages with live GitLab Pages previews, grounded in component knowledge and upstream repos |
 | hub.reindex | regenerate all indexes/views + lint |
 | hub.doctor | machine setup / health check |
 | hub.publish | add/update a publish manifest entry (gated) |

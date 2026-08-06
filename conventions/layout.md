@@ -50,18 +50,19 @@ Each `prototype/<slug>/` holds exactly one file, `prototype.yaml`:
   `preview_url` (`<pages_base_url>/branch-<branch>/`), `current` (a key
   of `versions`), `versions` (map `vN -> {timestamp, commit, summary}`;
   `commit` is a fork sha, or `static` on migrated static-era entries)
-- optional: `snapshots` (map `vN -> {branch, preview_url}` for frozen
-  side-by-side branches), `mr_url` (set when upstreamed)
+- optional: `target` (a key of conventions/prototype-targets.yaml
+  `targets:`; absent = `uxd-rhoai`), `composes` (list of other prototype
+  branches merged into this one), `snapshots` (map `vN -> {branch,
+  preview_url}` for frozen side-by-side branches), `mr_url` (set when
+  upstreamed)
 
-The React pages themselves live in the UXD fork
-(`conventions/prototype-targets.yaml`, target uxd-rhoai, points at it), one branch per
-prototype based off `upstream/3.6`. Cross-component prototypes keep their
-metadata in `narrative/prototype/<slug>/`.
-
-Prototypes normally live in the UXD fork; an owner-approved prototype in
-another repo (e.g. the MLflow fork) records its `source_repo`/`branch`/`base`
-the same way, with `preview_url` pointing at the best viewable surface for
-that repo (a Pages deployment when one exists, else the branch URL).
+The React pages themselves live in the target repo declared by
+`target:` (conventions/prototype-targets.yaml) — the UXD fork
+(`uxd-rhoai`, default, branches off `upstream/3.6`) or the MLflow fork
+(`mlflow`, branches off the configured source branch). `preview_url`
+points at the target's Pages deployment (`<pages_base_url>/branch-<slug>/`)
+when one exists, else the branch URL as a stand-in. Cross-component
+prototypes keep their metadata in `narrative/prototype/<slug>/`.
 
 ## Component families
 `related:` in `components/components.yaml` declares a component's boundary

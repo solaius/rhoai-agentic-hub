@@ -44,6 +44,13 @@ set `UXD_FORK_DIR` in `restricted/.env` if the clone lives somewhere
 custom, and `GITLAB_CEE_TOKEN` (GitLab CEE personal token, api scope)
 to let setup verify Pages and set the fork's `PAGES_URL` CI variable.
 
+Optional (hub.prototype, mlflow target): the MLflow fork clone —
+`bash scripts/doctor.sh setup` clones and prepares it (uv sync + yarn
+install) as a sibling of this repo; set MLFLOW_DIR / MLFLOW_SOURCE_REPO /
+MLFLOW_SOURCE_BRANCH / MLFLOW_PUSH_REPO in `restricted/.env` to override
+(see restricted/.env.example). Building the frontend needs Node.js +
+corepack (yarn 4); the Python side needs uv >= 0.10.12.
+
 4. Run the doctor's fix mode: `bash scripts/doctor.sh setup`
    (creates a `.venv/`, installs Python deps, creates `memory/.scratch/`,
    writes `.claude/settings.local.json` with the auto-memory redirect).

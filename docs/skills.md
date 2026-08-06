@@ -44,7 +44,14 @@ families (design decisions D8/D11):
   a fork branch off `upstream/3.6` -> `eslint` + `npm run build` -> gate
   -> push + hub metadata -> reindex -> live preview URL. Then
   `hub.prototype version <component>/<slug>` iterates on the same branch
-  (preview redeploys on push).
+  (preview redeploys on push). Targets are declared in
+  `conventions/prototype-targets.yaml` and each has an instruction file
+  under the skill's `targets/` dir: `uxd-rhoai` (default — React +
+  PatternFly 6 in the UXD RHOAI fork) and `mlflow` (MLflow's own design
+  system in the MLflow fork; env-selected source fork via
+  MLFLOW_SOURCE_REPO/MLFLOW_SOURCE_BRANCH, pushed to MLFLOW_PUSH_REPO with
+  per-branch GitLab Pages previews). Doctor sections 12-13 keep both
+  target environments healthy.
 - **Jira:** `hub.jira-sweep <component>` (scope discovery → tracked snapshot +
   gated refs) then `hub.jira-sync` on demand — diff-driven refresh; the map
   lives in [/views/jira-map.md](/views/jira-map.md). `hub.jira-hygiene` audits

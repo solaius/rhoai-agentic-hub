@@ -25,7 +25,7 @@ this system solves their problems.
 | "Strategy docs are disconnected from Jira reality" | One living strategy doc per component synthesized from knowledge + research + Jira — refresh rewrites in place with history, includes a Jira coverage map and gap-derived candidate RFEs. [Research & Strategy](#research--strategy) |
 | "Customer feedback is trapped in transcripts" | Extract structured signals from notes/emails/Jira, track locally, sync to a shared Sheet — all data lives in a restricted encrypted tree. [Customer Tracking](#customer-tracking) |
 | "Building a deck takes a full day" | Red Hat-branded slide decks and scrolling narratives in minutes — brand standards, design tokens, and templates built into the skill. [Content Creation](#content-creation) |
-| "UI prototypes look nothing like the real product" | Prototypes are now real React + PatternFly 6 pages, built in the UXD team's RHOAI prototype fork with live internal previews. [Content Creation](#content-creation) |
+| "UI prototypes look nothing like the real product" | Prototypes are now real React + PatternFly 6 pages, built in the UXD team's RHOAI prototype fork with live internal previews. Targets now include MLflow itself — prototypes land in the MLflow fork in its native design system. [Content Creation](#content-creation) |
 | "I'm worried about leaking NDA content" | Inline approve on every tracked write with public-vs-restricted choice, encrypted restricted tree, publish allowlist, and disclosure lint. [Trust & Security](#trust--security) |
 
 ## A day in the life
@@ -40,7 +40,7 @@ Run **[hub.standup](#daily-operations)** and read a structured brief. It pulls f
 - **A decision, date change, or useful link** surfaces mid-work. Hit **[hub.capture](#memory--continuity)** — the reflex for durable items. Takes seconds, not a filing exercise. It classifies (profile update / new fact / knowledge entry), shows a one-line confirm, files it in the right place, reindexes, and commits.
 - **Need to go deeper** on a component or narrative topic. Run **[hub.research](#research--strategy)** and it fans out across lenses (landscape, upstream, architecture, requirements, competitive, jira-gap) with a living executive summary. Re-runs refresh — numbering continues, contradicted findings get supersede notes, nothing is lost.
 - **Stakeholder asks for a deck.** Use **[presentation-create](#content-creation)** and get a Red Hat-branded slide deck or scrolling narrative in minutes — self-contained HTML with all assets, brand standards and design tokens built in.
-- **Need a UI prototype** for stakeholder review. Run **[hub.prototype](#content-creation)** -- it loads the component's architecture, upstream repos, and strategy, queries PatternFly MCP for every component it will use, and generates a React page on a branch in the UXD fork; pushing the branch lands its live GitLab Pages preview URL in `views/prototypes.md`.
+- **Need a UI prototype** for stakeholder review. Run **[hub.prototype](#content-creation)** -- it loads the component's architecture, upstream repos, and strategy, queries PatternFly MCP for every component it will use, and generates a page on a branch in the chosen target repo (UXD fork by default; MLflow fork for MLflow-native prototypes); pushing the branch lands its live GitLab Pages preview URL in `views/prototypes.md`.
 - **Customer meeting prep.** Check the **[restricted tracker](#customer-tracking)** for signals from prior conversations, then update it afterward with notes from the new meeting.
 - **Jira issue quality check.** Run **[hub.jira-hygiene](#jira--project-management)** to audit one issue against type-specific checklists (naming, links, Fix Version, Components, labels) — read-only, reports findings in chat.
 
@@ -111,7 +111,10 @@ Building enablement no longer takes a full day. The hub generates Red Hat-brande
 - **blog-mockup** — quick Red Hat-branded HTML preview of any blog content. Lightweight alternative to blog-create's full pipeline. Output ships via hub.publish only on request.
 - **`hub.prototype`** -- UI prototypes as real React + PatternFly 6 pages
   in the UXD RHOAI fork (`pedouble/rhoai`, based off `upstream/3.6`, one
-  branch per prototype). The skill deep-reads the component's knowledge,
+  branch per prototype). A second target, `mlflow`, generates pages in
+  MLflow's own design system inside the MLflow fork (env-selected source
+  and push repos), with the same per-branch GitLab Pages preview story.
+  The skill deep-reads the component's knowledge,
   research, strategy, related components, Jira scope, and upstream repos,
   runs mandatory PatternFly MCP component planning, generates the page(s)
   + route + nav wiring in the fork, and verifies with the fork's own
