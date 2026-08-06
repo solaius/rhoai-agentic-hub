@@ -878,38 +878,45 @@ except Exception: print("")')
         else
           warn "PAGES_URL CI variable not set — run: bash scripts/doctor.sh setup"
         fi
-        # keep conventions/prototype-fork.yaml in sync (tracked -- commit it).
-        SYNC=$(PAGES_LIVE="$PAGES_LIVE" "$PYTHON" - "$ROOT/conventions/prototype-fork.yaml" "$MODE" <<'PY'
+        # keep conventions/prototype-targets.yaml in sync (tracked -- commit it).
+        SYNC=$(PAGES_LIVE="$PAGES_LIVE" "$PYTHON" - "$ROOT/conventions/prototype-targets.yaml" "$MODE" uxd-rhoai <<'PY'
 import os, re, sys
-path, mode = sys.argv[1], sys.argv[2]
+path, mode, target = sys.argv[1], sys.argv[2], sys.argv[3]
 url = os.environ["PAGES_LIVE"].rstrip("/")
 text = open(path, encoding="utf-8").read()
-m = re.search(r'(?m)^pages_base_url:\s*"?([^"\n]*)"?\s*$', text)
-cur = m.group(1) if m else None
+block = re.search(r'(?ms)^  ' + re.escape(target) + r':\n.*?(?=^  \S|\Z)', text)
+if not block:
+    print("stale"); sys.exit()
+m = re.search(r'(?m)^    pages_base_url:\s*"?([^"\n]*)"?\s*$', block.group(0))
+if not m:
+    print("stale"); sys.exit()
+cur = m.group(1)
 if cur == url:
     print("ok")
-elif mode == "setup" and m:
+elif mode == "setup":
+    s = block.start() + m.start()
+    e = block.start() + m.end()
     open(path, "w", encoding="utf-8").write(
-        text[:m.start()] + f'pages_base_url: "{url}"' + text[m.end():])
+        text[:s] + f'    pages_base_url: "{url}"' + text[e:])
     print("written")
 else:
     print("stale")
 PY
 )
         case "$SYNC" in
-          ok) ok "prototype-fork.yaml pages_base_url in sync" ;;
-          written) ok "prototype-fork.yaml pages_base_url written — commit the change" ;;
-          *) warn "prototype-fork.yaml pages_base_url is stale/empty — run: bash scripts/doctor.sh setup" ;;
+          ok) ok "prototype-targets.yaml pages_base_url in sync" ;;
+          written) ok "prototype-targets.yaml pages_base_url written — commit the change" ;;
+          *) warn "prototype-targets.yaml pages_base_url is stale/empty — run: bash scripts/doctor.sh setup" ;;
         esac
       else
         warn "fork Pages not reachable via API — check token scope, or enable Pages by pushing a branch once"
       fi
     else
-      PB=$(grep -E '^pages_base_url:' "$ROOT/conventions/prototype-fork.yaml" 2>/dev/null | sed 's/pages_base_url:[[:space:]]*"\{0,1\}\([^"]*\)"\{0,1\}/\1/')
+      PB=$("$PYTHON" -c "import yaml; d=yaml.safe_load(open(r'$ROOT/conventions/prototype-targets.yaml', encoding='utf-8')); print(d['targets']['uxd-rhoai'].get('pages_base_url') or '')" 2>/dev/null)
       if [ -n "$PB" ]; then
         ok "pages_base_url configured: $PB (no GITLAB_CEE_TOKEN — API checks skipped)"
       else
-        warn "no GITLAB_CEE_TOKEN in restricted/.env — set PAGES_URL by hand: fork Settings > CI/CD > Variables (key PAGES_URL, value from Deploy > Pages), then put the same URL in conventions/prototype-fork.yaml pages_base_url"
+        warn "no GITLAB_CEE_TOKEN in restricted/.env — set PAGES_URL by hand: fork Settings > CI/CD > Variables (key PAGES_URL, value from Deploy > Pages), then put the same URL in conventions/prototype-targets.yaml (targets.uxd-rhoai.pages_base_url)"
       fi
       note "optional: GITLAB_API_TOKEN as a fork CI variable enables MR-comment previews (fork CI feature)"
     fi

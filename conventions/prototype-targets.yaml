@@ -1,0 +1,31 @@
+# Prototype target registry -- single tracked source of truth for the
+# multi-target prototype pipeline (specs:
+# /docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md,
+# /docs/superpowers/specs/2026-08-05-mlflow-prototype-target-design.md).
+# Each target's pages_base_url is discovered by `bash scripts/doctor.sh
+# setup` (needs GITLAB_CEE_TOKEN) or filled by hand from the fork's
+# GitLab Pages settings; commit the change when it lands. Local clone
+# paths are machine-specific and live in restricted/.env (the env var
+# named by each target's clone_dir_env).
+# `instructions:` paths are relative to .claude/skills/hub.prototype/.
+targets:
+  uxd-rhoai:
+    default: true
+    upstream_repo: https://gitlab.cee.redhat.com/uxd/prototypes/rhoai
+    upstream_project_id: 155361
+    fork_repo: git@gitlab.cee.redhat.com:pedouble/rhoai.git
+    fork_project_path: pedouble/rhoai
+    base_branch: "3.6"
+    pages_base_url: "https://rhoai-a4b259.pages.redhat.com"
+    clone_dir_env: UXD_FORK_DIR
+    instructions: targets/uxd-rhoai.md
+  mlflow:
+    source_repo_default: https://github.com/mlflow/mlflow
+    source_repo_env: MLFLOW_SOURCE_REPO
+    source_branch_env: MLFLOW_SOURCE_BRANCH
+    source_branch_default: master
+    push_repo_env: MLFLOW_PUSH_REPO
+    push_project_path: pedouble/mlflow
+    pages_base_url: ""
+    clone_dir_env: MLFLOW_DIR
+    instructions: targets/mlflow.md

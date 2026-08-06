@@ -54,7 +54,7 @@ Each `prototype/<slug>/` holds exactly one file, `prototype.yaml`:
   side-by-side branches), `mr_url` (set when upstreamed)
 
 The React pages themselves live in the UXD fork
-(`conventions/prototype-fork.yaml` points at it), one branch per
+(`conventions/prototype-targets.yaml`, target uxd-rhoai, points at it), one branch per
 prototype based off `upstream/3.6`. Cross-component prototypes keep their
 metadata in `narrative/prototype/<slug>/`.
 

@@ -9,7 +9,7 @@ Input: a subcommand (`create`, `version`, `list`) plus a component id
 and/or slug. Default subcommand: `create`.
 
 Spec: /docs/superpowers/specs/2026-08-04-uxd-fork-prototyping-design.md
-(owner rulings R1-R6). Fork config: /conventions/prototype-fork.yaml.
+(owner rulings R1-R6). Fork config: /conventions/prototype-targets.yaml.
 Structure: /conventions/layout.md (prototype/ leg, prototype.yaml v2).
 
 Prototypes are internal-only (fork GitLab Pages, Red Hat network). There
@@ -27,7 +27,7 @@ by this skill (ruling R4).
 2. **PatternFly MCP.** Call `searchPatternFlyDocs` with
    `searchQuery: "button"`, `version: "v6"`. On failure STOP and point at
    `bash scripts/doctor.sh setup` + /docs/mcp-servers.md.
-3. **Fork ready.** Read `conventions/prototype-fork.yaml`. Resolve the
+3. **Fork ready.** Read `conventions/prototype-targets.yaml` (targets.uxd-rhoai). Resolve the
    clone dir (UXD_FORK_DIR from restricted/.env, else `F:/code/rh/rhoai`,
    else `~/code/rh/rhoai`). Verify: clone exists, `git -C <fork> remote
    get-url upstream` works, `node_modules/` present, `pages_base_url`
@@ -163,7 +163,7 @@ versions:
   v1: {timestamp: <today>, commit: <sha after the fork commit>, summary: <one line>}
 ```
 
-`preview_url` = `pages_base_url` from conventions/prototype-fork.yaml +
+`preview_url` = `pages_base_url` from conventions/prototype-targets.yaml (targets.uxd-rhoai) +
 `/branch-<branch>/`.
 
 ### Step 10: Gate (two-part, one confirm)
