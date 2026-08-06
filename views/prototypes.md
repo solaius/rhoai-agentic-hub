@@ -2,7 +2,7 @@
 # Prototypes
 
 ## Skills Registry
-- [Skills Registry (MLflow-native, RFC-0008)](https://gitlab.cee.redhat.com/pedouble/mlflow/-/tree/skills-registry-rfc) — Faithful MLflow-native prototype of the skills-registry RFC screens for the Databricks sync -- skills list (Status column, pagination), prompts-style detail (version rail + viewing pane with rendered SKILL.md manifest, per-version and whole-entry delete), and a gateway-style create screen -- built in MLflow's own design system, mock-backed, demoed from a local dev server. (status: active, current: v2, versions: v1, v2, branch: skills-registry-rfc)
+- [Skills Registry (MLflow-native, RFC-0008)](https://mlflow-e2fa8f.pages.redhat.com/branch-skills-registry-rfc/#/skills) — Faithful MLflow-native prototype of the skills-registry RFC screens for the Databricks sync -- skills list (Status column, pagination), prompts-style detail (version rail + viewing pane with rendered SKILL.md manifest, per-version and whole-entry delete), and a gateway-style create screen -- built in MLflow's own design system, mock-backed, demoed from a local dev server. (status: active, current: v2, versions: v1, v2, branch: skills-registry-rfc)
 - [Skills Registry UI (RHOAI)](https://rhoai-a4b259.pages.redhat.com/branch-skills-registry-ui/) — Governed skills registry as the Registry tab of the AI Hub Skills page -- namespace-scoped list (search, facets, pagination, register-skill modal with repo provenance) and governed detail (four-track badges, integer-version table with aliases, approval timeline) -- 47 registered of the catalog's 63 skills, stacked on the catalog prototype for the full catalog-to-registry journey. (status: active, current: v1, versions: v1, branch: skills-registry-ui)
 
 ## Skills Catalog

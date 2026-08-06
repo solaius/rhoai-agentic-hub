@@ -6,12 +6,8 @@ target: mlflow
 source_repo: https://gitlab.cee.redhat.com/pedouble/mlflow.git
 branch: skills-registry-rfc
 base: page-composer-upstream
-# branch-URL stand-in (no Pages base URL yet); upgrades to a live
-# /branch-skills-registry-rfc/ Pages preview once this branch is next
-# versioned/rebased onto page-composer-upstream after it picked up the
-# Pages CI commit -- this branch predates that commit.
-preview_url: https://gitlab.cee.redhat.com/pedouble/mlflow/-/tree/skills-registry-rfc
+preview_url: https://mlflow-e2fa8f.pages.redhat.com/branch-skills-registry-rfc/#/skills
 current: v2
 versions:
   v1: {timestamp: 2026-08-05, commit: 2e2a6d9f, summary: Three RFC screens + create flow, reworked to the prompts layout through owner UAT; screenshots + local dev server are the demo surface}
-  v2: {timestamp: 2026-08-05, commit: 36037a2c, summary: Add-version flow (repo locked, auto-incremented integer shown) with a monotonic version counter that survives deletes}
+  v2: {timestamp: 2026-08-05, commit: 36037a2c, summary: Add-version flow (repo locked, auto-incremented integer shown) with a monotonic version counter that survives deletes; 2026-08-06 merge eea03188 brought the Pages CI onto the branch, lighting up the live preview}
