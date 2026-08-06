@@ -68,9 +68,19 @@ a. `git -C <clone> fetch origin && git -C <clone> fetch gitlab` (skip
 b. Base ref: `gitlab/<source branch>` when the push repo is configured
    (it carries the Pages CI commit on top of the source branch — see
    [T-push] sync note), else `origin/<source branch>`.
-   `git -C <clone> checkout -b <slug> <base ref>`.
-   NEVER switch branches if the clone's working tree is dirty — STOP and
-   tell the user what's uncommitted.
+   When the clone's working tree is clean you may branch in place
+   (`git -C <clone> checkout -b <slug> <base ref>`), but the proven
+   default is a WORKTREE — the clone routinely sits dirty on an active
+   prototype branch, and a worktree isolates the new prototype without
+   touching it:
+   `git -C <clone> worktree add ../mlflow-<slug>-worktree -b <slug> <base ref>`.
+   The worktree needs its own frontend install: in its
+   `mlflow/server/js`, run plain `yarn install` — NOT `--immutable`,
+   which false-fails on Windows on a vendored-package checksum (CI keeps
+   `--immutable` on Linux, where it passes). If the install touches
+   `yarn.lock`, revert it (`git checkout -- yarn.lock`); never commit a
+   file you didn't author. After the gate, remove the worktree
+   (`git worktree remove`) or keep it for fast VERSION iteration.
 c. Composition: when this prototype needs another prototype's screens,
    `git -C <clone> merge <that-branch>` instead of rebuilding; record
    each merged branch in prototype.yaml `composes:`.
@@ -100,10 +110,12 @@ d. Visual check via the dev-server skill (backend :5000 + frontend
 - `target: mlflow` (REQUIRED — mlflow is not the default target)
 - `source_repo:` the push repo URL when configured, else the source repo
 - `base:` `<source branch>` (e.g. `page-composer-upstream`)
-- `preview_url:` registry `pages_base_url` + `/branch-<branch>/` when
-  `pages_base_url` is non-empty; else the branch web URL stand-in
-  (`<push repo web url>/-/tree/<branch>`). Upgrade stand-ins once doctor
-  section 13f fills `pages_base_url` — hub.sweep flags them.
+- `preview_url:` registry `pages_base_url` + `/branch-<branch>/#/<route>`
+  when `pages_base_url` is non-empty; else the branch web URL stand-in
+  (`<push repo web url>/-/tree/<branch>`). A branch created BEFORE the
+  Pages CI landed on `gitlab/<source branch>` has no pipeline — merge
+  `gitlab/<source branch>` into it to light the preview up (proven on
+  the skills-registry pilot); hub.sweep flags remaining stand-ins.
 - `composes:` list of merged prototype branches (omit if none)
 
 ## [T-push] Gate execution (clone side)
@@ -114,11 +126,13 @@ gate records the local branch only).
 
 Pages inheritance note: prototype branches get their `/branch-<slug>/`
 preview because `gitlab/<source branch>` carries the `.gitlab-ci.yml`
-Pages job. Doctor 13f + the CI-sync note in that file describe how
-`gitlab/<source branch>` = `origin/<source branch>` + the CI commit; if
-origin moves, re-sync by rebasing the CI commit onto the new
-`origin/<source branch>` and force-pushing `gitlab/<source branch>`
-(owner action, not this skill).
+Pages job. `gitlab/<source branch>` = `origin/<source branch>` + the
+hub-managed commits: the Pages CI job, its static-files packaging, and
+any build-blocking type fixes (`yarn build` must pass on the base, or
+every prototype branch inherits a red pipeline). If origin moves,
+re-sync by rebasing those commits onto the new `origin/<source branch>`
+and force-pushing `gitlab/<source branch>` (owner action, not this
+skill).
 
 Snapshots (VERSION step 4): `git -C <clone> branch <slug>-v<N>`, push it
 to gitlab, record under `snapshots:` with its `/branch-<slug>-v<N>/`
@@ -130,3 +144,16 @@ Print the preview URL; note it goes live when the fork pipeline finishes
 (watch: `https://gitlab.cee.redhat.com/pedouble/mlflow/-/pipelines`).
 VPN required to view. In local-only mode: report the branch name and how
 to demo via the dev-server skill instead.
+
+First-deploy smoke check: once the pipeline is green, confirm the
+preview actually boots. A `302` from the URL means Pages is serving
+(Red Hat SSO redirect — normal); a white screen means the ARTIFACT
+SHAPE is wrong, not the app: the deployment must have `index.html` at
+its root AND the whole build under `static-files/`, because MLflow's
+server mounts the build there and both index.html and webpack's runtime
+reference `static-files/...`. The CI's packaging step produces this
+shape — on a white screen, diff `.gitlab-ci.yml` on the branch against
+`gitlab/<source branch>` before debugging the app. To reproduce Pages
+locally without SSO: serve the local `build/` with a tiny static server
+mapping `/<prefix>/static-files/*` → `build/*` and `/<prefix>/` →
+`build/index.html`, then open `/<prefix>/#/<route>` in a browser.
