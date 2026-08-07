@@ -11,6 +11,12 @@
     "published": "2026-08-01",
     "source": "components/mcp-catalog/enablement/catalog-hub"
   },
+  "mcp-ecosystem/ai-asset-management-roadmap": {
+    "badge": "new",
+    "hash": "5de48cd36c4714847a8b6415840f50dd09bbad5693033a4870d9941a50f06915",
+    "published": "2026-08-07",
+    "source": "components/mcp-ecosystem/enablement/ai-asset-management-roadmap"
+  },
   "mcp-ecosystem/hub": {
     "badge": "updated",
     "hash": "53a6bc52703515e318a25ddc236161137a867102e1c9c2fb6cedfdedc107c766",
