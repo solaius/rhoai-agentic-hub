@@ -101,6 +101,12 @@
     .cai-tag-needed { background: rgba(0,149,150,0.12); color: var(--rh-teal); }
     .cai-tag-optional { background: rgba(244,180,0,0.12); color: var(--rh-orange); }
     .cai-tag-none { background: rgba(138,138,138,0.12); color: var(--text-muted); }
+    .submission-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .submission-meta .meta-field { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0.35rem 0.7rem; font-family: var(--font-text); font-size: 0.72rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem; }
+    .submission-meta .meta-label { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); white-space: nowrap; }
+    .submission-meta .meta-value { color: var(--text-primary); font-weight: 500; }
+    .format-rationale { margin-top: 0.5rem; padding: 0.5rem 0.9rem; background: rgba(0,102,204,0.04); border: 1px solid rgba(0,102,204,0.15); border-radius: 6px; font-size: 0.72rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5; display: flex; align-items: flex-start; gap: 0.5rem; }
+    .format-rationale .format-tag { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.15rem 0.45rem; border-radius: 3px; white-space: nowrap; flex-shrink: 0; background: rgba(0,102,204,0.12); color: var(--rh-blue-light); margin-top: 0.05rem; }
     .matrix-grid { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 0; font-size: 0.78rem; }
     .matrix-header { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-red); padding: 0.5rem 0.6rem; border-bottom: 2px solid var(--rh-red); font-weight: 600; }
     .matrix-cell { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); font-family: var(--font-text); display: flex; align-items: center; }
@@ -267,15 +273,24 @@
           <div class="abstract-card">
             <div class="abstract-label">CFP Abstract</div>
             <p>Every enterprise can get an agent running in a notebook. Making it production-ready &mdash; with execution isolation, cryptographic identity, policy enforcement, and a complete audit trail &mdash; is where 88% of pilots fail. Meanwhile, agents in the wild face a 78.3% attack success rate in controlled testing.</p>
-            <p>In this session, we start with an ungoverned agent prototype and walk through Red Hat AI's three-layer security and governance model, step by step with live demos and an attack-and-defend scenario:</p>
-            <p><strong style="color: var(--text-primary);">Layer 1: OpenShell Sandbox Isolation</strong> &mdash; Deploy the agent into an OpenShell sandbox (co-engineered with NVIDIA) with kernel namespaces, seccomp profiles, and capability dropping. We trigger a malicious tool call and show sandbox containment in action &mdash; then compare the architecture to gVisor and Kata Containers to explain the design tradeoffs.</p>
-            <p><strong style="color: var(--text-primary);">Layer 2: SPIFFE/SPIRE Cryptographic Identity</strong> &mdash; Assign the agent a SPIFFE identity via SPIRE: verifiable, short-lived SVIDs that federate across clusters. No more shared service accounts. We walk through the identity chain and why NIST and IETF AIMS are converging on SPIFFE as the standard for non-human identity.</p>
+            <p>In this session, we start with an ungoverned agent prototype and walk through Red Hat AI's three-layer security model, step by step with live demos and an attack-and-defend scenario:</p>
+            <p><strong style="color: var(--text-primary);">Layer 1: OpenShell Sandbox Isolation</strong> &mdash; Deploy the agent into an OpenShell sandbox (co-engineered with NVIDIA) with kernel namespaces, seccomp profiles, and capability dropping. We trigger a malicious tool call and show containment in action, then compare to gVisor and Kata Containers.</p>
+            <p><strong style="color: var(--text-primary);">Layer 2: SPIFFE/SPIRE Cryptographic Identity</strong> &mdash; Assign the agent a SPIFFE identity via SPIRE: verifiable, short-lived SVIDs that federate across clusters. No more shared service accounts. We walk through the identity chain and why NIST and IETF AIMS are converging on SPIFFE for non-human identity.</p>
             <p><strong style="color: var(--text-primary);">Layer 3: AI Gateway Policy Enforcement</strong> &mdash; Route the agent's LLM calls through AI Gateway with OPA policies enforcing token budgets, sensitive data filtering, and tool call restrictions. Every interaction is logged with full identity context.</p>
-            <p>The session culminates in a live attack-and-defend scenario demonstrating all three layers working together, producing a complete audit trail. You leave with an architecture pattern you can whiteboard with any customer stuck between "it works in dev" and "my CISO won't sign off."</p>
+            <p>The session culminates in a live attack-and-defend scenario demonstrating all three layers working together with a complete audit trail. You leave with an architecture pattern you can whiteboard with any customer stuck between "it works in dev" and "my CISO won't sign off."</p>
           </div>
           <div class="cai-inline">
             <span class="cai-tag cai-tag-needed">CAI: Demo support</span>
             Live attack-and-defend demo: deploy agent, trigger malicious tool call, show sandbox containment, SPIFFE identity chain, Gateway policy + audit trail. Before/after contrast is the dramatic arc.
+          </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, advanced</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical specialist</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Government/public sector</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            The live attack-and-defend demo is the centerpiece &mdash; a breakout gives control over pacing through the three security layers with a dramatic before/after arc. The interactive variant works because attendees can bring their own threat scenarios to test against the model. A panel would dilute the demo impact; a lab would require environment provisioning that isn't ready.
           </div>
         </div>
         <div class="proposal-rule"></div>
@@ -316,6 +331,15 @@
           <div class="cai-inline">
             <span class="cai-tag cai-tag-needed">CAI: Demo support</span>
             Live demo: Catalog &rarr; Operator &rarr; Gateway &rarr; Studio. Demo practically runs itself &mdash; value is the governed end-to-end flow and the partner ecosystem.
+          </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, intermediate</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical specialist</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Telecommunications</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            The value is a guided end-to-end walkthrough &mdash; Catalog to Operator to Gateway to Studio &mdash; where the live demo practically runs itself. A breakout lets the presenter narrate the architectural decisions at each stage (why stateless HTTP, why Kubernetes-native routing) while showing them in action. An interactive or lab format adds complexity without adding insight.
           </div>
         </div>
         <div class="proposal-rule"></div>
@@ -371,6 +395,15 @@
             <span class="cai-tag cai-tag-none">No CAI needed</span>
             This is a conversation, not a demo. Panel with 2&ndash;3 SAs or TAMs. The format naturally satisfies the Global Sales co-speaker requirement.
           </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, introductory</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical seller</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Telecommunications, Manufacturing</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            A panel is the only format that delivers on the premise &mdash; real field practitioners sharing technical war stories from 34 customer engagements across 11 verticals. A single-speaker breakout would be one person's perspective; a panel surfaces patterns across verticals and naturally generates the "I saw that too" moments. The second half opens to audience Q&amp;A, turning attendees' customer scenarios into live coaching.
+          </div>
         </div>
         <div class="proposal-rule"></div>
         <div class="slide-notes">The panel format is distinct from the breakouts &mdash; conversational, interactive, grounded in real field experience. Panelists should be SAs/TAMs sharing technical challenges (architecture failures, identity gaps, cost surprises), not demand patterns. FSI dominance (14 of 34 accounts) is notable. Format naturally satisfies the co-speaker requirement.</div>
@@ -408,6 +441,15 @@
           <div class="cai-inline">
             <span class="cai-tag cai-tag-optional">CAI: Optional</span>
             Architecture diagrams and visual aids. Optional: interactive whiteboarding templates for customer scenarios in the 120-min format.
+          </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, intermediate</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical specialist</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Telecommunications, Manufacturing</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            The 45-min breakout covers the eight-layer architecture as a guided walkthrough &mdash; efficient for the mental model. The 120-min interactive is the stronger format: after the walkthrough, attendees whiteboard a real customer scenario, mapping requirements to layers and identifying gaps. That hands-on design exercise is the highest-value activity for architects and consultants designing these stacks for customers.
           </div>
         </div>
         <div class="proposal-rule"></div>
@@ -449,6 +491,15 @@
             <span class="cai-tag cai-tag-optional">CAI: Optional</span>
             Optional demo: agent inventory discovery + registry governance flow. Statistics and architecture carry the narrative without a demo.
           </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, advanced</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical specialist</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Government/public sector</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            This is a deep technical architecture session &mdash; OCI packaging formats, cryptographic verification chains, federated discovery protocols. A breakout gives room to go deep on each layer without time pressure from audience interaction. The statistics set up the problem; the architecture walkthrough is the answer. An interactive format would fragment the narrative; the content is too specialized for a panel.
+          </div>
         </div>
         <div class="proposal-rule"></div>
         <div class="slide-notes">Strong for FSI and regulated industry sellers. Technical depth on OCI packaging, immutability, and federation distinguishes this from the GTM "shadow agents" framing. Hyperscaler registries are cloud-locked; Red Hat's is open and self-managed. Co-speaker: an SA or consultant working in a regulated vertical.</div>
@@ -487,6 +538,15 @@
           <div class="cai-inline">
             <span class="cai-tag cai-tag-optional">CAI: Optional</span>
             Optional demo: scanning + signing pipeline in action, showing a malicious skill caught by SkillSpector. Statistics are compelling standalone.
+          </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, advanced</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical specialist</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Government/public sector</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            The session extends a mental model attendees already have (container trust pipelines) into a new domain (AI supply chain). A breakout works because the narrative is linear &mdash; threat landscape, then Konflux build pipeline, then scanning, then trust tier distribution &mdash; and each section builds on the previous. The live scan catching a malicious skill is a controlled demo moment, not an interactive exercise.
           </div>
         </div>
         <div class="proposal-rule"></div>
@@ -539,6 +599,15 @@
           <div class="cai-inline">
             <span class="cai-tag cai-tag-optional">CAI: Optional</span>
             Optional: live tracing demo showing a multi-agent workflow trace in OpenTelemetry. The architecture walkthrough stands on its own.
+          </div>
+          <div class="submission-meta">
+            <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, intermediate</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical delivery</span></div>
+            <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Telecommunications</span></div>
+          </div>
+          <div class="format-rationale">
+            <span class="format-tag">Why this format</span>
+            The breakout walks through a real distributed trace spanning orchestrator agents, specialist agents, MCP tool calls, and Gateway policy decisions. The interactive variant works because tracing is inherently hands-on: attendees walk through trace data, identify failure points in a multi-agent workflow, and build alerting rules. Both formats deliver day-one patterns; the interactive version builds muscle memory.
           </div>
         </div>
         <div class="proposal-rule"></div>
