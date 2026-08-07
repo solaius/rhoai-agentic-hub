@@ -43,7 +43,7 @@
   },
   "platform/rh1-2027-cfp-proposals": {
     "badge": "updated",
-    "hash": "bcfa34e924f2b4689f561fd6f2bd9353729e1c71a8e3e2987627188a2ad1e8cd",
+    "hash": "4ee9022a8cb49a12b02ddba4c6f199d402b8a6faed2988ab4eb8b4b46bbcd613",
     "published": "2026-08-07",
     "source": "components/platform/enablement/rh1-2027-cfp-proposals"
   },
