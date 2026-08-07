@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Red Hat One 2027 — CFP Proposal Candidates</title>
-  <meta name="description" content="Ranked CFP proposal ideas for Red Hat One 2027, grounded in customer demand, competitive intelligence, and strategic research." />
+  <meta name="description" content="7 deep-technical CFP proposals for Red Hat One 2027, with full submission-ready abstracts." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Mono:wght@400;500;600&family=Red+Hat+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -48,439 +48,76 @@
       --transition-enter: 350ms;
       --ease-out-pop:     cubic-bezier(0.22, 1, 0.36, 1);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background: var(--bg-canvas);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: var(--fs-body);
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-      overflow: hidden;
-    }
-    main.deck {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: var(--bg-canvas);
-    }
-
-    .slide {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      min-height: 100vh;
-      padding: 1.5rem 4rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      overflow: hidden;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: scale(0.96);
-      transition:
-        opacity var(--transition-exit) ease-in,
-        transform var(--transition-exit) ease-in,
-        visibility 0s linear var(--transition-exit);
-    }
-    .slide-inner {
-      max-width: var(--content-max);
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .slide-eyebrow {
-      font-size: var(--fs-label);
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--rh-red);
-      font-family: var(--font-mono);
-      margin-bottom: var(--space-sm);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-
+    html, body { background: var(--bg-canvas); color: var(--text-primary); font-family: var(--font-sans); font-size: var(--fs-body); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow: hidden; }
+    main.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; background: var(--bg-canvas); }
+    .slide { position: absolute; inset: 0; width: 100%; min-height: 100vh; padding: 1.5rem 4rem 4.5rem; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; opacity: 0; visibility: hidden; pointer-events: none; transform: scale(0.96); transition: opacity var(--transition-exit) ease-in, transform var(--transition-exit) ease-in, visibility 0s linear var(--transition-exit); }
+    .slide-inner { max-width: var(--content-max); width: 100%; margin: 0 auto; }
+    .slide-eyebrow { font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rh-red); font-family: var(--font-mono); margin-bottom: var(--space-sm); display: flex; align-items: center; gap: 0.6rem; }
     .display-xl { font-size: var(--fs-display-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; color: var(--text-primary); margin: 0; }
     .display-lg { font-size: var(--fs-display-lg); line-height: 1.1; letter-spacing: -0.02em; font-weight: 700; color: var(--text-primary); margin: 0 0 var(--space-md); }
-    .lead       { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; font-family: var(--font-text); }
-    .body       { font-size: var(--fs-body); line-height: 1.6; color: var(--text-secondary); margin: var(--space-md) 0 0; max-width: 70ch; font-family: var(--font-text); }
-    .accent     { color: var(--rh-red); }
-
+    .lead { font-size: var(--fs-body-lead); line-height: 1.45; color: var(--text-secondary); margin: var(--space-sm) 0 0; max-width: 80ch; font-family: var(--font-text); }
+    .accent { color: var(--rh-red); }
     @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slide-right { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes slide-left { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes scale-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
-
-    main.deck .slide.current .anim-fade-up     { animation: fade-up    400ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
-    main.deck .slide.current .anim-fade-in     { animation: fade-in    400ms ease-out both;           animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-fade-up { animation: fade-up 400ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-fade-in { animation: fade-in 400ms ease-out both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
     main.deck .slide.current .anim-slide-right { animation: slide-right 500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
-    main.deck .slide.current .anim-slide-left  { animation: slide-left  500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
-    main.deck .slide.current .anim-scale-in    { animation: scale-in   450ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
-
-    /* Badges */
-    .badge {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 0.2rem 0.55rem;
-      border-radius: 3px;
-      display: inline-flex;
-      align-items: center;
-      white-space: nowrap;
-    }
+    main.deck .slide.current .anim-slide-left { animation: slide-left 500ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    main.deck .slide.current .anim-scale-in { animation: scale-in 450ms var(--ease-out-pop) both; animation-delay: calc(var(--index, 0) * var(--stagger-delay)); }
+    .badge { font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.2rem 0.55rem; border-radius: 3px; display: inline-flex; align-items: center; white-space: nowrap; }
     .badge-red { background: rgba(238,0,0,0.12); color: var(--rh-red); }
     .badge-teal { background: rgba(0,149,150,0.12); color: var(--rh-teal); }
     .badge-blue { background: rgba(0,102,204,0.12); color: var(--rh-blue-light); }
     .badge-green { background: rgba(62,134,53,0.15); color: var(--rh-green); }
     .badge-purple { background: rgba(103,83,172,0.12); color: var(--rh-purple); }
     .badge-orange { background: rgba(244,180,0,0.12); color: var(--rh-orange); }
-
-    /* Rank number */
-    .rank {
-      font-family: var(--font-sans);
-      font-size: 3rem;
-      font-weight: 900;
-      color: rgba(238,0,0,0.15);
-      position: absolute;
-      top: 0.5rem;
-      right: 1rem;
-      line-height: 1;
-    }
-
-    /* Stat strip */
-    .stat-strip {
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-    }
-    .stat-strip .stat-num {
-      font-family: var(--font-sans);
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: var(--rh-red);
-      line-height: 1;
-    }
-    .stat-strip .stat-label {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-top: 0.2rem;
-    }
-
-    /* Summary table */
-    .summary-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: var(--font-text);
-      font-size: 0.78rem;
-    }
-    .summary-table th {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--rh-red);
-      text-align: left;
-      padding: 0.5rem 0.6rem;
-      border-bottom: 2px solid var(--rh-red);
-      font-weight: 600;
-    }
-    .summary-table td {
-      padding: 0.45rem 0.6rem;
-      border-bottom: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      vertical-align: middle;
-    }
-    .summary-table tr:hover td {
-      background: rgba(238,0,0,0.04);
-    }
-    .summary-table .rank-cell {
-      font-family: var(--font-sans);
-      font-weight: 800;
-      color: var(--rh-red);
-      font-size: 0.85rem;
-      width: 2rem;
-      text-align: center;
-    }
-    .summary-table .title-cell {
-      font-weight: 600;
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-    }
-
-    /* Slide-level recommendation callout (visible on proposal slides, also read by notes panel JS) */
-    .slide .slide-notes {
-      margin-top: 0;
-      padding: 0.65rem 1rem 0.65rem 1.1rem;
-      background: linear-gradient(135deg, rgba(244,180,0,0.04), rgba(244,180,0,0.02));
-      border: 1px solid rgba(244,180,0,0.18);
-      border-radius: 8px;
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      font-family: var(--font-text);
-      line-height: 1.55;
-      position: relative;
-      display: flex;
-      align-items: flex-start;
-      gap: 0.6rem;
-    }
-    .slide .slide-notes::before {
-      content: 'WHY THIS RANKS HERE';
-      flex-shrink: 0;
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--rh-orange);
-      background: rgba(244,180,0,0.1);
-      padding: 0.2rem 0.5rem;
-      border-radius: 3px;
-      margin-top: 0.05rem;
-      white-space: nowrap;
-    }
-    .proposal-rule {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(244,180,0,0.25), rgba(244,180,0,0.35), rgba(244,180,0,0.25), transparent);
-      margin: 0.8rem 0;
-    }
-    /* Hide notes on title, context, summary, and CTA slides — only show on proposal slides */
-    .slide[data-slide="1"] .slide-notes,
-    .slide[data-slide="2"] .slide-notes,
-    .slide[data-slide="3"] .slide-notes,
-    .slide[data-slide="14"] .slide-notes {
-      display: none;
-    }
-
-    /* Proposal slide layout */
-    .proposal-badges {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.4rem;
-    }
-    .proposal-separator {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, var(--rh-red), rgba(238,0,0,0.15), transparent);
-      margin: 0.8rem 0;
-    }
-    .proposal-body {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      align-items: stretch;
-    }
-    .desc-card {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 1.1rem 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .desc-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--rh-red), rgba(238,0,0,0.3));
-    }
-    .desc-card .desc-label {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--rh-red);
-      margin-bottom: 0.5rem;
-    }
-    .desc-card p {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      font-family: var(--font-text);
-      line-height: 1.6;
-      margin: 0;
-    }
-    .cai-card {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 1.1rem 1.25rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .cai-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--rh-teal), rgba(0,149,150,0.3));
-    }
-    .cai-card .cai-level {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      padding: 0.2rem 0.6rem;
-      border-radius: 3px;
-      margin-bottom: 0.6rem;
-    }
-    .cai-level-needed {
-      background: rgba(0,149,150,0.12);
-      color: var(--rh-teal);
-    }
-    .cai-level-optional {
-      background: rgba(244,180,0,0.12);
-      color: var(--rh-orange);
-    }
-    .cai-level-critical {
-      background: rgba(238,0,0,0.12);
-      color: var(--rh-red);
-    }
-    .cai-level-none {
-      background: rgba(138,138,138,0.12);
-      color: var(--text-muted);
-    }
-    .cai-card p {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      font-family: var(--font-text);
-      line-height: 1.6;
-      margin: 0;
-    }
-    .cai-card .cai-items {
-      list-style: none;
-      padding: 0;
-      margin: 0.4rem 0 0;
-    }
-    .cai-card .cai-items li {
-      font-size: 0.78rem;
-      color: var(--text-secondary);
-      font-family: var(--font-text);
-      padding: 0.2rem 0 0.2rem 1rem;
-      position: relative;
-      line-height: 1.45;
-    }
-    .cai-card .cai-items li::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0.55rem;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--rh-teal);
-    }
-
-    /* Support matrix */
-    .matrix-grid {
-      display: grid;
-      grid-template-columns: 2.5fr 1fr 1fr 1fr;
-      gap: 0;
-      font-size: 0.78rem;
-    }
-    .matrix-header {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--rh-red);
-      padding: 0.5rem 0.6rem;
-      border-bottom: 2px solid var(--rh-red);
-      font-weight: 600;
-    }
-    .matrix-cell {
-      padding: 0.4rem 0.6rem;
-      border-bottom: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-family: var(--font-text);
-      display: flex;
-      align-items: center;
-    }
-    .matrix-cell.title-col {
-      font-weight: 600;
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.8rem;
-    }
-    .dot-yes {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--rh-teal);
-      display: inline-block;
-    }
-    .dot-maybe {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--rh-orange);
-      display: inline-block;
-    }
-    .dot-no {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--border-subtle);
-      display: inline-block;
-    }
-
-    /* Controls */
-    .deck-controls {
-      position: fixed;
-      bottom: 1.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: var(--space-md);
-      background: rgba(21, 21, 21, 0.92);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-subtle);
-      border-radius: 999px;
-      padding: 0.5rem 1.1rem;
-      z-index: 50;
-    }
-    .deck-controls button {
-      width: 38px;
-      height: 38px;
-      background: transparent;
-      border: none;
-      color: var(--rh-red);
-      font-size: 1.3rem;
-      cursor: pointer;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 180ms ease-out, color 180ms ease-out;
-    }
-    .deck-controls button:hover:not(:disabled) { background: rgba(238, 0, 0, 0.15); color: #ff4444; }
+    .rank { font-family: var(--font-sans); font-size: 3rem; font-weight: 900; color: rgba(238,0,0,0.15); position: absolute; top: 0.5rem; right: 1rem; line-height: 1; }
+    .stat-strip { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .stat-strip .stat-num { font-family: var(--font-sans); font-size: 1.6rem; font-weight: 800; color: var(--rh-red); line-height: 1; }
+    .stat-strip .stat-label { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem; }
+    .summary-table { width: 100%; border-collapse: collapse; font-family: var(--font-text); font-size: 0.78rem; }
+    .summary-table th { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-red); text-align: left; padding: 0.5rem 0.6rem; border-bottom: 2px solid var(--rh-red); font-weight: 600; }
+    .summary-table td { padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); vertical-align: middle; }
+    .summary-table tr:hover td { background: rgba(238,0,0,0.04); }
+    .summary-table .rank-cell { font-family: var(--font-sans); font-weight: 800; color: var(--rh-red); font-size: 0.85rem; width: 2rem; text-align: center; }
+    .summary-table .title-cell { font-weight: 600; color: var(--text-primary); font-family: var(--font-sans); }
+    .slide .slide-notes { margin-top: 0.6rem; padding: 0.55rem 1rem 0.55rem 1.1rem; background: linear-gradient(135deg, rgba(244,180,0,0.04), rgba(244,180,0,0.02)); border: 1px solid rgba(244,180,0,0.18); border-radius: 8px; font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5; position: relative; display: flex; align-items: flex-start; gap: 0.6rem; }
+    .slide .slide-notes::before { content: 'NOTES'; flex-shrink: 0; font-family: var(--font-mono); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rh-orange); background: rgba(244,180,0,0.1); padding: 0.2rem 0.5rem; border-radius: 3px; margin-top: 0.05rem; white-space: nowrap; }
+    .proposal-rule { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(244,180,0,0.25), rgba(244,180,0,0.35), rgba(244,180,0,0.25), transparent); margin: 0.6rem 0; }
+    .slide[data-slide="1"] .slide-notes, .slide[data-slide="2"] .slide-notes, .slide[data-slide="3"] .slide-notes, .slide[data-slide="11"] .slide-notes { display: none; }
+    .proposal-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+    .proposal-separator { width: 100%; height: 1px; background: linear-gradient(90deg, var(--rh-red), rgba(238,0,0,0.15), transparent); margin: 0.6rem 0; }
+    .abstract-card { background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 10px; padding: 1rem 1.2rem; position: relative; overflow: hidden; }
+    .abstract-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--rh-red), rgba(238,0,0,0.3)); }
+    .abstract-card .abstract-label { font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-red); margin-bottom: 0.45rem; }
+    .abstract-card p { font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.55; margin: 0 0 0.35rem; }
+    .abstract-card p:last-child { margin-bottom: 0; }
+    .cai-inline { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; padding: 0.4rem 0.8rem; background: rgba(0,149,150,0.04); border: 1px solid rgba(0,149,150,0.15); border-radius: 6px; font-size: 0.72rem; color: var(--text-secondary); font-family: var(--font-text); }
+    .cai-inline .cai-tag { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.15rem 0.45rem; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
+    .cai-tag-needed { background: rgba(0,149,150,0.12); color: var(--rh-teal); }
+    .cai-tag-optional { background: rgba(244,180,0,0.12); color: var(--rh-orange); }
+    .cai-tag-none { background: rgba(138,138,138,0.12); color: var(--text-muted); }
+    .matrix-grid { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 0; font-size: 0.78rem; }
+    .matrix-header { font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--rh-red); padding: 0.5rem 0.6rem; border-bottom: 2px solid var(--rh-red); font-weight: 600; }
+    .matrix-cell { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); font-family: var(--font-text); display: flex; align-items: center; }
+    .matrix-cell.title-col { font-weight: 600; color: var(--text-primary); font-family: var(--font-sans); font-size: 0.8rem; }
+    .dot-yes { width: 10px; height: 10px; border-radius: 50%; background: var(--rh-teal); display: inline-block; }
+    .dot-maybe { width: 10px; height: 10px; border-radius: 50%; background: var(--rh-orange); display: inline-block; }
+    .dot-no { width: 10px; height: 10px; border-radius: 50%; background: var(--border-subtle); display: inline-block; }
+    .deck-controls { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: var(--space-md); background: rgba(21,21,21,0.92); backdrop-filter: blur(8px); border: 1px solid var(--border-subtle); border-radius: 999px; padding: 0.5rem 1.1rem; z-index: 50; }
+    .deck-controls button { width: 38px; height: 38px; background: transparent; border: none; color: var(--rh-red); font-size: 1.3rem; cursor: pointer; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: background 180ms ease-out, color 180ms ease-out; }
+    .deck-controls button:hover:not(:disabled) { background: rgba(238,0,0,0.15); color: #ff4444; }
     .deck-controls button:disabled { opacity: 0.3; cursor: not-allowed; }
     .deck-dots { display: flex; gap: 0.35rem; list-style: none; margin: 0; padding: 0; }
     .deck-dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; background: var(--text-muted); transition: background 180ms, transform 180ms; color: transparent; font-size: 0; border: none; cursor: pointer; }
-    .deck-dots button[aria-current="true"] { background: var(--rh-red); transform: scale(1.4); box-shadow: 0 0 12px rgba(238, 0, 0, 0.5); }
+    .deck-dots button[aria-current="true"] { background: var(--rh-red); transform: scale(1.4); box-shadow: 0 0 12px rgba(238,0,0,0.5); }
     .deck-dots button:hover { background: #ff4444; }
     .deck-counter { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); letter-spacing: 0.06em; padding: 0 var(--space-sm); border-left: 1px solid var(--border-subtle); }
     .deck-controls button:focus-visible, .deck-dots button:focus-visible { outline: 2px solid var(--rh-red); outline-offset: 2px; }
-
-    /* Overview */
     .deck-overview { position: fixed; inset: 0; background: rgba(21,21,21,0.97); backdrop-filter: blur(12px); z-index: 100; padding: 4rem 3rem; overflow-y: auto; }
     .deck-overview[hidden] { display: none; }
     .overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1200px; margin: 0 auto; }
@@ -489,35 +126,25 @@
     .overview-thumb .num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--rh-red); letter-spacing: 0.15em; }
     .overview-thumb .ttl { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); line-height: 1.25; }
     .overview-thumb .beat { font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase; }
-
-    /* Notes */
     .deck-notes { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(21,21,21,0.95); border-top: 1px solid var(--rh-red); padding: 1rem 1.5rem; z-index: 60; }
     .deck-notes[hidden] { display: none; }
     .notes-label { color: var(--rh-red); font-size: var(--fs-label); letter-spacing: 0.22em; text-transform: uppercase; font-weight: 700; margin: 0 0 0.3rem; }
     .notes-body { color: var(--text-secondary); font-size: 0.9rem; margin: 0; font-family: var(--font-text); }
     .deck-notes kbd { font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); padding: 0.15rem 0.4rem; border-radius: 3px; color: var(--rh-red); }
-
     @media (prefers-reduced-motion: reduce) {
       * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 180ms !important; }
-      main.deck .slide.current .anim-fade-up,
-      main.deck .slide.current .anim-slide-right,
-      main.deck .slide.current .anim-slide-left,
-      main.deck .slide.current .anim-scale-in,
-      main.deck .slide.current .anim-fade-in { animation: fade-in 180ms ease-out both; }
+      main.deck .slide.current .anim-fade-up, main.deck .slide.current .anim-slide-right, main.deck .slide.current .anim-slide-left, main.deck .slide.current .anim-scale-in, main.deck .slide.current .anim-fade-in { animation: fade-in 180ms ease-out both; }
     }
-
     @media print {
       html, body, main.deck { overflow: visible; height: auto; }
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
       main.deck { background: var(--bg-canvas) !important; }
       .deck-controls, .deck-overview, .deck-notes { display: none !important; }
       .slide { position: relative; opacity: 1 !important; visibility: visible !important; transform: none !important; pointer-events: auto; page-break-after: always; break-after: page; background: var(--bg-canvas); padding: 0.5in; min-height: auto; }
-      .slide-eyebrow { color: var(--rh-red) !important; }
     }
-
     @media (max-width: 768px) {
       :root { --fs-display-xl: 1.8rem; --fs-display-lg: 1.4rem; --fs-body-lead: 1rem; }
-      .slide { padding: 2rem 1.25rem; }
+      .slide { padding: 2rem 1.25rem 4.5rem; }
       .deck-controls { padding: 0.3rem 0.6rem; gap: 0.5rem; }
       .deck-controls button { width: 32px; height: 32px; font-size: 1.05rem; }
       .deck-dots button { width: 8px; height: 8px; }
@@ -533,14 +160,12 @@
     <section class="slide" data-slide="1" role="group" aria-label="Title">
       <div class="slide-inner" style="display: flex; flex-direction: column; justify-content: center; min-height: 85vh; position: relative;">
         <div style="position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(238,0,0,0.2) 0%, transparent 70%); pointer-events: none;"></div>
-        <div class="anim-fade-up" style="--index: 0">
-          <div class="slide-eyebrow">RED HAT ONE 2027</div>
-        </div>
+        <div class="anim-fade-up" style="--index: 0"><div class="slide-eyebrow">RED HAT ONE 2027</div></div>
         <h1 class="display-xl anim-fade-up" style="--index: 1"><span class="accent">CFP Proposal</span> Candidates</h1>
-        <p class="lead anim-fade-up" style="--index: 2">10 ranked presentation ideas grounded in customer demand, competitive intelligence, and strategic research across the Red Hat AI agentic portfolio.</p>
+        <p class="lead anim-fade-up" style="--index: 2">7 deep-technical session proposals for hands-on-keyboard roles &mdash; grounded in customer demand, competitive intelligence, and strategic research across the Red Hat AI agentic portfolio.</p>
         <div class="anim-fade-up" style="--index: 3; display: flex; gap: 2.5rem; margin-top: 2rem;">
           <div>
-            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">10</div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-red);">7</div>
             <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Proposals</div>
           </div>
           <div>
@@ -548,8 +173,8 @@
             <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Customer accounts<br>informing topics</div>
           </div>
           <div>
-            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">4</div>
-            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Session formats<br>covered</div>
+            <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--text-primary);">3</div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em;">Session formats<br>(breakout, panel, interactive)</div>
           </div>
           <div>
             <div style="font-family: var(--font-sans); font-size: 2rem; font-weight: 800; color: var(--rh-orange);">Aug 7</div>
@@ -567,16 +192,16 @@
         <h2 class="display-lg anim-fade-up" style="--index: 1">What Makes a <span class="accent">Winning</span> Proposal</h2>
         <div class="anim-fade-up" style="--index: 2; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
           <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-red); border-radius: 0 8px 8px 0; padding: 1rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-red); margin-bottom: 0.4rem; font-weight: 600;">Audience</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">7,000+ Red Hat field associates: sellers, SAs, specialists, TAMs. 87% ICs, 13% managers. Americas 43%, EMEA 31%, APAC 26%.</div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-red); margin-bottom: 0.4rem; font-weight: 600;">Target Audience</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">7,000+ Red Hat field associates. <strong style="color: var(--text-primary);">Per Rosa Guntrip (BU lead):</strong> deep technical content for hands-on-keyboard roles &mdash; Consultants, Architects, TAMs, SSAs, SAAs. Not GTM topics.</div>
           </div>
           <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-teal); border-radius: 0 8px 8px 0; padding: 1rem;">
             <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-teal); margin-bottom: 0.4rem; font-weight: 600;">Session Types</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Breakouts (45 min), Panels (45 min), Interactive (45/120 min), Hands-On Labs (120 min). Variety is valued.</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Breakouts (45 min), Panels (45 min), Interactive (45/120 min). Labs available but not in our submission mix. Format variety is valued.</div>
           </div>
           <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-blue); border-radius: 0 8px 8px 0; padding: 1rem;">
             <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-blue-light); margin-bottom: 0.4rem; font-weight: 600;">What Wins</div>
-            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Customer stories, live demos, interactive elements, practical takeaways. Include successes and failures. No product pitches.</div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.5;">Live demos, architecture walkthroughs, practical patterns attendees can use immediately. Customer war stories &mdash; successes and failures. No product pitches.</div>
           </div>
           <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-orange); border-radius: 0 8px 8px 0; padding: 1rem;">
             <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-orange); margin-bottom: 0.4rem; font-weight: 600;">Requirements</div>
@@ -584,9 +209,9 @@
           </div>
         </div>
         <div class="anim-fade-up" style="--index: 3; margin-top: 1.2rem; border-left: 3px solid var(--rh-red); padding: 0.6rem 1rem; background: rgba(238,0,0,0.04); border-radius: 0 6px 6px 0;">
-          <p style="font-size: 0.85rem; color: var(--text-primary); font-family: var(--font-text); line-height: 1.5; margin: 0;"><strong>Ask for CAI:</strong> Several proposals include demos, interactive workshops, or hands-on labs that would benefit from CAI team support. Those are flagged on each proposal slide and summarized on slide 14.</p>
+          <p style="font-size: 0.85rem; color: var(--text-primary); font-family: var(--font-text); line-height: 1.5; margin: 0;"><strong>Ask for CAI:</strong> Several proposals include demos or interactive elements that would benefit from CAI team support. Those are flagged on each proposal slide and summarized on slide 11.</p>
         </div>
-        <div class="slide-notes">Key context from the CFP Guide. The audience is internal Red Hat field associates, not customers. Each proposal must include a Global Sales co-speaker. Topic = AI Platform, Product = Red Hat AI.</div>
+        <div class="slide-notes">Updated per Rosa Guntrip's guidance (Aug 5). Proposals reworked for deep technical content targeting hands-on-keyboard roles. GTM-only topics dropped or reframed. Labs excluded from our submission mix.</div>
       </div>
     </section>
 
@@ -594,89 +219,18 @@
     <section class="slide" data-slide="3" role="group" aria-label="Summary">
       <div class="slide-inner">
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">AT A GLANCE</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1">All <span class="accent">10</span> Proposals Ranked</h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1">All <span class="accent">7</span> Proposals</h2>
         <div class="anim-fade-up" style="--index: 2; margin-top: 0.5rem;">
           <table class="summary-table">
-            <thead>
-              <tr>
-                <th style="width: 2rem;">#</th>
-                <th>Title</th>
-                <th style="width: 7.5rem;">Format</th>
-                <th style="width: 9rem;">Primary Audience</th>
-                <th style="width: 5rem;">CAI</th>
-              </tr>
-            </thead>
+            <thead><tr><th style="width: 2rem;">#</th><th>Title</th><th style="width: 8rem;">Format</th><th style="width: 9rem;">Primary Audience</th><th style="width: 5rem;">CAI</th></tr></thead>
             <tbody>
-              <tr>
-                <td class="rank-cell">1</td>
-                <td class="title-cell">Why 88% of Agent Pilots Fail</td>
-                <td><span class="badge badge-red">Breakout</span></td>
-                <td><span class="badge badge-blue">All</span></td>
-                <td style="text-align: center;"><span class="dot-yes" title="Demo support needed"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">2</td>
-                <td class="title-cell">Token Economics: The Hidden Crisis</td>
-                <td><span class="badge badge-red">Breakout</span></td>
-                <td><span class="badge badge-blue">Sellers</span></td>
-                <td style="text-align: center;"><span class="dot-maybe" title="Optional demo"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">3</td>
-                <td class="title-cell">The Complete MCP Ecosystem</td>
-                <td><span class="badge badge-red">Breakout</span> <span class="badge badge-green">Lab</span></td>
-                <td><span class="badge badge-blue">Tech Seller</span></td>
-                <td style="text-align: center;"><span class="dot-yes" title="Demo + lab support needed"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">4</td>
-                <td class="title-cell">Agent Security: OpenShell + SPIFFE</td>
-                <td><span class="badge badge-red">Breakout</span></td>
-                <td><span class="badge badge-blue">Specialist</span></td>
-                <td style="text-align: center;"><span class="dot-yes" title="Demo support needed"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">5</td>
-                <td class="title-cell">What Enterprises Are Really Asking For</td>
-                <td><span class="badge badge-purple">Panel</span></td>
-                <td><span class="badge badge-blue">All</span></td>
-                <td style="text-align: center;"><span class="dot-no" title="No CAI needed"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">6</td>
-                <td class="title-cell">Red Hat AI Architecture for the Field</td>
-                <td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td>
-                <td><span class="badge badge-blue">Tech Seller</span></td>
-                <td style="text-align: center;"><span class="dot-maybe" title="Optional diagrams"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">7</td>
-                <td class="title-cell">Shadow Agents: The New Shadow IT</td>
-                <td><span class="badge badge-red">Breakout</span></td>
-                <td><span class="badge badge-blue">Sellers</span></td>
-                <td style="text-align: center;"><span class="dot-maybe" title="Optional demo"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">8</td>
-                <td class="title-cell">AI Supply Chain Under Attack</td>
-                <td><span class="badge badge-red">Breakout</span></td>
-                <td><span class="badge badge-blue">Tech Seller</span></td>
-                <td style="text-align: center;"><span class="dot-maybe" title="Optional demo"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">9</td>
-                <td class="title-cell">Governing AI in Regulated Industries</td>
-                <td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td>
-                <td><span class="badge badge-blue">Sellers</span></td>
-                <td style="text-align: center;"><span class="dot-no" title="No CAI needed"></span></td>
-              </tr>
-              <tr>
-                <td class="rank-cell">10</td>
-                <td class="title-cell">Hands-On: Build, Deploy, Govern an Agent</td>
-                <td><span class="badge badge-green">Lab 120m</span></td>
-                <td><span class="badge badge-blue">Specialist</span></td>
-                <td style="text-align: center;"><span class="dot-yes" title="Lab environment needed"></span></td>
-              </tr>
+              <tr><td class="rank-cell">1</td><td class="title-cell">Securing &amp; Governing Agents: Prototype to Production</td><td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td><td><span class="badge badge-blue">Architect, TAM</span></td><td style="text-align: center;"><span class="dot-yes"></span></td></tr>
+              <tr><td class="rank-cell">2</td><td class="title-cell">The Complete MCP Ecosystem</td><td><span class="badge badge-red">Breakout</span></td><td><span class="badge badge-blue">Architect, SSA</span></td><td style="text-align: center;"><span class="dot-yes"></span></td></tr>
+              <tr><td class="rank-cell">3</td><td class="title-cell">What Enterprises Really Ask About Agents</td><td><span class="badge badge-purple">Panel</span></td><td><span class="badge badge-blue">All</span></td><td style="text-align: center;"><span class="dot-no"></span></td></tr>
+              <tr><td class="rank-cell">4</td><td class="title-cell">Red Hat AI Reference Architecture: The Agentic Stack</td><td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td><td><span class="badge badge-blue">Architect, TAM</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
+              <tr><td class="rank-cell">5</td><td class="title-cell">Agent Fleet Lifecycle: Registry, Immutability &amp; Discovery</td><td><span class="badge badge-red">Breakout</span></td><td><span class="badge badge-blue">Architect, Consultant</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
+              <tr><td class="rank-cell">6</td><td class="title-cell">AI Supply Chain Under Attack</td><td><span class="badge badge-red">Breakout</span></td><td><span class="badge badge-blue">Architect, Specialist</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
+              <tr><td class="rank-cell">7</td><td class="title-cell">Agent Observability: Tracing Multi-Agent Workflows</td><td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td><td><span class="badge badge-blue">Architect, TAM</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
             </tbody>
           </table>
           <div style="display: flex; gap: 1.5rem; margin-top: 0.8rem; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">
@@ -685,48 +239,47 @@
             <span><span class="dot-no" style="vertical-align: middle;"></span> No CAI needed</span>
           </div>
         </div>
-        <div class="slide-notes">Summary view of all 10 proposals. CAI column indicates which proposals need CAI team support for demos, interactive elements, or lab environments. Recommendation: submit 3-5 proposals across different formats.</div>
+        <div class="slide-notes">All 7 proposals are deep technical content targeting hands-on-keyboard roles. Formats: 5 breakouts, 1 panel, 3 also offered as interactive. No labs. CAI support needed for the 2 demo-heavy proposals (#1, #2).</div>
       </div>
     </section>
 
-    <!-- ===== SLIDE 4: PROPOSAL #1 ===== -->
+    <!-- ===== SLIDE 4: PROPOSAL #1 (MERGED: Governance + Security) ===== -->
     <section class="slide" data-slide="4" role="group" aria-label="Proposal 1">
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">01</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #1</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">The Agentic Enterprise: Why <span class="accent">88%</span> of Agent Pilots Fail</h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">From Prototype to Production: <span class="accent">Securing and Governing</span> Agents on Red Hat AI</h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
           <span class="badge badge-red">Breakout 45m</span>
           <span class="badge badge-teal">or Interactive 45m</span>
-          <span class="badge badge-blue">All audiences</span>
+          <span class="badge badge-blue">Architect &middot; Specialist &middot; TAM</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div class="stat-strip" style="margin-bottom: 0.8rem;">
-            <div><div class="stat-num">88%</div><div class="stat-label">Pilots fail</div></div>
-            <div><div class="stat-num">40%</div><div class="stat-label">Projects canceled<br>(Gartner, by 2027)</div></div>
-            <div><div class="stat-num">21%</div><div class="stat-label">Have mature<br>governance</div></div>
-            <div><div class="stat-num">22%</div><div class="stat-label">Report negative<br>ROI at 12 months</div></div>
+          <div class="stat-strip" style="margin-bottom: 0.6rem;">
+            <div><div class="stat-num">88%</div><div class="stat-label">Pilots fail to<br>reach production</div></div>
+            <div><div class="stat-num">78.3%</div><div class="stat-label">Attack success rate<br>in agent testing</div></div>
+            <div><div class="stat-num">15+</div><div class="stat-label">Customers asking<br>for SPIFFE identity</div></div>
+            <div><div class="stat-num">3</div><div class="stat-label">Security layers<br>(kernel+identity+policy)</div></div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>The master narrative for Red Hat AI's agentic strategy. Walks through the three enterprise blockers &mdash; governance, security, cost &mdash; and shows how Red Hat AI closes each gap with a live demo: ungoverned prototype to production-ready with identity, policy, and audit trail. Every attendee leaves with the "why Red Hat for agents" story.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>Every enterprise can get an agent running in a notebook. Making it production-ready &mdash; with execution isolation, cryptographic identity, policy enforcement, and a complete audit trail &mdash; is where 88% of pilots fail. Meanwhile, agents in the wild face a 78.3% attack success rate in controlled testing.</p>
+            <p>In this session, we start with an ungoverned agent prototype and walk through Red Hat AI's three-layer security and governance model, step by step with live demos and an attack-and-defend scenario:</p>
+            <p><strong style="color: var(--text-primary);">Layer 1: OpenShell Sandbox Isolation</strong> &mdash; Deploy the agent into an OpenShell sandbox (co-engineered with NVIDIA) with kernel namespaces, seccomp profiles, and capability dropping. We trigger a malicious tool call and show sandbox containment in action &mdash; then compare the architecture to gVisor and Kata Containers to explain the design tradeoffs.</p>
+            <p><strong style="color: var(--text-primary);">Layer 2: SPIFFE/SPIRE Cryptographic Identity</strong> &mdash; Assign the agent a SPIFFE identity via SPIRE: verifiable, short-lived SVIDs that federate across clusters. No more shared service accounts. We walk through the identity chain and why NIST and IETF AIMS are converging on SPIFFE as the standard for non-human identity.</p>
+            <p><strong style="color: var(--text-primary);">Layer 3: AI Gateway Policy Enforcement</strong> &mdash; Route the agent's LLM calls through AI Gateway with OPA policies enforcing token budgets, sensitive data filtering, and tool call restrictions. Every interaction is logged with full identity context.</p>
+            <p>The session culminates in a live attack-and-defend scenario demonstrating all three layers working together, producing a complete audit trail. You leave with an architecture pattern you can whiteboard with any customer stuck between "it works in dev" and "my CISO won't sign off."</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Live demo of the full governance stack in action</li>
-              <li>Deploy an agent, show it running ungoverned</li>
-              <li>Add OpenShell sandboxing + SPIFFE identity</li>
-              <li>AI Gateway policy enforcement + audit trail</li>
-              <li>Before/after contrast is the dramatic arc</li>
-            </ul>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-needed">CAI: Demo support</span>
+            Live attack-and-defend demo: deploy agent, trigger malicious tool call, show sandbox containment, SPIFFE identity chain, Gateway policy + audit trail. Before/after contrast is the dramatic arc.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">This is the #1 recommendation because it provides the master narrative every seller can use. The demo shows the full governance stack in action. Natural sales partnership with any SA or seller working AI deals. Could also run as a 45-min interactive with audience Q&amp;A.</div>
+        <div class="slide-notes">Merges the governance journey and security deep dive into one comprehensive session. The prototype-to-production arc gives it narrative structure; the attack-and-defend demo and gVisor/Kata comparison give it technical credibility. Critical for FSI (14 accounts), defense (3 accounts). NVIDIA co-engineering adds enterprise weight. Natural co-speaker: SA or specialist in security-sensitive verticals.</div>
       </div>
     </section>
 
@@ -735,36 +288,38 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">02</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #2</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Token Economics: The <span class="accent">Hidden Crisis</span> in Enterprise AI</h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">From Discovery to Production: The Complete <span class="accent">MCP Ecosystem</span></h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
           <span class="badge badge-red">Breakout 45m</span>
-          <span class="badge badge-blue">General + Technical Seller</span>
+          <span class="badge badge-blue">Architect &middot; SSA &middot; TAM</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div class="stat-strip" style="margin-bottom: 0.8rem;">
-            <div><div class="stat-num">90%</div><div class="stat-label">Per-token cost<br>drop since Jan 2025</div></div>
-            <div><div class="stat-num">1,001%</div><div class="stat-label">Consumption<br>growth</div></div>
-            <div><div class="stat-num">24x</div><div class="stat-label">Token usage growth<br>by 2030 (Goldman)</div></div>
-            <div><div class="stat-num">$7M</div><div class="stat-label">Avg enterprise<br>AI budget (2026)</div></div>
+          <div class="stat-strip" style="margin-bottom: 0.6rem;">
+            <div><div class="stat-num">97M</div><div class="stat-label">Monthly MCP<br>SDK downloads</div></div>
+            <div><div class="stat-num">41%</div><div class="stat-label">Of orgs in<br>MCP production</div></div>
+            <div><div class="stat-num">7+</div><div class="stat-label">Enterprise customers<br>requesting MCP Gateway</div></div>
+            <div><div class="stat-num">5</div><div class="stat-label">Launch partners<br>(Confluent, EDB, IBM...)</div></div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>The Jevons Paradox for AI: cheaper tokens don't save money, they explode consumption. Uber burned its entire 2026 AI budget by April. Agentic workloads (multi-turn loops, tool calls, fan-out) accelerate the burn. Self-hosted inference on Red Hat AI (vLLM, llm-d, RHEL AI) shifts from cost optimization to structural necessity. Gives every seller the economic argument that flips the "cloud AI is easier" objection.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>The Model Context Protocol has exploded &mdash; 97 million monthly SDK downloads and 41% of organizations already running MCP servers in production. But most deployments are developer-local: an MCP server on a laptop, connecting to a single LLM, with no auth, no routing, and no lifecycle management.</p>
+            <p>This session walks through what it takes to run MCP at enterprise scale on Red Hat AI, end to end:</p>
+            <p><strong style="color: var(--text-primary);">Discover</strong> &mdash; Browse the Skills Catalog for vetted MCP servers with trust tier badges, provenance metadata, and vulnerability scan results.</p>
+            <p><strong style="color: var(--text-primary);">Deploy</strong> &mdash; Use the MCP Lifecycle Operator to deploy servers as managed workloads on OpenShift with health checks, scaling, and upgrade paths.</p>
+            <p><strong style="color: var(--text-primary);">Secure</strong> &mdash; Route through the MCP Gateway with OAuth 2.1 token exchange, tool-level authorization policies, and per-tool rate limiting.</p>
+            <p><strong style="color: var(--text-primary);">Consume</strong> &mdash; Connect from Gen AI Studio and watch an agent discover available tools, negotiate capabilities, and execute a multi-step workflow.</p>
+            <p>We demo the complete flow live and discuss the architectural decisions behind stateless HTTP transport (from the July 2026 MCP spec revision), why Kubernetes-native MCP routing matters for multi-tenant environments, and how our launch partners (Confluent, EDB, IBM) are building certified MCP servers.</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Data-driven slides with cost modeling</li>
-              <li>Optional live demo: self-hosted inference cost vs. API pricing</li>
-              <li>CAI could build a TCO calculator or cost modeling tool</li>
-            </ul>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-needed">CAI: Demo support</span>
+            Live demo: Catalog &rarr; Operator &rarr; Gateway &rarr; Studio. Demo practically runs itself &mdash; value is the governed end-to-end flow and the partner ecosystem.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">Unique Red Hat argument no competitor can make — hyperscalers profit from token consumption, Red Hat profits from platform subscriptions. Every seller faces the TCO conversation. The Uber anecdote is public. Goldman Sachs 24x forecast is from their June 2026 AI economics report.</div>
+        <div class="slide-notes">MCP is the term customers are using right now. 7+ named accounts actively requesting MCP Gateway with auth. The July 2026 spec revision (stateless HTTP) is a tailwind for our Kubernetes-native approach. Most demo-ready capability in the portfolio. Strong co-speaker opportunity with an SA who has fielded MCP questions.</div>
       </div>
     </section>
 
@@ -773,37 +328,52 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">03</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #3</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">From Discovery to Production: The <span class="accent">MCP Ecosystem</span></h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">What Enterprises Are <span class="accent">Really Asking</span> About Agents</h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
-          <span class="badge badge-red">Breakout 45m</span>
-          <span class="badge badge-green">or Lab 120m</span>
-          <span class="badge badge-blue">Technical Seller + Specialist</span>
+          <span class="badge badge-purple">Panel 45m</span>
+          <span class="badge badge-blue">All audiences</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div class="stat-strip" style="margin-bottom: 0.8rem;">
-            <div><div class="stat-num">97M</div><div class="stat-label">Monthly MCP<br>SDK downloads</div></div>
-            <div><div class="stat-num">41%</div><div class="stat-label">Of orgs in<br>MCP production</div></div>
-            <div><div class="stat-num">7+</div><div class="stat-label">Enterprise customers<br>requesting MCP Gateway</div></div>
-            <div><div class="stat-num">5</div><div class="stat-label">Launch partners<br>(Confluent, EDB, IBM...)</div></div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.6rem;">
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.7rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Top 5 Technical Challenges</div>
+              <ol style="list-style: none; padding: 0; margin: 0;">
+                <li style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.15rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">1.</span>"What agents are running and who owns them?"</li>
+                <li style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.15rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">2.</span>"How do I stop agentic cost from spiraling?"</li>
+                <li style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.15rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">3.</span>"How do I satisfy my CISO?"</li>
+                <li style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.15rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">4.</span>"Can this run in my environment?"</li>
+                <li style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.15rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">5.</span>"How do I avoid framework lock-in?"</li>
+              </ol>
+            </div>
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.7rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Verticals Covered</div>
+              <div style="display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem;">
+                <span class="badge badge-red">FSI (14)</span>
+                <span class="badge badge-teal">Telco (6)</span>
+                <span class="badge badge-blue">Tech (5)</span>
+                <span class="badge badge-purple">Insurance (4)</span>
+                <span class="badge badge-orange">Defense (3)</span>
+                <span class="badge badge-green">Mfg (3)</span>
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.4;">Panel with SAs and TAMs who've been in these customer rooms, sharing real technical challenges &mdash; not marketing talking points.</div>
+            </div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>The most tangible, demo-ready capability in Red Hat AI. End-to-end flow: discover an MCP server in the Catalog, deploy with the Lifecycle Operator, route through the Gateway with OAuth and tool-level auth, consume in Gen AI Studio. The only complete MCP platform. Partner ecosystem (Confluent, EDB, IBM) adds credibility. Could also run as a 120-min hands-on lab.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>We've been in the room with 34 enterprise accounts across 11 verticals &mdash; financial services, telco, defense, insurance, manufacturing &mdash; as they evaluate agentic AI for production workloads. This panel brings together SAs and TAMs who've worked these engagements to share the real technical challenges customers are hitting.</p>
+            <p>The five questions that surface in every conversation: <strong style="color: var(--text-primary);">"What agents are running in my environment and who owns them?"</strong> &mdash; the identity and inventory problem. <strong style="color: var(--text-primary);">"How do I stop cost from spiraling?"</strong> &mdash; agentic workloads consuming 10-50x the tokens of simple chat. <strong style="color: var(--text-primary);">"How do I satisfy my CISO?"</strong> &mdash; sandboxing, audit trails, and policy enforcement. <strong style="color: var(--text-primary);">"Can this run in my environment?"</strong> &mdash; air-gapped, multi-cluster, hybrid cloud constraints. <strong style="color: var(--text-primary);">"How do I avoid framework lock-in?"</strong> &mdash; 1,000+ agent frameworks and counting.</p>
+            <p>Each panelist brings specific technical war stories: architectures that worked, approaches that failed, and the patterns emerging across verticals. The second half opens to audience Q&amp;A &mdash; bring your own customer scenarios. You leave with field-tested technical answers to the objections you're hearing in your own conversations.</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Live demo: Catalog &rarr; Operator &rarr; Gateway &rarr; Studio</li>
-              <li>If submitted as a lab: pre-built multi-user RHOAI environment</li>
-              <li>Demo practically runs itself &mdash; value is the governed end-to-end flow</li>
-            </ul>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-none">No CAI needed</span>
+            This is a conversation, not a demo. Panel with 2&ndash;3 SAs or TAMs. The format naturally satisfies the Global Sales co-speaker requirement.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">MCP is the term customers are using right now. 7+ named enterprise accounts are actively requesting MCP Gateway with auth. The July 2026 MCP spec revision (stateless HTTP) is a tailwind for our Kubernetes-native approach. This could be submitted as both a breakout AND a lab — different formats, same core content.</div>
+        <div class="slide-notes">The panel format is distinct from the breakouts &mdash; conversational, interactive, grounded in real field experience. Panelists should be SAs/TAMs sharing technical challenges (architecture failures, identity gaps, cost surprises), not demand patterns. FSI dominance (14 of 34 accounts) is notable. Format naturally satisfies the co-speaker requirement.</div>
       </div>
     </section>
 
@@ -812,37 +382,36 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">04</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #4</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Agent Security: <span class="accent">OpenShell</span>, SPIFFE, and Defense in Depth</h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">Red Hat AI <span class="accent">Reference Architecture</span>: The Agentic Stack</h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
           <span class="badge badge-red">Breakout 45m</span>
-          <span class="badge badge-blue">Technical Specialist + Delivery</span>
+          <span class="badge badge-teal">or Interactive 120m</span>
+          <span class="badge badge-blue">Architect &middot; TAM &middot; Consultant</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div class="stat-strip" style="margin-bottom: 0.8rem;">
-            <div><div class="stat-num">15+</div><div class="stat-label">Customers asking<br>for SPIFFE identity</div></div>
-            <div><div class="stat-num">78.3%</div><div class="stat-label">Attack success rate<br>in agent testing</div></div>
-            <div><div class="stat-num">88%</div><div class="stat-label">Of security incidents<br>involved AI agents</div></div>
-            <div><div class="stat-num">3</div><div class="stat-label">Security layers<br>(kernel+ns+OPA)</div></div>
+          <div class="stat-strip" style="margin-bottom: 0.6rem;">
+            <div><div class="stat-num">8</div><div class="stat-label">Architectural<br>layers</div></div>
+            <div><div class="stat-num">~4</div><div class="stat-label">API surfaces<br>(BYOA)</div></div>
+            <div><div class="stat-num">1000+</div><div class="stat-label">Agent frameworks<br>supported</div></div>
+            <div><div class="stat-num">4</div><div class="stat-label">Pillars<br>(agents, inference, data, safety)</div></div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>Security is the #1 blocker to enterprise agent production. Red Hat AI's three-layer security model: OpenShell for defense-in-depth sandboxing (co-engineered with NVIDIA), SPIFFE/SPIRE for agent identity (endorsed by NIST, adopted by Google Cloud), and AI Gateway in-loop policy enforcement. No competitor combines isolation + behavioral security + credential management + identity in a single runtime.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>Red Hat AI's agentic platform spans eight distinct architectural layers &mdash; from model serving through agent runtimes to governance and observability. Understanding how these layers interact, where the integration points are, and which components are optional vs. required is the foundation for every customer architecture conversation.</p>
+            <p>This session walks through the complete reference architecture:</p>
+            <p><strong style="color: var(--text-primary);">1. Model Serving</strong> &mdash; vLLM and llm-d for disaggregated inference, model routing, GPU scheduling. <strong style="color: var(--text-primary);">2. Agent Runtimes</strong> &mdash; BYOA control plane supporting LangGraph, CrewAI, Bee, and custom frameworks through ~4 standardized APIs. <strong style="color: var(--text-primary);">3. Tool Integration</strong> &mdash; MCP Gateway and Lifecycle Operator for governed tool access. <strong style="color: var(--text-primary);">4. Identity &amp; Security</strong> &mdash; SPIFFE identity, OpenShell sandboxing, credential management. <strong style="color: var(--text-primary);">5. Policy &amp; Guardrails</strong> &mdash; AI Gateway for in-line enforcement and content filtering. <strong style="color: var(--text-primary);">6. Registry &amp; Catalog</strong> &mdash; Agent Registry for fleet lifecycle, Skills Catalog for trusted tool discovery. <strong style="color: var(--text-primary);">7. Development Surface</strong> &mdash; Gen AI Studio as the unified development and testing interface. <strong style="color: var(--text-primary);">8. Observability</strong> &mdash; Distributed tracing, audit logging, and fleet monitoring.</p>
+            <p>For each layer: what it does, how it integrates with adjacent layers, what's GA vs. roadmap, and the deployment patterns we're seeing in the field. The 120-min interactive format includes a whiteboarding exercise where attendees design an architecture for a real customer scenario.</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Deploy an agent in OpenShell sandbox</li>
-              <li>Trigger a malicious tool call &mdash; show sandbox containment</li>
-              <li>Show SPIFFE identity chain and audit log</li>
-              <li>"Sandbox catches the bad action" is the dramatic highlight</li>
-            </ul>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-optional">CAI: Optional</span>
+            Architecture diagrams and visual aids. Optional: interactive whiteboarding templates for customer scenarios in the 120-min format.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">Agent identity is the #1 interoperability theme. Critical for FSI (14 accounts), defense (3 accounts), and government sellers. The NVIDIA co-engineering story (OpenShell + NemoClaw) adds enterprise weight. SPIFFE is converging as the standard — NIST, IETF AIMS, Google Cloud all align.</div>
+        <div class="slide-notes">The "how does it all fit together" session. Especially valuable for sellers expanding into AI who need the complete mental model. The 120-min interactive is the stronger format &mdash; whiteboarding real architectures is the highest-value activity. Co-speaker: an SA who has designed customer architectures using the stack.</div>
       </div>
     </section>
 
@@ -851,50 +420,38 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">05</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #5</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">What Enterprises Are <span class="accent">Really Asking For</span></h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">Agent Fleet Lifecycle: <span class="accent">Registry</span>, Immutability, and Discovery</h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
-          <span class="badge badge-purple">Panel 45m</span>
-          <span class="badge badge-blue">All audiences</span>
+          <span class="badge badge-red">Breakout 45m</span>
+          <span class="badge badge-blue">Architect &middot; Consultant &middot; Specialist</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.8rem;">
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Top 5 Customer Questions</div>
-              <ol style="list-style: none; padding: 0; margin: 0; counter-reset: q;">
-                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; counter-increment: q; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">1.</span>"What agents are running and who owns them?"</li>
-                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">2.</span>"How do I control costs?"</li>
-                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">3.</span>"How do I satisfy my CISO?"</li>
-                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">4.</span>"Can this run in my environment?"</li>
-                <li style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); padding: 0.2rem 0; display: flex; gap: 0.4rem;"><span style="color: var(--rh-red); font-weight: 700; font-family: var(--font-mono); font-size: 0.7rem; min-width: 1rem;">5.</span>"How do I avoid framework lock-in?"</li>
-              </ol>
-            </div>
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Verticals Covered</div>
-              <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
-                <span class="badge badge-red">FSI (14)</span>
-                <span class="badge badge-teal">Telco (6)</span>
-                <span class="badge badge-blue">Tech (5)</span>
-                <span class="badge badge-purple">Insurance (4)</span>
-                <span class="badge badge-orange">Defense (3)</span>
-                <span class="badge badge-green">Mfg (3)</span>
-              </div>
-              <div style="font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text); margin-top: 0.5rem; line-height: 1.45;">Panel with sales/SA partners who've been in these customer rooms. Covers demand patterns across verticals with built-in audience Q&amp;A.</div>
-            </div>
+          <div class="stat-strip" style="margin-bottom: 0.6rem;">
+            <div><div class="stat-num">82%</div><div class="stat-label">Enterprises found<br>unknown agents</div></div>
+            <div><div class="stat-num">47%</div><div class="stat-label">Of deployed agents<br>actively monitored</div></div>
+            <div><div class="stat-num">68%</div><div class="stat-label">Can't distinguish<br>human vs agent</div></div>
+            <div><div class="stat-num">2028</div><div class="stat-label">Gartner: every org<br>needs agent inventory</div></div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>Panel format is inherently interactive and naturally includes Global Sales partners. Grounded in real conversations with 34 enterprise accounts across 11 verticals. The "top 5 questions" structure gives every seller an immediate takeaway they can use in their next customer meeting.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>Gartner published its inaugural Market Guide for Guardian Agents in 2026, predicting that by 2028 every enterprise will need a governed agent inventory. Today, 82% of enterprises have discovered agents running that nobody deployed. Most organizations can't answer a basic question: how many agents are running in my environment?</p>
+            <p>This session goes deep on the technical architecture of Red Hat AI's Agent Registry &mdash; the only self-managed, disconnected-capable, governed fleet registry with lineage tracking:</p>
+            <p><strong style="color: var(--text-primary);">OCI Packaging</strong> &mdash; Agents packaged as OCI artifacts with immutable digests, signed provenance, and declarative dependency manifests. We walk through the packaging format and explain why OCI (not custom APIs) is the right distribution mechanism for agent workloads.</p>
+            <p><strong style="color: var(--text-primary);">Dependency Immutability</strong> &mdash; Pin agent dependencies (models, tools, guardrails) at deploy time with cryptographic verification. When a model is updated or a tool is patched, the registry tracks lineage and can enforce upgrade policies across the fleet.</p>
+            <p><strong style="color: var(--text-primary);">Cross-Cluster Discovery</strong> &mdash; Federated agent discovery across multiple OpenShift clusters, air-gapped environments, and hybrid deployments. Agents registered in one cluster become discoverable (with policy controls) in another.</p>
+            <p><strong style="color: var(--text-primary);">Fleet Lifecycle</strong> &mdash; Version management, rollback, canary deployments, and decommissioning with audit trails.</p>
+            <p>You leave understanding how to architect a governed agent inventory that scales from a single cluster to a global fleet.</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <p>This is a conversation, not a demo. Panel with 2&ndash;3 SAs or sellers who've been in customer rooms evaluating agentic AI. The format naturally satisfies the Global Sales co-speaker requirement.</p>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-optional">CAI: Optional</span>
+            Optional demo: agent inventory discovery + registry governance flow. Statistics and architecture carry the narrative without a demo.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">The panel format naturally satisfies the Global Sales co-speaker requirement. Could bring 2-3 SAs or sellers who have been in customer conversations about agentic AI. The FSI dominance (14 of 34 accounts) is notable — FSI customers are the most demanding on governance and identity.</div>
+        <div class="slide-notes">Strong for FSI and regulated industry sellers. Technical depth on OCI packaging, immutability, and federation distinguishes this from the GTM "shadow agents" framing. Hyperscaler registries are cloud-locked; Red Hat's is open and self-managed. Co-speaker: an SA or consultant working in a regulated vertical.</div>
       </div>
     </section>
 
@@ -903,55 +460,37 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">06</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #6</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Red Hat AI <span class="accent">Architecture</span> for the Field</h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">AI Supply Chain <span class="accent">Under Attack</span></h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
           <span class="badge badge-red">Breakout 45m</span>
-          <span class="badge badge-teal">or Interactive 120m</span>
-          <span class="badge badge-blue">Technical Seller + Specialist</span>
+          <span class="badge badge-blue">Architect &middot; Specialist &middot; Consultant</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Four Pillars</div>
-              <div style="display: flex; flex-direction: column; gap: 0.3rem;">
-                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">1. Agents</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">BYOA control plane, ~4 APIs across 1000+ frameworks</div>
-                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">2. Inference</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">Any model, any accelerator, any cloud (vLLM, llm-d)</div>
-                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">3. Data</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">RAG, customization, evaluation-driven development</div>
-                <div style="font-size: 0.8rem; color: var(--text-primary); font-weight: 600;">4. Safety &amp; Governance</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-text); padding-left: 0.8rem;">AI Gateway, trust pipeline, sovereign AI</div>
-              </div>
-            </div>
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Competitive Positioning</div>
-              <div style="display: flex; flex-direction: column; gap: 0.25rem; font-size: 0.78rem; font-family: var(--font-text); color: var(--text-secondary); line-height: 1.4;">
-                <div><strong style="color: var(--text-primary);">vs AWS AgentCore:</strong> Open vs locked, self-hosted vs SaaS</div>
-                <div><strong style="color: var(--text-primary);">vs Google Gemini:</strong> Multi-model vs Gemini-only</div>
-                <div><strong style="color: var(--text-primary);">vs Azure Foundry:</strong> Hybrid-first vs cloud-first</div>
-                <div><strong style="color: var(--text-primary);">vs Databricks:</strong> Full-stack vs data-centric</div>
-                <div><strong style="color: var(--text-primary);">vs watsonx:</strong> Open ecosystem vs IBM stack</div>
-              </div>
-            </div>
+          <div class="stat-strip" style="margin-bottom: 0.6rem;">
+            <div><div class="stat-num">36%</div><div class="stat-label">Community skills<br>have flaws</div></div>
+            <div><div class="stat-num">1,184</div><div class="stat-label">Poisoned skills<br>on ClawHub</div></div>
+            <div><div class="stat-num">78.3%</div><div class="stat-label">MCP attack<br>success rate</div></div>
+            <div><div class="stat-num">L3</div><div class="stat-label">SLSA provenance<br>(Red Hat only)</div></div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>The "how does it all fit together" session. Covers the 8-layer agentic inference stack, BYOA strategy, and competitive whiteboard. The 120-min interactive format lets attendees whiteboard architectures for their own customer scenarios.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>36% of community MCP skills have security flaws. Researchers found 1,184 poisoned skills on ClawHub. MCP tool-call injection attacks succeed 78.3% of the time. The AI supply chain is the next frontier for software supply chain attacks &mdash; and most organizations are pulling unvetted tools directly into production.</p>
+            <p>If you've spent the last five years building container trust pipelines with RHEL content trust, OpenShift image signing, and Sigstore verification, this session extends that same mental model into AI:</p>
+            <p><strong style="color: var(--text-primary);">Konflux Build Pipeline</strong> &mdash; SLSA Level 3 provenance for AI artifacts. We walk through the build pipeline architecture: source attestation, hermetic builds, signed SBOMs, and the provenance chain from source commit to deployed artifact. Red Hat is the only vendor delivering L3 for AI components.</p>
+            <p><strong style="color: var(--text-primary);">SkillSpector + Snyk Scanning</strong> &mdash; Static and dynamic analysis for MCP skills and agent packages. We show a live scan catching a malicious skill that exfiltrates environment variables through a tool-call side channel.</p>
+            <p><strong style="color: var(--text-primary);">Trust Tier Distribution</strong> &mdash; OCI distribution via Quay with trust tier badges in the Skills Catalog: Red Hat certified, partner verified, community contributed. How the scanning pipeline feeds trust tier classification.</p>
+            <p>You already know how to tell the container trust story. This session gives you the AI chapter.</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Architecture diagrams and visual aids</li>
-              <li>Optional: interactive whiteboarding templates for customer scenarios</li>
-            </ul>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-optional">CAI: Optional</span>
+            Optional demo: scanning + signing pipeline in action, showing a malicious skill caught by SkillSpector. Statistics are compelling standalone.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">Especially valuable for sellers expanding into AI who need the complete mental model. The competitive positioning is critical — every seller faces "why not AWS/Azure/Google?" in customer conversations. The 120-min interactive is the stronger format if accepted.</div>
+        <div class="slide-notes">The "36% of skills are flawed" stat from Snyk ToxicSkills is a conversation starter. Extends the trust story Red Hat sellers already know (container trust, image signing) into AI. Natural for regulated industry sellers and security-focused SAs. Co-speaker: a specialist or SA who has positioned Red Hat's trust pipeline.</div>
       </div>
     </section>
 
@@ -960,210 +499,101 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">07</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #7</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;"><span class="accent">Shadow Agents</span> Are the New Shadow IT</h2>
-        <div class="proposal-badges anim-fade-up" style="--index: 2;">
-          <span class="badge badge-red">Breakout 45m</span>
-          <span class="badge badge-blue">General + Technical Seller</span>
-        </div>
-        <div class="anim-fade-up" style="--index: 3;">
-          <div class="stat-strip" style="margin-bottom: 0.8rem;">
-            <div><div class="stat-num">82%</div><div class="stat-label">Enterprises found<br>unknown agents</div></div>
-            <div><div class="stat-num">47%</div><div class="stat-label">Of deployed agents<br>actively monitored</div></div>
-            <div><div class="stat-num">68%</div><div class="stat-label">Can't distinguish<br>human vs agent</div></div>
-            <div><div class="stat-num">#1</div><div class="stat-label">CISO risk for 2026<br>(Forrester)</div></div>
-          </div>
-        </div>
-        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>The "shadow IT" analogy resonates instantly with every seller who lived through that era. Gartner published its inaugural Market Guide for Guardian Agents. Red Hat AI's answer: Agent Registry for governed inventory, fleet lifecycle management, dependency immutability, and cross-cluster discovery. The only self-managed, disconnected-capable, governed fleet registry with lineage.</p>
-          </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Optional demo: agent inventory discovery + registry governance</li>
-              <li>Statistics carry the narrative &mdash; demo adds impact but isn't required</li>
-            </ul>
-          </div>
-        </div>
-        <div class="proposal-rule"></div>
-        <div class="slide-notes">Strong for FSI and regulated industry sellers. The "shadow IT" framing makes an abstract governance problem concrete. Positions Agent Registry as the governance answer. Hyperscaler registries are cloud-locked; Red Hat's is open and self-managed.</div>
-      </div>
-    </section>
-
-    <!-- ===== SLIDE 11: PROPOSAL #8 ===== -->
-    <section class="slide" data-slide="11" role="group" aria-label="Proposal 8">
-      <div class="slide-inner" style="position: relative;">
-        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">08</div>
-        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #8</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">AI Supply Chain <span class="accent">Under Attack</span></h2>
-        <div class="proposal-badges anim-fade-up" style="--index: 2;">
-          <span class="badge badge-red">Breakout 45m</span>
-          <span class="badge badge-blue">Technical Seller + Specialist</span>
-        </div>
-        <div class="anim-fade-up" style="--index: 3;">
-          <div class="stat-strip" style="margin-bottom: 0.8rem;">
-            <div><div class="stat-num">36%</div><div class="stat-label">Community skills<br>have flaws</div></div>
-            <div><div class="stat-num">1,184</div><div class="stat-label">Poisoned skills<br>on ClawHub</div></div>
-            <div><div class="stat-num">78.3%</div><div class="stat-label">MCP attack<br>success rate</div></div>
-            <div><div class="stat-num">L3</div><div class="stat-label">SLSA provenance<br>(Red Hat only)</div></div>
-          </div>
-        </div>
-        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>Extends Red Hat's established trust narrative (RHEL, OpenShift content trust) into AI. Presents the threat landscape with real examples, then Red Hat's trust pipeline: Konflux for SLSA L3 provenance, SkillSpector + Snyk scanning, Red Hat signing, OCI distribution via Quay, and trust tier badges in the Skills Catalog. No competitor combines all three.</p>
-          </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Optional demo: scanning + signing pipeline in action</li>
-              <li>Show a malicious skill caught by SkillSpector</li>
-              <li>Statistics are compelling standalone</li>
-            </ul>
-          </div>
-        </div>
-        <div class="proposal-rule"></div>
-        <div class="slide-notes">The "36% of skills are flawed" stat from Snyk ToxicSkills is a conversation starter. This extends the trust story Red Hat sellers already know how to tell (RHEL content trust, OpenShift image signing) into the AI domain. Natural for regulated industry sellers.</div>
-      </div>
-    </section>
-
-    <!-- ===== SLIDE 12: PROPOSAL #9 ===== -->
-    <section class="slide" data-slide="12" role="group" aria-label="Proposal 9">
-      <div class="slide-inner" style="position: relative;">
-        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">09</div>
-        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #9</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Governing AI in <span class="accent">Regulated Industries</span></h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">Agent Observability: Tracing <span class="accent">Multi-Agent Workflows</span> in Production</h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
           <span class="badge badge-red">Breakout 45m</span>
           <span class="badge badge-teal">or Interactive 45m</span>
-          <span class="badge badge-blue">General + Technical Seller</span>
+          <span class="badge badge-blue">Architect &middot; TAM &middot; Consultant</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem;">
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Regulatory Landscape</div>
-              <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text);">
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-orange);">&#9679;</span> EU AI Act high-risk provisions (enforceable Aug 2, 2026)</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-orange);">&#9679;</span> Colorado AI Act (enforceable Jun 2026)</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-teal);">&#9679;</span> NIST AI Agent Standards Initiative (Feb 2026)</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-blue-light);">&#9679;</span> Sector regulations extending to agents within 12-18 months</li>
-              </ul>
+          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.7rem; margin-bottom: 0.6rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">The Tracing Challenge</div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text);">
+              <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">User request</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(0,149,150,0.08); border: 1px solid rgba(0,149,150,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">Orchestrator agent</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(0,102,204,0.08); border: 1px solid rgba(0,102,204,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">2 specialist agents</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(103,83,172,0.08); border: 1px solid rgba(103,83,172,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">4 MCP tool calls</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(244,180,0,0.08); border: 1px solid rgba(244,180,0,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">Gateway policy</div>
+              <span style="color: var(--text-muted);">&rarr;</span>
+              <div style="background: rgba(62,134,53,0.08); border: 1px solid rgba(62,134,53,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">Multiple inference calls</div>
             </div>
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.8rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-teal); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">Red Hat AI Compliance Map</div>
-              <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-text);">
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Audit trails &rarr; AI Gateway</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Transparency metadata &rarr; Skills Catalog (Art. 50)</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Agent inventory &rarr; Agent Registry</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Identity &amp; accountability &rarr; SPIFFE</li>
-                <li style="padding: 0.15rem 0;"><span style="color: var(--rh-green);">&#10003;</span> Sandboxed execution &rarr; OpenShell</li>
-              </ul>
-            </div>
+            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-text); margin-top: 0.3rem;">When something fails silently and the agent hallucinates a response &mdash; how do you trace it?</div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>Turns regulation from a customer objection into a Red Hat selling point. EMEA sellers (31% of audience) face EU AI Act questions daily. FSI sellers everywhere face compliance objections. Maps the regulatory landscape directly to Red Hat AI capabilities. Interactive format works well as a compliance mapping workshop.</p>
+        <div class="anim-fade-up" style="--index: 5;">
+          <div class="abstract-card">
+            <div class="abstract-label">CFP Abstract</div>
+            <p>A single user request can trigger a chain of agent calls &mdash; an orchestrator dispatching to specialist agents, each making multiple tool calls through MCP servers, routing through an AI Gateway, and consuming inference tokens across different models. When something goes wrong (and it will), how do you trace the failure back to its root cause?</p>
+            <p>This session covers the observability architecture for agentic workloads on Red Hat AI:</p>
+            <p><strong style="color: var(--text-primary);">Distributed Tracing</strong> &mdash; OpenTelemetry-based tracing across multi-agent workflows. We walk through a trace that spans an orchestrator agent, two specialist agents, four MCP tool calls, and an AI Gateway policy decision &mdash; showing how each component contributes spans with semantic conventions for AI operations.</p>
+            <p><strong style="color: var(--text-primary);">Debugging Silent Failures</strong> &mdash; When an MCP tool call fails and the agent hallucinates a response instead of reporting the error, how do you catch it? We show the telemetry patterns that reveal these failures and the alerting rules that surface them before they reach users.</p>
+            <p><strong style="color: var(--text-primary);">Audit Log Architecture</strong> &mdash; Every LLM call, tool invocation, policy decision, and identity verification produces an audit event. We cover the log schema, retention policies, and how to query the audit trail for compliance reporting.</p>
+            <p><strong style="color: var(--text-primary);">Cost Attribution</strong> &mdash; Token consumption tracking per agent, per workflow, per team. When your inference bill spikes, you know which agent workflow caused it.</p>
+            <p>You leave with observability patterns you can implement on day one of any agentic deployment.</p>
           </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <p>Strategy and positioning content. Interactive format could include a compliance mapping exercise where attendees map their own customer's regulatory requirements to Red Hat AI capabilities.</p>
-          </div>
-        </div>
-        <div class="proposal-rule"></div>
-        <div class="slide-notes">Regulatory compliance is a buying trigger, not just a feature. The EU AI Act explicitly addresses multi-agent architectures in Recitals 99-100. Industry tagging: Financial Services, Healthcare, Government. No CAI support needed — this is strategy and positioning content.</div>
-      </div>
-    </section>
-
-    <!-- ===== SLIDE 13: PROPOSAL #10 ===== -->
-    <section class="slide" data-slide="13" role="group" aria-label="Proposal 10">
-      <div class="slide-inner" style="position: relative;">
-        <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">10</div>
-        <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #10</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.7rem;">Hands-On Lab: Build, Deploy, and <span class="accent">Govern</span> an Agent</h2>
-        <div class="proposal-badges anim-fade-up" style="--index: 2;">
-          <span class="badge badge-green">Lab 120m</span>
-          <span class="badge badge-blue">Technical Specialist + Delivery</span>
-        </div>
-        <div class="anim-fade-up" style="--index: 3;">
-          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 1rem; margin-bottom: 0.8rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-green); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem;">Lab Flow (7 Steps)</div>
-            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
-              <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">1. Browse Catalog</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(0,149,150,0.08); border: 1px solid rgba(0,149,150,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">2. Deploy via OpenShell</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(0,102,204,0.08); border: 1px solid rgba(0,102,204,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">3. Connect MCP Servers</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(103,83,172,0.08); border: 1px solid rgba(103,83,172,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">4. Route via Gateway</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">5. SPIFFE Identity</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(62,134,53,0.08); border: 1px solid rgba(62,134,53,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">6. Guardrails</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(244,180,0,0.08); border: 1px solid rgba(244,180,0,0.2); border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.75rem; color: var(--text-primary); font-family: var(--font-text);">7. Observe in Studio</div>
-            </div>
-          </div>
-        </div>
-        <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
-        <div class="proposal-body anim-fade-up" style="--index: 5;">
-          <div class="desc-card">
-            <div class="desc-label">Session overview</div>
-            <p>Labs are consistently the highest-rated sessions at Red Hat events. This makes the entire agentic platform tangible for technical sellers, SAs, and TAMs. The "govern an agent" angle is more compelling than "deploy an agent" because governance is the differentiator. Prior knowledge of OpenShift basics recommended.</p>
-          </div>
-          <div class="cai-card">
-            <div class="cai-level cai-level-needed">Possible CAI support</div>
-            <ul class="cai-items">
-              <li>Pre-built multi-user lab environment with full RHOAI agentic stack</li>
-              <li>3 instructors minimum for in-room support</li>
-              <li>Lab prep, environment provisioning, troubleshooting</li>
-              <li>Lead time needed: at least 2 months before event</li>
-            </ul>
+          <div class="cai-inline">
+            <span class="cai-tag cai-tag-optional">CAI: Optional</span>
+            Optional: live tracing demo showing a multi-agent workflow trace in OpenTelemetry. The architecture walkthrough stands on its own.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">Labs need the most preparation but get the highest ratings. CFP Guide says: use business customer use cases, "start at the end," avoid "how to deploy and configure" style. The governance angle satisfies this — the lab should be framed as solving a real enterprise problem, not just clicking through install steps.</div>
+        <div class="slide-notes">Every TAM and Consultant deploying agents needs observability patterns. Silent failures (hallucinated responses when tools fail) are a real production issue. Cost attribution is the question every CFO asks. Interactive format works well for tracing walkthroughs. Co-speaker: a TAM or SA who has debugged agent workflows in production.</div>
       </div>
     </section>
 
-    <!-- ===== SLIDE 14: CAI SUPPORT + NEXT STEPS ===== -->
-    <section class="slide" data-slide="14" role="group" aria-label="CAI Support and Next Steps">
+    <!-- ===== SLIDE 11: NEXT STEPS ===== -->
+    <section class="slide" data-slide="11" role="group" aria-label="Next Steps">
       <div class="slide-inner">
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">NEXT STEPS</div>
         <h2 class="display-lg anim-fade-up" style="--index: 1">CAI Support Matrix &amp; <span class="accent">Recommendation</span></h2>
         <div class="anim-fade-up" style="--index: 2;">
-          <div class="matrix-grid" style="margin-bottom: 1rem;">
+          <div class="matrix-grid" style="margin-bottom: 0.8rem;">
             <div class="matrix-header">Proposal</div>
-            <div class="matrix-header" style="text-align: center;">Demo</div>
+            <div class="matrix-header" style="text-align: center;">Live Demo</div>
             <div class="matrix-header" style="text-align: center;">Interactive</div>
-            <div class="matrix-header" style="text-align: center;">Lab Env</div>
+            <div class="matrix-header" style="text-align: center;">Diagrams</div>
 
-            <div class="matrix-cell title-col">#1 88% Pilot Failure</div>
+            <div class="matrix-cell title-col">#1 Governing + Security</div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
 
-            <div class="matrix-cell title-col">#3 MCP Ecosystem</div>
-            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
-            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
-            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
-
-            <div class="matrix-cell title-col">#4 Agent Security</div>
+            <div class="matrix-cell title-col">#2 MCP Ecosystem</div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
 
-            <div class="matrix-cell title-col">#10 Hands-On Lab</div>
+            <div class="matrix-cell title-col">#3 Customer Panel</div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+
+            <div class="matrix-cell title-col">#4 Reference Architecture</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
+
+            <div class="matrix-cell title-col">#5 Fleet Lifecycle</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+
+            <div class="matrix-cell title-col">#6 Supply Chain</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
+
+            <div class="matrix-cell title-col">#7 Observability</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
           </div>
-          <div style="display: flex; gap: 1.5rem; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 1.2rem;">
+          <div style="display: flex; gap: 1.5rem; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); margin-bottom: 1rem;">
             <span><span class="dot-yes" style="vertical-align: middle;"></span> Needed</span>
             <span><span class="dot-maybe" style="vertical-align: middle;"></span> Nice-to-have</span>
             <span><span class="dot-no" style="vertical-align: middle;"></span> Not needed</span>
@@ -1171,13 +601,13 @@
         </div>
         <div class="anim-fade-up" style="--index: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-red); border-radius: 0 8px 8px 0; padding: 1rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-red); margin-bottom: 0.4rem; font-weight: 600;">Recommended Submissions (3-5)</div>
+            <div style="font-family: var(--font-mono); font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rh-red); margin-bottom: 0.4rem; font-weight: 600;">Recommended Priority (3-5)</div>
             <div style="font-size: 0.82rem; color: var(--text-secondary); font-family: var(--font-text); line-height: 1.6;">
-              <strong style="color: var(--text-primary);">#1</strong> Master narrative (all audiences)<br>
-              <strong style="color: var(--text-primary);">#2</strong> Economic argument (sellers)<br>
-              <strong style="color: var(--text-primary);">#3</strong> Most demo-ready (technical)<br>
-              <strong style="color: var(--text-primary);">#5</strong> Format variety (panel)<br>
-              <strong style="color: var(--text-primary);">#10</strong> Highest-rated format (lab)
+              <strong style="color: var(--text-primary);">#1</strong> Governance + security demo<br>
+              <strong style="color: var(--text-primary);">#2</strong> MCP ecosystem (most demo-ready)<br>
+              <strong style="color: var(--text-primary);">#3</strong> Customer panel (format variety)<br>
+              <strong style="color: var(--text-primary);">#4</strong> Architecture (broadest scope)<br>
+              <strong style="color: var(--text-primary);">#6</strong> Supply chain (trust narrative)
             </div>
           </div>
           <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-left: 4px solid var(--rh-orange); border-radius: 0 8px 8px 0; padding: 1rem;">
@@ -1191,7 +621,7 @@
             </div>
           </div>
         </div>
-        <div class="slide-notes">Recommended combination covers strategic narrative (#1), economic argument (#2), tangible demo (#3), format variety (#5 panel), and hands-on learning (#10 lab). Five submissions across four formats, covering all audience types and proficiency levels. The Aug 7 deadline is 3 days away.</div>
+        <div class="slide-notes">All 7 proposals are deep technical content per Rosa's guidance. Recommended 5 cover: comprehensive governance+security demo (#1), most tangible capability (#2), format variety (#3 panel), broadest architecture (#4), and trust narrative (#6). Remaining 2 (#5, #7) are strong if more slots available. Aug 7 deadline is 2 days away.</div>
       </div>
     </section>
 
@@ -1200,18 +630,15 @@
       <div class="overview-grid">
         <button class="overview-thumb" data-goto="1"><span class="num">01</span><span class="ttl">CFP Proposal Candidates</span><span class="beat">TITLE</span></button>
         <button class="overview-thumb" data-goto="2"><span class="num">02</span><span class="ttl">What Makes a Winning Proposal</span><span class="beat">CONTEXT</span></button>
-        <button class="overview-thumb" data-goto="3"><span class="num">03</span><span class="ttl">All 10 Proposals Ranked</span><span class="beat">SUMMARY</span></button>
-        <button class="overview-thumb" data-goto="4"><span class="num">04</span><span class="ttl">#1 — Why 88% of Pilots Fail</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="5"><span class="num">05</span><span class="ttl">#2 — Token Economics</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="6"><span class="num">06</span><span class="ttl">#3 — MCP Ecosystem</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="7"><span class="num">07</span><span class="ttl">#4 — Agent Security</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="8"><span class="num">08</span><span class="ttl">#5 — Customer Panel</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="9"><span class="num">09</span><span class="ttl">#6 — Architecture for the Field</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="10"><span class="num">10</span><span class="ttl">#7 — Shadow Agents</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="11"><span class="num">11</span><span class="ttl">#8 — Supply Chain</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="12"><span class="num">12</span><span class="ttl">#9 — Regulated Industries</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="13"><span class="num">13</span><span class="ttl">#10 — Hands-On Lab</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="14"><span class="num">14</span><span class="ttl">CAI Support + Next Steps</span><span class="beat">CLOSE</span></button>
+        <button class="overview-thumb" data-goto="3"><span class="num">03</span><span class="ttl">All 7 Proposals</span><span class="beat">SUMMARY</span></button>
+        <button class="overview-thumb" data-goto="4"><span class="num">04</span><span class="ttl">#1 — Governance + Security</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="5"><span class="num">05</span><span class="ttl">#2 — MCP Ecosystem</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="6"><span class="num">06</span><span class="ttl">#3 — Customer Panel</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="7"><span class="num">07</span><span class="ttl">#4 — Reference Architecture</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="8"><span class="num">08</span><span class="ttl">#5 — Fleet Lifecycle</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="9"><span class="num">09</span><span class="ttl">#6 — Supply Chain</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="10"><span class="num">10</span><span class="ttl">#7 — Observability</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="11"><span class="num">11</span><span class="ttl">CAI Support + Next Steps</span><span class="beat">CLOSE</span></button>
       </div>
     </div>
 
@@ -1237,11 +664,8 @@
       <li><button role="tab" data-goto="9" aria-label="Go to slide 9"></button></li>
       <li><button role="tab" data-goto="10" aria-label="Go to slide 10"></button></li>
       <li><button role="tab" data-goto="11" aria-label="Go to slide 11"></button></li>
-      <li><button role="tab" data-goto="12" aria-label="Go to slide 12"></button></li>
-      <li><button role="tab" data-goto="13" aria-label="Go to slide 13"></button></li>
-      <li><button role="tab" data-goto="14" aria-label="Go to slide 14"></button></li>
     </ol>
-    <span class="deck-counter">01 / 14</span>
+    <span class="deck-counter">01 / 11</span>
     <button class="btn-next" aria-label="Next slide">&#x2192;</button>
   </nav>
 
@@ -1256,7 +680,6 @@
       var overview = document.querySelector('.deck-overview');
       var notes = document.querySelector('.deck-notes');
       var notesBody = document.getElementById('notes-body');
-
       var style = document.createElement('style');
       var css = '';
       for (var i = 1; i <= TOTAL; i++) {
@@ -1264,97 +687,48 @@
       }
       style.textContent = css;
       document.head.appendChild(style);
-
       var state = { current: 1, overviewOpen: false, notesOpen: false };
-
       function clamp(n) { return Math.max(1, Math.min(TOTAL, n)); }
-
-      function getSlideNotes(n) {
-        var slide = deck.querySelector('.slide[data-slide="' + n + '"]');
-        if (!slide) return '';
-        var notesEl = slide.querySelector('.slide-notes');
-        return notesEl ? notesEl.textContent : '';
-      }
-
+      function getSlideNotes(n) { var s = deck.querySelector('.slide[data-slide="' + n + '"]'); if (!s) return ''; var el = s.querySelector('.slide-notes'); return el ? el.textContent : ''; }
       function render() {
         deck.setAttribute('data-slide-current', String(state.current));
         counter.textContent = String(state.current).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
-        dots.forEach(function (d, i) {
-          if (i + 1 === state.current) d.setAttribute('aria-current', 'true');
-          else d.removeAttribute('aria-current');
-        });
-        Array.from(deck.querySelectorAll('.slide')).forEach(function (s) {
-          var n = parseInt(s.getAttribute('data-slide'), 10);
-          if (n === state.current) { s.classList.add('current'); s.removeAttribute('aria-hidden'); }
-          else { s.classList.remove('current'); s.setAttribute('aria-hidden', 'true'); }
-        });
-        btnPrev.disabled = state.current === 1;
-        btnNext.disabled = state.current === TOTAL;
-        if (state.notesOpen) {
-          var txt = getSlideNotes(state.current);
-          notesBody.textContent = txt || '(No notes for this slide)';
-        }
+        dots.forEach(function (d, i) { if (i + 1 === state.current) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+        Array.from(deck.querySelectorAll('.slide')).forEach(function (s) { var n = parseInt(s.getAttribute('data-slide'), 10); if (n === state.current) { s.classList.add('current'); s.removeAttribute('aria-hidden'); } else { s.classList.remove('current'); s.setAttribute('aria-hidden', 'true'); } });
+        btnPrev.disabled = state.current === 1; btnNext.disabled = state.current === TOTAL;
+        if (state.notesOpen) { notesBody.textContent = getSlideNotes(state.current) || '(No notes for this slide)'; }
         requestAnimationFrame(fireSlideAnimations);
       }
-
       function goTo(n) { var next = clamp(n); if (next === state.current) return; state.current = next; render(); syncHash(); }
       function next() { goTo(state.current + 1); }
       function prev() { goTo(state.current - 1); }
-
       function syncHash() { var h = '#s=' + state.current; if (location.hash !== h) history.replaceState(null, '', h); }
       function readHash() { var m = /^#s=(\d{1,2})$/.exec(location.hash || ''); return m ? clamp(parseInt(m[1], 10)) : 1; }
-
       var digitBuffer = '', digitTimer = null;
       function clearBuffer() { digitBuffer = ''; if (digitTimer) { clearTimeout(digitTimer); digitTimer = null; } }
-
       function onKey(e) {
         if (state.overviewOpen) return onOverviewKey(e);
         var k = e.key;
         if (k === 'ArrowRight' || k === 'ArrowDown' || k === 'PageDown' || k === ' ') { e.preventDefault(); next(); clearBuffer(); return; }
         if (k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp' || k === 'Backspace') { e.preventDefault(); prev(); clearBuffer(); return; }
         if (k === 'Home') { e.preventDefault(); goTo(1); clearBuffer(); return; }
-        if (k === 'End')  { e.preventDefault(); goTo(TOTAL); clearBuffer(); return; }
+        if (k === 'End') { e.preventDefault(); goTo(TOTAL); clearBuffer(); return; }
         if (k === 'Escape') { e.preventDefault(); toggleOverview(); clearBuffer(); return; }
         if (k === 'p' || k === 'P') { e.preventDefault(); toggleNotes(); clearBuffer(); return; }
-        if (/^[0-9]$/.test(k)) {
-          e.preventDefault();
-          digitBuffer += k;
-          if (digitTimer) clearTimeout(digitTimer);
-          if (digitBuffer.length === 2) { goTo(parseInt(digitBuffer, 10)); clearBuffer(); return; }
-          digitTimer = setTimeout(function () { var n = parseInt(digitBuffer, 10); if (n >= 1 && n <= 9) goTo(n); clearBuffer(); }, 600);
-        }
+        if (/^[0-9]$/.test(k)) { e.preventDefault(); digitBuffer += k; if (digitTimer) clearTimeout(digitTimer); if (digitBuffer.length === 2) { goTo(parseInt(digitBuffer, 10)); clearBuffer(); return; } digitTimer = setTimeout(function () { var n = parseInt(digitBuffer, 10); if (n >= 1 && n <= 9) goTo(n); clearBuffer(); }, 600); }
       }
-
-      btnPrev.addEventListener('click', prev);
-      btnNext.addEventListener('click', next);
+      btnPrev.addEventListener('click', prev); btnNext.addEventListener('click', next);
       dots.forEach(function (d) { d.addEventListener('click', function () { goTo(parseInt(d.getAttribute('data-goto'), 10)); }); });
       window.addEventListener('keydown', onKey);
-
-      Array.from(overview.querySelectorAll('.overview-thumb')).forEach(function (t) {
-        t.addEventListener('click', function () { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); });
-      });
-
-      function applyStaggerIndices(slide) {
-        Array.from(slide.querySelectorAll('[data-stagger] > *')).forEach(function (el, i) { el.style.setProperty('--index', String(i)); });
-      }
+      Array.from(overview.querySelectorAll('.overview-thumb')).forEach(function (t) { t.addEventListener('click', function () { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); }); });
+      function applyStaggerIndices(slide) { Array.from(slide.querySelectorAll('[data-stagger] > *')).forEach(function (el, i) { el.style.setProperty('--index', String(i)); }); }
       function fireSlideAnimations() { var cur = deck.querySelector('.slide.current'); if (cur) applyStaggerIndices(cur); }
-
       function toggleOverview() { state.overviewOpen ? closeOverview() : openOverview(); }
-      function openOverview() { state.overviewOpen = true; overview.hidden = false; var active = overview.querySelector('.overview-thumb[data-goto="' + state.current + '"]'); if (active) active.focus(); }
+      function openOverview() { state.overviewOpen = true; overview.hidden = false; var a = overview.querySelector('.overview-thumb[data-goto="' + state.current + '"]'); if (a) a.focus(); }
       function closeOverview() { state.overviewOpen = false; overview.hidden = true; deck.focus(); }
-      function onOverviewKey(e) {
-        if (e.key === 'Escape') { e.preventDefault(); closeOverview(); }
-        if (e.key === 'Enter') { var t = document.activeElement; if (t && t.classList.contains('overview-thumb')) { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); } }
-      }
-
+      function onOverviewKey(e) { if (e.key === 'Escape') { e.preventDefault(); closeOverview(); } if (e.key === 'Enter') { var t = document.activeElement; if (t && t.classList.contains('overview-thumb')) { goTo(parseInt(t.getAttribute('data-goto'), 10)); closeOverview(); } } }
       function toggleNotes() { if (!notes) return; state.notesOpen = !state.notesOpen; notes.hidden = !state.notesOpen; if (state.notesOpen) { notesBody.textContent = getSlideNotes(state.current) || '(No notes for this slide)'; } }
-
-      document.addEventListener('DOMContentLoaded', function () {
-        state.current = readHash();
-        render();
-        window.addEventListener('hashchange', function () { state.current = readHash(); render(); });
-      });
-
+      document.addEventListener('DOMContentLoaded', function () { state.current = readHash(); render(); window.addEventListener('hashchange', function () { state.current = readHash(); render(); }); });
       window.__deck = { goTo: goTo, next: next, prev: prev, state: state };
     }());
   </script>

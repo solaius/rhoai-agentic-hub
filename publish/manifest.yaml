@@ -105,4 +105,4 @@
   dest: platform/rh1-2027-cfp-proposals/
   audience: internal
   title: Red Hat One 2027 — CFP Proposal Candidates
-  description: 14-slide deck presenting 10 ranked CFP proposal ideas for RH1 2027, with CAI support matrix and recommended submission strategy.
+  description: 11-slide deck presenting 7 deep-technical CFP proposals for RH1 2027, updated per BU guidance (deep technical content for hands-on-keyboard roles).
