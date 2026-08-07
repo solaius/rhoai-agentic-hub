@@ -106,3 +106,8 @@
   audience: internal
   title: Red Hat One 2027 — CFP Proposal Candidates
   description: 11-slide deck presenting 7 deep-technical CFP proposals for RH1 2027, updated per BU guidance (deep technical content for hands-on-keyboard roles).
+- source: components/mcp-ecosystem/enablement/ai-asset-management-roadmap/
+  dest: mcp-ecosystem/ai-asset-management-roadmap/
+  audience: internal
+  title: AI Asset Management Roadmap
+  description: MCP Ecosystem, Skills, Agents, and AI Gateway milestones across RHOAI 3.5-3.7.

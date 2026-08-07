@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Asset Management Roadmap — Red Hat OpenShift AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800;900&family=Red+Hat+Text:wght@400;500;600;700&family=Red+Hat+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-canvas:      #151515;
+      --bg-elevated:    #1a1a1a;
+      --bg-card:        #202020;
+      --bg-cell:        #1c1c1c;
+      --text-primary:   #ffffff;
+      --text-secondary: #d2d2d2;
+      --text-muted:     #8a8a8a;
+      --rh-red:         #EE0000;
+      --rh-red-dark:    #A30000;
+      --border-subtle:  #333333;
+      --border-muted:   #444444;
+
+      --color-dp:       #FFD54F;
+      --color-dp-bg:    rgba(255, 213, 79, 0.12);
+      --color-tp:       #73BCF7;
+      --color-tp-bg:    rgba(115, 188, 247, 0.12);
+      --color-ga:       #4caf50;
+      --color-ga-bg:    rgba(76, 175, 80, 0.12);
+      --color-milestone: #FF8A65;
+      --color-milestone-bg: rgba(255, 138, 101, 0.10);
+
+      --font-sans: "Red Hat Display", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-text: "Red Hat Text", "Inter", -apple-system, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "Red Hat Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 3rem 3.5rem 2rem;
+    }
+
+    /* Header */
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    .header-bar {
+      width: 5px;
+      min-height: 72px;
+      background: var(--rh-red);
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .header-content { flex: 1; }
+    .header-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      color: var(--rh-red);
+      margin-bottom: 0.35rem;
+    }
+    .header-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.3rem;
+    }
+    .header-subtitle {
+      font-family: var(--font-text);
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* Subject to change banner */
+    .disclaimer-banner {
+      background: linear-gradient(135deg, rgba(238,0,0,0.08), rgba(238,0,0,0.03));
+      border: 1px solid rgba(238, 0, 0, 0.25);
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .disclaimer-icon {
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .disclaimer-text {
+      font-family: var(--font-text);
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+    }
+    .disclaimer-text strong {
+      color: var(--rh-red);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-text);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+    .legend-chip {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .legend-chip--dp  { background: var(--color-dp-bg);  color: var(--color-dp);  border: 1px solid rgba(255,213,79,0.3); }
+    .legend-chip--tp  { background: var(--color-tp-bg);  color: var(--color-tp);  border: 1px solid rgba(115,188,247,0.3); }
+    .legend-chip--ga  { background: var(--color-ga-bg);  color: var(--color-ga);  border: 1px solid rgba(76,175,80,0.3); }
+    .legend-chip--ms  { background: var(--color-milestone-bg); color: var(--color-milestone); border: 1px solid rgba(255,138,101,0.3); }
+
+    /* Roadmap table */
+    .roadmap-section {
+      margin-bottom: 2rem;
+    }
+
+    .roadmap-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    .roadmap-table thead th {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 0.85rem 0.75rem;
+      text-align: center;
+      border-bottom: 2px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+    .roadmap-table thead th:first-child {
+      text-align: left;
+      padding-left: 1.25rem;
+      min-width: 220px;
+    }
+    .roadmap-table thead th.release-col {
+      border-left: 1px solid var(--border-subtle);
+      min-width: 110px;
+    }
+    .roadmap-table thead th.release-ga {
+      background: rgba(76, 175, 80, 0.06);
+    }
+
+    /* Release sub-labels */
+    .release-label { display: block; font-size: 0.72rem; letter-spacing: 1px; }
+    .release-date {
+      display: block;
+      font-family: var(--font-text);
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      text-transform: none;
+      letter-spacing: 0;
+      margin-top: 2px;
+    }
+
+    /* Group header rows */
+    .roadmap-table .group-row td {
+      background: var(--bg-canvas);
+      padding: 0.6rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* Data rows */
+    .roadmap-table tbody td {
+      padding: 0.7rem 0.75rem;
+      border-bottom: 1px solid rgba(51,51,51,0.6);
+      text-align: center;
+      vertical-align: middle;
+      font-family: var(--font-text);
+      font-size: 0.85rem;
+    }
+    .roadmap-table tbody td:first-child {
+      text-align: left;
+      padding-left: 1.25rem;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+    }
+    .roadmap-table tbody td.release-col {
+      border-left: 1px solid rgba(51,51,51,0.4);
+    }
+    .roadmap-table tbody td.release-ga {
+      background: rgba(76, 175, 80, 0.03);
+    }
+
+    .roadmap-table tbody tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+    .roadmap-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Component detail text */
+    .comp-detail {
+      display: block;
+      font-family: var(--font-text);
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Milestone chips */
+    .chip {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .chip--dp {
+      background: var(--color-dp-bg);
+      color: var(--color-dp);
+      border: 1px solid rgba(255,213,79,0.25);
+    }
+    .chip--tp {
+      background: var(--color-tp-bg);
+      color: var(--color-tp);
+      border: 1px solid rgba(115,188,247,0.25);
+    }
+    .chip--ga {
+      background: var(--color-ga-bg);
+      color: var(--color-ga);
+      border: 1px solid rgba(76,175,80,0.25);
+      font-weight: 700;
+    }
+    .chip--milestone {
+      background: var(--color-milestone-bg);
+      color: var(--color-milestone);
+      border: 1px solid rgba(255,138,101,0.25);
+      font-size: 0.65rem;
+    }
+    .chip--directional {
+      opacity: 0.7;
+      border-style: dashed;
+    }
+
+    .cell-empty {
+      color: var(--border-muted);
+      font-size: 0.75rem;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .footer-bar {
+      width: 3px;
+      height: 16px;
+      background: var(--rh-red);
+      border-radius: 2px;
+    }
+    .footer-text {
+      font-family: var(--font-text);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .footer-date {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Progress bar for GA timeline */
+    .ga-timeline {
+      margin-top: 2rem;
+      background: var(--bg-elevated);
+      border-radius: 10px;
+      padding: 1.5rem 1.5rem 1.25rem;
+      border: 1px solid var(--border-subtle);
+    }
+    .ga-timeline-title {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .ga-track {
+      position: relative;
+      height: 36px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 6px;
+      overflow: visible;
+      margin-bottom: 0.5rem;
+    }
+    .ga-track-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .ga-markers {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 2px;
+    }
+    .ga-marker {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .ga-marker strong {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 900px) {
+      .page { padding: 1.5rem; }
+      .header-title { font-size: 1.6rem; }
+      .roadmap-table { font-size: 13px; }
+      .roadmap-table thead th { font-size: 0.6rem; padding: 0.6rem 0.4rem; }
+      .roadmap-table tbody td { padding: 0.5rem 0.4rem; }
+      .roadmap-table thead th:first-child,
+      .roadmap-table tbody td:first-child { min-width: 150px; padding-left: 0.75rem; }
+    }
+
+    @media print {
+      html, body { background: #fff; color: #000; }
+      .roadmap-table { box-shadow: none; border: 1px solid #ccc; }
+      .roadmap-table thead th { background: #f0f0f0; color: #333; border-color: #ccc; }
+      .roadmap-table tbody td { border-color: #ddd; }
+      .group-row td { background: #f8f8f8 !important; color: #666; }
+      .disclaimer-banner { border-color: #cc0000; background: #fff5f5; }
+      .disclaimer-text strong { color: #cc0000; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-bar"></div>
+    <div class="header-content">
+      <div class="header-eyebrow">Red Hat OpenShift AI</div>
+      <h1 class="header-title">AI Asset Management Roadmap</h1>
+      <div class="header-subtitle">MCP Ecosystem, Skills, Agents, and AI Gateway milestones across RHOAI 3.5 through 3.7</div>
+    </div>
+  </div>
+
+  <!-- Subject to change -->
+  <div class="disclaimer-banner">
+    <div class="disclaimer-icon">&#9888;</div>
+    <div class="disclaimer-text">
+      <strong>Subject to change</strong> &mdash; All dates and milestones are forward-looking targets based on current planning.
+      Timelines may shift as engineering, upstream dependencies, and customer priorities evolve.
+      This document does not represent a commitment to deliver.
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><span class="legend-chip legend-chip--dp">DP</span> Dev Preview</div>
+    <div class="legend-item"><span class="legend-chip legend-chip--tp">TP</span> Tech Preview</div>
+    <div class="legend-item"><span class="legend-chip legend-chip--ga">GA</span> General Availability</div>
+    <div class="legend-item"><span class="legend-chip legend-chip--ms">Milestone</span> Scoped capability</div>
+  </div>
+
+  <!-- Roadmap table -->
+  <div class="roadmap-section">
+    <table class="roadmap-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th class="release-col">
+            <span class="release-label">3.5</span>
+            <span class="release-date">Aug 2026</span>
+          </th>
+          <th class="release-col">
+            <span class="release-label">3.6 EA1</span>
+            <span class="release-date">Sep 2026</span>
+          </th>
+          <th class="release-col">
+            <span class="release-label">3.6 EA2</span>
+            <span class="release-date">Oct 2026</span>
+          </th>
+          <th class="release-col release-ga">
+            <span class="release-label">3.6</span>
+            <span class="release-date">Nov 2026</span>
+          </th>
+          <th class="release-col">
+            <span class="release-label">3.7 EA1</span>
+            <span class="release-date">Dec 2026</span>
+          </th>
+          <th class="release-col">
+            <span class="release-label">3.7</span>
+            <span class="release-date">Feb 2027</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- MCP Ecosystem -->
+        <tr class="group-row"><td colspan="7">MCP Ecosystem</td></tr>
+        <tr>
+          <td>MCP Gateway<span class="comp-detail">Envoy-based routing &amp; access control (via RHCL)</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--ga">GA</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+        <tr>
+          <td>MCP Catalog<span class="comp-detail">Discovery &amp; browsing of MCP servers in AI Hub</span></td>
+          <td class="release-col"><span class="chip chip--dp">DP</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--ga">GA</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+        <tr>
+          <td>MCP Registry<span class="comp-detail">Governance, versioning &amp; metadata (MLflow backend)</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--ga">GA</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+        <tr>
+          <td>MCP Lifecycle Operator<span class="comp-detail">Declarative MCPServer CRD deployment (kubernetes-sigs)</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--ga">GA</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+
+        <!-- Skills -->
+        <tr class="group-row"><td colspan="7">Skills</td></tr>
+        <tr>
+          <td>Skills Catalog<span class="comp-detail">Browse &amp; search curated skills in AI Hub</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+        <tr>
+          <td>Skills Registry<span class="comp-detail">Governance &amp; lifecycle for skills (MLflow backend)</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--dp">DP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+
+        <!-- Agents -->
+        <tr class="group-row"><td colspan="7">Agents</td></tr>
+        <tr>
+          <td>Agent Catalog<span class="comp-detail">Starter-kit discovery &amp; agent deployment in AI Hub</span></td>
+          <td class="release-col"><span class="chip chip--dp">DP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--milestone">Deploy</span></td>
+          <td class="release-col release-ga"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+        <tr>
+          <td>Agent Registry<span class="comp-detail">Governance, lifecycle &amp; RBAC for agents (MLflow backend)</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--milestone">Starts</span></td>
+          <td class="release-col release-ga"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--dp chip--directional">DP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+        </tr>
+        <tr>
+          <td>OpenShell<span class="comp-detail">Agent sandboxing, identity &amp; execution (NVIDIA upstream)</span></td>
+          <td class="release-col"><span class="chip chip--dp">DP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+          <td class="release-col release-ga"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--ga">GA</span></td>
+        </tr>
+
+        <!-- AI Gateway -->
+        <tr class="group-row"><td colspan="7">AI Gateway</td></tr>
+        <tr>
+          <td>AI Gateway<span class="comp-detail">Praxis-based inference routing &amp; agentic control plane</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col release-ga"><span class="chip chip--dp">DP</span></td>
+          <td class="release-col"><span class="cell-empty">&mdash;</span></td>
+          <td class="release-col"><span class="chip chip--tp">TP</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GA convergence timeline -->
+  <div class="ga-timeline">
+    <div class="ga-timeline-title">GA convergence &mdash; RHOAI 3.6 (November 2026)</div>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem;">
+      <div class="ga-track">
+        <div class="ga-track-fill" style="width: 66%; background: linear-gradient(90deg, rgba(76,175,80,0.15), rgba(76,175,80,0.25));">
+          <span style="color: var(--color-ga);">MCP Gateway</span>
+        </div>
+      </div>
+      <div class="ga-track">
+        <div class="ga-track-fill" style="width: 66%; background: linear-gradient(90deg, rgba(115,188,247,0.1), rgba(76,175,80,0.25));">
+          <span style="color: var(--color-ga);">MCP Catalog</span>
+        </div>
+      </div>
+      <div class="ga-track">
+        <div class="ga-track-fill" style="width: 66%; background: linear-gradient(90deg, rgba(115,188,247,0.1), rgba(76,175,80,0.25));">
+          <span style="color: var(--color-ga);">MCP Registry</span>
+        </div>
+      </div>
+      <div class="ga-track">
+        <div class="ga-track-fill" style="width: 66%; background: linear-gradient(90deg, rgba(76,175,80,0.15), rgba(76,175,80,0.25));">
+          <span style="color: var(--color-ga);">MCP Lifecycle Operator</span>
+        </div>
+      </div>
+      <div class="ga-track">
+        <div class="ga-track-fill" style="width: 100%; background: linear-gradient(90deg, rgba(255,213,79,0.08), rgba(76,175,80,0.2));">
+          <span style="color: var(--color-ga);">OpenShell &rarr; 3.7</span>
+        </div>
+      </div>
+    </div>
+    <div class="ga-markers" style="margin-top: 0.5rem;">
+      <div class="ga-marker"><strong>3.5</strong>Aug</div>
+      <div class="ga-marker"><strong>EA1</strong>Sep</div>
+      <div class="ga-marker"><strong>EA2</strong>Oct</div>
+      <div class="ga-marker"><strong>3.6 GA</strong>Nov</div>
+      <div class="ga-marker"><strong>EA1</strong>Dec</div>
+      <div class="ga-marker"><strong>3.7 GA</strong>Feb</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <div class="footer-brand">
+      <div class="footer-bar"></div>
+      <span class="footer-text">Red Hat OpenShift AI &mdash; AI Asset Management</span>
+    </div>
+    <span class="footer-date">Updated August 2026 &mdash; Red Hat Confidential</span>
+  </div>
+
+</div>
+
+</body>
+</html>
