@@ -236,7 +236,7 @@
               <tr><td class="rank-cell">4</td><td class="title-cell">Red Hat AI Reference Architecture: The Agentic Stack</td><td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td><td><span class="badge badge-blue">Architect, TAM</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
               <tr><td class="rank-cell">5</td><td class="title-cell">Agent Fleet Lifecycle: Registry, Immutability &amp; Discovery</td><td><span class="badge badge-red">Breakout</span></td><td><span class="badge badge-blue">Architect, Consultant</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
               <tr><td class="rank-cell">6</td><td class="title-cell">AI Supply Chain Under Attack</td><td><span class="badge badge-red">Breakout</span></td><td><span class="badge badge-blue">Architect, Specialist</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
-              <tr><td class="rank-cell">7</td><td class="title-cell">Agent Observability: Tracing Multi-Agent Workflows</td><td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td><td><span class="badge badge-blue">Architect, TAM</span></td><td style="text-align: center;"><span class="dot-maybe"></span></td></tr>
+              <tr><td class="rank-cell">7</td><td class="title-cell">Self-Healing Agents: Production Failure to Automated Fix</td><td><span class="badge badge-red">Breakout</span> <span class="badge badge-teal">Interactive</span></td><td><span class="badge badge-blue">Architect, TAM</span></td><td style="text-align: center;"><span class="dot-yes"></span></td></tr>
             </tbody>
           </table>
           <div style="display: flex; gap: 1.5rem; margin-top: 0.8rem; font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">
@@ -559,59 +559,48 @@
       <div class="slide-inner" style="position: relative;">
         <div class="rank anim-fade-in" style="--index: 0; font-size: 5rem; top: -0.5rem; right: 0;">07</div>
         <div class="slide-eyebrow anim-fade-up" style="--index: 0">PROPOSAL #7</div>
-        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;">Agent Observability: Tracing <span class="accent">Multi-Agent Workflows</span> in Production</h2>
+        <h2 class="display-lg anim-fade-up" style="--index: 1; font-size: 1.6rem;"><span class="accent">Self-Healing Agents</span>: From Production Failure to Automated Fix on Red Hat AI</h2>
         <div class="proposal-badges anim-fade-up" style="--index: 2;">
           <span class="badge badge-red">Breakout 45m</span>
           <span class="badge badge-teal">or Interactive 45m</span>
-          <span class="badge badge-blue">Architect &middot; TAM &middot; Consultant</span>
+          <span class="badge badge-blue">Architect &middot; TAM &middot; Specialist</span>
         </div>
         <div class="anim-fade-up" style="--index: 3;">
-          <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.7rem; margin-bottom: 0.6rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.6rem; color: var(--rh-red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem;">The Tracing Challenge</div>
-            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; font-size: 0.75rem; color: var(--text-secondary); font-family: var(--font-text);">
-              <div style="background: rgba(238,0,0,0.08); border: 1px solid rgba(238,0,0,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">User request</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(0,149,150,0.08); border: 1px solid rgba(0,149,150,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">Orchestrator agent</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(0,102,204,0.08); border: 1px solid rgba(0,102,204,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">2 specialist agents</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(103,83,172,0.08); border: 1px solid rgba(103,83,172,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">4 MCP tool calls</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(244,180,0,0.08); border: 1px solid rgba(244,180,0,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">Gateway policy</div>
-              <span style="color: var(--text-muted);">&rarr;</span>
-              <div style="background: rgba(62,134,53,0.08); border: 1px solid rgba(62,134,53,0.2); border-radius: 6px; padding: 0.3rem 0.5rem;">Multiple inference calls</div>
-            </div>
-            <div style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-text); margin-top: 0.3rem;">When something fails silently and the agent hallucinates a response &mdash; how do you trace it?</div>
+          <div class="stat-strip" style="margin-bottom: 0.6rem;">
+            <div><div class="stat-num">88%</div><div class="stat-label">Pilots fail to<br>reach production</div></div>
+            <div><div class="stat-num">0</div><div class="stat-label">Open-source platforms<br>ship detect-to-fix</div></div>
+            <div><div class="stat-num">$15M</div><div class="stat-label">Raindrop raised on<br>"self-healing agents"</div></div>
+            <div><div class="stat-num">4</div><div class="stat-label">Loop stages<br>(observe&rarr;diagnose&rarr;fix&rarr;regress)</div></div>
           </div>
         </div>
         <div class="proposal-separator anim-fade-in" style="--index: 4;"></div>
         <div class="anim-fade-up" style="--index: 5;">
           <div class="abstract-card">
             <div class="abstract-label">CFP Abstract</div>
-            <p>A single user request can trigger a chain of agent calls &mdash; an orchestrator dispatching to specialist agents, each making multiple tool calls through MCP servers, routing through an AI Gateway, and consuming inference tokens across different models. When something goes wrong (and it will), how do you trace the failure back to its root cause?</p>
-            <p>This session covers the observability architecture for agentic workloads on Red Hat AI:</p>
-            <p><strong style="color: var(--text-primary);">Distributed Tracing</strong> &mdash; OpenTelemetry-based tracing across multi-agent workflows. We walk through a trace that spans an orchestrator agent, two specialist agents, four MCP tool calls, and an AI Gateway policy decision &mdash; showing how each component contributes spans with semantic conventions for AI operations.</p>
-            <p><strong style="color: var(--text-primary);">Debugging Silent Failures</strong> &mdash; When an MCP tool call fails and the agent hallucinates a response instead of reporting the error, how do you catch it? We show the telemetry patterns that reveal these failures and the alerting rules that surface them before they reach users.</p>
-            <p><strong style="color: var(--text-primary);">Audit Log Architecture</strong> &mdash; Every LLM call, tool invocation, policy decision, and identity verification produces an audit event. We cover the log schema, retention policies, and how to query the audit trail for compliance reporting.</p>
-            <p><strong style="color: var(--text-primary);">Cost Attribution</strong> &mdash; Token consumption tracking per agent, per workflow, per team. When your inference bill spikes, you know which agent workflow caused it.</p>
-            <p>You leave with observability patterns you can implement on day one of any agentic deployment.</p>
+            <p>88% of agentic AI pilots fail to reach production. When production agents do break, the path from detected failure to deployed fix is entirely manual &mdash; an engineer reads traces, finds the root cause, writes the fix, and hopes the regression doesn't return. LangSmith Engine and Raindrop 2.0 are racing to close this loop, but both are closed source. No open-source platform ships it.</p>
+            <p>This session walks through Red Hat AI's approach to self-healing agents &mdash; built on MLflow's tracing, evaluation, and issue detection &mdash; with a live demo:</p>
+            <p><strong style="color: var(--text-primary);">Observe and Alert</strong> &mdash; Trace-aware webhook events that fire when eval scores breach thresholds, issue detection finds problems, or traces error. The missing signals that turn passive dashboards into active triggers.</p>
+            <p><strong style="color: var(--text-primary);">Diagnose</strong> &mdash; Automatic issue detection clusters failures, pins them to source code in a connected repository, and surfaces a diagnosis with severity, root cause, and links to every affected trace.</p>
+            <p><strong style="color: var(--text-primary);">Fix</strong> &mdash; A coding agent receives the diagnosis and trace context, applies the fix, and opens a pull request. The harness is pluggable (OpenCode, Claude Code, Codex); inference runs on your own models. Nothing merges without human review.</p>
+            <p><strong style="color: var(--text-primary);">Regress</strong> &mdash; Fixed failures become evaluation datasets automatically, so the same problem cannot silently return.</p>
+            <p>We demo the full loop live: a model deprecation breaks an agent, the webhook fires, issue detection diagnoses it, a coding agent opens a PR with trace evidence, and the engineer reviews. You leave with the architecture for self-healing agent workflows on Red Hat AI.</p>
           </div>
           <div class="cai-inline">
-            <span class="cai-tag cai-tag-optional">CAI: Optional</span>
-            Optional: live tracing demo showing a multi-agent workflow trace in OpenTelemetry. The architecture walkthrough stands on its own.
+            <span class="cai-tag cai-tag-needed">CAI: Demo support</span>
+            Live self-healing loop demo: break an agent, watch webhook fire, issue detection diagnose, coding agent open a PR with trace links. The before/after arc is the dramatic moment.
           </div>
           <div class="submission-meta">
             <div class="meta-field"><span class="meta-label">Proficiency</span> <span class="meta-value">Technical, intermediate</span></div>
-            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical delivery</span></div>
+            <div class="meta-field"><span class="meta-label">Audience</span> <span class="meta-value">Technical specialist</span></div>
             <div class="meta-field"><span class="meta-label">Industries</span> <span class="meta-value">Financial services, Telecommunications</span></div>
           </div>
           <div class="format-rationale">
             <span class="format-tag">Why this format</span>
-            The breakout walks through a real distributed trace spanning orchestrator agents, specialist agents, MCP tool calls, and Gateway policy decisions. The interactive variant works because tracing is inherently hands-on: attendees walk through trace data, identify failure points in a multi-agent workflow, and build alerting rules. Both formats deliver day-one patterns; the interactive version builds muscle memory.
+            The breakout delivers the full self-healing loop as a guided narrative with a live demo &mdash; break an agent, watch the system detect, diagnose, and fix it. The interactive variant works because attendees can bring their own failure scenarios and walk through how the loop would handle them, building intuition for which failures are automatable and which need human judgment.
           </div>
         </div>
         <div class="proposal-rule"></div>
-        <div class="slide-notes">Every TAM and Consultant deploying agents needs observability patterns. Silent failures (hallucinated responses when tools fail) are a real production issue. Cost attribution is the question every CFO asks. Interactive format works well for tracing walkthroughs. Co-speaker: a TAM or SA who has debugged agent workflows in production.</div>
+        <div class="slide-notes">Pivoted from pure observability to the self-healing loop based on Nehanth Narendrula's agent-improvement RFC for MLflow. LangSmith Engine and Raindrop 2.0 ($15M raise) validate the market. No open-source platform ships detect-diagnose-fix end to end. MLflow has all the building blocks. Co-speaker: an SA or TAM who has helped customers debug production agent failures.</div>
       </div>
     </section>
 
@@ -657,8 +646,8 @@
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
 
-            <div class="matrix-cell title-col">#7 Observability</div>
-            <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
+            <div class="matrix-cell title-col">#7 Self-Healing Agents</div>
+            <div class="matrix-cell" style="justify-content: center;"><span class="dot-yes"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-maybe"></span></div>
             <div class="matrix-cell" style="justify-content: center;"><span class="dot-no"></span></div>
           </div>
@@ -706,7 +695,7 @@
         <button class="overview-thumb" data-goto="7"><span class="num">07</span><span class="ttl">#4 — Reference Architecture</span><span class="beat">PROPOSAL</span></button>
         <button class="overview-thumb" data-goto="8"><span class="num">08</span><span class="ttl">#5 — Fleet Lifecycle</span><span class="beat">PROPOSAL</span></button>
         <button class="overview-thumb" data-goto="9"><span class="num">09</span><span class="ttl">#6 — Supply Chain</span><span class="beat">PROPOSAL</span></button>
-        <button class="overview-thumb" data-goto="10"><span class="num">10</span><span class="ttl">#7 — Observability</span><span class="beat">PROPOSAL</span></button>
+        <button class="overview-thumb" data-goto="10"><span class="num">10</span><span class="ttl">#7 — Self-Healing Agents</span><span class="beat">PROPOSAL</span></button>
         <button class="overview-thumb" data-goto="11"><span class="num">11</span><span class="ttl">CAI Support + Next Steps</span><span class="beat">CLOSE</span></button>
       </div>
     </div>

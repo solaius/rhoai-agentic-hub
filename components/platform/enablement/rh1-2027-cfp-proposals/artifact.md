@@ -57,9 +57,9 @@ Labs excluded from submission mix. Deadline: August 7, 2026.
 - **Industries:** Financial services, Government/public sector
 - **Why this format:** The session extends a mental model attendees already have (container trust pipelines) into a new domain (AI supply chain). A breakout works because the narrative is linear — threat landscape, then Konflux build pipeline, then scanning, then trust tier distribution — and each section builds on the previous. The live scan catching a malicious skill is a controlled demo moment, not an interactive exercise. Attendees leave with the "AI chapter" of the trust story they already know how to tell.
 
-### #7 — Agent Observability: Tracing Multi-Agent Workflows in Production
+### #7 — Self-Healing Agents: From Production Failure to Automated Fix on Red Hat AI
 - **Format:** Breakout 45m / Interactive 45m
 - **Technical Proficiency:** Technical, intermediate
-- **Primary Audience:** Technical delivery
+- **Primary Audience:** Technical specialist
 - **Industries:** Financial services, Telecommunications
-- **Why this format:** The breakout walks through a real distributed trace spanning orchestrator agents, specialist agents, MCP tool calls, and Gateway policy decisions — showing how to read the trace and diagnose silent failures. The interactive variant works because tracing is inherently hands-on: attendees can walk through trace data, identify the failure point in a multi-agent workflow, and build alerting rules. Both formats deliver day-one patterns; the interactive version builds muscle memory.
+- **Why this format:** The breakout delivers the full self-healing loop as a guided narrative with a live demo — break an agent, watch the system detect, diagnose, and fix it. The interactive variant works because attendees can bring their own failure scenarios and walk through how the loop would handle them, building intuition for which failures are automatable and which need human judgment.
