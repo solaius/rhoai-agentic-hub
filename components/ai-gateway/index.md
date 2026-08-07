@@ -13,4 +13,4 @@ Related: [MCP Gateway](/components/mcp-gateway/index.md) · [Agent Interop](/com
 - [work/](/components/ai-gateway/work/)
 
 ## Connections
-- artifact · [Red Hat One 2027 — CFP Proposal Candidates](/components/platform/enablement/rh1-2027-cfp-proposals/artifact.md) — 14-slide deck presenting 10 ranked CFP proposal ideas for RH1 2027, with CAI support matrix and recommended submission strategy.
+- artifact · [Red Hat One 2027 — CFP Proposal Candidates](/components/platform/enablement/rh1-2027-cfp-proposals/artifact.md) — 11-slide deck presenting 7 deep-technical CFP proposals for RH1 2027, updated per Rosa Guntrip's guidance (deep technical content for hands-on-keyboard roles, not GTM).
