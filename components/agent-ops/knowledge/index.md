@@ -2,10 +2,14 @@
 # Agent Ops — knowledge
 
 ## fact
+- [Agent Improvement RFC — overview](/components/agent-ops/knowledge/fact-agent-improvement-rfc.md) — Two-part MLflow RFC for self-healing agents — Part 1 adds trace-aware webhook events for eval thresholds, issue detection, and trace errors; Part 2 adds an Improve tab with coding-agent-driven diagnosis and fix workflow (failing traces to PRs).
+- [Self-healing agents — competitive landscape](/components/agent-ops/knowledge/fact-self-healing-agents-competitive.md) — Competitive landscape for agent self-healing/improvement — LangSmith Engine (closed, metered), Raindrop 2.0 ($15M raise, MCP-based), plus eval alerting table (6 competitors ship it, MLflow has none). No open-source platform ships the full detect-diagnose-fix loop.
 - [Zero-trust for agents](/components/agent-ops/knowledge/fact-zero-trust-for-agents.md) — The zero-trust principles for agent identity and access from Red Hat's Agentic AI Strategy — agent-native identity, fine-grained dynamic access, token exchange, enterprise IdP integration.
 
 ## person
+- [Nehanth Narendrula](/components/agent-ops/knowledge/person-nehanth-narendrula.md) — App Dev team — author of the agent-improvement RFC for MLflow (trace webhooks + self-healing improvement workflow).
 - [Xernay Aniwar](/components/agent-ops/knowledge/person-xernay-aniwar.md) — Content/technical writer — authored the "What is AgentOps?" Red Hat topics-page explainer.
 
 ## reference
+- [Agent Improvement RFC — PR #1](/components/agent-ops/knowledge/ref-agent-improvement-rfc-pr.md) — Nehanth's two-part MLflow RFC for self-healing agents — trace-aware webhook events (Part 1) and a coding-agent-driven improvement workflow (Part 2).
 - [What is AgentOps?](/components/agent-ops/knowledge/ref-what-is-agentops.md) — Red Hat topics-page explainer defining AgentOps, the AI-agent-vs-agentic-AI distinction, and four core capabilities.
