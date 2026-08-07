@@ -36,9 +36,9 @@
     "source": "components/mcp-registry/enablement/registry-hub"
   },
   "platform/rh1-2027-cfp-proposals": {
-    "badge": "new",
-    "hash": "bbf8beba5538d20748bbbd3f3bb1691905d58fe2767da03b16073a5cffab82a8",
-    "published": "2026-08-04",
+    "badge": "updated",
+    "hash": "bcfa34e924f2b4689f561fd6f2bd9353729e1c71a8e3e2987627188a2ad1e8cd",
+    "published": "2026-08-07",
     "source": "components/platform/enablement/rh1-2027-cfp-proposals"
   },
   "skills-registry/databricks-vision-doc": {
